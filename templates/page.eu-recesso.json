@@ -1,0 +1,92 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "settings": {
+        "color_scheme": "",
+        "use_custom_section_spacing": false,
+        "mobile_section_spacing_top": 30,
+        "mobile_section_spacing_right": 0,
+        "mobile_section_spacing_bottom": 0,
+        "mobile_section_spacing_left": 0,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 0,
+        "show_title": true,
+        "page_width": "xs"
+      }
+    },
+    "178126334969d44cce": {
+      "type": "apps",
+      "blocks": {
+        "revoq_eu_withdrawal_button_widerrufsbutton_form_7VtxKp": {
+          "type": "shopify://apps/revoq-eu-withdrawal-button/blocks/widerrufsbutton-form/019c3356-2775-7d52-b915-4b0f965005ae",
+          "settings": {
+            "button_shape": "rounded",
+            "button_radius": 0,
+            "button_size": "medium",
+            "button_variant": "filled",
+            "button_color": "#111827",
+            "button_text_color": "#ffffff",
+            "button_border_color": "#111827",
+            "button_border_width": 1,
+            "card_style": "boxed",
+            "card_shape": "rounded",
+            "input_shape": "rounded",
+            "field_spacing": 10,
+            "max_width": 760,
+            "section_padding": 24,
+            "text_color": "#111827",
+            "secondary_text_color": "#6b7280",
+            "input_background_color": "#ffffff",
+            "name_placeholder": "-",
+            "order_placeholder": "-",
+            "show_heading": false,
+            "heading_text": "-",
+            "show_section_heading": true,
+            "section_heading_text": "-",
+            "show_subheading": true,
+            "subheading_text": "-",
+            "show_order_hint": true,
+            "order_hint_text": "-",
+            "show_email_hint": true,
+            "show_privacy_notice": true,
+            "email_hint_text": "-"
+          }
+        }
+      },
+      "block_order": [
+        "revoq_eu_withdrawal_button_widerrufsbutton_form_7VtxKp"
+      ],
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": false,
+        "remove_vertical_spacing": true,
+        "remove_horizontal_spacing": false,
+        "use_custom_section_spacing": false,
+        "mobile_section_spacing_top": 0,
+        "mobile_section_spacing_right": 0,
+        "mobile_section_spacing_bottom": 0,
+        "mobile_section_spacing_left": 0,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 0
+      }
+    }
+  },
+  "order": [
+    "main",
+    "178126334969d44cce"
+  ]
+}

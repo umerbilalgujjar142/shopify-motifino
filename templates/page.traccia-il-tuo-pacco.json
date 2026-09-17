@@ -1,0 +1,174 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "color_scheme": "",
+        "use_custom_section_spacing": false,
+        "mobile_section_spacing_top": 0,
+        "mobile_section_spacing_right": 0,
+        "mobile_section_spacing_bottom": 0,
+        "mobile_section_spacing_left": 0,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 0,
+        "show_title": true,
+        "page_width": "xs"
+      }
+    },
+    "rich_text_BRmw4D": {
+      "type": "rich-text",
+      "blocks": {
+        "subheading_RwaUc4": {
+          "type": "subheading",
+          "settings": {
+            "text": "Traccia la tua spedizione"
+          }
+        },
+        "heading_4t3wVY": {
+          "type": "heading",
+          "settings": {
+            "text": "Scopri dov'é il tuo pacco",
+            "heading_tag": "h1"
+          }
+        },
+        "richtext_CL8btn": {
+          "type": "richtext",
+          "settings": {
+            "content": "<p>Sei in trepidante attesa di ricevere il tuo ordine?</p><p>Qui potrai seguirlo in tutti i suoi spostamenti, direttamente dal nostro magazzino a casa tua.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "subheading_RwaUc4",
+        "heading_4t3wVY",
+        "richtext_CL8btn"
+      ],
+      "name": "t:sections.rich_text.presets.rich_text.name",
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": false,
+        "content_width": "sm",
+        "text_position": "start",
+        "remove_vertical_spacing": false,
+        "use_custom_section_spacing": false,
+        "mobile_section_spacing_top": 0,
+        "mobile_section_spacing_right": 0,
+        "mobile_section_spacing_bottom": 0,
+        "mobile_section_spacing_left": 0,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 0
+      }
+    },
+    "faq_P6dWDt": {
+      "type": "faq",
+      "blocks": {
+        "question_dFYmAc": {
+          "type": "question",
+          "settings": {
+            "question": "Dove trovo il mio numero d'ordine?",
+            "answer": "<p>Controlla tra le tue email e cerca quella riguardante la conferma dell'ordine, ossia quella che hai ricevuto poco dopo che hai fatto l'acquisto. Lo troverai lì e sarà simile a questo \"#M12478\"</p>"
+          }
+        },
+        "question_9zJzyF": {
+          "type": "question",
+          "settings": {
+            "question": "Dove trovo il numero di tracciamento?",
+            "answer": "<p>Nel momento dell'evasione dell'ordine hai ricevuto un'email con all'interno il codice di tracciamento. Il formato può variare in base al corriere utilizzato</p>"
+          }
+        },
+        "question_RNFbqf": {
+          "type": "question",
+          "settings": {
+            "question": "Problemi con il tracciamento?",
+            "answer": "<p>Non ti preoccupare se non riesci a tracciare il tuo ordine. Potrebbe volerci un po' di tempo perché si aggiorni.</p><p>Se hai bisogno di una mano, non esitare a premere il pulsante WhatsApp in basso a destra e un nostro operatore sarà subito disponibile per te.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "question_dFYmAc",
+        "question_9zJzyF",
+        "question_RNFbqf"
+      ],
+      "name": "t:sections.faq.presets.faq.name",
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": false,
+        "use_custom_section_spacing": false,
+        "mobile_section_spacing_top": 0,
+        "mobile_section_spacing_right": 0,
+        "mobile_section_spacing_bottom": 0,
+        "mobile_section_spacing_left": 0,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 0,
+        "show_categories": false,
+        "subheading": "",
+        "title": "",
+        "content": ""
+      }
+    },
+    "1775146505c859c561": {
+      "type": "apps",
+      "blocks": {
+        "track123_search_DEWgLV": {
+          "type": "shopify://apps/track123/blocks/search/60c49c11-a7c0-49a0-861e-2f84d2f294e6",
+          "settings": {
+            "block_image": "shopify://shop_images/sfondo_tracking_page_cd20cdf2-d6f2-4508-82ac-a4637630d862.jpg",
+            "search_form_background_color": "#f0efeb",
+            "preview_state": "detail",
+            "search_by": "by_order_number_and_email_or_by_tracking_number",
+            "time_format": "HH:mm",
+            "map_coordinates": "destination_address",
+            "show_estimated_delivery_time": true,
+            "show_carrier_info": true,
+            "only_show_last_mile_carrier": false,
+            "show_tracking_number": true,
+            "link_to_carrier_website": true,
+            "show_package_info": true,
+            "show_reorder_button": false,
+            "custom_css": ""
+          }
+        }
+      },
+      "block_order": [
+        "track123_search_DEWgLV"
+      ],
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": false,
+        "remove_vertical_spacing": false,
+        "remove_horizontal_spacing": true,
+        "use_custom_section_spacing": false,
+        "mobile_section_spacing_top": 0,
+        "mobile_section_spacing_right": 0,
+        "mobile_section_spacing_bottom": 0,
+        "mobile_section_spacing_left": 0,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 0
+      }
+    }
+  },
+  "order": [
+    "main",
+    "rich_text_BRmw4D",
+    "faq_P6dWDt",
+    "1775146505c859c561"
+  ]
+}

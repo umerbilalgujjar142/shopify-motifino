@@ -1,0 +1,251 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "rich_text_BELUzP": {
+      "type": "rich-text",
+      "blocks": {
+        "subheading_tCFbTx": {
+          "type": "subheading",
+          "settings": {
+            "text": "Domande o Dubbi?"
+          }
+        },
+        "heading_7qnYqb": {
+          "type": "heading",
+          "settings": {
+            "text": "Guarda le domande frequenti",
+            "heading_tag": "h1"
+          }
+        },
+        "richtext_KhrkjT": {
+          "type": "richtext",
+          "settings": {
+            "content": "<p>Qui puoi trovare tutte le domande frequenti. Qualsiasi dubbio lo puoi risolvere guardando questa lista. Se non trovi risposta alla tua domanda sentiti libero di contattarci premendo il pulsante WhatsApp in basso a destra </p>"
+          }
+        }
+      },
+      "block_order": [
+        "subheading_tCFbTx",
+        "heading_7qnYqb",
+        "richtext_KhrkjT"
+      ],
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": true,
+        "content_width": "sm",
+        "text_position": "start",
+        "remove_vertical_spacing": false
+      }
+    },
+    "faq_YByh8y": {
+      "type": "faq",
+      "blocks": {
+        "category_ewcaeM": {
+          "type": "category",
+          "settings": {
+            "title": "Prodotti",
+            "icon": "picto-award-gift",
+            "icon_width": 24
+          }
+        },
+        "question_HQphi6": {
+          "type": "question",
+          "settings": {
+            "question": "Come posso tagliare la cintura?",
+            "answer": "<p>Tagliare la cintura è molto semplice. Abbiamo creato una pagina dedicata per la spiegazione<br/>Premi qui sotto per scoprire come<br/><br/> <a href=\"/pages/come-tagliare-la-cintura\" title=\"Come tagliare la cintura\">COME TAGLIARE LA CINTURA</a></p>"
+          }
+        },
+        "question_FVgbLi": {
+          "type": "question",
+          "settings": {
+            "question": "Quanto sono lunghe le vostre cinture?",
+            "answer": "<p>Puoi trovare le nostre cinture di due diverse lunghezze: <strong>130cm</strong> e <strong>150cm</strong>.</p><p>Le cinture da 130cm coprono tutte le taglie fino alla <strong>58 italiana</strong> di pantaloni, mentre la 150cm copre le altre taglie fino alla <strong>68 italiana</strong> di pantaloni.</p><p>Se non sei sicuro della tua taglia contatta i nostri assistenti su Whatsapp che troveranno la taglia giusta per te.</p>"
+          }
+        },
+        "question_Bqq7Uz": {
+          "type": "question",
+          "settings": {
+            "question": "Come fa a chiudersi senza buchi?",
+            "answer": "<p>Semplicemente la cintura è dotata di una cremagliera interna con tanti scalini. La fibbia con il suo meccanismo a scatto va a bloccarsi in questi scalini quando la si chiude.</p>"
+          }
+        },
+        "question_Djwkyr": {
+          "type": "question",
+          "settings": {
+            "question": "Come faccio ad aprire la cintura?",
+            "answer": "<p>Per aprire la cintura basterà premere il bottone o levetta presente nella fibbia e poi sfilarla.</p>"
+          }
+        },
+        "question_eqUhti": {
+          "type": "question",
+          "settings": {
+            "question": "Di che materiali sono le cinture?",
+            "answer": "<p>Tutte le nostre cinture sono al 70% pelle vera di vitello e al 30% PU. Una combinazione che rende le cinture durevoli e di ottima qualità</p>"
+          }
+        },
+        "category_VWWCt9": {
+          "type": "category",
+          "settings": {
+            "title": "Spedizioni",
+            "icon": "picto-delivery-truck",
+            "icon_width": 24
+          }
+        },
+        "question_MDqMhU": {
+          "type": "question",
+          "settings": {
+            "question": "Quanto impiega il pacco ad arrivare?",
+            "answer": "<p>In media necessitiamo di 1 giorno di preparazione ed evasione dell'ordine. Nelle successive 24/72h il pacco sarà a casa tua</p>"
+          }
+        },
+        "question_a6tnik": {
+          "type": "question",
+          "settings": {
+            "question": "Con chi spedite?",
+            "answer": "<p>Spediamo normalmente con Poste italiane, GLS, BRT e corrieri interni.</p>"
+          }
+        },
+        "question_iJWYwG": {
+          "type": "question",
+          "settings": {
+            "question": "In pagamento alla consegna ci sono problemi durante la spedizione?",
+            "answer": "<p>Quando si ordina in contrassegno bisogna prestare attenzione a quando il corriere è in consegna. Il pacco ovviamente non può essere consegnato se non presente la persona destinataria o incaricata, perché il corriere necessita del pagamento.</p><p>Inoltre avvisiamo che dopo molte spedizioni fatte in questa modalità, possiamo affermare che 1 spedizione su 10 non arriva a destinazione. Questo perché in caso di problemi il corriere rimanda indietro il pacco al mittente.</p><p>Una seconda spedizione nel caso la prima fallisca, non verrà più effettuata in pagamento alla consegna.</p>"
+          }
+        },
+        "category_6kPFfg": {
+          "type": "category",
+          "settings": {
+            "title": "Metodi di pagamento",
+            "icon": "picto-credit-card",
+            "icon_width": 24
+          }
+        },
+        "question_xg9KE8": {
+          "type": "question",
+          "settings": {
+            "question": "Posso pagare alla consegna?",
+            "answer": "<p>Certamente! Andando al checkout potrai scegliere il metodo di pagamento che preferisci, tra i quali anche il pagamento alla consegna. Pagherai solo con la tua nuovissima cintura tra le mani</p>"
+          }
+        },
+        "question_XbYYj7": {
+          "type": "question",
+          "settings": {
+            "question": "Posso pagare con PayPal o Klarna?",
+            "answer": "<p>Certamente! Puoi trovare PayPal e Klarna come metodi di pagamento direttamente al checkout dopo aver scelto le tue cinture</p>"
+          }
+        },
+        "question_DHUMJx": {
+          "type": "question",
+          "settings": {
+            "question": "I pagamenti online sono sicuri?",
+            "answer": "<p>Assolutamente si!</p><p>Usiamo i sistemi di pagamento più diffusi e sicuri online. Inoltre il portale utilizzato per i pagamenti è uno tra i più utilizzati dai negozi online di fama mondiale</p><p>Tutte le transazioni sono cryptate e controllate</p>"
+          }
+        },
+        "category_3DBFjh": {
+          "type": "category",
+          "settings": {
+            "title": "Resi e Garanzie",
+            "icon": "picto-return",
+            "icon_width": 24
+          }
+        },
+        "question_nXfBKJ": {
+          "type": "question",
+          "settings": {
+            "question": "Posso effettuare un reso?",
+            "answer": "<p>Certamente.</p><p>Siamo sicuri che la nostra cintura ti sarà perfetta. Ma se questo non accadesse o tu ritenessi che non sia così nei primi 30 giorni dopo l'ordine, allora organizzeremo un reso gratuito per te e ti rimborseremo fino all'ultimo centesimo speso</p>"
+          }
+        },
+        "question_nFPwjU": {
+          "type": "question",
+          "settings": {
+            "question": "Come posso effettuare un reso?",
+            "answer": "<p>Puoi dare un'occhiata alle nostre politiche dei \"<a href=\"/policies/refund-policy\" title=\"Refund Policy\">Resi e Rimborsi</a>\". Se sei idoneo contattaci per richiedere subito il reso del tuo prodotto.</p>"
+          }
+        },
+        "question_TbkXWF": {
+          "type": "question",
+          "settings": {
+            "question": "Ci sono garanzie?",
+            "answer": "<p>Ogni nostra cintura è coperta da una garanzia di 2 anni. Tale garanzia viene attestata dalla email di conferma dell'ordine.</p>"
+          }
+        },
+        "category_MrPTBJ": {
+          "type": "category",
+          "settings": {
+            "title": "Assistenza",
+            "icon": "picto-operator",
+            "icon_width": 24
+          }
+        },
+        "question_Eg3NQk": {
+          "type": "question",
+          "settings": {
+            "question": "Quando è attiva la vostra assistenza?",
+            "answer": "<p>Siamo attivi su WhatsApp tutto il giorno, mentre per chiamate rispondiamo dalle 9:30 alle 12:30 e dalle 14:00 alle 18:00</p><p>Gli orari possono variare</p><p>Se non rispondiamo entro poco tempo probabilmente ci sono dei problemi nei nostri canali di comunicazione oppure semplicemente l'assistenza è ferma per ferie o eventi speciali.</p><p>In questi casi attendere pazientemente grazie</p>"
+          }
+        },
+        "question_tGMqgX": {
+          "type": "question",
+          "settings": {
+            "question": "Dove posso scrivervi?",
+            "answer": "<p>Puoi contattarci direttamente su Whatsapp premendo il pulsante verde che trovi qui in basso a destra. Altrimenti via email scrivendo nel form che trovi in questa pagina <a href=\"/pages/contact\" title=\"Contattaci\">Contattaci</a>, oppure scrivendo direttamente all'email <a href=\"mailto:assistenza@motifino.com\" target=\"_blank\" title=\"mailto:assistenza@motifino.com\">assistenza@motifino.com</a></p><p>Siamo disponibili anche in chiamata su Whatsapp ad orari limitati.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "category_ewcaeM",
+        "question_HQphi6",
+        "question_FVgbLi",
+        "question_Bqq7Uz",
+        "question_Djwkyr",
+        "question_eqUhti",
+        "category_VWWCt9",
+        "question_MDqMhU",
+        "question_a6tnik",
+        "question_iJWYwG",
+        "category_6kPFfg",
+        "question_xg9KE8",
+        "question_XbYYj7",
+        "question_DHUMJx",
+        "category_3DBFjh",
+        "question_nXfBKJ",
+        "question_nFPwjU",
+        "question_TbkXWF",
+        "category_MrPTBJ",
+        "question_Eg3NQk",
+        "question_tGMqgX"
+      ],
+      "name": "t:sections.faq.presets.faq.name",
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": false,
+        "use_custom_section_spacing": false,
+        "mobile_section_spacing_top": 0,
+        "mobile_section_spacing_right": 0,
+        "mobile_section_spacing_bottom": 0,
+        "mobile_section_spacing_left": 0,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 0,
+        "show_categories": false,
+        "subheading": "",
+        "title": "",
+        "content": ""
+      }
+    }
+  },
+  "order": [
+    "rich_text_BELUzP",
+    "faq_YByh8y"
+  ]
+}

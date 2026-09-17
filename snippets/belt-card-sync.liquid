@@ -1,0 +1,127 @@
+{%- comment -%}
+  Keeps one free Privilege Card Black per belt in the cart, whatever added the belt.
+  Must be rendered on every page — see theme.liquid.
+{%- endcomment -%}
+
+{%- assign bb_card_variant = all_products['privilege-card-black'].variants.first -%}
+{%- if bb_card_variant -%}
+  <script>window.MOTIFINO_PRIVILEGE_CARD_VARIANT_ID = {{ bb_card_variant.id }};</script>
+{%- endif -%}
+
+{{ 'belt-combination.js' | asset_url | script_tag }}
+
+<script>
+  /*
+   * One free Privilege Card Black per belt, whatever put the belt in the cart.
+   * The theme's own product form and quick-add don't know the rule, so the cart is
+   * reconciled after every change. Rendered from theme.liquid, not from the cart
+   * drawer section, because that section is disabled on this store.
+   */
+  (function () {
+    var busy = false;
+
+    /* The cart page reconciles itself in main-cart.liquid, where the section can be
+       re-rendered in place instead of reloading. */
+    function isCartPage() {
+      return window.themeVariables
+        && window.themeVariables.settings
+        && window.themeVariables.settings.pageType === 'cart';
+    }
+
+    function done(changed) {
+      busy = false;
+      if (changed) document.dispatchEvent(new CustomEvent('cart:refresh'));
+    }
+
+    /* The theme hands us the new cart with the event, so no extra read. */
+    function sync(cart) {
+      if (busy || isCartPage() || !window.MotifinoBelt) return;
+      busy = true;
+      window.MotifinoBelt.syncPrivilegeCard(cart)
+        .then(done)
+        .catch(function (e) {
+          busy = false;
+          console.warn('[Cart] Privilege card sync failed:', e);
+        });
+    }
+
+    document.addEventListener('cart:change', function (e) {
+      sync(e && e.detail && e.detail.cart);
+    });
+
+    /* With cart_type "page" the theme jumps straight to /cart after an add and never
+       fires cart:change, so the card count could only be corrected once the cart had
+       already rendered. Do the add here, sync, then navigate — /cart arrives correct. */
+    var GIFTED_CARDS = [56920917147974, 56920945066310];
+
+    function cartTypeIsPage() {
+      return window.themeVariables
+        && window.themeVariables.settings
+        && window.themeVariables.settings.cartType === 'page';
+    }
+
+    document.addEventListener('submit', function (e) {
+      var form = e.target;
+      if (!form || !form.action || form.action.indexOf('/cart/add') === -1) return;
+      if (!cartTypeIsPage() || !window.MotifinoBelt) return;
+
+      var idField = form.querySelector('[name="id"]');
+      if (!idField) return;
+
+      /* Silver/Gold cards keep the theme's one-per-customer check. */
+      if (GIFTED_CARDS.indexOf(parseInt(idField.value, 10)) !== -1) return;
+      if (!form.checkValidity()) return;
+
+      e.preventDefault();
+      e.stopImmediatePropagation();
+
+      var buttons = Array.prototype.filter.call(form.elements, function (el) {
+        return el.type === 'submit';
+      });
+      buttons.forEach(function (b) { b.setAttribute('aria-busy', 'true'); });
+
+      fetch('{{ routes.cart_add_url }}.js', {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+      })
+        .then(function (r) {
+          return r.json().then(function (body) {
+            if (!r.ok) throw body;
+            return body;
+          });
+        })
+        .then(function () { return window.MotifinoBelt.syncPrivilegeCard(); })
+        .then(function () { window.location.href = '{{ routes.cart_url }}'; })
+        .catch(function (err) {
+          buttons.forEach(function (b) { b.removeAttribute('aria-busy'); });
+          form.dispatchEvent(new CustomEvent('cart:error', {
+            bubbles: true,
+            detail: { error: (err && err.description) || 'Impossibile aggiungere al carrello.' }
+          }));
+        });
+    }, { capture: true });
+
+    {%- liquid
+      assign bb_belts = 0
+      assign bb_cards = 0
+      for bb_ci in cart.items
+        if bb_ci.product.type == 'Combinazione cintura'
+          assign bb_belts = bb_belts | plus: bb_ci.quantity
+        endif
+        if bb_ci.product.handle == 'privilege-card-black'
+          assign bb_cards = bb_cards | plus: bb_ci.quantity
+        endif
+      endfor
+    -%}
+
+    /* Only read the cart on load when this page already renders a mismatch. */
+    if ({{ bb_belts }} !== {{ bb_cards }}) {
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function () { sync(); });
+      } else {
+        sync();
+      }
+    }
+  })();
+</script>

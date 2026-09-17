@@ -1,0 +1,1262 @@
+/* ============================================================
+   BUNDLE BUILDER — bb-screen-composer.css
+   Styles exclusively for #bb-screen-composer (Screen 1).
+   Loaded via snippets/bb-screen-composer.liquid
+   ============================================================ */
+
+/* ── Belt number badge pill (top of composer) ─────────────── */
+.bb-belt-badge {
+  display: inline-block;
+  background: var(--bb-accent);
+  color: #fff;
+  font-size: var(--bb-fs-base);
+  font-weight: 700;
+  letter-spacing: .3px;
+  padding: 7px 18px;
+  border-radius: 20px;
+}
+
+.bb-composer-hero .bb-belt-badge {
+  position: absolute;
+  top: 52px;
+  left: 12px;
+  z-index: 4;
+  margin: 0;
+}
+
+/* ── Worn-photo toggle — rounded, centered pill ──────────────
+   Product view (default) = black · Worn view (.is-worn) = white */
+.bb-worn-btn {
+  position: absolute;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 18px;
+  border-radius: 32px;
+  border: 1px solid var(--bb-dark);
+  background: var(--bb-dark);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+  color: #fff;
+  font-family: inherit;
+  font-size: var(--bb-fs-2xs);
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  z-index: 4;
+  transition: background .18s, box-shadow .18s, color .18s, border-color .18s;
+}
+
+.bb-worn-btn:hover {
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+}
+
+.bb-worn-btn.is-worn {
+  background: #fff;
+  color: var(--bb-dark);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+.bb-worn-btn.is-worn:hover {
+  background: #fff;
+}
+
+/* ── Composer hero — full-width preview photo as background ── */
+.bb-composer-hero {
+  position: relative;
+  width: 100%;
+  min-height: 245px;
+  background: #e8e8e8;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+/* @media (max-width: 480px) {
+  .bb-composer-hero {
+    min-height: 170px;
+  }
+} */
+
+.bb-composer-hero__bg {
+  position: absolute;
+  top: -32px;
+  left: 0;
+  width: 100%;
+  height: calc(100% + 65px);
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  transition: opacity .35s;
+}
+
+.bb-composer-hero__bg--worn {
+  z-index: 2;
+}
+
+.bb-belt-preview__placeholder {
+  display: none;
+  position: absolute;
+  top: 35%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #bbb;
+  font-size: var(--bb-fs-base);
+  text-align: center;
+  pointer-events: none;
+  z-index: 1;
+  padding: 0 24px;
+  line-height: 1.5;
+}
+
+.bb-belt-preview {
+  display: none;
+}
+
+/* ── Belt wizard — transparent overlay at TOP of the hero photo ─ */
+#bb-belt-wizard {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 5;
+  padding: 10px 12px 8px;
+  background: transparent;
+  border-bottom: none;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+#bb-belt-wizard::-webkit-scrollbar {
+  display: none;
+}
+
+.bb-wizard {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  min-width: 100%;
+  padding: 2px 0;
+  box-sizing: border-box;
+}
+
+/* ── Each step wrapper */
+.bb-wizard__step {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  cursor: default;
+}
+
+.bb-wizard__step.is-done {
+  cursor: pointer;
+}
+
+/* ── Pill: wraps the dot + label */
+.bb-wizard__pill {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 14px 6px 8px;
+  border-radius: 999px;
+  transition: background .35s ease, box-shadow .35s ease;
+  white-space: nowrap;
+}
+
+/* Active → gold gradient pill */
+.bb-wizard__step.is-active .bb-wizard__pill {
+  background: linear-gradient(135deg, #c9970a 0%, #e8b923 60%, #b8800b 100%);
+  border: 1.5px solid #b8800b;
+  box-shadow: 0 3px 12px rgba(184, 134, 11, .40);
+}
+
+/* Done → faint gold tint, clickable */
+.bb-wizard__step.is-done .bb-wizard__pill {
+  background: rgba(184, 134, 11, .08);
+}
+
+/* Pending → glass pill so it's readable on any photo */
+.bb-wizard__step.is-pending .bb-wizard__pill {
+  background: rgba(255, 255, 255, 0.30);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* ── Number dot */
+.bb-wizard__dot {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--bb-fs-sm);
+  font-weight: 700;
+  flex-shrink: 0;
+  transition: background .35s, border-color .35s, color .35s;
+}
+
+.bb-wizard__step.is-active .bb-wizard__dot {
+  background: rgba(255, 255, 255, .28);
+  color: #fff;
+  border: none;
+}
+
+.bb-wizard__step.is-done .bb-wizard__dot {
+  background: var(--bb-accent);
+  color: #fff;
+  border: none;
+}
+
+.bb-wizard__step.is-pending .bb-wizard__dot {
+  background: transparent;
+  color: #c0c0c0;
+  border: 2px solid #d8d8d8;
+}
+
+/* ── Label text */
+.bb-wizard__lbl {
+  font-size: var(--bb-fs-sm);
+  font-weight: 600;
+  line-height: 1;
+  transition: color .35s;
+}
+
+.bb-wizard__step.is-active .bb-wizard__lbl {
+  color: #fff;
+}
+
+.bb-wizard__step.is-done .bb-wizard__lbl {
+  color: var(--bb-accent);
+}
+
+.bb-wizard__step.is-pending .bb-wizard__lbl {
+  color: #c0c0c0;
+}
+
+/* ── Connector line between steps */
+.bb-wizard__line {
+  flex-shrink: 0;
+  width: 22px;
+  height: 2px;
+  border-radius: 2px;
+  margin: 0 2px;
+  transition: background .35s;
+}
+
+.bb-wizard__line.is-done {
+  background: var(--bb-accent);
+}
+
+.bb-wizard__line.is-pending {
+  background: #ddd;
+}
+
+/* ── Infinity + button */
+.bb-wizard__add {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, #c9970a 0%, #e8b923 60%, #b8800b 100%);
+  color: #fff;
+  font-size: var(--bb-fs-xl);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  line-height: 1;
+  padding: 0;
+  box-shadow: 0 2px 8px rgba(184, 134, 11, .40);
+  transition: filter .2s, box-shadow .2s;
+}
+
+.bb-wizard__add:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 4px 14px rgba(184, 134, 11, .55);
+}
+
+/* ── Section label ─────────────────────────────────────────── */
+.bb-section {
+  padding: 13px 16px 14px;
+}
+
+.bb-section-header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 0 8px;
+  margin-bottom: 4px;
+}
+
+.bb-section__label {
+  font-size: var(--bb-fs-base);
+  font-weight: 600;
+  color: #111;
+  margin-bottom: 15px;
+}
+
+.bb-section-header .bb-section__label {
+  margin: 11px 0 0px;
+}
+
+.bb-section__counter {
+  font-size: var(--bb-fs-xs);
+  color: var(--bb-mid);
+  font-weight: 500;
+  white-space: nowrap;
+  background: var(--bb-light);
+  padding: 2px 8px;
+  border-radius: 20px;
+  flex-shrink: 0;
+}
+
+/* ── Length section — label + buttons on ONE row ─────────── */
+.bb-section--inline-length {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: nowrap;
+}
+
+.bb-section--inline-length .bb-section__label {
+  margin-bottom: 0;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.bb-section--inline-length .bb-length-selector {
+  flex-wrap: nowrap;
+  flex: 1;
+  justify-content: flex-start;
+}
+
+/* ── Length selector ──────────────────────────────────────── */
+.bb-length-selector {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.bb-length-btn {
+  padding: 5px 16px;
+  border-radius: 20px;
+  background: var(--bb-white);
+  color: #a09e9e !important;
+  font-size: var(--bb-fs-xs);
+  cursor: pointer;
+  transition: all .2s;
+  text-decoration: none;
+  line-height: 1.3;
+}
+
+.bb-length-btn.is-selected {
+  /* background: linear-gradient(45deg,
+      #bf953f 0%,
+      #fcf6ba 50%,
+      #b38728 100%); */
+  background-color: var(--bb-dark);
+  color: var(--bb-light) !important;
+  border: none;
+}
+
+/* ── Buckle carousel — centered cover-flow ─────────────────── */
+.bb-carousel {
+  position: relative;
+  height: 96px;
+  overflow: hidden;
+  margin: 0 -16px;
+  touch-action: pan-y;
+  cursor: grab;
+}
+
+.bb-carousel::-webkit-scrollbar {
+  display: none;
+}
+
+.bb-carousel__item {
+  position: absolute;
+  left: 50%;
+  top: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  transition: transform .38s cubic-bezier(.25, .46, .45, .94),
+    opacity .30s ease;
+  will-change: transform, opacity;
+}
+
+.bb-carousel__thumb {
+  position: relative;
+  width: 110px;
+  height: 86px;
+  border-radius: 12px;
+  border: 1.5px solid transparent;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 0;
+  box-sizing: border-box;
+  box-shadow: none;
+  transition: border-color .28s, box-shadow .28s, background .28s;
+}
+
+.bb-carousel__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.bb-carousel__thumb svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ── Selected: subtle gray rounded border ── */
+.bb-carousel__item.is-selected .bb-carousel__thumb {
+  background: #fff;
+  box-shadow: none;
+}
+
+/* Tap feedback while sliding on mobile */
+.bb-carousel__item:active .bb-carousel__thumb {
+  border-color: #c8c8c8;
+  padding: 0 4px;
+}
+
+/* ── Unavailable items — greyscale + badge ──────────────────── */
+.bb-carousel__item--unavailable .bb-carousel__thumb {
+  filter: grayscale(100%) opacity(0.42);
+}
+
+.bb-strap-item--unavailable {
+  filter: grayscale(100%) opacity(0.42);
+}
+
+.bb-unavail-badge {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(20, 20, 20, 0.72);
+  color: #fff;
+  font-size: 8.5px;
+  font-weight: 700;
+  padding: 3px 7px;
+  border-radius: 5px;
+  text-align: center;
+  line-height: 1.5;
+  pointer-events: none;
+  z-index: 20;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* ── Label as bottom overlay INSIDE the bordered card ── */
+.bb-carousel__label {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 3px 6px 4px;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  text-align: center;
+  font-size: var(--bb-fs-2xs);
+  font-weight: 600;
+  color: #444;
+  line-height: 1.4;
+  border-radius: 0 0 9px 9px;
+}
+
+.bb-carousel__item.is-selected .bb-carousel__label {
+  font-weight: 700;
+  color: #b8800b;
+  background: rgba(255, 255, 255, 0.90);
+  -webkit-text-fill-color: #b8800b;
+}
+
+/* ── Buckle section — 0px top, 14px bottom */
+.bb-section--buckle {
+  padding-top: 0;
+  padding-bottom: 14px;
+}
+
+/* ── Strap section ── */
+.bb-section--strap {
+  overflow: visible;
+  padding-right: 16px;
+  padding-top: 0;
+  padding-bottom: 14px;
+}
+
+/* .bb-section--strap .bb-section-header {
+  margin-bottom: 5px;
+} */
+
+/* ── Strap carousel — centered cover-flow, full-bleed ──────── */
+.bb-strap-carousel {
+  position: relative;
+  height: 96px;
+  overflow: hidden;
+  margin: 0 -16px 14px;
+  touch-action: pan-y;
+  cursor: grab;
+}
+
+/* ── Strap items ───── */
+.bb-strap-item {
+  position: absolute;
+  left: 50%;
+  top: 2px;
+  width: 240px;
+  height: 86px;
+  cursor: pointer;
+  border-radius: 12px;
+  border: 1.5px solid transparent;
+  background: #fff;
+  box-sizing: border-box;
+  overflow: hidden;
+  box-shadow: none;
+  transition: transform .38s cubic-bezier(.25, .46, .45, .94),
+    opacity .30s ease,
+    border-color .28s,
+    box-shadow .28s;
+  will-change: transform, opacity;
+  user-select: none;
+}
+
+.bb-strap-item.is-selected {
+  box-shadow: none;
+}
+
+/* Tap feedback while sliding on mobile */
+.bb-strap-item:active {
+  border-color: #c8c8c8;
+}
+
+/* ── Strap photo ────────────────────────────────────────── */
+.bb-strap-item__thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  display: block;
+  border: none;
+  background: transparent;
+  border-radius: 10px;
+  padding: 0 3px;
+}
+
+/* ── Strap color bar (fallback when no photo) ──────────── */
+.bb-strap-item__bar {
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  border: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.bb-strap-item__bar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 8%;
+  right: 8%;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.55);
+  border-radius: 0 0 50% 50%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.bb-strap-item__bar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg,
+      rgba(255, 255, 255, 0.32) 0%,
+      rgba(255, 255, 255, 0.12) 18%,
+      transparent 45%,
+      rgba(0, 0, 0, 0.08) 70%,
+      rgba(0, 0, 0, 0.26) 100%);
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.bb-strap-item.is-selected .bb-strap-item__bar {
+  outline-color: var(--bb-accent);
+}
+
+/* ── Strap item name — hidden; shown in section header inline span */
+.bb-strap-item__name {
+  display: none;
+}
+
+/* ── External selected-strap name label — hidden (name in section header) */
+.bb-strap-selected-name {
+  display: none;
+}
+
+/* ── Old in-card buckle label — hidden (name moved to section header) ── */
+.bb-carousel__label {
+  display: none;
+}
+
+/* ── Section number prefix (1. / 2.) — accent gold ─────────── */
+.bb-section__num {
+  color: var(--bb-accent);
+  font-weight: 700;
+}
+
+/* ── Inline selection name in section header label ─────────── */
+.bb-selection-inline-name {
+  color: var(--bb-dark);
+  font-weight: 700;
+}
+
+/* ── Strap prev/next nav arrows (hidden — use swipe) ──────── */
+.bb-strap-nav {
+  display: none;
+}
+
+.bb-strap-nav__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 1.5px solid #ddd;
+  border-radius: 50%;
+  background: #fff;
+  color: #555;
+  font-size: var(--bb-fs-md);
+  cursor: pointer;
+  transition: border-color .18s, color .18s;
+  user-select: none;
+  padding: 0;
+  line-height: 1;
+}
+
+.bb-strap-nav__btn:hover {
+  border-color: var(--bb-accent);
+  color: var(--bb-accent);
+}
+
+.bb-strap-nav__btn:disabled {
+  opacity: .35;
+  cursor: default;
+}
+
+.bb-strap-nav__label {
+  font-size: var(--bb-fs-xs);
+  color: #aaa;
+}
+
+.bb-strap-hint {
+  display: none;
+}
+
+/* ── Summary pill ─────────────────────────────────────────── */
+.bb-summary-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: var(--bb-light);
+  border-radius: 24px;
+  font-size: var(--bb-fs-sm);
+  color: var(--bb-dark);
+  margin: 14px 16px 0;
+  flex-wrap: wrap;
+}
+
+.bb-summary-pill__edit {
+  margin-left: auto;
+  color: var(--bb-accent);
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: var(--bb-fs-xs);
+  white-space: nowrap;
+}
+
+.bb-summary-pill__item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.bb-summary-pill__dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--bb-accent);
+  flex-shrink: 0;
+}
+
+/* ── Composer screen as a flex column on mobile.
+   `margin-top: auto` on the combo-bar fills any vertical gap when the
+   composer content is shorter than the viewport, so the bar lands at the
+   bottom edge instead of leaving a white strip below it. The section's
+   `min-height: 100vh` guarantees there's always something to fill. */
+@media (max-width: 767px) {
+  #bb-screen-composer.is-active {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+}
+
+/* ── Combo summary bar — sticky-floats over the composer like the review footer.
+   No ::before fade gradient: the inline progress-feedback bar + rising pill
+   live directly above the combo-bar, and a fade would obscure the animation. */
+.bb-combo-bar {
+  position: sticky;
+  bottom: 0;
+  z-index: 20;
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 16px calc(16px + env(safe-area-inset-bottom, 0px));
+  background: var(--bb-combo-bg);
+  box-shadow: 0 -12px 32px -4px rgba(0, 0, 0, .14);
+}
+
+.bb-combo-bar__info {
+  position: relative;
+  margin-bottom: 10px;
+  padding-right: 44px;
+}
+
+.bb-combo-bar__view {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid var(--bb-dark);
+  border-radius: 50%;
+  background: #fff;
+  color: var(--bb-dark);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background .2s, border-color .2s;
+}
+
+.bb-combo-bar__view:hover {
+  background: #f5f5f5;
+  border-color: #b8b8b8;
+}
+
+.bb-combo-bar__view svg {
+  display: block;
+}
+
+.bb-combo-bar__view-count {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  box-sizing: border-box;
+  border-radius: 999px;
+  background: var(--bb-accent);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 0 2px #fff;
+  transform: scale(0);
+  transition: transform .18s ease-out;
+  pointer-events: none;
+}
+
+.bb-combo-bar__view.has-count .bb-combo-bar__view-count {
+  transform: scale(1);
+}
+
+.bb-combo-bar__title {
+  font-size: var(--bb-fs-xl);
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+
+.bb-combo-bar__sub {
+  font-size: var(--bb-fs-lg);
+  color: var(--bb-dark);
+  line-height: 1.4;
+  font-weight: 400;
+}
+
+.bb-combo-bar__actions {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  gap: 10px;
+  padding-top: 13px;
+}
+
+@media screen and (max-width: 699px) {
+  .bb-combo-bar__actions {
+    padding-top: 0;
+    gap: 0;
+  }
+  .bb-combo-bar {
+    gap: 0;
+  }
+}
+
+/* Back button — circular icon button */
+.bb-combo-bar__back {
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--bb-dark);
+  color: var(--bb-white);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background .2s, filter .2s;
+}
+
+.bb-combo-bar__back svg {
+  display: block;
+  width: 18px;
+  height: 18px;
+}
+
+.bb-combo-bar__back:hover {
+  filter: brightness(1.15);
+}
+
+/* Primary action — pill, fills remaining space */
+.bb-combo-bar__actions .bb-btn-primary {
+  flex: 1 1 auto;
+  width: auto;
+  height: 44px;
+  padding: 0 18px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.bb-composer-cta__label {
+  flex: 1 1 auto;
+  text-align: center;
+}
+
+.bb-composer-cta__arrow {
+  flex: 0 0 auto;
+  display: block;
+  width: 18px;
+  height: 18px;
+}
+
+/* Mobile: shrink action button text so labels fit on small screens */
+@media (max-width: 767px) {
+
+  .bb-combo-bar__back,
+  .bb-combo-bar__actions .bb-btn-primary {
+    font-size: var(--bb-fs-md);
+  }
+
+  .bb-combo-bar__title {
+    font-size: var(--bb-fs-lg);
+  }
+
+  .bb-combo-bar__sub {
+    font-size: var(--bb-fs-md);
+  }
+}
+
+/* ── Infinity extra-belt bar ─────────────────────────────── */
+.bb-infinity-bar {
+  padding: 12px 16px 20px;
+  background: #0d0d00;
+  border-top: 1px solid #2a2200;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bb-infinity-bar__total {
+  font-size: var(--bb-fs-base);
+  color: var(--bb-accent);
+  font-weight: 600;
+  text-align: center;
+  letter-spacing: .02em;
+}
+
+.bb-infinity-bar__add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 11px 16px;
+  border-radius: 10px;
+  border: 1.5px dashed var(--bb-accent);
+  background: transparent;
+  color: var(--bb-accent);
+  font-size: var(--bb-fs-base);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s;
+}
+
+.bb-infinity-bar__add:hover {
+  background: rgba(184, 134, 11, .08);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   PROGRESS FEEDBACK  (inline, between strap section and combo bar)
+   Gradient bar fills over 2s while pill rises from behind combo bar
+   ══════════════════════════════════════════════════════════════ */
+.bb-progress-feedback {
+  /* Anchored to the very top edge of the sticky combo-bar so the gradient
+     bar + rising pill follow it through scroll. The 3px height is purely
+     the gradient bar; the pill animation overflows upward (combo-bar
+     overflow stays visible). */
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  pointer-events: none;
+  background: transparent;
+}
+
+.bb-progress-feedback__bar {
+  position: absolute;
+  inset: 0;
+  background: transparent;
+  overflow: hidden;
+}
+
+.bb-progress-feedback__fill {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, #bf953f 0%, #fcf6ba 50%, #b38728 100%);
+  transform: scaleX(0);
+  transform-origin: left center;
+  animation: bb-progress-fill 1.2s linear forwards;
+}
+
+.bb-progress-feedback__pill {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 7px;
+  background: #efefe6;
+  border-radius: 999px;
+  box-shadow:
+    0 8px 20px rgba(0, 0, 0, 0.18),
+    0 0 0 1px rgba(0, 0, 0, 0.04);
+  white-space: nowrap;
+  transform: translate(-50%, 60px);
+  opacity: 0;
+  animation: bb-progress-pill 1.2s cubic-bezier(.22, .61, .36, 1) forwards;
+  z-index: 999;
+}
+
+.bb-progress-feedback__pill::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: linear-gradient(135deg, #bf953f 0%, #fcf6ba 50%, #b38728 100%);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.bb-progress-feedback__check {
+  display: inline-flex;
+  width: 15px;
+  height: 15px;
+  flex: 0 0 auto;
+}
+
+.bb-progress-feedback__check svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.bb-progress-feedback__text {
+  font-size: 12px;
+  font-weight: 700;
+  color: #111;
+  letter-spacing: 0.2px;
+  line-height: 1;
+}
+
+@media (min-width: 768px) {
+  .bb-progress-feedback__check {
+    width: 24px;
+    height: 24px;
+  }
+
+  .bb-progress-feedback__text {
+    font-size: 13px;
+  }
+}
+
+@keyframes bb-progress-fill {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+@keyframes bb-progress-pill {
+  0%   { transform: translate(-50%, 60px);  opacity: 0; }
+  30%  { transform: translate(-50%, -14px); opacity: 1; }
+  100% { transform: translate(-50%, -14px); opacity: 1; }
+}
+
+/* ============================================================
+   DESKTOP LAYOUT  (≥ 768px)
+   Mobile styles above are preserved unchanged.
+   Left: sticky belt preview  |  Right: scrollable selectors.
+   Pure flex — no grid.
+   ============================================================ */
+@media (min-width: 768px) {
+
+  /* ── Outer: two rows — top row has hero+right, bottom row is combo bar ──
+     Scoped to .is-active so the ID specificity doesn't override
+     .bb-screen { display: none } when this screen is inactive.           */
+  #bb-screen-composer.is-active {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    min-height: 80vh;
+    border-radius: 18px;
+    overflow: hidden;
+  }
+
+  /* ── LEFT: preview fills exactly the same height as the right panel ── */
+  .bb-composer-hero {
+    flex: 0 0 50%;
+    width: 50%;
+    align-self: stretch;
+    height: auto;
+    min-height: 320px;
+    position: relative;
+  }
+
+  /* ── RIGHT: flex column — stacks buckle, strap, combo bar ── */
+  .bb-composer-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  /* ── RIGHT: padding per section ─────────────────────────── */
+  .bb-section--buckle {
+    padding: 20px 20px 14px;
+  }
+
+  .bb-section--strap {
+    padding: 14px 20px 14px;
+  }
+
+  /* ── COMBO BAR: full-width bottom row of the desktop card.
+     `position: relative` (instead of static) so the absolute-positioned
+     .bb-progress-feedback child anchors to the bar, not to .bb-wrap.
+     The card layout already places the bar at the bottom, and the parent's
+     overflow:hidden would neutralize sticky anyway. */
+  .bb-combo-bar {
+    position: relative;
+    flex: 0 0 100%;
+    margin-top: 0;
+    padding: 14px 20px 20px;
+    border-top: 1px solid var(--bb-border);
+    box-shadow: none;
+  }
+
+  .bb-combo-bar__info {
+    text-align: right;
+    margin-bottom: 0;
+  }
+
+  .bb-combo-bar__title,
+  .bb-combo-bar__sub {
+    text-align: right;
+  }
+
+  .bb-combo-bar__actions {
+    border-top: none;
+    padding-top: 0 !important;
+    justify-content: flex-end;
+  }
+
+  .bb-combo-bar__actions .bb-btn-primary {
+    flex: 0 1 auto;
+  }
+
+  /* ── BUCKLE: single row, all items equal width ──────────── */
+  .bb-carousel {
+    position: static;
+    height: auto;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 10px;
+    overflow: visible;
+    margin: 0;
+    touch-action: auto;
+    cursor: default;
+  }
+
+  .bb-carousel__item {
+    position: static;
+    left: auto;
+    top: auto;
+    flex: 1 0 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    transform: none !important;
+    opacity: 1 !important;
+    z-index: auto !important;
+    pointer-events: auto !important;
+  }
+
+  .bb-carousel__thumb {
+    width: 100%;
+    height: 90px;
+    border-radius: 12px;
+    border: 1.5px solid transparent;
+    transition: border-color .2s;
+  }
+
+  .bb-carousel__item:hover .bb-carousel__thumb {
+    border-color: rgba(200, 200, 200, .55);
+  }
+
+  .bb-carousel__item.is-selected .bb-carousel__thumb {
+    border-color: #c8c8c8;
+    box-shadow: none;
+  }
+
+  .bb-carousel__label {
+    display: block !important;
+    position: static;
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    padding: 5px 2px 2px;
+    font-size: var(--bb-fs-xs);
+    font-weight: 600;
+    color: #666;
+    border-radius: 0;
+    text-align: center;
+  }
+
+  .bb-carousel__item.is-selected .bb-carousel__label {
+    color: var(--bb-accent);
+    -webkit-text-fill-color: var(--bb-accent);
+    background: transparent;
+  }
+
+  .bb-carousel__item--unavailable .bb-carousel__thumb {
+    filter: grayscale(100%) opacity(0.42);
+  }
+
+  /* ── STRAP: flex-wrap, 2 per row ────────────────────────── */
+  .bb-strap-carousel {
+    position: static;
+    height: auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    overflow: visible;
+    margin: 0 0 6px;
+    touch-action: auto;
+    cursor: default;
+  }
+
+  .bb-strap-item {
+    position: relative;
+    left: auto;
+    top: auto;
+    flex: 0 0 calc((100% - 8px) / 2);
+    /* 2 per row, 1×8px gap */
+    height: 64px;
+    border-radius: 12px;
+    border: 1.5px solid transparent;
+    cursor: pointer;
+    transform: none !important;
+    opacity: 1 !important;
+    z-index: auto !important;
+    pointer-events: auto !important;
+    transition: border-color .2s;
+  }
+
+  .bb-strap-item:hover {
+    border-color: rgba(200, 200, 200, .55);
+  }
+
+  .bb-strap-item.is-selected {
+    border-color: #c8c8c8;
+    box-shadow: none;
+  }
+
+  .bb-strap-item__name {
+    display: none;
+  }
+
+  .bb-strap-item--unavailable {
+    filter: grayscale(100%) opacity(0.42);
+  }
+
+  /* ── Hide swipe arrows (all items visible) ───────────────── */
+  .bb-section--buckle .bb-strap-nav,
+  .bb-section--strap .bb-strap-nav {
+    display: none;
+  }
+
+}

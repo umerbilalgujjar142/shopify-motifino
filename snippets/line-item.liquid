@@ -1,0 +1,194 @@
+{%- comment -%}
+  ----------------------------------------------------------------------------------------------------------------------
+  LINE ITEM
+  ----------------------------------------------------------------------------------------------------------------------
+
+  This component renders a single line item product information, and is used on order and cart page.
+
+  ********************************************
+  Supported variables
+  ********************************************
+
+  * line_item: the line item to render (required)
+  * show_quantity_selector: if set to true, the quantity selector is displayed (useful for instance of mini-cart)
+
+  ********************************************
+  Motifino belt logic
+  ********************************************
+
+  A belt is one unit of a "Combinazione cintura" product — leather and buckle already
+  combined, sold in a 130-cm or 150-cm variant. One combination is one box, so one free
+  Privilege Card Black is carried per belt; that card line is derived from the belt count
+  and therefore has no quantity controls of its own.
+{%- endcomment -%}
+
+<line-item class="line-item">
+  {%- liquid
+    assign _li_is_belt = false
+    if line_item.product.type == 'Combinazione cintura'
+      assign _li_is_belt = true
+    endif
+
+    # Privilege Card Black: the free gift bundled with every belt. Its quantity is
+    # managed automatically, so it gets no controls.
+    assign _li_is_free_card = false
+    if line_item.product.handle == 'privilege-card-black'
+      assign _li_is_free_card = true
+    endif
+
+    # Privilege Card Silver/Gold: standalone gifted products, capped at qty 1 — remove-only.
+    assign _li_is_privilege_card = false
+    if line_item.variant_id == 56920917147974 or line_item.variant_id == 56920945066310
+      assign _li_is_privilege_card = true
+    endif
+  -%}
+
+  <div class="bb-line-item-img-wrap">
+    {%- if line_item.image != blank -%}
+      {{-
+        line_item.image
+        | image_url: width: line_item.image.width
+        | image_tag:
+          loading: 'lazy',
+          sizes: '(max-width: 699px) 70px, 120px',
+          widths: '70,120,140,210,240,360',
+          class: 'line-item__media'
+      -}}
+    {%- endif -%}
+  </div>
+
+  <div class="line-item-info">
+    {%- assign text_class = '' -%}
+
+    {%- if settings.product_card_text_font == 'heading' -%}
+      {%- assign text_class = 'h6' -%}
+    {%- endif -%}
+
+    <div class="v-stack">
+      {%- if settings.show_vendor and line_item.vendor != blank -%}
+        {%- capture vendor_class -%}smallcaps {% if settings.product_card_text_font == 'heading' %}heading{% endif %}{% endcapture %}
+        {%- render 'vendor' with line_item.vendor, class: vendor_class -%}
+      {%- endif -%}
+
+      <div class="v-stack justify-items-start gap-1">
+        {%- assign _display_title = line_item.product.title | default: line_item.title -%}
+        {%- if _li_is_free_card and line_item.quantity > 1 -%}
+          {%- assign _display_title = _display_title | append: ' x' | append: line_item.quantity -%}
+        {%- endif -%}
+        {%- comment -%}
+          The length keeps its own span so a long name truncates instead of
+          pushing it onto a second line.
+        {%- endcomment -%}
+        {%- assign _variant_label = '' -%}
+        {%- unless _li_is_free_card or line_item.product.has_only_default_variant or line_item.gift_card -%}
+          {%- assign _variant_label = line_item.variant.title -%}
+        {%- endunless -%}
+
+        {%- capture _title_inner -%}
+          <span class="bb-li-title__name">{{ _display_title }}</span>
+          {%- if _variant_label != blank -%}
+            <span class="bb-li-title__variant">{{ _variant_label }}</span>
+          {%- endif -%}
+        {%- endcapture -%}
+
+        <div class="bb-title-actions">
+          {%- if line_item.url != blank and _li_is_free_card == false -%}
+            <a style="font-weight:700" href="{{ line_item.url }}" class="bb-li-title {{ text_class }}">{{- _title_inner -}}</a>
+          {%- else -%}
+            <p style="font-weight:700;margin:0;" class="bb-li-title {{ text_class }}">{{- _title_inner -}}</p>
+          {%- endif -%}
+        </div>
+      </div>
+
+      {%- capture secondary_information -%}
+        {%- if _li_is_free_card -%}
+          {%- comment -%}One card per belt, always free. 19,99 is its standalone value.{%- endcomment -%}
+          {%- assign _card_value = line_item.quantity | times: 1999 -%}
+          <div class="h-stack gap-2" style="align-items:center;">
+            <span style="color:#000;font-weight:400;">GRATIS</span>
+            <span style="font-size:13px;color:#c0392b;text-decoration:line-through;">
+              {{- _card_value | money -}}
+            </span>
+          </div>
+        {%- else -%}
+          {%- if line_item.selling_plan_allocation -%}
+            <p class="text-subdued">{{ line_item.selling_plan_allocation.selling_plan.name }}</p>
+          {%- endif -%}
+
+          {%- unless line_item.properties == empty -%}
+            <ul class="text-subdued">
+              {%- for property in line_item.properties -%}
+                {%- assign first_character_in_key = property.first | truncate: 1, '' -%}
+
+                {%- if property.last == blank or first_character_in_key == '_' -%}
+                  {%- continue -%}
+                {%- endif -%}
+
+                <li>
+                  {%- if property.last contains '/uploads/' or property.last contains '/files/' -%}
+                    <a href="{{ property.last }}">{{ property.last | split: '/' | last }}</a>
+                  {%- else -%}
+                    {{ property.first }}: {{ property.last }}
+                  {%- endif -%}
+                </li>
+              {%- endfor -%}
+            </ul>
+          {%- endunless -%}
+
+          {%- comment -%}Price, struck original and discount badges all on one line.{%- endcomment -%}
+          <div class="bb-li-pricerow">
+            <span class="bb-li-price">{{- line_item.final_line_price | money -}}</span>
+            {%- if line_item.original_line_price > line_item.final_line_price -%}
+              <span class="bb-li-original-price">{{- line_item.original_line_price | money -}}</span>
+            {%- endif -%}
+            {%- for discount_allocation in line_item.line_level_discount_allocations -%}
+              <span class="discount-badge bb-li-discount text-xs">
+                {%- render 'icon' with 'discount', width: 12 -%}
+                <span class="bb-li-discount__name">{{ discount_allocation.discount_application.title }}</span>
+                <span class="bb-li-discount__amount">(-{{ discount_allocation.amount | money }})</span>
+                {%- if section.settings.allow_discount_application
+                  and discount_allocation.discount_application.type != ''
+                -%}
+                  <cart-discount-remove-button
+                    discount-code="{{ discount_allocation.discount_application.title }}"
+                    class="h-stack align-center"
+                  >
+                    <button type="button">{%- render 'icon' with 'close', width: 8 -%}</button>
+                  </cart-discount-remove-button>
+                {%- endif -%}
+              </span>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      {%- endcapture -%}
+
+      {%- if secondary_information != blank -%}
+        <div class="v-stack justify-items-start gap-1">
+          {{- secondary_information -}}
+        </div>
+      {%- endif -%}
+
+      {%- comment -%}
+        The theme's own stepper, so the cart matches the product page. The free
+        Privilege Card is derived from the belt count and the gifted Silver/Gold
+        cards are capped at one, so neither gets a quantity control.
+      {%- endcomment -%}
+      {%- if show_quantity_selector and _li_is_free_card == false and _li_is_privilege_card == false -%}
+        <div class="line-item__quantity">
+          {%- render 'quantity-selector', line_item: line_item, size: 'sm' -%}
+        </div>
+      {%- endif -%}
+
+      {%- if _li_is_privilege_card -%}
+        <div class="line-item__quantity">
+          <button type="button" class="bb-privilege-remove-btn"
+            data-line-key="{{ line_item.key }}"
+            aria-label="Rimuovi Privilege Card"
+          ><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+      {%- endif -%}
+
+    </div>
+  </div>
+
+</line-item>

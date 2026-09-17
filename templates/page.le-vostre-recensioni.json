@@ -1,0 +1,559 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "color_scheme": "",
+        "use_custom_section_spacing": false,
+        "mobile_section_spacing_top": 0,
+        "mobile_section_spacing_right": 0,
+        "mobile_section_spacing_bottom": 0,
+        "mobile_section_spacing_left": 0,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 0,
+        "show_title": true,
+        "page_width": "xs"
+      }
+    },
+    "rich_text_8YzdkM": {
+      "type": "rich-text",
+      "blocks": {
+        "subheading_V9DAJM": {
+          "type": "subheading",
+          "settings": {
+            "text": "Cosa ne pensano gli altri?"
+          }
+        },
+        "heading_tz4NJW": {
+          "type": "heading",
+          "settings": {
+            "text": "Guarda le vostre recensioni",
+            "heading_tag": "h1"
+          }
+        },
+        "richtext_dxQiGr": {
+          "type": "richtext",
+          "settings": {
+            "content": "<p>Qui in questa sezione puoi trovare tutte le recensioni dei <strong>nostri clienti</strong>. Saremo felicissimi se facessi parte pure tu di questa sezione con una bella o brutta recensione in base alla tua esperienza con noi.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "subheading_V9DAJM",
+        "heading_tz4NJW",
+        "richtext_dxQiGr"
+      ],
+      "name": "t:sections.rich_text.presets.rich_text.name",
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": false,
+        "content_width": "sm",
+        "text_position": "start",
+        "remove_vertical_spacing": false,
+        "use_custom_section_spacing": false,
+        "mobile_section_spacing_top": 0,
+        "mobile_section_spacing_right": 0,
+        "mobile_section_spacing_bottom": 0,
+        "mobile_section_spacing_left": 0,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 0
+      }
+    },
+    "multi_column_zGAkmH": {
+      "type": "multi-column",
+      "blocks": {
+        "image_with_text_44jtcc": {
+          "type": "image_with_text",
+          "settings": {
+            "image": "shopify://shop_images/Progetto_senza_titolo_2.png",
+            "title": "Un'ottima azienda.",
+            "heading_tag": "h6",
+            "content": "<p>Un'ottima azienda.. dalla qualità del prodotto, al confezionamento, alla rapidità nella spedizione, alla gestione del cliente e del post vendita.. 🔝</p>",
+            "link_url": "https://www.trustpilot.com/review/motifino.com?languages=all",
+            "link_text": "Sergio Scognamiglio"
+          }
+        },
+        "image_with_text_9mLXHX": {
+          "type": "image_with_text",
+          "settings": {
+            "image": "shopify://shop_images/Progetto_senza_titolo_2.png",
+            "title": "Queste cinture sono stupende ..non",
+            "heading_tag": "h6",
+            "content": "<p>Queste cinture sono stupende ..non hanno difetti .. sono belle esteticamente ed altissima qualità... sarò cliente fisso</p>",
+            "link_url": "https://www.trustpilot.com/review/motifino.com?languages=all",
+            "link_text": "Crescenzo Piscopo"
+          }
+        },
+        "image_with_text_CaEA3y": {
+          "type": "image_with_text",
+          "settings": {
+            "image": "shopify://shop_images/Progetto_senza_titolo_2.png",
+            "title": "Acquistata giovedì ed è arrivata oggi",
+            "heading_tag": "h6",
+            "content": "<p>Acquistata giovedì ed è arrivata oggi, a prima vista il prodotto sembrerebbe molto, molto di qualità dal momento che è un regalo lo consegneremo a metà mese. Sono certo che sarà gradito... Grazie a voi</p>",
+            "link_url": "https://www.trustpilot.com/review/motifino.com?languages=all",
+            "link_text": "lionellolossi"
+          }
+        },
+        "image_with_text_MHXHL7": {
+          "type": "image_with_text",
+          "settings": {
+            "image": "shopify://shop_images/Progetto_senza_titolo_2.png",
+            "title": "Cinture oltre le aspettative",
+            "heading_tag": "h6",
+            "content": "<p>Cinture oltre le aspettative….<br/>Ne ho acquistate 2 ed in futuro ne acquisterò certamente altre…<br/>Ottimo rapporto qualità prezzo.<br/>Ordine ricevuto in Sardegna entro i 3 giorni lavorativi….ottimo!</p>",
+            "link_url": "https://www.trustpilot.com/review/motifino.com?languages=all",
+            "link_text": "Salvatore Pischedda"
+          }
+        },
+        "image_with_text_tBRYrU": {
+          "type": "image_with_text",
+          "settings": {
+            "image": "shopify://shop_images/Progetto_senza_titolo_2.png",
+            "title": "L'ho regalata a mio marito a Natale",
+            "heading_tag": "h6",
+            "content": "<p>L'ho regalata a mio marito a Natale ,si è trovato benissimo che per la festa del papà ne ho prese altre tre</p>",
+            "link_url": "https://www.trustpilot.com/review/motifino.com?languages=all",
+            "link_text": "Elisa Mercandelli"
+          }
+        },
+        "image_with_text_6iJHFA": {
+          "type": "image_with_text",
+          "settings": {
+            "image": "shopify://shop_images/Progetto_senza_titolo_2.png",
+            "title": "Tutto Ottimo",
+            "heading_tag": "h6",
+            "content": "<p>Spedizione Rapidissima, ottimi prodotti ben confezionati. Le cinture possono essere anche un ottimo regalo per qualunque occasione. Consigliatissime</p>",
+            "link_url": "https://www.trustpilot.com/review/motifino.com?languages=all",
+            "link_text": "Carmelo Morelli"
+          }
+        },
+        "image_with_text_c4GDHE": {
+          "type": "image_with_text",
+          "settings": {
+            "image": "shopify://shop_images/Progetto_senza_titolo_2.png",
+            "title": "Ti mette di buon umore 😉",
+            "heading_tag": "h6",
+            "content": "<p>Regolare la comodità del tuo punto vita a seconda della giornata non ha prezzo. Davvero comoda e ti mette di buon umore. Consigliatissima 👍🏻</p>",
+            "link_url": "https://www.trustpilot.com/review/motifino.com?languages=all",
+            "link_text": "Luca Pitone"
+          }
+        },
+        "image_with_text_R7GVYa": {
+          "type": "image_with_text",
+          "settings": {
+            "image": "shopify://shop_images/Progetto_senza_titolo_2.png",
+            "title": "Fatto bene",
+            "heading_tag": "h6",
+            "content": "<p>Fatto bene, confezionato in una elegante confezione. Spiegazioni di utilizzo e consegna ottimi. Ottimi in tutto.</p>",
+            "link_url": "https://www.trustpilot.com/review/motifino.com?languages=all",
+            "link_text": "Duccio Picchi"
+          }
+        }
+      },
+      "block_order": [
+        "image_with_text_44jtcc",
+        "image_with_text_9mLXHX",
+        "image_with_text_CaEA3y",
+        "image_with_text_MHXHL7",
+        "image_with_text_tBRYrU",
+        "image_with_text_6iJHFA",
+        "image_with_text_c4GDHE",
+        "image_with_text_R7GVYa"
+      ],
+      "name": "t:sections.multi_column.presets.multi_column.name",
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": false,
+        "use_custom_section_spacing": false,
+        "mobile_section_spacing_top": 0,
+        "mobile_section_spacing_right": 0,
+        "mobile_section_spacing_bottom": 0,
+        "mobile_section_spacing_left": 0,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 0,
+        "columns_per_row": 4,
+        "stack_on_mobile": false,
+        "mobile_card_width": 75,
+        "overlap_image": false,
+        "content_alignment": "center",
+        "text_alignment": "start",
+        "card_color_scheme": "scheme-d1e6cd7b-3e71-4141-bf7b-fa5ddaf02c90",
+        "card_padding": 16,
+        "card_border_radius": 2,
+        "image_max_width": 100,
+        "heading_max_lines": 1,
+        "text_max_lines": 5,
+        "spacing": "xs",
+        "subheading": "",
+        "title": "",
+        "content": ""
+      }
+    },
+    "rich_text_WfYyaz": {
+      "type": "rich-text",
+      "blocks": {
+        "image_FGqhnd": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/Progetto_senza_titolo_3.png",
+            "width_mode": "custom",
+            "max_width": 140,
+            "mobile_max_width": 100
+          }
+        },
+        "richtext_jfaG3f": {
+          "type": "richtext",
+          "settings": {
+            "content": "<p>Valutati <strong>4.8</strong> su <strong>5</strong> sulla base di più di 200 recensioni. Le  nostre recensioni a 5 stelle</p>"
+          }
+        },
+        "button_BVtzb7": {
+          "type": "button",
+          "settings": {
+            "style": "solid",
+            "text": "Vedi le recensioni su Trustpilot",
+            "url": "https://www.trustpilot.com/review/motifino.com?languages=all",
+            "background": "",
+            "text_color": ""
+          }
+        },
+        "spacer_fXKzPM": {
+          "type": "spacer",
+          "settings": {
+            "height_desktop": 45,
+            "height_mobile": 20
+          }
+        },
+        "subheading_3CCwmm": {
+          "type": "subheading",
+          "settings": {
+            "text": "Siamo sempre disponibili!"
+          }
+        },
+        "richtext_VnxKrV": {
+          "type": "richtext",
+          "settings": {
+            "content": "<p>Scrivici su Whatsapp per qualsiasi cosa.<br/>Troverai sempre delle vere persone pronte ad aiutarti al meglio.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "image_FGqhnd",
+        "richtext_jfaG3f",
+        "button_BVtzb7",
+        "spacer_fXKzPM",
+        "subheading_3CCwmm",
+        "richtext_VnxKrV"
+      ],
+      "name": "t:sections.rich_text.presets.rich_text.name",
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": false,
+        "content_width": "xs",
+        "text_position": "center",
+        "remove_vertical_spacing": true,
+        "use_custom_section_spacing": false,
+        "mobile_section_spacing_top": 0,
+        "mobile_section_spacing_right": 0,
+        "mobile_section_spacing_bottom": 0,
+        "mobile_section_spacing_left": 0,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 0
+      }
+    },
+    "media_grid_rKMpQi": {
+      "type": "media-grid",
+      "blocks": {
+        "image_zttAEi": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/5.jpg",
+            "desktop_image_fit": "contain",
+            "mobile_image_fit": "contain",
+            "column_count": "3",
+            "row_count": 1,
+            "add_padding": false,
+            "subheading": "",
+            "subheading_style": "subheading",
+            "title": "",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "text_position": "place-self-center text-center",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0,
+            "gradient_overlay": "",
+            "mobile_padding_top": 0,
+            "mobile_padding_right": 0,
+            "mobile_padding_bottom": 0,
+            "mobile_padding_left": 0,
+            "desktop_padding_top": 0,
+            "desktop_padding_right": 0,
+            "desktop_padding_bottom": 0,
+            "desktop_padding_left": 0
+          }
+        },
+        "image_i73Ynm": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/3_7af4df67-721d-44d7-989a-8fe3bf6db02e.jpg",
+            "desktop_image_fit": "contain",
+            "mobile_image_fit": "contain",
+            "column_count": "3",
+            "row_count": 1,
+            "add_padding": false,
+            "subheading": "",
+            "subheading_style": "subheading",
+            "title": "",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "text_position": "place-self-center text-center",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0,
+            "gradient_overlay": "",
+            "mobile_padding_top": 0,
+            "mobile_padding_right": 0,
+            "mobile_padding_bottom": 0,
+            "mobile_padding_left": 0,
+            "desktop_padding_top": 0,
+            "desktop_padding_right": 0,
+            "desktop_padding_bottom": 0,
+            "desktop_padding_left": 0
+          }
+        },
+        "image_98f4Jw": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/6.jpg",
+            "desktop_image_fit": "contain",
+            "mobile_image_fit": "contain",
+            "column_count": "3",
+            "row_count": 1,
+            "add_padding": false,
+            "subheading": "",
+            "subheading_style": "subheading",
+            "title": "",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "text_position": "place-self-center text-center",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0,
+            "gradient_overlay": "",
+            "mobile_padding_top": 0,
+            "mobile_padding_right": 0,
+            "mobile_padding_bottom": 0,
+            "mobile_padding_left": 0,
+            "desktop_padding_top": 0,
+            "desktop_padding_right": 0,
+            "desktop_padding_bottom": 0,
+            "desktop_padding_left": 0
+          }
+        },
+        "image_84RXmX": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/2_e70dd8c2-8ccc-4b2c-9982-010f1c6aea2b.jpg",
+            "desktop_image_fit": "contain",
+            "mobile_image_fit": "contain",
+            "column_count": "3",
+            "row_count": 1,
+            "add_padding": false,
+            "subheading": "",
+            "subheading_style": "subheading",
+            "title": "",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "text_position": "place-self-center text-center",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0,
+            "gradient_overlay": "",
+            "mobile_padding_top": 0,
+            "mobile_padding_right": 0,
+            "mobile_padding_bottom": 0,
+            "mobile_padding_left": 0,
+            "desktop_padding_top": 0,
+            "desktop_padding_right": 0,
+            "desktop_padding_bottom": 0,
+            "desktop_padding_left": 0
+          }
+        },
+        "image_kHGDbf": {
+          "type": "image",
+          "disabled": true,
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/4_9d60ab81-491d-4d7b-9ee7-0fa401e9336f.jpg",
+            "desktop_image_fit": "contain",
+            "mobile_image_fit": "contain",
+            "column_count": "4",
+            "row_count": 1,
+            "add_padding": false,
+            "subheading": "",
+            "subheading_style": "subheading",
+            "title": "",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "text_position": "place-self-center text-center",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0,
+            "gradient_overlay": "",
+            "mobile_padding_top": 0,
+            "mobile_padding_right": 0,
+            "mobile_padding_bottom": 0,
+            "mobile_padding_left": 0,
+            "desktop_padding_top": 0,
+            "desktop_padding_right": 0,
+            "desktop_padding_bottom": 0,
+            "desktop_padding_left": 0
+          }
+        },
+        "image_F8eANA": {
+          "type": "image",
+          "disabled": true,
+          "settings": {
+            "color_scheme": "scheme-4",
+            "image": "shopify://shop_images/7.jpg",
+            "desktop_image_fit": "contain",
+            "mobile_image_fit": "contain",
+            "column_count": "4",
+            "row_count": 1,
+            "add_padding": false,
+            "subheading": "",
+            "subheading_style": "subheading",
+            "title": "",
+            "heading_tag": "h4",
+            "content": "",
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "text_position": "place-self-center text-center",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0,
+            "gradient_overlay": "",
+            "mobile_padding_top": 0,
+            "mobile_padding_right": 0,
+            "mobile_padding_bottom": 0,
+            "mobile_padding_left": 0,
+            "desktop_padding_top": 0,
+            "desktop_padding_right": 0,
+            "desktop_padding_bottom": 0,
+            "desktop_padding_left": 0
+          }
+        }
+      },
+      "block_order": [
+        "image_zttAEi",
+        "image_i73Ynm",
+        "image_98f4Jw",
+        "image_84RXmX",
+        "image_kHGDbf",
+        "image_F8eANA"
+      ],
+      "name": "t:sections.media_grid.presets.media_grid.name",
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": false,
+        "desktop_row_height": 400,
+        "mobile_row_height": 340,
+        "section_width": "full",
+        "mobile_spacing": "xs",
+        "desktop_spacing": "xs",
+        "desktop_outer_radius": 0,
+        "use_custom_section_spacing": true,
+        "mobile_section_spacing_top": 10,
+        "mobile_section_spacing_right": 4,
+        "mobile_section_spacing_bottom": 50,
+        "mobile_section_spacing_left": 4,
+        "desktop_section_spacing_top": 40,
+        "desktop_section_spacing_right": 10,
+        "desktop_section_spacing_bottom": 50,
+        "desktop_section_spacing_left": 10,
+        "subheading": "",
+        "title": "",
+        "content": ""
+      }
+    },
+    "1775146214d41b0981": {
+      "type": "apps",
+      "blocks": {
+        "loox_reviews_loox_agg_section_XAqib9": {
+          "type": "shopify://apps/loox-reviews/blocks/loox-agg-section/5c3b337f-fd14-4df5-b1d6-80ec13e6e28e",
+          "settings": {
+            "reviews_to_display": "",
+            "default_tab": "automatic",
+            "only_photos": false,
+            "hide_thumbnails": true,
+            "product_handle": "",
+            "aggregated": true,
+            "data-limit": 20,
+            "maxwidth": 1080,
+            "is_sample": true
+          }
+        }
+      },
+      "block_order": [
+        "loox_reviews_loox_agg_section_XAqib9"
+      ],
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": false,
+        "remove_vertical_spacing": false,
+        "remove_horizontal_spacing": true,
+        "use_custom_section_spacing": false,
+        "mobile_section_spacing_top": 0,
+        "mobile_section_spacing_right": 0,
+        "mobile_section_spacing_bottom": 0,
+        "mobile_section_spacing_left": 0,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 0
+      }
+    }
+  },
+  "order": [
+    "main",
+    "rich_text_8YzdkM",
+    "multi_column_zGAkmH",
+    "rich_text_WfYyaz",
+    "media_grid_rKMpQi",
+    "1775146214d41b0981"
+  ]
+}

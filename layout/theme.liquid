@@ -1,0 +1,316 @@
+<!doctype html>
+
+<html lang="{{ request.locale.iso_code }}" dir="{% render 'direction' %}">
+  <head>
+    <meta charset="utf-8">
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, height=device-height, minimum-scale=1.0, maximum-scale=5.0"
+    >
+
+    <!-- Google Consent Mode V2 -->
+    <script>
+     window.dataLayer = window.dataLayer || [];
+     function gtag(){dataLayer.push(arguments);}
+
+    gtag('set', 'url_passthrough', true);
+
+     if(localStorage.getItem('consentMode') === null) {
+     gtag('consent', 'default', {
+     'functionality_storage': 'granted',
+     'security_storage': 'granted',
+     'personalization_storage': 'denied',
+     'analytics_storage': 'denied',
+     'ad_storage': 'denied',
+     'ad_user_data': 'denied',
+     'ad_personalization': 'denied',
+     'wait_for_update': 1000,
+     });
+     } else {
+     gtag('consent', 'default', JSON.parse(localStorage.getItem('consentMode')));
+    }
+    </script>
+
+
+    <!-- Google Tag Manager -->
+    <script>
+      (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != 'dataLayer' ? '&l=' + l : '';
+        j.async = true;
+        j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, 'script', 'dataLayer', 'GTM-5JFBV3KR');
+    </script>
+    <!-- End Google Tag Manager -->
+
+    <title>
+      {% if page_title == blank -%}
+        {{- shop.name -}}
+      {%- else -%}
+        {{- page_title -}}
+        {%- if current_page != 1 %} &ndash; {{ 'general.page' | t: page: current_page }}{% endif -%}
+      {%- endif %}
+    </title>
+
+    {%- if page_description -%}
+      <meta name="description" content="{{ page_description | escape }}">
+    {%- endif -%}
+
+    <link rel="canonical" href="{{ canonical_url }}">
+
+    {%- if settings.favicon -%}
+      <link rel="shortcut icon" href="{{ settings.favicon | image_url: width: 96 }}">
+      <link rel="apple-touch-icon" href="{{ settings.favicon | image_url: width: 180 }}">
+    {%- endif -%}
+
+    {%- comment -%}Few prefetch to increase performance on commonly used third-parties{%- endcomment -%}
+    <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
+
+    {%- unless settings.heading_font.system? -%}
+      <link rel="preload" href="{{ settings.heading_font | font_url }}" as="font" type="font/woff2" crossorigin>
+    {%- endunless -%}
+
+    {%- unless settings.text_font.system? -%}
+      <link rel="preload" href="{{ settings.text_font | font_url }}" as="font" type="font/woff2" crossorigin>
+    {%- endunless -%}
+
+    {%- render 'social-meta-tags' -%}
+    {%- render 'microdata-schema' -%}
+    {%- render 'css-variables' -%}
+    {%- render 'js-variables' -%}
+
+    {%- if request.page_type == 'gift_card' -%}
+      <script src="{{ 'vendor/qrcode.js' | shopify_asset_url }}" defer></script>
+    {%- endif -%}
+
+    <script type="importmap">
+      {%- comment -%}On Safari 16.3 and lower, a polyfill is used to load importmap{%- endcomment -%}
+      {
+        "imports": {
+          "vendor": "{{ 'vendor.min.js' | asset_url }}",
+          "theme": "{{ 'theme.js' | asset_url }}",
+          "photoswipe": "{{ 'photoswipe.min.js' | asset_url }}"
+        }
+      }
+    </script>
+
+    <script type="module" src="{{ 'vendor.min.js' | asset_url }}"></script>
+    <script type="module" src="{{ 'theme.js' | asset_url }}"></script>
+
+    {{ content_for_header }}
+
+    {{- 'theme.css' | asset_url | stylesheet_tag: preload: true -}}
+  </head>
+
+  {% liquid
+    assign features_class = ''
+
+    if settings.show_button_transition
+      assign features_class = features_class | append: 'features--button-transition '
+    endif
+
+    if settings.show_image_zoom_on_hover
+      assign features_class = features_class | append: 'features--zoom-image '
+    endif
+  %}
+
+  <body class="{{ features_class }} color-scheme color-scheme--{{ settings.default_color_scheme.id }}">
+    {%- render 'shadow-dom-templates' -%}
+
+    <!-- Google Tag Manager (noscript) -->
+    <noscript
+      ><iframe
+        src="https://www.googletagmanager.com/ns.html?id=GTM-5JFBV3KR"
+        height="0"
+        width="0"
+        style="display:none;visibility:hidden"
+      ></iframe
+    ></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+    <loading-bar class="loading-bar" aria-hidden="true"></loading-bar>
+    <a href="#main" allow-hash-change class="skip-to-content sr-only">
+      {{- 'general.accessibility.skip_to_content' | t -}}
+    </a>
+
+    {%- comment -%}
+      This placeholder will be filled to screen readers for any kind of announcements
+    {%- endcomment -%}
+    <div class="sr-only" role="status" aria-live="polite" aria-atomic="true">
+      <span id="status-announcement"></span>
+    </div>
+
+    <div class="sr-only" role="alert" aria-live="assertive" aria-atomic="true">
+      <span id="error-announcement"></span>
+    </div>
+
+    <span
+      id="header-scroll-tracker"
+      style="position: absolute; width: 1px; height: 1px; top: var(--header-scroll-tracker-offset, 10px); left: 0;"
+    >
+      {%- comment -%}
+        This allows our theme to track when the user has scrolled a given amount of pixels, without relying on a global scroll listener. This helps
+        to improve performance and reduce reflows.
+      {%- endcomment -%}
+    </span>
+
+    {%- if request.page_type != 'password' -%}
+      {%- sections 'header-group' -%}
+      {%- sections 'overlay-group' -%}
+      {%- render 'belt-card-sync' -%}
+    {%- endif -%}
+
+    <main id="main" class="anchor">
+      {{ content_for_layout }}
+
+      {%- comment -%}
+        IMPLEMENTATION NOTE: For best semantics, having the footer group outside the main would be slightly better, but
+          moving it inside the main allows to have all the sections (including sections inside the footer group) to be
+          consecutive, and hence having a cleaner margin collapsing management.
+      {%- endcomment -%}
+      {%- if request.page_type != 'password' -%}
+        {%- sections 'footer-group' -%}
+      {%- endif -%}
+    </main>
+
+    <!-- FB Android WebView Fix: redirect to Chrome, fallback to banner -->
+{% comment %} <script>
+(function() {
+  var ua = navigator.userAgent;
+  var isFBAndroid = /(FBAN|FBAV|FB_IAB)/.test(ua) && /Android/.test(ua);
+  if (!isFBAndroid) return;
+
+  function showBanner() {
+    if (document.getElementById('fb-chrome-banner')) return;
+    var bar = document.createElement('div');
+    bar.id = 'fb-chrome-banner';
+    bar.innerHTML =
+      'Pages not loading? Tap <b>⋮</b> (top right) → <b>"Open in Chrome"</b>' +
+      '<span style="float:right;padding:0 12px;cursor:pointer;font-weight:bold" ' +
+      'onclick="this.parentNode.remove()">✕</span>';
+    bar.style.cssText =
+      'position:fixed;top:0;left:0;right:0;z-index:2147483647;' +
+      'background:#1877f2;color:#fff;padding:12px 14px;' +
+      'font-size:14px;line-height:1.4;font-family:sans-serif;';
+    document.body.appendChild(bar);
+  }
+
+  // Only attempt the auto-redirect once per session
+  if (!sessionStorage.getItem('fb_escape_tried')) {
+    sessionStorage.setItem('fb_escape_tried', '1');
+    var clean = window.location.href.replace(/^https?:\/\//, '');
+    window.location.href =
+      'intent://' + clean +
+      '#Intent;scheme=https;package=com.android.chrome;' +
+      'S.browser_fallback_url=' + encodeURIComponent(window.location.href) +
+      ';end';
+    // If redirect was blocked, we're still here after 1.5s → show banner
+    setTimeout(showBanner, 1500);
+  } else {
+    // Redirect already failed earlier in this session → show banner immediately
+    showBanner();
+  }
+})();
+</script> {% endcomment %}
+
+<!-- FB Android WebView: Open in Chrome with better UI -->
+{% comment %} <script>
+(function() {
+  var ua = navigator.userAgent;
+  var isFBAndroid = /(FBAN|FBAV|FB_IAB)/.test(ua) && /Android/.test(ua);
+  if (!isFBAndroid) return;
+
+  function showBanner() {
+    if (document.getElementById('fb-chrome-banner')) return;
+
+    var overlay = document.createElement('div');
+    overlay.id = 'fb-chrome-banner';
+    overlay.style.cssText =
+      'position:fixed;top:0;left:0;right:0;bottom:0;z-index:2147483647;' +
+      'background:rgba(0,0,0,0.85);display:flex;align-items:flex-end;' +
+      'font-family:-apple-system,BlinkMacSystemFont,sans-serif;';
+
+    overlay.innerHTML =
+      '<div style="' +
+        'background:#fff;width:100%;border-radius:20px 20px 0 0;' +
+        'padding:24px 20px 36px;box-sizing:border-box;text-align:center;' +
+      '">' +
+
+        /* drag handle */
+        '<div style="' +
+          'width:40px;height:4px;background:#ddd;border-radius:4px;' +
+          'margin:0 auto 20px;' +
+        '"></div>' +
+
+        /* chrome icon */
+        '<div style="' +
+          'width:64px;height:64px;border-radius:50%;' +
+          'background:linear-gradient(135deg,#4285f4,#34a853,#fbbc05,#ea4335);' +
+          'margin:0 auto 16px;display:flex;align-items:center;justify-content:center;' +
+          'font-size:28px;' +
+        '">🌐</div>' +
+
+        /* title */
+        '<div style="font-size:20px;font-weight:700;color:#111;margin-bottom:8px;">' +
+          'Open in Chrome for best experience' +
+        '</div>' +
+
+        /* subtitle */
+        '<div style="font-size:14px;color:#666;margin-bottom:24px;line-height:1.5;">' +
+          'This page works better in Chrome.<br>' +
+          'Tap the button below or tap <b>⋮</b> → <b>Open in Chrome</b>' +
+        '</div>' +
+
+        /* steps */
+        '<div style="' +
+          'background:#f7f7f7;border-radius:12px;padding:16px;' +
+          'margin-bottom:24px;text-align:left;font-size:13px;color:#444;line-height:1.8;' +
+        '">' +
+          '<div>1️⃣ &nbsp;Tap <b>⋮</b> in the top right corner</div>' +
+          '<div>2️⃣ &nbsp;Select <b>"Open in Chrome"</b></div>' +
+          '<div>3️⃣ &nbsp;Enjoy the full experience ✅</div>' +
+        '</div>' +
+
+        /* open button */
+        '<button onclick="' +
+          'var c=window.location.href.replace(/^https?:\\/\\//,\'\');' +
+          'window.location.href=\'intent://\'+c+\'#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=\'+encodeURIComponent(window.location.href)+\';end\';' +
+        '" style="' +
+          'width:100%;padding:16px;border:none;border-radius:12px;' +
+          'background:#4285f4;color:#fff;font-size:16px;font-weight:700;' +
+          'cursor:pointer;margin-bottom:12px;' +
+        '">Open in Chrome</button>' +
+
+        /* dismiss */
+        '<button onclick="document.getElementById(\'fb-chrome-banner\').remove();" style="' +
+          'width:100%;padding:14px;border:none;border-radius:12px;' +
+          'background:#f0f0f0;color:#444;font-size:15px;font-weight:600;' +
+          'cursor:pointer;' +
+        '">Continue anyway</button>' +
+
+      '</div>';
+
+    document.body.appendChild(overlay);
+  }
+
+  if (!sessionStorage.getItem('fb_escape_tried')) {
+    sessionStorage.setItem('fb_escape_tried', '1');
+    var clean = window.location.href.replace(/^https?:\/\//, '');
+    window.location.href =
+      'intent://' + clean +
+      '#Intent;scheme=https;package=com.android.chrome;' +
+      'S.browser_fallback_url=' + encodeURIComponent(window.location.href) +
+      ';end';
+    setTimeout(showBanner, 1500);
+  } else {
+    showBanner();
+  }
+
+})();
+</script> {% endcomment %}
+  </body>
+</html>

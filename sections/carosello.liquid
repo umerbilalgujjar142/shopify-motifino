@@ -1,0 +1,1433 @@
+{%- if section.blocks.size > 0 -%}
+  {%- liquid
+    assign stack_mobile = section.settings.stack_mobile
+    assign slide_gap = section.settings.slide_gap | default: 0
+    assign mobile_width_pct = section.settings.mobile_slide_width | default: 85
+    assign desk_cols = section.settings.desktop_slides_visible | at_most: section.blocks.size | at_least: 1
+    assign media_radius = section.settings.media_border_radius | default: 0
+    assign carousel_id = 'carosello-carousel-' | append: section.id
+    assign show_nav = false
+    if section.settings.show_navigation and section.blocks.size > 1
+      assign show_nav = true
+    endif
+
+    assign nav_style_effective = section.settings.navigation_style | default: 'pill_below'
+    if nav_style_effective == 'side_arrows'
+      assign nav_style_effective = 'side_arrows_pill'
+    endif
+
+    assign nav_use_side_pill = false
+    assign nav_use_side_minimal = false
+    if show_nav
+      if nav_style_effective == 'side_arrows_pill'
+        assign nav_use_side_pill = true
+      elsif nav_style_effective == 'side_arrows_minimal'
+        assign nav_use_side_minimal = true
+      endif
+    endif
+
+    assign hide_nav_on_desktop = false
+    if show_nav and section.blocks.size <= section.settings.desktop_slides_visible
+      assign hide_nav_on_desktop = true
+    endif
+
+    assign carosello_aspect_ratio_css = ''
+    assign carosello_media_ratio_mode = 'auto'
+    assign carosello_ar_setting = section.settings.image_aspect_ratio | default: 'auto'
+    case carosello_ar_setting
+      when '1_1'
+        assign carosello_media_ratio_mode = 'ratio'
+        assign carosello_aspect_ratio_css = '1 / 1'
+      when '16_9'
+        assign carosello_media_ratio_mode = 'ratio'
+        assign carosello_aspect_ratio_css = '16 / 9'
+      when '9_16'
+        assign carosello_media_ratio_mode = 'ratio'
+        assign carosello_aspect_ratio_css = '9 / 16'
+      when '3_4'
+        assign carosello_media_ratio_mode = 'ratio'
+        assign carosello_aspect_ratio_css = '3 / 4'
+      when '4_3'
+        assign carosello_media_ratio_mode = 'ratio'
+        assign carosello_aspect_ratio_css = '4 / 3'
+      when '4_5'
+        assign carosello_media_ratio_mode = 'ratio'
+        assign carosello_aspect_ratio_css = '4 / 5'
+      when 'custom'
+        assign carosello_media_ratio_mode = 'custom_height'
+      else
+        assign carosello_media_ratio_mode = 'auto'
+    endcase
+
+    assign carosello_custom_height = section.settings.custom_image_height | default: 400
+  -%}
+
+  <style>
+    #shopify-section-{{ section.id }} {
+      --carosello-gap: {{ slide_gap }}px;
+      --carosello-mw-pct: {{ mobile_width_pct }}%;
+      --carosello-desk-cols: {{ desk_cols }};
+      --carosello-media-radius: {{ media_radius }}px;
+      --carosello-slide-media-pad: {{ section.settings.slide_media_inner_padding | default: 0 }}px;
+      --carosello-slide-content-pad: {{ section.settings.slide_content_inner_padding | default: 0 }}px;
+      --carosello-inner-gap: {{ section.settings.slide_inner_gap | default: 0 }}px;
+      --carosello-pill-bg: rgb({{ section.settings.navigation_background.rgb }});
+      --carosello-pill-fg: rgb({{ section.settings.navigation_text.rgb }});
+      {%- if carosello_media_ratio_mode == 'ratio' and carosello_aspect_ratio_css != blank -%}
+        --carosello-aspect-ratio: {{ carosello_aspect_ratio_css }};
+      {%- endif -%}
+      {%- if carosello_media_ratio_mode == 'custom_height' -%}
+        --carosello-custom-media-height: {{ carosello_custom_height }}px;
+      {%- endif -%}
+    }
+
+    @media screen and (min-width: 1000px) {
+      #shopify-section-{{ section.id }} {
+        padding-left: {{ section.settings.desktop_padding_horizontal | default: 0 }}px;
+        padding-right: {{ section.settings.desktop_padding_horizontal | default: 0 }}px;
+      }
+    }
+
+    /* Vertical section spacing only on inner wrapper — mobile full-bleed overflow unchanged; desktop horizontal inset is on #shopify-section above (≥1000px). */
+    #shopify-section-{{ section.id }} .section-spacing {
+      padding-block-start: {{ section.settings.padding_top | default: 36 }}px;
+      padding-block-end: {{ section.settings.padding_bottom | default: 36 }}px;
+    }
+
+    {%- if carosello_media_ratio_mode == 'ratio' -%}
+      #shopify-section-{{ section.id }} .carosello-slide__media-viewport.carosello-slide__media--ratio {
+        min-height: 0;
+        --content-over-media-height: auto;
+        aspect-ratio: var(--carosello-aspect-ratio);
+      }
+
+      #shopify-section-{{ section.id }} .carosello-slide__media-viewport.carosello-slide__media--ratio img {
+        height: 100% !important;
+        min-height: 100%;
+        max-height: none;
+      }
+    {%- elsif carosello_media_ratio_mode == 'custom_height' -%}
+      #shopify-section-{{ section.id }} .carosello-slide__media-viewport.carosello-slide__media--custom-height {
+        aspect-ratio: unset;
+        min-height: 0;
+        height: var(--carosello-custom-media-height);
+        --content-over-media-height: 100%;
+      }
+
+      #shopify-section-{{ section.id }} .carosello-slide__media-viewport.carosello-slide__media--custom-height img {
+        height: 100% !important;
+        min-height: 100%;
+        max-height: none;
+      }
+    {%- endif -%}
+
+    /* Optional image link: display:contents keeps the same grid as a bare <picture> (see theme .content-over-media > picture). */
+    #shopify-section-{{ section.id }} .carosello-slide__media-viewport > .carosello__media-link {
+      display: contents;
+      text-decoration: none;
+      color: inherit;
+      max-width: none;
+      grid-area: full-start / full-start / full-end / full-end;
+      position: static;
+      z-index: auto;
+      text-shadow: none;
+    }
+
+    #shopify-section-{{ section.id }} .carosello-slide__media-viewport > .carosello__media-link picture {
+      display: contents;
+    }
+
+    /* Image fills viewport; corners come from .carosello__slide overflow clip only (no img border-radius). */
+    #shopify-section-{{ section.id }} .carosello-slide__media-viewport img,
+    #shopify-section-{{ section.id }} .carosello-slide__media-viewport .placeholder {
+      display: block;
+      grid-area: full-start / full-start / full-end / full-end;
+      width: 100%;
+      min-width: 100%;
+      height: 100%;
+      min-height: 100%;
+      max-height: 100%;
+      object-fit: cover;
+      object-position: var(--carosello-focal, center);
+      border-radius: 0;
+    }
+
+    /* Side arrows: all breakpoints (overrides theme coarse-pointer hiding for this section). */
+    #shopify-section-{{ section.id }} .carosello__floating-nav {
+      display: block;
+      position: relative;
+      padding-inline: 0;
+    }
+
+    #shopify-section-{{ section.id }} .carosello__floating-nav .floating-controls-container__control {
+      display: grid !important;
+      z-index: 2;
+      position: absolute;
+      inset-block-start: calc(50% - 1.5625rem);
+    }
+
+    #shopify-section-{{ section.id }} .carosello__floating-nav .floating-controls-container__control:first-child {
+      inset-inline-start: var(--carosello-floating-inset, 0.75rem);
+    }
+
+    #shopify-section-{{ section.id }} .carosello__floating-nav .floating-controls-container__control:last-child {
+      inset-inline-end: var(--carosello-floating-inset, 0.75rem);
+    }
+
+    #shopify-section-{{ section.id }} .carosello__floating-nav .carosello__side-arrow {
+      background: rgb({{ section.settings.navigation_background.rgb }});
+      color: rgb({{ section.settings.navigation_text.rgb }});
+    }
+
+    #shopify-section-{{ section.id }} .carosello__floating-nav .carosello__side-arrow:is(:disabled, [disabled]) {
+      color: #999;
+    }
+
+    #shopify-section-{{ section.id }} .carosello__minimal-nav {
+      display: block;
+      position: relative;
+      padding-inline: 0;
+    }
+
+    #shopify-section-{{ section.id }} .carosello__minimal-nav .carosello__minimal-nav__control {
+      display: grid !important;
+      z-index: 2;
+      position: absolute;
+      inset-block-start: 50%;
+      transform: translateY(-50%);
+    }
+
+    #shopify-section-{{ section.id }} .carosello__minimal-nav .carosello__minimal-nav__control:first-child {
+      inset-inline-start: var(--carosello-minimal-inset, 2px);
+    }
+
+    #shopify-section-{{ section.id }} .carosello__minimal-nav .carosello__minimal-nav__control:last-child {
+      inset-inline-end: var(--carosello-minimal-inset, 2px);
+    }
+
+    #shopify-section-{{ section.id }} .carosello__minimal-nav .carosello__minimal-arrow {
+      -webkit-appearance: none;
+      appearance: none;
+      margin: 0;
+      padding: 0.125rem;
+      border: none;
+      background: none;
+      box-shadow: none;
+      color: rgb({{ section.settings.navigation_text.rgb }});
+      cursor: pointer;
+      display: grid;
+      place-content: center;
+      border-radius: var(--rounded-full);
+    }
+
+    #shopify-section-{{ section.id }} .carosello__minimal-nav .carosello__minimal-arrow .icon {
+      width: 1.125rem;
+      height: 1.125rem;
+    }
+
+    #shopify-section-{{ section.id }} .carosello__minimal-nav .carosello__minimal-arrow:is(:disabled, [disabled]) {
+      color: #999;
+      cursor: default;
+    }
+
+    #shopify-section-{{ section.id }} .carosello__scroller {
+      gap: var(--carosello-gap);
+      display: flex;
+      align-items: stretch;
+    }
+
+    /*
+      Bleed alignment: reinforce scroll-padding with the same gutter token as .bleed.
+      Scoped to <1000px only so we do not override .md:unbleed (higher-specificity #id would win otherwise).
+    */
+    @media screen and (max-width: 999px) {
+      #shopify-section-{{ section.id }} .carosello__scroller.bleed {
+        scroll-padding-inline-start: var(--distance-to-bleed);
+        scroll-padding-inline-end: var(--distance-to-bleed);
+      }
+    }
+
+    #shopify-section-{{ section.id }} .carosello__slide {
+      flex: 0 0 calc((100% - (var(--carosello-desk-cols) - 1) * var(--carosello-gap)) / var(--carosello-desk-cols));
+      position: relative;
+      min-width: 0;
+      box-sizing: border-box;
+      border-radius: var(--carosello-media-radius);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--carosello-inner-gap);
+    }
+
+    /* Flex blowout containment: only inside slides (never constrain .carosello__scroller — preserves .bleed negative margins). */
+    #shopify-section-{{ section.id }} .carosello__slide .carosello-slide__content {
+      min-width: 0;
+      max-width: 100%;
+    }
+
+    #shopify-section-{{ section.id }} .carosello__slide .carosello__price-inline,
+    #shopify-section-{{ section.id }} .carosello__slide .carosello__price-inline price-list {
+      min-width: 0;
+      max-width: 100%;
+    }
+
+    #shopify-section-{{ section.id }} .carosello__slide .carosello-slide__content.prose :is(p.h1, p.h2, p.h3, p.h4, p.h5, p.h6),
+    #shopify-section-{{ section.id }} .carosello__slide .carosello-slide__content.prose .rte,
+    #shopify-section-{{ section.id }} .carosello__slide .carosello__price-inline,
+    #shopify-section-{{ section.id }} .carosello__slide .carosello__price-inline price-list,
+    #shopify-section-{{ section.id }} .carosello__slide .carosello__price-inline :is(sale-price, compare-at-price, unit-price, span) {
+      overflow-wrap: break-word;
+      white-space: normal !important;
+    }
+
+    #shopify-section-{{ section.id }} .carosello__slide.carosello-slide--reverse {
+      flex-direction: column-reverse;
+    }
+
+    #shopify-section-{{ section.id }} .carosello-slide--under.carosello--text-outside .carosello-slide__media {
+      min-width: 0;
+    }
+
+    @media screen and (max-width: 699px) {
+      #shopify-section-{{ section.id }} .carosello__scroller.carosello__scroller--stack-sm {
+        flex-direction: column;
+        flex-wrap: nowrap;
+        overflow: visible !important;
+        scroll-snap-type: none !important;
+        overscroll-behavior-x: auto;
+      }
+
+      #shopify-section-{{ section.id }} .carosello__scroller.carosello__scroller--stack-sm .carosello__slide {
+        flex: 0 0 auto;
+        width: 100%;
+      }
+
+      #shopify-section-{{ section.id }} .carosello__scroller:not(.carosello__scroller--stack-sm) .carosello__slide {
+        flex: 0 0 var(--carosello-mw-pct);
+      }
+
+      #shopify-section-{{ section.id }} .carosello--mobile-stack .carosello__floating-nav > carousel-prev-button,
+      #shopify-section-{{ section.id }} .carosello--mobile-stack .carosello__floating-nav > carousel-next-button {
+        display: none !important;
+      }
+
+      #shopify-section-{{ section.id }} .carosello--mobile-stack .carosello__minimal-nav > carousel-prev-button,
+      #shopify-section-{{ section.id }} .carosello--mobile-stack .carosello__minimal-nav > carousel-next-button {
+        display: none !important;
+      }
+
+      #shopify-section-{{ section.id }} .carosello--mobile-stack .carosello__pill-wrapper {
+        display: none !important;
+      }
+    }
+
+    /*
+      Outer media shell: slide "Inner padding around image" only. Native overlay (::before on .content-over-media)
+      lives on .carosello-slide__media-viewport so it covers the photo area, not the padded margin.
+    */
+    #shopify-section-{{ section.id }} .carosello-slide__media {
+      flex: 0 0 auto;
+      align-self: stretch;
+      width: 100%;
+      margin: 0;
+      overflow: visible;
+      box-sizing: border-box;
+      padding: var(--carosello-slide-media-pad);
+    }
+
+    #shopify-section-{{ section.id }} .carosello-slide__media-viewport {
+      width: 100%;
+      min-height: 0;
+    }
+
+    /*
+      Text wrapper: padding from section "Inner padding around text container" (--carosello-slide-content-pad).
+      Vertical gap between image column and text column: "Gap between image and text" on .carosello__slide (--carosello-inner-gap).
+      Inner spacing between headings/paragraphs/buttons: theme .prose only (no row-gap / child margins added here).
+    */
+    #shopify-section-{{ section.id }} .carosello-slide__content {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      max-width: 100%;
+      min-height: 0;
+      box-sizing: border-box;
+      padding: var(--carosello-slide-content-pad);
+      margin: 0;
+    }
+
+    #shopify-section-{{ section.id }} .carosello-slide__button-group {
+      align-self: stretch;
+      width: 100%;
+    }
+
+    @media screen and (min-width: 1000px) {
+      #shopify-section-{{ section.id }} .carosello__slide--hide-desktop {
+        display: none !important;
+      }
+    }
+
+    @media screen and (max-width: 999px) {
+      #shopify-section-{{ section.id }} .carosello__slide--hide-mobile {
+        display: none !important;
+      }
+    }
+
+    #shopify-section-{{ section.id }} .carosello__pill-nav {
+      align-items: center;
+      column-gap: 0.75rem;
+      padding: 0.5rem 0.75rem;
+      border-radius: 999px;
+      background: var(--carosello-pill-bg);
+      color: var(--carosello-pill-fg);
+      margin-block-start: 1.5rem;
+      width: max-content;
+      max-width: 100%;
+      margin-inline: auto;
+      display: flex;
+    }
+
+    #shopify-section-{{ section.id }} .carosello__pill-nav .page-dots {
+      --dot-size: 0.3125rem;
+    }
+
+    #shopify-section-{{ section.id }} .carosello__pill-arrow {
+      color: inherit;
+      padding: 0.25rem;
+      margin: 0;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      border-radius: var(--rounded-full);
+      display: grid;
+      place-content: center;
+    }
+
+    #shopify-section-{{ section.id }} .carosello__pill-arrow:disabled {
+      opacity: 0.35;
+      cursor: default;
+    }
+
+    #shopify-section-{{ section.id }} .carosello__pill-arrow .icon {
+      width: 1rem;
+      height: 1rem;
+    }
+
+    /* Desktop: hide arrows + dots when all slides fit in view (mobile still needs controls). DOM stays for JS. */
+    @media screen and (min-width: 700px) {
+      #shopify-section-{{ section.id }} .carosello__floating-nav.hide-nav-on-desktop > .floating-controls-container__control,
+      #shopify-section-{{ section.id }} .carosello__minimal-nav.hide-nav-on-desktop > .carosello__minimal-nav__control {
+        display: none !important;
+      }
+
+      #shopify-section-{{ section.id }} .carosello__pill-wrapper.hide-nav-on-desktop {
+        display: none !important;
+      }
+    }
+
+  </style>
+
+  {%- assign color_scheme_hash = section.settings.color_scheme.settings.background_gradient | default: section.settings.color_scheme.settings.background | md5 -%}
+
+  <div
+    class="section-spacing{% if stack_mobile %} carosello--mobile-stack{% endif %} color-scheme color-scheme--{{ section.settings.color_scheme.id }} color-scheme--bg-{{ color_scheme_hash }} {% if section.settings.separate_section_with_border %}bordered-section{% endif %}"
+  >
+    <div class="container">
+      <div class="section-stack">
+        {%- assign carosello_heading_alignment = section.settings.heading_alignment | default: 'center' -%}
+        {%- render 'section-header', subheading: section.settings.subheading, heading: section.settings.title, content: section.settings.content, text_alignment: carosello_heading_alignment -%}
+
+        {%- capture carosello_slides -%}
+          {%- for block in section.blocks -%}
+            {%- liquid
+              assign slide_product = block.settings.product
+              assign slide_image = block.settings.image | default: slide_product.featured_image
+              assign slide_image_mobile = block.settings.mobile_image
+              assign text_over = false
+              if section.settings.text_layout == 'over'
+                assign text_over = true
+              endif
+
+              assign carosello_focal = block.settings.focal_point | default: 'center'
+              assign carosello_media_class = 'content-over-media carosello-slide__media-viewport'
+              if carosello_media_ratio_mode == 'ratio'
+                assign carosello_media_class = carosello_media_class | append: ' carosello-slide__media--ratio'
+              elsif carosello_media_ratio_mode == 'custom_height'
+                assign carosello_media_class = carosello_media_class | append: ' carosello-slide__media--custom-height'
+              else
+                assign carosello_media_class = carosello_media_class | append: ' content-over-media--md'
+              endif
+
+              assign img_loading = 'lazy'
+              assign img_fetchpriority = 'low'
+              if forloop.first
+                assign img_loading = 'eager'
+                assign img_fetchpriority = 'high'
+              endif
+
+              assign resolved_heading = block.settings.heading
+              assign show_auto_title = false
+              if resolved_heading == blank and slide_product != blank
+                assign show_auto_title = true
+              endif
+
+              assign price_custom = block.settings.price_text
+              assign show_auto_price = false
+              if price_custom == blank and slide_product != blank
+                assign show_auto_price = true
+              endif
+
+              assign btn1_href = block.settings.button_1_link | default: slide_product.url
+              assign btn2_href = block.settings.button_2_link | default: slide_product.url
+
+              assign slide_scheme_hash = block.settings.color_scheme.settings.background_gradient | default: block.settings.color_scheme.settings.background | md5
+
+              assign slide_text_classes = 'carosello-slide__content prose'
+              if text_over
+                assign slide_text_classes = slide_text_classes | append: ' ' | append: block.settings.content_position
+                assign slide_btn_justify = block.settings.content_position | split: ' ' | last | replace: 'text-', ''
+              else
+                assign slide_align_class = block.settings.text_alignment | default: 'left' | replace: 'left', 'start' | replace: 'right', 'end'
+                assign slide_text_classes = slide_text_classes | append: ' text-' | append: slide_align_class
+                assign slide_btn_justify = slide_align_class
+              endif
+            -%}
+
+            {%- capture slide_text_box -%}
+              <div class="{{ slide_text_classes }}">
+                {%- if block.settings.subheading != blank -%}
+                  <p class="{{ block.settings.subheading_size | default: 'h6' }}">{{ block.settings.subheading }}</p>
+                {%- endif -%}
+
+                {%- if resolved_heading != blank -%}
+                  <p class="{{ block.settings.heading_size | default: 'h3' }}">{{ block.settings.heading }}</p>
+                {%- elsif show_auto_title and block.settings.show_product_title -%}
+                  <p class="{{ block.settings.heading_size | default: 'h3' }}">{{ slide_product.title | escape }}</p>
+                {%- endif -%}
+
+                {%- liquid
+                  assign price_align_for_justify = block.settings.text_alignment | default: 'left'
+                  if text_over
+                    assign price_align_for_justify = block.settings.content_position | split: ' ' | last | replace: 'text-', ''
+                  endif
+                -%}
+                {%- capture price_justify -%}
+                  {%- if price_align_for_justify == 'center' -%}
+                    center
+                  {%- elsif price_align_for_justify == 'right' or price_align_for_justify == 'end' -%}
+                    flex-end
+                  {%- else -%}
+                    flex-start
+                  {%- endif -%}
+                {%- endcapture -%}
+
+                {%- if price_custom != blank -%}
+                  <p class="carosello__price-inline {{ block.settings.price_size | default: 'h6' }}">{{ price_custom }}</p>
+                {%- elsif show_auto_price and block.settings.show_product_price -%}
+                  <div class="carosello__price-inline {{ block.settings.price_size | default: 'h6' }}" style="display: flex; justify-content: {{ price_justify | strip }};">
+                    {%- render 'price-list', product: slide_product, context: 'card' -%}
+                  </div>
+                {%- endif -%}
+
+                {%- if block.settings.text != blank -%}
+                  <div class="rte">{{ block.settings.text }}</div>
+                {%- endif -%}
+
+                {%- liquid
+                  assign carosello_show_btn1 = false
+                  if block.settings.button_1_text != blank and btn1_href != blank
+                    assign carosello_show_btn1 = true
+                  endif
+                  assign carosello_show_btn2 = false
+                  if block.settings.button_2_text != blank and btn2_href != blank
+                    assign carosello_show_btn2 = true
+                  endif
+                -%}
+                {%- if carosello_show_btn1 or carosello_show_btn2 -%}
+                  <div class="button-group carosello-slide__button-group justify-{{ slide_btn_justify }}">
+                    {%- if carosello_show_btn1 -%}
+                      {%- render 'button', href: btn1_href, content: block.settings.button_1_text, style: block.settings.button_1_style -%}
+                    {%- endif -%}
+                    {%- if carosello_show_btn2 -%}
+                      {%- render 'button', href: btn2_href, content: block.settings.button_2_text, style: block.settings.button_2_style -%}
+                    {%- endif -%}
+                  </div>
+                {%- endif -%}
+              </div>
+            {%- endcapture -%}
+
+            {%- capture sizes_attr -%}
+              (max-width: 699px) {{ mobile_width_pct }}vw, (max-width: 1149px) {{ 100 | divided_by: desk_cols | at_least: 40 }}vw, {{ 100 | divided_by: desk_cols }}vw
+            {%- endcapture -%}
+
+            {%- capture carosello_slide_media_inner -%}
+              {%- if slide_image != blank -%}
+                {%- capture carosello_slide_picture -%}
+                  <picture>
+                    {%- if slide_image_mobile != blank -%}
+                      <source
+                        media="(max-width: 699px)"
+                        srcset="{{ slide_image_mobile | image_url: width: 400 }} 400w, {{ slide_image_mobile | image_url: width: 600 }} 600w, {{ slide_image_mobile | image_url: width: 800 }} 800w, {{ slide_image_mobile | image_url: width: 1000 }} 1000w"
+                        width="{{ slide_image_mobile.width }}"
+                        height="{{ slide_image_mobile.height }}"
+                      >
+                    {%- endif -%}
+
+                    {{-
+                      slide_image
+                      | image_url: width: slide_image.width
+                      | image_tag:
+                        sizes: sizes_attr,
+                        widths: '200,300,400,500,600,700,800,1000,1200,1400,1600,1800,2000',
+                        class: 'zoom-image group-hover:zoom',
+                        draggable: false,
+                        loading: img_loading,
+                        fetchpriority: img_fetchpriority
+                    -}}
+                  </picture>
+                {%- endcapture -%}
+                {%- if block.settings.image_link != blank -%}
+                  <a href="{{ block.settings.image_link }}" class="carosello__media-link">{{- carosello_slide_picture -}}</a>
+                {%- else -%}
+                  {{- carosello_slide_picture -}}
+                {%- endif -%}
+              {%- else -%}
+                {%- capture ph_slide -%}{%- cycle 'product-1', 'product-2', 'product-3', 'product-4' -%}{%- endcapture -%}
+                {{- ph_slide | placeholder_svg_tag: 'placeholder zoom-image group-hover:zoom' | replace: '<svg', '<svg preserveAspectRatio="xMinYMin slice"' -}}
+              {%- endif -%}
+            {%- endcapture -%}
+
+            <div
+              class="carosello__slide shrink-0 snap-start{% if forloop.first %} is-initial{% endif %} carosello-slide {% if text_over %}carosello-slide--over{% else %}carosello-slide--under carosello--text-outside{% endif %}{% if text_over == false and block.settings.media_position == 'below' %} carosello-slide--reverse{% endif %}{% if block.settings.hide_on_desktop %} carosello__slide--hide-desktop{% endif %}{% if block.settings.hide_on_mobile %} carosello__slide--hide-mobile{% endif %} color-scheme color-scheme--{{ block.settings.color_scheme.id }} color-scheme--bg-{{ slide_scheme_hash }} group"
+              {{ block.shopify_attributes }}
+            >
+                {%- if text_over -%}
+                  <div class="carosello-slide__media">
+                    <div
+                      class="{{ carosello_media_class }}"
+                      style="--carosello-focal: {{ carosello_focal }}; --content-over-media-overlay: {{ block.settings.overlay_color.rgb }} / {{ block.settings.overlay_opacity | divided_by: 100.0 }};{% if block.settings.gradient_overlay != blank %} --content-over-media-gradient-overlay: {{ block.settings.gradient_overlay }};{% endif %}"
+                    >
+                      {{- carosello_slide_media_inner -}}
+
+                      {{- slide_text_box -}}
+                    </div>
+                  </div>
+                {%- else -%}
+                  <div class="carosello-slide__media">
+                    <div class="{{ carosello_media_class }}" style="--carosello-focal: {{ carosello_focal }};">
+                      {{- carosello_slide_media_inner -}}
+                    </div>
+                  </div>
+
+                  {{- slide_text_box -}}
+                {%- endif -%}
+            </div>
+          {%- endfor -%}
+        {%- endcapture -%}
+
+        {%- liquid
+          assign carosello_track_bleed_classes = ''
+          unless stack_mobile
+            assign carosello_track_bleed_classes = ' bleed md:unbleed'
+          endunless
+        -%}
+
+        {%- capture carosello_scroll_carousel -%}
+          <scroll-carousel
+            id="{{ carousel_id }}"
+            class="carosello__scroller scroll-area snap-x{% if stack_mobile %} carosello__scroller--stack-sm{% endif %}{{ carosello_track_bleed_classes }}"
+            group-cells
+            allow-drag
+          >
+            {{ carosello_slides }}
+          </scroll-carousel>
+        {%- endcapture -%}
+
+        {%- if section.blocks.size <= 1 -%}
+          <div class="carosello__scroller v-stack gap-0{{ carosello_track_bleed_classes }}">
+            {{ carosello_slides }}
+          </div>
+        {%- elsif nav_use_side_pill -%}
+          <div class="floating-controls-container floating-controls-container--inside carosello__floating-nav{% if hide_nav_on_desktop %} hide-nav-on-desktop{% endif %}">
+            <carousel-prev-button class="floating-controls-container__control" aria-controls="{{ carousel_id }}">
+              <button
+                type="button"
+                class="prev-next-button prev-next-button--prev circle-button circle-button--lg carosello__side-arrow hover:animate-icon-inline"
+                disabled
+              >
+                <span class="sr-only">{{ 'general.accessibility.previous' | t }}</span>
+                {%- render 'icon' with 'chevron-left', direction_aware: true -%}
+              </button>
+            </carousel-prev-button>
+
+            {{ carosello_scroll_carousel }}
+
+            <carousel-next-button class="floating-controls-container__control" aria-controls="{{ carousel_id }}">
+              <button type="button" class="prev-next-button prev-next-button--next circle-button circle-button--lg carosello__side-arrow hover:animate-icon-inline">
+                <span class="sr-only">{{ 'general.accessibility.next' | t }}</span>
+                {%- render 'icon' with 'chevron-right', direction_aware: true -%}
+              </button>
+            </carousel-next-button>
+          </div>
+        {%- elsif nav_use_side_minimal -%}
+          <div class="carosello__minimal-nav{% if hide_nav_on_desktop %} hide-nav-on-desktop{% endif %}">
+            <carousel-prev-button class="carosello__minimal-nav__control" aria-controls="{{ carousel_id }}">
+              <button type="button" class="carosello__minimal-arrow tap-area" disabled aria-label="{{ 'general.accessibility.previous' | t | escape }}">
+                <span class="sr-only">{{ 'general.accessibility.previous' | t }}</span>
+                {%- render 'icon' with 'chevron-left', direction_aware: true -%}
+              </button>
+            </carousel-prev-button>
+
+            {{ carosello_scroll_carousel }}
+
+            <carousel-next-button class="carosello__minimal-nav__control" aria-controls="{{ carousel_id }}">
+              <button type="button" class="carosello__minimal-arrow tap-area" aria-label="{{ 'general.accessibility.next' | t | escape }}">
+                <span class="sr-only">{{ 'general.accessibility.next' | t }}</span>
+                {%- render 'icon' with 'chevron-right', direction_aware: true -%}
+              </button>
+            </carousel-next-button>
+          </div>
+        {%- else -%}
+          {{ carosello_scroll_carousel }}
+        {%- endif -%}
+
+      {%- if show_nav and section.blocks.size > 1 and nav_style_effective == 'pill_below' -%}
+        <div class="carosello__pill-wrapper{% if hide_nav_on_desktop %} hide-nav-on-desktop{% endif %} justify-items-center">
+            <div class="carosello__pill-nav">
+              <carousel-prev-button aria-controls="{{ carousel_id }}">
+                <button
+                  type="button"
+                  class="carosello__pill-arrow tap-area"
+                  aria-label="{{ 'general.accessibility.previous' | t | escape }}"
+                >
+                  <span class="sr-only">{{ 'general.accessibility.previous' | t }}</span>
+                  {%- render 'icon' with 'chevron-left', direction_aware: true -%}
+                </button>
+              </carousel-prev-button>
+
+              <carousel-navigation aria-controls="{{ carousel_id }}" class="page-dots page-dots--narrow">
+                {%- for block in section.blocks -%}
+                  <button
+                    type="button"
+                    class="tap-area"
+                    aria-current="{% if forloop.first %}true{% else %}false{% endif %}"
+                    aria-label="{{ 'general.accessibility.go_to_item' | t: index: forloop.index | escape }}"
+                  >
+                    <span class="sr-only">{{- 'general.accessibility.go_to_item' | t: index: forloop.index -}}</span>
+                  </button>
+                {%- endfor -%}
+              </carousel-navigation>
+
+              <carousel-next-button aria-controls="{{ carousel_id }}">
+                <button
+                  type="button"
+                  class="carosello__pill-arrow tap-area"
+                  aria-label="{{ 'general.accessibility.next' | t | escape }}"
+                >
+                  <span class="sr-only">{{ 'general.accessibility.next' | t }}</span>
+                  {%- render 'icon' with 'chevron-right', direction_aware: true -%}
+                </button>
+              </carousel-next-button>
+            </div>
+        </div>
+      {%- endif -%}
+      </div>
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Carosello",
+  "class": "shopify-section--carosello",
+  "tag": "section",
+  "disabled_on": {
+    "templates": ["password"],
+    "groups": ["header", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:global.colors.scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "select",
+      "id": "text_layout",
+      "label": "Text placement",
+      "options": [
+        {
+          "value": "over",
+          "label": "Text over image"
+        },
+        {
+          "value": "under",
+          "label": "Text under image"
+        }
+      ],
+      "default": "under",
+      "info": "Applies to all slides in this section."
+    },
+    {
+      "type": "select",
+      "id": "image_aspect_ratio",
+      "label": "Slide image aspect ratio",
+      "options": [
+        {
+          "value": "auto",
+          "label": "Auto (theme default height)"
+        },
+        {
+          "value": "16_9",
+          "label": "16:9"
+        },
+        {
+          "value": "9_16",
+          "label": "9:16"
+        },
+        {
+          "value": "1_1",
+          "label": "1:1"
+        },
+        {
+          "value": "3_4",
+          "label": "3:4"
+        },
+        {
+          "value": "4_3",
+          "label": "4:3"
+        },
+        {
+          "value": "4_5",
+          "label": "4:5"
+        },
+        {
+          "value": "custom",
+          "label": "Custom height"
+        }
+      ],
+      "default": "auto"
+    },
+    {
+      "type": "range",
+      "id": "custom_image_height",
+      "label": "Custom media height",
+      "min": 200,
+      "max": 900,
+      "step": 10,
+      "unit": "px",
+      "default": 400,
+      "visible_if": "{{ section.settings.image_aspect_ratio == 'custom' }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "stack_mobile",
+      "label": "Stack on mobile",
+      "default": false,
+      "info": "Stacks slides vertically on small screens and hides carousel navigation. Takes priority over peek width."
+    },
+    {
+      "type": "range",
+      "id": "desktop_slides_visible",
+      "label": "Slides visible on desktop",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "default": 3,
+      "info": "Approximate columns; carousel scrolls by visible group."
+    },
+    {
+      "type": "range",
+      "id": "mobile_slide_width",
+      "label": "Mobile slide width (peek)",
+      "min": 60,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 85,
+      "info": "Used when Stack on mobile is off."
+    },
+    {
+      "type": "header",
+      "content": "Section Text"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "t:global.text.alignment",
+      "options": [
+        {
+          "value": "start",
+          "label": "t:global.position.left"
+        },
+        {
+          "value": "center",
+          "label": "t:global.position.center"
+        },
+        {
+          "value": "end",
+          "label": "t:global.position.right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "subheading",
+      "label": "t:global.text.subheading"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "title",
+      "label": "t:global.text.heading"
+    },
+    {
+      "type": "richtext",
+      "id": "content",
+      "label": "t:global.text.content"
+    },
+    {
+      "type": "header",
+      "content": "Navigation"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_navigation",
+      "label": "Show carousel navigation",
+      "default": true,
+      "info": "Hidden when there is only one slide. Stacked mobile hides nav on small screens."
+    },
+    {
+      "type": "select",
+      "id": "navigation_style",
+      "label": "Navigation layout",
+      "options": [
+        {
+          "value": "pill_below",
+          "label": "Pill below (arrows + dots)"
+        },
+        {
+          "value": "side_arrows_pill",
+          "label": "Side arrows (pill buttons)"
+        },
+        {
+          "value": "side_arrows_minimal",
+          "label": "Side arrows (minimal)"
+        }
+      ],
+      "default": "pill_below",
+      "info": "Pill: dots under slides. Side pill: circular buttons on the sides. Minimal: icon-only arrows near the edges.",
+      "visible_if": "{{ section.settings.show_navigation }}"
+    },
+    {
+      "type": "color",
+      "id": "navigation_background",
+      "label": "Navigation background",
+      "default": "#6B4F2A",
+      "info": "Pill fill and side pill arrow buttons. Not used for minimal side arrows.",
+      "visible_if": "{{ section.settings.show_navigation }}"
+    },
+    {
+      "type": "color",
+      "id": "navigation_text",
+      "label": "Navigation icon color",
+      "default": "#FFFFFF",
+      "info": "Icons and dots (all layouts). Minimal arrows use this color only.",
+      "visible_if": "{{ section.settings.show_navigation }}"
+    },
+    {
+      "type": "header",
+      "content": "Spacings & Styling"
+    },
+    {
+      "type": "checkbox",
+      "id": "separate_section_with_border",
+      "label": "t:global.section.separate_section_with_border",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_horizontal",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "label": "Desktop horizontal padding",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "slide_gap",
+      "label": "Gap between slides",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "slide_media_inner_padding",
+      "label": "Inner padding around image",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "slide_content_inner_padding",
+      "label": "Inner padding around text container",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "slide_inner_gap",
+      "label": "Gap between image and text",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 0,
+      "info": "Space between the media area and the text stack (text under image layout)."
+    },
+    {
+      "type": "range",
+      "id": "media_border_radius",
+      "label": "Slide card corner radius",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 12,
+      "info": "Applied to the whole slide card (solid color + media)."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide",
+      "settings": [
+        {
+          "type": "color_scheme",
+          "id": "color_scheme",
+          "label": "Slide text color scheme",
+          "default": "scheme-2"
+        },
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product"
+        },
+        {
+          "type": "header",
+          "content": "General"
+        },
+        {
+          "type": "checkbox",
+          "id": "hide_on_desktop",
+          "label": "Hide on desktop",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "hide_on_mobile",
+          "label": "Hide on mobile",
+          "default": false
+        },
+        {
+          "type": "header",
+          "content": "Images"
+        },
+        {
+          "type": "select",
+          "id": "media_position",
+          "label": "Media position",
+          "options": [
+            {
+              "value": "above",
+              "label": "Above text"
+            },
+            {
+              "value": "below",
+              "label": "Below text"
+            }
+          ],
+          "default": "above",
+          "visible_if": "{{ section.settings.text_layout == 'under' }}"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "t:global.image.image",
+          "info": "Optional. Uses the product featured image when empty."
+        },
+        {
+          "type": "image_picker",
+          "id": "mobile_image",
+          "label": "t:global.image.mobile_image",
+          "info": "Optional. Shown below 700px when set; otherwise the main image is used."
+        },
+        {
+          "type": "url",
+          "id": "image_link",
+          "label": "Image link",
+          "info": "Makes the image clickable. Ideal when not using buttons."
+        },
+        {
+          "type": "select",
+          "id": "focal_point",
+          "label": "Image focal point (crop)",
+          "options": [
+            {
+              "value": "top",
+              "label": "t:global.position.top"
+            },
+            {
+              "value": "center",
+              "label": "t:global.position.center"
+            },
+            {
+              "value": "bottom",
+              "label": "t:global.position.bottom"
+            }
+          ],
+          "default": "center"
+        },
+        {
+          "type": "header",
+          "content": "Texts"
+        },
+        {
+          "type": "text_alignment",
+          "id": "text_alignment",
+          "label": "Text alignment",
+          "default": "left"
+        },
+        {
+          "type": "select",
+          "id": "content_position",
+          "label": "t:global.position.content_position",
+          "options": [
+            {
+              "value": "place-self-start text-start",
+              "label": "t:global.position.top_left"
+            },
+            {
+              "value": "place-self-start-center text-center",
+              "label": "t:global.position.top_center"
+            },
+            {
+              "value": "place-self-start-end text-end",
+              "label": "t:global.position.top_right"
+            },
+            {
+              "value": "place-self-center-start text-start",
+              "label": "t:global.position.middle_left"
+            },
+            {
+              "value": "place-self-center text-center",
+              "label": "t:global.position.middle_center"
+            },
+            {
+              "value": "place-self-center-end text-end",
+              "label": "t:global.position.middle_right"
+            },
+            {
+              "value": "place-self-end-start text-start",
+              "label": "t:global.position.bottom_left"
+            },
+            {
+              "value": "place-self-end-center text-center",
+              "label": "t:global.position.bottom_center"
+            },
+            {
+              "value": "place-self-end text-end",
+              "label": "t:global.position.bottom_right"
+            }
+          ],
+          "default": "place-self-end-start text-start",
+          "visible_if": "{{ section.settings.text_layout == 'over' }}"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "subheading",
+          "label": "t:global.text.subheading"
+        },
+        {
+          "type": "select",
+          "id": "subheading_size",
+          "label": "t:global.text.style",
+          "info": "Subheading visual size (h1–h6 classes).",
+          "options": [
+            {
+              "value": "h1",
+              "label": "H1"
+            },
+            {
+              "value": "h2",
+              "label": "H2"
+            },
+            {
+              "value": "h3",
+              "label": "H3"
+            },
+            {
+              "value": "h4",
+              "label": "H4"
+            },
+            {
+              "value": "h5",
+              "label": "H5"
+            },
+            {
+              "value": "h6",
+              "label": "H6"
+            }
+          ],
+          "default": "h6"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "heading",
+          "label": "t:global.text.heading",
+          "info": "Connect a dynamic source or leave empty to use the product title when a product is selected."
+        },
+        {
+          "type": "select",
+          "id": "heading_size",
+          "label": "t:global.text.style",
+          "info": "Heading visual size (h1–h6 classes).",
+          "options": [
+            {
+              "value": "h1",
+              "label": "H1"
+            },
+            {
+              "value": "h2",
+              "label": "H2"
+            },
+            {
+              "value": "h3",
+              "label": "H3"
+            },
+            {
+              "value": "h4",
+              "label": "H4"
+            },
+            {
+              "value": "h5",
+              "label": "H5"
+            },
+            {
+              "value": "h6",
+              "label": "H6"
+            }
+          ],
+          "default": "h3"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "t:global.text.content"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_product_title",
+          "label": "Show product title",
+          "default": true,
+          "info": "When the heading is empty, the product title is used. Turn off to hide it while still using the product (e.g. for the image)."
+        },
+        {
+          "type": "checkbox",
+          "id": "show_product_price",
+          "label": "Show product price",
+          "default": true,
+          "info": "When the price line is empty, the product price is shown. Turn off to hide it while still using the product."
+        },
+        {
+          "type": "inline_richtext",
+          "id": "price_text",
+          "label": "Price line",
+          "info": "Optional. Leave empty to render the product price (price-list) when a product is selected."
+        },
+        {
+          "type": "select",
+          "id": "price_size",
+          "label": "t:global.text.style",
+          "info": "Price line visual size (custom line and product price wrapper).",
+          "options": [
+            {
+              "value": "h1",
+              "label": "H1"
+            },
+            {
+              "value": "h2",
+              "label": "H2"
+            },
+            {
+              "value": "h3",
+              "label": "H3"
+            },
+            {
+              "value": "h4",
+              "label": "H4"
+            },
+            {
+              "value": "h5",
+              "label": "H5"
+            },
+            {
+              "value": "h6",
+              "label": "H6"
+            }
+          ],
+          "default": "h6"
+        },
+        {
+          "type": "header",
+          "content": "Buttons"
+        },
+        {
+          "type": "text",
+          "id": "button_1_text",
+          "label": "t:global.text.button_text"
+        },
+        {
+          "type": "url",
+          "id": "button_1_link",
+          "label": "t:global.text.button_link",
+          "info": "Defaults to the selected product URL when empty."
+        },
+        {
+          "type": "select",
+          "id": "button_1_style",
+          "label": "t:global.text.button_style",
+          "options": [
+            {
+              "value": "outline",
+              "label": "t:global.text.link_style_options.outline"
+            },
+            {
+              "value": "solid",
+              "label": "t:global.text.link_style_options.solid"
+            },
+            {
+              "value": "link",
+              "label": "t:global.text.link_style_options.link"
+            }
+          ],
+          "default": "link"
+        },
+        {
+          "type": "text",
+          "id": "button_2_text",
+          "label": "t:global.text.button_text"
+        },
+        {
+          "type": "url",
+          "id": "button_2_link",
+          "label": "t:global.text.button_link",
+          "info": "Defaults to the selected product URL when empty."
+        },
+        {
+          "type": "select",
+          "id": "button_2_style",
+          "label": "t:global.text.button_style",
+          "options": [
+            {
+              "value": "outline",
+              "label": "t:global.text.link_style_options.outline"
+            },
+            {
+              "value": "solid",
+              "label": "t:global.text.link_style_options.solid"
+            },
+            {
+              "value": "link",
+              "label": "t:global.text.link_style_options.link"
+            }
+          ],
+          "default": "outline"
+        },
+        {
+          "type": "header",
+          "content": "Overlay",
+          "visible_if": "{{ section.settings.text_layout == 'over' }}"
+        },
+        {
+          "type": "color",
+          "id": "overlay_color",
+          "label": "t:global.colors.overlay_color",
+          "default": "#000000",
+          "visible_if": "{{ section.settings.text_layout == 'over' }}"
+        },
+        {
+          "type": "range",
+          "id": "overlay_opacity",
+          "label": "t:global.colors.overlay_opacity",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "default": 0,
+          "visible_if": "{{ section.settings.text_layout == 'over' }}"
+        },
+        {
+          "type": "color_background",
+          "id": "gradient_overlay",
+          "label": "t:global.colors.gradient_overlay",
+          "default": "linear-gradient(180deg, rgba(54, 54, 54, 0.2) 0%, rgba(4, 4, 4, 0.65) 100%)",
+          "info": "t:sections.slideshow.blocks.image.gradient_overlay_info",
+          "visible_if": "{{ section.settings.text_layout == 'over' }}"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Carosello",
+      "category": "t:global.categories.products",
+      "blocks": [
+        {
+          "type": "slide"
+        },
+        {
+          "type": "slide"
+        },
+        {
+          "type": "slide"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

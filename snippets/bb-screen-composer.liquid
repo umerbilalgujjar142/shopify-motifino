@@ -1,0 +1,114 @@
+{{ 'bb-screen-composer.css' | asset_url | stylesheet_tag }}
+
+{%- comment -%} ══ SCREEN 1: BELT COMPOSER ════════════════════== {%- endcomment -%}
+<section id="bb-screen-composer" class="bb-screen" style="display:none" aria-label="Componi la cintura">
+  {%- comment -%} ── Hero: full-width preview photo + wizard overlay + quick actions ── {%- endcomment -%}
+  <div
+    class="bb-composer-hero"
+    id="bb-composer-hero"
+    data-belt-preview-base="{{ section.settings.belt_preview_base_url }}"
+  >
+    {%- comment -%} Background: belt combo photo fills entire hero area {%- endcomment -%}
+    <canvas id="bb-belt-canvas" width="340" height="100" style="display:none;max-width:100%;"></canvas>
+    <img
+      id="bb-belt-preview-img"
+      src="{{ 'blank.svg' | asset_url }}"
+      width="340"
+      height="100"
+      alt="Anteprima cintura"
+      class="bb-composer-hero__bg"
+      style="display:none;"
+    >
+    {%- comment -%} Worn photo — second image, swapped in by the toggle button below (same pattern as single-bundle-builder) {%- endcomment -%}
+    <img
+      id="bb-worn-preview-img"
+      src=""
+      alt="Cintura indossata"
+      class="bb-composer-hero__bg bb-composer-hero__bg--worn"
+      style="display:none;"
+    >
+    <div class="bb-belt-preview__placeholder" id="bb-belt-preview-placeholder">
+      Seleziona le opzioni per vedere l'anteprima
+    </div>
+
+    {%- comment -%} Worn-photo toggle — rounded, centered pill button (same style/logic as sbb-worn-btn) {%- endcomment -%}
+    <button
+      class="bb-worn-btn"
+      id="bb-worn-toggle"
+      type="button"
+      data-label="Vedi indossata"
+      data-label-back="Vista prodotto"
+      style="display:none;"
+    >
+      <span class="bb-worn-btn__label">Vedi indossata</span>
+    </button>
+  </div>
+
+  {%- comment -%} Right panel: buckle + strap selectors + combo bar {%- endcomment -%}
+  <div class="bb-composer-right">
+
+    {%- comment -%} 2. Buckle carousel {%- endcomment -%}
+    <div class="bb-section bb-section--buckle">
+      <div class="bb-section-header">
+        <div class="bb-section__label">
+          <span class="bb-section__num">1. Fibbia:</span> <span id="bb-buckle-name-inline" class="bb-selection-inline-name"></span>
+        </div>
+        {% comment %} <span class="bb-section__counter" id="bb-buckle-nav-label"></span> {% endcomment %}
+      </div>
+      <div class="bb-carousel" id="bb-buckle-carousel" role="listbox" aria-label="Stile fibbia">
+        {%- comment -%} Rendered by JS {%- endcomment -%}
+      </div>
+      <div class="bb-strap-nav">
+        <button class="bb-strap-nav__btn" id="bb-buckle-prev" aria-label="Fibbia precedente">&#8592;</button>
+        <button class="bb-strap-nav__btn" id="bb-buckle-next" aria-label="Fibbia successiva">&#8594;</button>
+      </div>
+    </div>
+
+    {%- comment -%} 3. Strap color — vertical stacked fan {%- endcomment -%}
+    <div class="bb-section bb-section--strap">
+      <div class="bb-section-header">
+        <div class="bb-section__label" style="margin-top:0">
+          <span class="bb-section__num">2. Pelle:</span> <span id="bb-strap-name-inline" class="bb-selection-inline-name"></span>
+        </div>
+        {% comment %} <span class="bb-section__counter" id="bb-strap-nav-label"></span> {% endcomment %}
+        <div class="bb-length-selector" id="bb-length-selector">
+          {%- comment -%} Rendered by JS {%- endcomment -%}
+        </div>
+      </div>
+      <div class="bb-strap-carousel" id="bb-strap-carousel" role="listbox" aria-label="Colore della cintura">
+        {%- comment -%} Rendered by JS as horizontal fan items {%- endcomment -%}
+      </div>
+      <div class="bb-strap-selected-name" id="bb-strap-color-name"></div>
+      <div class="bb-strap-nav">
+        <button class="bb-strap-nav__btn" id="bb-strap-prev" aria-label="Colore precedente">&#8592;</button>
+        <button class="bb-strap-nav__btn" id="bb-strap-next" aria-label="Colore successivo">&#8594;</button>
+      </div>
+    </div>
+
+  </div>{%- comment -%} /.bb-composer-right {%- endcomment -%}
+
+  {%- comment -%} Combo bar — outside the two-column flex, spans full width.
+       Progress-feedback lives inside it so the gradient bar + rising pill
+       follow the sticky combo-bar instead of scrolling away. {%- endcomment -%}
+  <div class="bb-combo-bar">
+    <div class="bb-progress-feedback" id="bb-progress-feedback" aria-hidden="true"></div>
+    <div class="bb-combo-bar__info">
+      <div class="bb-combo-bar__title" id="bb-combo-belt-label">CINTURA 1 DI 1</div>
+      <div class="bb-combo-bar__sub" id="bb-combo-text">— + —</div>
+    </div>
+    <div class="bb-combo-bar__actions">
+      {% comment %}
+      <button class="bb-combo-bar__back" data-action="composer-back" aria-label="Indietro">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="19" y1="12" x2="5" y2="12"/>
+          <polyline points="12 19 5 12 12 5"/>
+        </svg>
+      </button>
+      {% endcomment %}
+      <button class="bb-btn-primary is-accent" data-action="add-to-set" id="bb-composer-cta">
+        <span class="bb-composer-cta__label">Aggiungi combinazione</span>
+      </button>
+    </div>
+  </div>
+
+</section>

@@ -1,0 +1,1045 @@
+{% comment %}
+  Section: bundle-page.liquid
+  3-Step Bundle Creator
+  Step 1 → Choose plan (One / Two / Infinity)
+  Step 2 → Select items (1, 2, or 3+ from a collection)
+  Step 3 → Review & Checkout with bundle price
+{% endcomment %}
+
+{%- assign bp_col = section.settings.collection -%}
+
+<style>
+  :root {
+    --bp-accent:      #c9a96e;
+    --bp-accent-dark: #b8924f;
+    --bp-bg:          #faf9f7;
+    --bp-card:        #ffffff;
+    --bp-border:      #e8e2d9;
+    --bp-text:        #1e1e1e;
+    --bp-muted:       #6b6b6b;
+    --bp-radius:      14px;
+    --bp-shadow:      0 4px 20px rgba(0,0,0,.07);
+  }
+
+  .bp-wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    color: var(--bp-text);
+    background: var(--bp-bg);
+    min-height: 80vh;
+  }
+
+  /* ── Progress bar ──────────────────────────────── */
+  .bp-progress {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    margin-bottom: 56px;
+  }
+
+  .bp-progress__step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    min-width: 80px;
+  }
+
+  .bp-progress__dot {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 2px solid var(--bp-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 16px;
+    background: var(--bp-card);
+    color: var(--bp-muted);
+    transition: all .3s;
+    position: relative;
+    z-index: 1;
+  }
+
+  .bp-progress__step.is-active .bp-progress__dot {
+    background: var(--bp-accent);
+    border-color: var(--bp-accent);
+    color: #fff;
+    box-shadow: 0 0 0 5px rgba(201,169,110,.2);
+  }
+
+  .bp-progress__step.is-done .bp-progress__dot {
+    background: var(--bp-accent);
+    border-color: var(--bp-accent);
+    color: #fff;
+  }
+
+  .bp-progress__label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--bp-muted);
+    text-align: center;
+  }
+
+  .bp-progress__step.is-active .bp-progress__label { color: var(--bp-accent); }
+
+  .bp-progress__line {
+    flex: 1;
+    height: 2px;
+    background: var(--bp-border);
+    margin-top: 22px;
+    max-width: 120px;
+    transition: background .4s;
+  }
+
+  .bp-progress__line.is-done { background: var(--bp-accent); }
+
+  /* ── Steps visibility ─────────────────────────── */
+  .bp-step { display: none; }
+  .bp-step.is-active { display: block; }
+
+  /* ── Headings ─────────────────────────────────── */
+  .bp-heading {
+    font-size: 30px;
+    font-weight: 800;
+    text-align: center;
+    margin: 0 0 8px;
+    letter-spacing: -.01em;
+  }
+
+  .bp-subheading {
+    font-size: 16px;
+    color: var(--bp-muted);
+    text-align: center;
+    margin: 0 0 44px;
+  }
+
+  /* ── Plan cards (Step 1) ──────────────────────── */
+  .bp-plans {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+    gap: 28px;
+    max-width: 920px;
+    margin: 0 auto;
+  }
+
+  .bp-plan {
+    background: var(--bp-card);
+    border: 2px solid var(--bp-border);
+    border-radius: var(--bp-radius);
+    padding: 40px 32px;
+    text-align: center;
+    cursor: pointer;
+    transition: all .25s;
+    position: relative;
+  }
+
+  .bp-plan:hover {
+    border-color: var(--bp-accent);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(201,169,110,.18);
+  }
+
+  .bp-plan--popular::before {
+    content: 'Most Popular';
+    position: absolute;
+    top: -13px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bp-accent);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    padding: 4px 16px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+
+  .bp-plan__icon {
+    font-size: 52px;
+    line-height: 1;
+    margin-bottom: 18px;
+    display: block;
+  }
+
+  .bp-plan__name {
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 10px;
+  }
+
+  .bp-plan__desc {
+    font-size: 14px;
+    color: var(--bp-muted);
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+
+  .bp-plan__price {
+    font-size: 38px;
+    font-weight: 800;
+    color: var(--bp-accent);
+    letter-spacing: -.02em;
+    margin-bottom: 4px;
+  }
+
+  .bp-plan__items {
+    font-size: 12px;
+    color: var(--bp-muted);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    margin-bottom: 28px;
+  }
+
+  .bp-plan__cta {
+    display: block;
+    width: 100%;
+    background: var(--bp-accent);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .2s;
+    font-family: inherit;
+  }
+
+  .bp-plan__cta:hover { background: var(--bp-accent-dark); }
+
+  /* ── Step 2 header ─────────────────────────────── */
+  .bp-step2-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .bp-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--bp-accent);
+    color: #fff;
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .02em;
+  }
+
+  .bp-counter {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--bp-muted);
+  }
+
+  .bp-counter b { color: var(--bp-accent); }
+
+  /* ── Product grid ──────────────────────────────── */
+  .bp-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 36px;
+  }
+
+  .bp-product {
+    background: var(--bp-card);
+    border: 2px solid var(--bp-border);
+    border-radius: var(--bp-radius);
+    overflow: hidden;
+    cursor: pointer;
+    transition: all .2s;
+    position: relative;
+    user-select: none;
+  }
+
+  .bp-product:hover:not(.is-locked) {
+    border-color: var(--bp-accent);
+    transform: translateY(-2px);
+    box-shadow: var(--bp-shadow);
+  }
+
+  .bp-product.is-selected { border-color: var(--bp-accent); }
+
+  .bp-product.is-locked {
+    opacity: .4;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .bp-product__tick {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--bp-accent);
+    color: #fff;
+    font-size: 17px;
+    font-weight: 700;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    box-shadow: 0 2px 8px rgba(201,169,110,.4);
+  }
+
+  .bp-product.is-selected .bp-product__tick { display: flex; }
+
+  .bp-product__img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    display: block;
+    background: #f0ece4;
+  }
+
+  .bp-product__placeholder {
+    width: 100%;
+    aspect-ratio: 1;
+    background: linear-gradient(135deg,#f5f0e8,#e8e0d0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 44px;
+  }
+
+  .bp-product__body {
+    padding: 14px 16px;
+  }
+
+  .bp-product__name {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+    margin-bottom: 6px;
+  }
+
+  .bp-product__price {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--bp-accent);
+  }
+
+  /* ── Buttons ───────────────────────────────────── */
+  .bp-btn-back {
+    background: none;
+    border: 1px solid var(--bp-border);
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 14px;
+    cursor: pointer;
+    color: var(--bp-muted);
+    transition: all .2s;
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 28px;
+  }
+
+  .bp-btn-back:hover {
+    border-color: var(--bp-accent);
+    color: var(--bp-accent);
+  }
+
+  @keyframes bp-spin { to { transform: rotate(360deg); } }
+  .bp-spinner {
+    display: inline-block;
+    flex-shrink: 0;
+    vertical-align: middle;
+    animation: bp-spin 0.7s linear infinite;
+  }
+  .bp-btn-primary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    background: var(--bp-accent);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 17px;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .2s;
+    font-family: inherit;
+    letter-spacing: .01em;
+  }
+
+  .bp-btn-primary:hover:not(:disabled) {
+    background: var(--bp-accent-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(201,169,110,.35);
+  }
+
+  .bp-btn-primary:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  /* ── Step 3 review ─────────────────────────────── */
+  .bp-review-layout {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 36px;
+    align-items: start;
+  }
+
+  @media (max-width: 768px) {
+    .bp-review-layout { grid-template-columns: 1fr; }
+  }
+
+  .bp-review-list {
+    background: var(--bp-card);
+    border: 1px solid var(--bp-border);
+    border-radius: var(--bp-radius);
+    overflow: hidden;
+  }
+
+  .bp-review-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--bp-border);
+    transition: background .15s;
+  }
+
+  .bp-review-item:last-child { border-bottom: none; }
+  .bp-review-item:hover { background: #fdf9f2; }
+
+  .bp-review-item__num {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--bp-accent);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .bp-review-item__img {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    object-fit: cover;
+    background: #f0ece4;
+    flex-shrink: 0;
+  }
+
+  .bp-review-item__name {
+    font-size: 15px;
+    font-weight: 600;
+    flex: 1;
+  }
+
+  .bp-review-item__remove {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: var(--bp-muted);
+    transition: color .2s;
+    padding: 4px 8px;
+    border-radius: 6px;
+  }
+
+  .bp-review-item__remove:hover { color: #c0392b; background: #fff0f0; }
+
+  /* ── Summary card ──────────────────────────────── */
+  .bp-summary {
+    background: var(--bp-card);
+    border: 1px solid var(--bp-border);
+    border-radius: var(--bp-radius);
+    padding: 28px;
+    position: sticky;
+    top: 24px;
+  }
+
+  .bp-summary__title {
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--bp-border);
+  }
+
+  .bp-summary__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    color: var(--bp-muted);
+    margin-bottom: 10px;
+  }
+
+  .bp-summary__divider {
+    height: 1px;
+    background: var(--bp-border);
+    margin: 16px 0;
+  }
+
+  .bp-summary__total {
+    display: flex;
+    justify-content: space-between;
+    font-size: 22px;
+    font-weight: 800;
+  }
+
+  .bp-summary__total-price { color: var(--bp-accent); }
+
+  .bp-summary__checkout {
+    margin-top: 24px;
+  }
+
+  .bp-empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--bp-muted);
+    font-size: 16px;
+  }
+</style>
+
+{%- comment -%} Embed products as JSON for the JS to consume {%- endcomment -%}
+{%- if bp_col != blank -%}
+<script id="bp-products-json" type="application/json">
+[
+  {%- for product in bp_col.products limit: 24 -%}
+  {
+    "id": {{ product.id }},
+    "title": {{ product.title | json }},
+    "price_formatted": {{ product.price_min | money | json }},
+    "image": {% if product.featured_image %}{{ product.featured_image | image_url: width: 420 | json }}{% else %}null{% endif %},
+    "variant_id": {{ product.selected_or_first_available_variant.id | default: 0 }},
+    "available": {{ product.available }}
+  }{% unless forloop.last %},{% endunless %}
+  {%- endfor -%}
+]
+</script>
+{%- endif -%}
+
+<div class="bp-wrap" id="bp-app">
+
+  {%- comment -%} ── Progress ── {%- endcomment -%}
+  <div class="bp-progress">
+    <div class="bp-progress__step is-active" data-bp-step="1">
+      <div class="bp-progress__dot">1</div>
+      <div class="bp-progress__label">Choose Plan</div>
+    </div>
+    <div class="bp-progress__line" data-bp-line="1"></div>
+    <div class="bp-progress__step" data-bp-step="2">
+      <div class="bp-progress__dot">2</div>
+      <div class="bp-progress__label">Select Items</div>
+    </div>
+    <div class="bp-progress__line" data-bp-line="2"></div>
+    <div class="bp-progress__step" data-bp-step="3">
+      <div class="bp-progress__dot">3</div>
+      <div class="bp-progress__label">Review & Pay</div>
+    </div>
+  </div>
+
+  {%- comment -%} ── STEP 1: Choose plan ── {%- endcomment -%}
+  <div class="bp-step is-active" id="bp-step-1">
+    <h2 class="bp-heading">{{ section.settings.title | default: 'Build Your Bundle' }}</h2>
+    <p class="bp-subheading">{{ section.settings.subtitle | default: 'Choose the plan that works best for you' }}</p>
+
+    <div class="bp-plans">
+
+      {%- comment -%} One {%- endcomment -%}
+      <div class="bp-plan" onclick="BP.selectPlan('one')">
+        <span class="bp-plan__icon">1️⃣</span>
+        <div class="bp-plan__name">One</div>
+        <p class="bp-plan__desc">Pick your single favourite item from the collection.</p>
+        <div class="bp-plan__price">{{ section.settings.price_one | money }}</div>
+        <div class="bp-plan__items">1 item included</div>
+        <button class="bp-plan__cta">Select this plan</button>
+      </div>
+
+      {%- comment -%} Two {%- endcomment -%}
+      <div class="bp-plan bp-plan--popular" onclick="BP.selectPlan('two')">
+        <span class="bp-plan__icon">2️⃣</span>
+        <div class="bp-plan__name">Two</div>
+        <p class="bp-plan__desc">Mix and match two of your favourite items.</p>
+        <div class="bp-plan__price">{{ section.settings.price_two | money }}</div>
+        <div class="bp-plan__items">2 items included</div>
+        <button class="bp-plan__cta">Select this plan</button>
+      </div>
+
+      {%- comment -%} Infinity {%- endcomment -%}
+      <div class="bp-plan" onclick="BP.selectPlan('infinity')">
+        <span class="bp-plan__icon">∞</span>
+        <div class="bp-plan__name">Infinity</div>
+        <p class="bp-plan__desc">Go all out — select three or more items, no limits.</p>
+        <div class="bp-plan__price">{{ section.settings.price_infinity | money }}</div>
+        <div class="bp-plan__items">3+ items included</div>
+        <button class="bp-plan__cta">Select this plan</button>
+      </div>
+
+    </div>
+  </div>
+
+  {%- comment -%} ── STEP 2: Select items ── {%- endcomment -%}
+  <div class="bp-step" id="bp-step-2">
+    <button class="bp-btn-back" onclick="BP.goTo(1)">&#8592; Back</button>
+
+    <div class="bp-step2-top">
+      <div>
+        <div class="bp-badge" id="bp-plan-badge">One Plan</div>
+      </div>
+      <div class="bp-counter">
+        Selected: <b id="bp-sel-count">0</b> / <b id="bp-sel-limit">1</b>
+      </div>
+    </div>
+
+    <div class="bp-grid" id="bp-product-grid">
+      <div class="bp-empty">Loading products&hellip;</div>
+    </div>
+
+    <button class="bp-btn-primary" id="bp-next-btn" onclick="BP.goToReview()" disabled>
+      Review Bundle &rarr;
+    </button>
+  </div>
+
+  {%- comment -%} ── STEP 3: Review & Checkout ── {%- endcomment -%}
+  <div class="bp-step" id="bp-step-3">
+    <button class="bp-btn-back" onclick="BP.goTo(2)">&#8592; Back</button>
+
+    <h2 class="bp-heading" style="text-align:left;margin-bottom:8px;">Review Your Bundle</h2>
+    <p class="bp-subheading" style="text-align:left;margin-bottom:32px;">Double-check your selections then head to checkout.</p>
+
+    <div class="bp-review-layout">
+      <div class="bp-review-list" id="bp-review-list"></div>
+
+      <div class="bp-summary">
+        <div class="bp-summary__title">Order Summary</div>
+        <div class="bp-summary__row">
+          <span id="bp-sum-plan">One Bundle</span>
+          <span id="bp-sum-price"></span>
+        </div>
+        <div class="bp-summary__row">
+          <span id="bp-sum-items"></span>
+          <span>&#10003;</span>
+        </div>
+        <div class="bp-summary__divider"></div>
+        <div class="bp-summary__total">
+          <span>Total</span>
+          <span class="bp-summary__total-price" id="bp-sum-total"></span>
+        </div>
+        <div class="bp-summary__checkout">
+          <button class="bp-btn-primary" id="bp-checkout-btn" onclick="BP.checkout()">
+            Checkout &rarr;
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ── Plan config (prices injected from Liquid, in store currency cents) ── */
+  var PLANS = {
+    one: {
+      key:       'one',
+      label:     'One Bundle',
+      limit:     1,
+      minSelect: 1,
+      price:     {{ section.settings.price_one | default: 2999 }},
+      variantId: {{ section.settings.variant_id_one | default: 0 }}
+    },
+    two: {
+      key:       'two',
+      label:     'Two Bundle',
+      limit:     2,
+      minSelect: 2,
+      price:     {{ section.settings.price_two | default: 4999 }},
+      variantId: {{ section.settings.variant_id_two | default: 0 }}
+    },
+    infinity: {
+      key:       'infinity',
+      label:     'Infinity Bundle',
+      limit:     Infinity,
+      minSelect: 3,
+      price:     {{ section.settings.price_infinity | default: 6999 }},
+      variantId: {{ section.settings.variant_id_infinity | default: 0 }}
+    }
+  };
+
+  /* ── Demo products (used when no collection is configured) ── */
+  var DEMO_PRODUCTS = [
+    { id:1, title:'Classic White Tee',       price_formatted:'$29.00', image:null, variant_id:0, available:true },
+    { id:2, title:'Navy Striped Shirt',       price_formatted:'$35.00', image:null, variant_id:0, available:true },
+    { id:3, title:'Linen Trousers',           price_formatted:'$49.00', image:null, variant_id:0, available:true },
+    { id:4, title:'Leather Belt',             price_formatted:'$39.00', image:null, variant_id:0, available:true },
+    { id:5, title:'Canvas Tote Bag',          price_formatted:'$25.00', image:null, variant_id:0, available:true },
+    { id:6, title:'Merino Wool Scarf',        price_formatted:'$55.00', image:null, variant_id:0, available:true },
+    { id:7, title:'Slim-Fit Chinos',          price_formatted:'$59.00', image:null, variant_id:0, available:true },
+    { id:8, title:'Oxford Button-Down Shirt', price_formatted:'$45.00', image:null, variant_id:0, available:true },
+  ];
+
+  /* ── App state ── */
+  var state = {
+    plan:     null,   /* 'one' | 'two' | 'infinity' */
+    selected: []      /* array of product objects */
+  };
+
+  /* ── Load products ── */
+  var products = DEMO_PRODUCTS;
+  var el = document.getElementById('bp-products-json');
+  if (el) {
+    try {
+      var parsed = JSON.parse(el.textContent);
+      if (parsed && parsed.length) products = parsed;
+    } catch (e) { /* keep demo products */ }
+  }
+
+  /* ── Helpers ── */
+  function money(cents) {
+    return '$' + (cents / 100).toFixed(2);
+  }
+
+  function getPlan() { return PLANS[state.plan]; }
+
+  function canAdd() {
+    var p = getPlan();
+    if (!p) return false;
+    if (p.limit === Infinity) return true;
+    return state.selected.length < p.limit;
+  }
+
+  function isReady() {
+    var p = getPlan();
+    if (!p) return false;
+    return state.selected.length >= p.minSelect;
+  }
+
+  function limitLabel() {
+    var p = getPlan();
+    if (!p) return '?';
+    return p.limit === Infinity ? (p.minSelect + '+') : p.limit;
+  }
+
+  /* ── Show step ── */
+  function goTo(n) {
+    document.querySelectorAll('.bp-step').forEach(function (s) {
+      s.classList.remove('is-active');
+    });
+    var step = document.getElementById('bp-step-' + n);
+    if (step) step.classList.add('is-active');
+
+    /* progress dots */
+    document.querySelectorAll('[data-bp-step]').forEach(function (dot) {
+      var num = parseInt(dot.dataset.bpStep, 10);
+      dot.classList.remove('is-active', 'is-done');
+      if (num === n)  dot.classList.add('is-active');
+      if (num < n)    dot.classList.add('is-done');
+    });
+    /* progress lines */
+    document.querySelectorAll('[data-bp-line]').forEach(function (line) {
+      var num = parseInt(line.dataset.bpLine, 10);
+      line.classList.toggle('is-done', num < n);
+    });
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  /* ── Render product grid ── */
+  function renderGrid() {
+    var grid = document.getElementById('bp-product-grid');
+    if (!products.length) {
+      grid.innerHTML = '<div class="bp-empty">No products found. Assign a collection in the section settings.</div>';
+      return;
+    }
+
+    grid.innerHTML = products.map(function (p) {
+      var isSel   = state.selected.some(function (s) { return s.id === p.id; });
+      var isLock  = !isSel && !canAdd();
+      var imgHtml = p.image
+        ? '<img class="bp-product__img" src="' + p.image + '" alt="' + p.title.replace(/"/g,'&quot;') + '" loading="lazy">'
+        : '<div class="bp-product__placeholder">\uD83D\uDECD\uFE0F</div>';
+
+      return '<div class="bp-product' +
+        (isSel   ? ' is-selected' : '') +
+        (isLock  ? ' is-locked'   : '') +
+        '" onclick="BP.toggle(' + p.id + ')">' +
+        '<div class="bp-product__tick">&#10003;</div>' +
+        imgHtml +
+        '<div class="bp-product__body">' +
+          '<div class="bp-product__name">' + p.title + '</div>' +
+          '<div class="bp-product__price">' + p.price_formatted + '</div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  /* ── Update step 2 UI ── */
+  function updateStep2() {
+    var plan  = getPlan();
+    var count = state.selected.length;
+
+    document.getElementById('bp-plan-badge').textContent  = (plan ? plan.label : '');
+    document.getElementById('bp-sel-count').textContent   = count;
+    document.getElementById('bp-sel-limit').textContent   = limitLabel();
+
+    var btn = document.getElementById('bp-next-btn');
+    var ready = isReady();
+    btn.disabled = !ready;
+
+    if (ready) {
+      btn.textContent = 'Review Bundle \u2192';
+    } else if (plan && plan.limit === Infinity) {
+      btn.textContent = 'Select at least ' + plan.minSelect + ' items to continue';
+    } else if (plan) {
+      var need = plan.limit - count;
+      btn.textContent = 'Select ' + need + ' more item' + (need !== 1 ? 's' : '') + ' to continue';
+    }
+
+    renderGrid();
+  }
+
+  /* ── Render review (step 3) ── */
+  function renderReview() {
+    var plan = getPlan();
+    var list = document.getElementById('bp-review-list');
+
+    list.innerHTML = state.selected.map(function (p, i) {
+      var imgHtml = p.image
+        ? '<img class="bp-review-item__img" src="' + p.image + '" alt="' + p.title.replace(/"/g,'&quot;') + '" loading="lazy">'
+        : '<div class="bp-review-item__img" style="background:#f0ece4;"></div>';
+      return '<div class="bp-review-item">' +
+        '<div class="bp-review-item__num">' + (i + 1) + '</div>' +
+        imgHtml +
+        '<div class="bp-review-item__name">' + p.title + '</div>' +
+        '<button class="bp-review-item__remove" onclick="BP.remove(' + i + ')" aria-label="Remove">&#x2715;</button>' +
+      '</div>';
+    }).join('');
+
+    var priceStr = money(plan.price);
+    document.getElementById('bp-sum-plan').textContent  = plan.label;
+    document.getElementById('bp-sum-price').textContent = priceStr;
+    document.getElementById('bp-sum-items').textContent = state.selected.length + ' item' + (state.selected.length !== 1 ? 's' : '') + ' selected';
+    document.getElementById('bp-sum-total').textContent = priceStr;
+  }
+
+  /* ── Public API ── */
+  window.BP = {
+
+    selectPlan: function (key) {
+      if (!PLANS[key]) return;
+      state.plan     = key;
+      state.selected = [];
+      goTo(2);
+      updateStep2();
+    },
+
+    toggle: function (productId) {
+      var product = products.find(function (p) { return p.id === productId; });
+      if (!product) return;
+
+      var idx = state.selected.findIndex(function (s) { return s.id === productId; });
+      if (idx >= 0) {
+        state.selected.splice(idx, 1);
+      } else {
+        if (!canAdd()) return;
+        state.selected.push(product);
+      }
+      updateStep2();
+    },
+
+    goToReview: function () {
+      if (!isReady()) return;
+      renderReview();
+      goTo(3);
+    },
+
+    remove: function (index) {
+      state.selected.splice(index, 1);
+      if (!isReady()) {
+        goTo(2);
+        updateStep2();
+      } else {
+        renderReview();
+      }
+    },
+
+    goTo: goTo,
+
+    checkout: function () {
+      var plan = getPlan();
+      var btn  = document.getElementById('bp-checkout-btn');
+      if (!plan || !state.selected.length) return;
+
+      var origHTML = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '<svg class="bp-spinner" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>' + origHTML;
+
+      /* Build line items array */
+      var items = [];
+
+      /* 1. Bundle plan product (if variant configured) */
+      if (plan.variantId) {
+        items.push({
+          id:       plan.variantId,
+          quantity: 1,
+          properties: {
+            'Bundle Plan':   plan.label,
+            'Items in bundle': state.selected.length
+          }
+        });
+      }
+
+      /* 2. Selected product variants */
+      state.selected.forEach(function (p, i) {
+        if (p.variant_id) {
+          items.push({
+            id:       p.variant_id,
+            quantity: 1,
+            properties: {
+              '_bundle':        plan.label,
+              '_bundle_slot':   'Item ' + (i + 1)
+            }
+          });
+        }
+      });
+
+      /* No variant IDs at all → demo mode, alert the merchant */
+      if (!items.length) {
+        alert('Bundle preview ready!\n\nTo enable real checkout, set Variant IDs in the section settings (Shopify Admin \u2192 Online Store \u2192 Customize).');
+        btn.disabled    = false;
+        btn.innerHTML   = 'Checkout &rarr;';
+        return;
+      }
+
+      fetch('/cart/add.js', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ items: items })
+      })
+        .then(function (r) {
+          if (!r.ok) throw new Error('Cart error ' + r.status);
+          return r.json();
+        })
+        .then(function () {
+          window.location.href = '/checkout';
+        })
+        .catch(function (err) {
+          console.error('Bundle checkout error:', err);
+          alert('Something went wrong adding to cart. Please try again.');
+          btn.disabled  = false;
+          btn.innerHTML = origHTML;
+        });
+    }
+
+  };
+
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Bundle Page",
+  "tag": "section",
+  "class": "bp-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Build Your Bundle"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Sub-heading",
+      "default": "Choose the plan that works best for you"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Products Collection",
+      "info": "Products customers can add to their bundle. Leave blank to show demo products."
+    },
+    {
+      "type": "header",
+      "content": "One Plan"
+    },
+    {
+      "type": "number",
+      "id": "price_one",
+      "label": "Price (cents)",
+      "default": 2999,
+      "info": "e.g. 2999 = $29.99"
+    },
+    {
+      "type": "number",
+      "id": "variant_id_one",
+      "label": "Bundle Variant ID",
+      "info": "Shopify Variant ID for the 'One' bundle product. Find it in Products > your bundle product > copy variant ID."
+    },
+    {
+      "type": "header",
+      "content": "Two Plan"
+    },
+    {
+      "type": "number",
+      "id": "price_two",
+      "label": "Price (cents)",
+      "default": 4999,
+      "info": "e.g. 4999 = $49.99"
+    },
+    {
+      "type": "number",
+      "id": "variant_id_two",
+      "label": "Bundle Variant ID",
+      "info": "Shopify Variant ID for the 'Two' bundle product."
+    },
+    {
+      "type": "header",
+      "content": "Infinity Plan"
+    },
+    {
+      "type": "number",
+      "id": "price_infinity",
+      "label": "Price (cents)",
+      "default": 6999,
+      "info": "e.g. 6999 = $69.99"
+    },
+    {
+      "type": "number",
+      "id": "variant_id_infinity",
+      "label": "Bundle Variant ID",
+      "info": "Shopify Variant ID for the 'Infinity' bundle product."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Bundle Builder"
+    }
+  ]
+}
+{% endschema %}

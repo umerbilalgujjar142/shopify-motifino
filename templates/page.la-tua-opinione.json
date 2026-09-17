@@ -1,0 +1,152 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "color_scheme": "",
+        "use_custom_section_spacing": false,
+        "mobile_section_spacing_top": 0,
+        "mobile_section_spacing_right": 0,
+        "mobile_section_spacing_bottom": 0,
+        "mobile_section_spacing_left": 0,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 0,
+        "show_title": true,
+        "page_width": "xs"
+      }
+    },
+    "rich_text_QHXcrg": {
+      "type": "rich-text",
+      "blocks": {
+        "subheading_YmD8Km": {
+          "type": "subheading",
+          "settings": {
+            "text": "Non sei soddisfatto?"
+          }
+        },
+        "heading_6PGcUW": {
+          "type": "heading",
+          "settings": {
+            "text": "DICCI COSA NE PENSI",
+            "heading_tag": "h1"
+          }
+        },
+        "richtext_b9k8Uq": {
+          "type": "richtext",
+          "settings": {
+            "content": "<p>Cerchiamo di dare sempre il meglio nei nostri servizi e prodotti, ma sicuramente non siamo perfetti.</p><p>Abbiamo bisogno dei giudizi come il tuo per migliore ogni giorno di più.</p><p>Ti preghiamo di scrivere nel form qui sotto la tua esperienza e di cosa non sei soddisfatto.</p><p>Faremo tesoro delle tue parole</p>"
+          }
+        }
+      },
+      "block_order": [
+        "subheading_YmD8Km",
+        "heading_6PGcUW",
+        "richtext_b9k8Uq"
+      ],
+      "name": "t:sections.rich_text.presets.rich_text.name",
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": false,
+        "content_width": "sm",
+        "text_position": "start",
+        "remove_vertical_spacing": false,
+        "use_custom_section_spacing": false,
+        "mobile_section_spacing_top": 0,
+        "mobile_section_spacing_right": 0,
+        "mobile_section_spacing_bottom": 0,
+        "mobile_section_spacing_left": 0,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 0
+      }
+    },
+    "contact_Gg7mJd": {
+      "type": "contact",
+      "name": "t:sections.contact.presets.contact_form.name",
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": false,
+        "use_custom_section_spacing": false,
+        "mobile_section_spacing_top": 0,
+        "mobile_section_spacing_right": 0,
+        "mobile_section_spacing_bottom": 0,
+        "mobile_section_spacing_left": 0,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 0,
+        "subheading": "",
+        "title": "",
+        "content": ""
+      }
+    },
+    "faq_mAGhKX": {
+      "type": "faq",
+      "blocks": {
+        "question_zeXwMG": {
+          "type": "question",
+          "settings": {
+            "question": "Cintura troppo lunga?",
+            "answer": "<p>Se la tua cintura risulta troppo lunga non ti preoccupare, la puoi accorciare facilmente. segui le istruzioni in questa pagina <a href=\"/pages/come-tagliare-la-cintura\" title=\"Come tagliare la cintura\">\"Come tagliare la cintura\"</a></p>"
+          }
+        },
+        "question_ttqJLJ": {
+          "type": "question",
+          "settings": {
+            "question": "Cintura troppo corta?",
+            "answer": "<p>Se la tua cintura risulta troppo corta e hai preso la 130cm, allora scrivi pure al nostro supporto per avere un cambio taglia. Se invece hai già la 150cm e non è abbastanza lunga richiedi gratuitamente il reso del tuo prodotto. Leggi pure le <a href=\"/policies/refund-policy\" title=\"Refund Policy\">Politiche di reso</a> per capire se sei idoneo.</p>"
+          }
+        },
+        "question_hqEpdY": {
+          "type": "question",
+          "settings": {
+            "question": "Problemi con la spedizione?",
+            "answer": "<p>Il mondo della logistica ha moti problemi e sicuramente il nostro team cerca ogni giorno di migliorare gli aspetti che riguardano noi, però sfortunatamente abbiamo poco controllo di quello che succede dopo che il pacco lascia la nostra sede. Ti preghiamo comunque di scriverci cosa è andato storto così da valutare quale spedizioniere è meglio utilizzare nella tua zona</p>"
+          }
+        }
+      },
+      "block_order": [
+        "question_zeXwMG",
+        "question_ttqJLJ",
+        "question_hqEpdY"
+      ],
+      "name": "t:sections.faq.presets.faq.name",
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": false,
+        "use_custom_section_spacing": false,
+        "mobile_section_spacing_top": 0,
+        "mobile_section_spacing_right": 0,
+        "mobile_section_spacing_bottom": 0,
+        "mobile_section_spacing_left": 0,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 0,
+        "show_categories": false,
+        "subheading": "",
+        "title": "",
+        "content": ""
+      }
+    }
+  },
+  "order": [
+    "main",
+    "rich_text_QHXcrg",
+    "contact_Gg7mJd",
+    "faq_mAGhKX"
+  ]
+}

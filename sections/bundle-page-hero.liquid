@@ -1,0 +1,121 @@
+<div class="bundle-page-hero">
+  <div class="bundle-page-hero__container">
+
+    <div class="bundle-page-hero__breadcrumb">
+      <a href="{{ routes.root_url }}">Home</a>
+      <span aria-hidden="true"> / </span>
+      <span>Bundle Builder</span>
+    </div>
+
+    <div class="bundle-page-hero__content">
+      <div class="bundle-page-hero__left">
+        <span class="bundle-page-hero__badge">
+          {{ section.settings.badge | default: "Personalizzazione completa" }}
+        </span>
+        <h1 class="bundle-page-hero__title">
+          {{ section.settings.title | default: "Crea il tuo Bundle di Cinture" }}
+        </h1>
+        <p class="bundle-page-hero__sub">
+          {{ section.settings.subtitle | default: "Scegli il set, componi ogni cintura con la tua fibbia e colore preferiti. Spedizione gratuita sopra €50." }}
+        </p>
+        <div class="bundle-page-hero__badges">
+          <span class="bundle-page-hero__trust">🔒 Checkout sicuro</span>
+          <span class="bundle-page-hero__trust">🚚 Spedizione 3–5 gg</span>
+          <span class="bundle-page-hero__trust">↩️ Reso 30 gg</span>
+        </div>
+      </div>
+
+      <div class="bundle-page-hero__right">
+        <div class="bundle-page-hero__tier-summary">
+          <div class="bph-tier">
+            <div class="bph-tier__icon">
+              <svg viewBox="0 0 40 40" width="28" height="28" fill="none"><rect x="8" y="17" width="24" height="6" rx="3" fill="#b8860b" opacity=".85"/><rect x="17" y="12" width="6" height="16" rx="2" fill="#b8860b"/></svg>
+            </div>
+            <div class="bph-tier__body">
+              <strong>Single</strong>
+              <span>1 cintura — {{ section.settings.price_single | default: "€ 49,99" }}</span>
+            </div>
+          </div>
+          <div class="bph-tier">
+            <div class="bph-tier__icon">
+              <svg viewBox="0 0 40 40" width="28" height="28" fill="none"><rect x="6" y="14" width="22" height="5" rx="2.5" fill="#b8860b" opacity=".7"/><rect x="6" y="21" width="22" height="5" rx="2.5" fill="#b8860b"/><rect x="16" y="10" width="5" height="20" rx="2" fill="#b8860b" opacity=".5"/></svg>
+            </div>
+            <div class="bph-tier__body">
+              <strong>Double</strong>
+              <span>2 cinture — {{ section.settings.price_double | default: "€ 79,99" }} <em>Risparmi €19,99</em></span>
+            </div>
+          </div>
+          <div class="bph-tier">
+            <div class="bph-tier__icon">
+              <svg viewBox="0 0 40 40" width="28" height="28" fill="none"><rect x="5" y="12" width="20" height="4" rx="2" fill="#b8860b" opacity=".5"/><rect x="5" y="18" width="20" height="4" rx="2" fill="#b8860b" opacity=".75"/><rect x="5" y="24" width="20" height="4" rx="2" fill="#b8860b"/><rect x="15" y="9" width="4" height="22" rx="2" fill="#b8860b" opacity=".4"/></svg>
+            </div>
+            <div class="bph-tier__body">
+              <strong>Triple</strong>
+              <span>3 cinture — {{ section.settings.price_triple | default: "€ 99,99" }} <em>Risparmi €49,98</em></span>
+            </div>
+          </div>
+          <div class="bph-tier bph-tier--infinity">
+            <div class="bph-tier__icon">
+              <svg viewBox="0 0 40 40" width="28" height="28" fill="none"><path d="M8 20c0-3.3 2.7-6 6-6s6 3 8 6-2.7 6-8 6-6-2.7-6-6z" fill="#b8860b" opacity=".6"/><path d="M20 20c0-3 2.7-6 6-6s6 2.7 6 6-2.7 6-6 6-6-3-8-6z" fill="#b8860b" opacity=".9"/></svg>
+            </div>
+            <div class="bph-tier__body">
+              <strong>Infinity ∞</strong>
+              <span>da {{ section.settings.price_infinity | default: "€ 119,99" }} · Cinture illimitate</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Bundle Page Hero",
+  "settings": [
+    {
+      "type": "text",
+      "id": "badge",
+      "label": "Badge",
+      "default": "Personalizzazione completa"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Page title",
+      "default": "Crea il tuo Bundle di Cinture"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Scegli il set, componi ogni cintura con la tua fibbia e colore preferiti. Spedizione gratuita sopra €50."
+    },
+    {
+      "type": "text",
+      "id": "price_single",
+      "label": "Single Set price display",
+      "default": "€ 49,99"
+    },
+    {
+      "type": "text",
+      "id": "price_double",
+      "label": "Double Set price display",
+      "default": "€ 79,99"
+    },
+    {
+      "type": "text",
+      "id": "price_triple",
+      "label": "Triple Set price display",
+      "default": "€ 99,99"
+    },
+    {
+      "type": "text",
+      "id": "price_infinity",
+      "label": "Infinity Set base price display",
+      "default": "€ 119,99"
+    }
+  ]
+}
+{% endschema %}

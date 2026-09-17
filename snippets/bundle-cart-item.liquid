@@ -1,0 +1,81 @@
+{% comment %}
+  ============================================================
+  SNIPPET: bundle-cart-item.liquid
+  ============================================================
+  Usage — add to your theme's cart.liquid or main-cart-items.liquid
+  inside the cart line item loop:
+
+    {% for item in cart.items %}
+      {% if item.properties['Cintura 1 - Lunghezza'] %}
+        {% render 'bundle-cart-item', item: item %}
+      {% else %}
+        {%- your normal line item template here -%}
+      {% endif %}
+    {% endfor %}
+
+  ============================================================
+{% endcomment %}
+
+{%- assign belt_count = 0 -%}
+{%- if item.properties['Cintura 1 - Lunghezza'] != blank -%}{%- assign belt_count = 1 -%}{%- endif -%}
+{%- if item.properties['Cintura 2 - Lunghezza'] != blank -%}{%- assign belt_count = 2 -%}{%- endif -%}
+{%- if item.properties['Cintura 3 - Lunghezza'] != blank -%}{%- assign belt_count = 3 -%}{%- endif -%}
+
+<div class="bb-cart__bundle">
+  <div class="bb-cart__bundle-header">
+    <span>{{ item.product.title }}</span>
+    <span style="color:var(--bb-accent);font-weight:700;">
+      {{ item.final_line_price | money }}
+    </span>
+  </div>
+
+  <div class="bb-cart__bundle-body">
+    {%- for i in (1..belt_count) -%}
+      {%- assign prop_length = 'Cintura ' | append: i | append: ' - Lunghezza' -%}
+      {%- assign prop_buckle = 'Cintura ' | append: i | append: ' - Fibbia' -%}
+      {%- assign prop_color  = 'Cintura ' | append: i | append: ' - Colore' -%}
+
+      {%- assign prop_img = '_cintura_' | append: i | append: '_img' -%}
+      {%- assign combo_img = item.properties[prop_img] -%}
+      <div class="bb-cart__line">
+        <div class="bb-cart__line-thumb">
+          {%- if combo_img != blank -%}
+            <img src="{{ combo_img }}"
+                 alt="Cintura {{ i }}" loading="lazy"
+                 style="width:100%;height:100%;object-fit:cover;border-radius:8px;">
+          {%- elsif item.image -%}
+            <img src="{{ item.image | img_url: '100x100' }}"
+                 alt="{{ item.product.title }}" loading="lazy"
+                 style="width:100%;height:100%;object-fit:cover;border-radius:8px;">
+          {%- else -%}
+            <div style="width:100%;height:100%;background:#e8e0d0;border-radius:8px;"></div>
+          {%- endif -%}
+        </div>
+        <div class="bb-cart__line-info">
+          <div class="bb-cart__line-name">Cintura #{{ i }}</div>
+          <div class="bb-cart__line-meta">
+            📏 {{ item.properties[prop_length] }}
+            &middot; 🔩 {{ item.properties[prop_buckle] }}
+            &middot; 🎨 {{ item.properties[prop_color] }}
+          </div>
+        </div>
+      </div>
+    {%- endfor -%}
+
+    {%- comment -%} Quantity & remove — standard Shopify approach {%- endcomment -%}
+    <div class="bb-cart__qty" style="margin-top:12px;">
+      <button class="bb-cart__qty-btn"
+              data-quantity-minus
+              data-line="{{ forloop.index }}"
+              aria-label="Diminuisci quantità">−</button>
+      <span class="bb-cart__qty-num">{{ item.quantity }}</span>
+      <button class="bb-cart__qty-btn"
+              data-quantity-plus
+              data-line="{{ forloop.index }}"
+              aria-label="Aumenta quantità">+</button>
+      <a href="{{ routes.cart_change_url }}?line={{ forloop.index }}&quantity=0"
+         class="bb-cart__remove"
+         aria-label="Rimuovi bundle dal carrello">Rimuovi</a>
+    </div>
+  </div>
+</div>

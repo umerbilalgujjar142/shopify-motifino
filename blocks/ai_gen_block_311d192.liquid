@@ -1,0 +1,243 @@
+{% doc %}
+  @prompt
+    Crea una sezione che permetta di scrivere un testo, con il font modificabile, compreso il suo peso. Inoltre dai la possibilità di inserire una sfumatura al posto del colore del testo, Inserisci la possibilità di creare un effetto di movimento della sfumatura con lo scorrere dello schermo, come un parallax effect
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-gradient-text-block-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    padding: {{ block.settings.padding }}px;
+  }
+
+  .ai-gradient-text-{{ ai_gen_id }} {
+    font-family: {{ block.settings.text_font.family }}, {{ block.settings.text_font.fallback_families }};
+    font-weight: {{ block.settings.text_font.weight }};
+    font-style: {{ block.settings.text_font.style }};
+    font-size: {{ block.settings.font_size }}px;
+    line-height: {{ block.settings.line_height }};
+    text-align: {{ block.settings.text_alignment }};
+    margin: 0;
+    {% if block.settings.use_gradient %}
+      background: {{ block.settings.gradient_color }};
+      {% if block.settings.enable_parallax %}
+        background-size: 200% 200%;
+      {% endif %}
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    {% else %}
+      color: {{ block.settings.text_color }};
+    {% endif %}
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-gradient-text-{{ ai_gen_id }} {
+      font-size: {{ block.settings.font_size | times: 0.7 }}px;
+    }
+  }
+{% endstyle %}
+
+<gradient-text-parallax-{{ ai_gen_id }} class="ai-gradient-text-block-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  {% if block.settings.text != blank %}
+    <p class="ai-gradient-text-{{ ai_gen_id }}" data-parallax-enabled="{{ block.settings.enable_parallax }}" data-parallax-speed="{{ block.settings.parallax_speed }}">{{ block.settings.text }}</p>
+  {% else %}
+    <p class="ai-gradient-text-{{ ai_gen_id }}" style="color: #999; font-style: italic;">
+      Inserisci il tuo testo nelle impostazioni
+    </p>
+  {% endif %}
+</gradient-text-parallax-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class GradientTextParallax{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.textElement = null;
+        this.isParallaxEnabled = false;
+        this.parallaxSpeed = 1;
+      }
+
+      connectedCallback() {
+        this.textElement = this.querySelector('.ai-gradient-text-{{ ai_gen_id }}');
+        
+        if (!this.textElement) return;
+
+        this.isParallaxEnabled = this.textElement.getAttribute('data-parallax-enabled') === 'true';
+        this.parallaxSpeed = parseFloat(this.textElement.getAttribute('data-parallax-speed')) || 1;
+
+        if (this.isParallaxEnabled) {
+          this.setupParallax();
+        }
+      }
+
+      setupParallax() {
+        this.handleScroll = this.handleScroll.bind(this);
+        window.addEventListener('scroll', this.handleScroll, { passive: true });
+        this.handleScroll();
+      }
+
+      handleScroll() {
+        const rect = this.textElement.getBoundingClientRect();
+        const windowHeight = window.innerHeight;
+        const elementCenter = rect.top + rect.height / 2;
+        const viewportCenter = windowHeight / 2;
+        
+        const distanceFromCenter = elementCenter - viewportCenter;
+        const maxDistance = windowHeight;
+        const scrollProgress = (distanceFromCenter / maxDistance) * this.parallaxSpeed;
+        
+        const position = 50 + (scrollProgress * 50);
+        const clampedPosition = Math.max(0, Math.min(100, position));
+        
+        this.textElement.style.backgroundPosition = `${clampedPosition}% center`;
+      }
+
+      disconnectedCallback() {
+        if (this.isParallaxEnabled) {
+          window.removeEventListener('scroll', this.handleScroll);
+        }
+      }
+    }
+
+    customElements.define('gradient-text-parallax-{{ ai_gen_id }}', GradientTextParallax{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Testo con sfumatura",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Contenuto"
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Testo"
+    },
+    {
+      "type": "header",
+      "content": "Tipografia"
+    },
+    {
+      "type": "font_picker",
+      "id": "text_font",
+      "label": "Font",
+      "default": "helvetica_n4"
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "label": "Dimensione font",
+      "min": 12,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "line_height",
+      "label": "Altezza linea",
+      "min": 1,
+      "max": 2,
+      "step": 0.1,
+      "default": 1.2
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Allineamento",
+      "options": [
+        {
+          "value": "left",
+          "label": "Sinistra"
+        },
+        {
+          "value": "center",
+          "label": "Centro"
+        },
+        {
+          "value": "right",
+          "label": "Destra"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Colore"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_gradient",
+      "label": "Usa sfumatura",
+      "default": true
+    },
+    {
+      "type": "color_background",
+      "id": "gradient_color",
+      "label": "Sfumatura",
+      "default": "linear-gradient(135deg, rgba(191, 149, 63, 1) 0%, rgba(252, 246, 186, 1) 50%, rgba(179, 135, 40, 1) 100%)"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Colore testo",
+      "default": "#141311"
+    },
+    {
+      "type": "header",
+      "content": "Effetto parallax"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_parallax",
+      "label": "Abilita effetto parallax",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "parallax_speed",
+      "label": "Velocità parallax",
+      "min": 0.5,
+      "max": 2,
+      "step": 0.5,
+      "default": 1
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Larghezza desktop",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "padding",
+      "label": "Padding",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    }
+  ],
+  "presets": [
+    {
+      "name": "Testo con sfumatura"
+    }
+  ]
+}
+{% endschema %}

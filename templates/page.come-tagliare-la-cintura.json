@@ -1,0 +1,279 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "color_scheme": "",
+        "use_custom_section_spacing": false,
+        "mobile_section_spacing_top": 0,
+        "mobile_section_spacing_right": 0,
+        "mobile_section_spacing_bottom": 0,
+        "mobile_section_spacing_left": 0,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 0,
+        "show_title": true,
+        "page_width": "xs"
+      }
+    },
+    "media_grid_LwMVWX": {
+      "type": "media-grid",
+      "blocks": {
+        "image_npacCJ": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "",
+            "hide_on_desktop": false,
+            "hide_on_mobile": false,
+            "enable_text_parallax": false,
+            "image": "shopify://shop_images/Come_tagliare_la_cintura_MOTIFINO_PC.jpg",
+            "desktop_image_fit": "cover",
+            "mobile_image": "shopify://shop_images/Immagini_34.jpg",
+            "mobile_image_fit": "cover",
+            "block_link": "",
+            "column_count": "12",
+            "row_count": 2,
+            "add_padding": false,
+            "subheading": "Come tagliare la cintura",
+            "subheading_style": "h6",
+            "subheading_shadow": 80,
+            "title": "FALLA SU MISURA",
+            "heading_tag": "h1",
+            "heading_shadow": 80,
+            "content": "<p>Segui gli step o il video sottostante per  fare la tua cintura su misura in 2 minuti</p>",
+            "content_shadow": 80,
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "button_shadow": 0,
+            "text_position": "place-self-start-center text-center",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0,
+            "gradient_overlay": "",
+            "mobile_padding_top": 60,
+            "mobile_padding_right": 0,
+            "mobile_padding_bottom": 0,
+            "mobile_padding_left": 0,
+            "desktop_padding_top": 80,
+            "desktop_padding_right": 0,
+            "desktop_padding_bottom": 0,
+            "desktop_padding_left": 0
+          }
+        },
+        "video_PU8LBP": {
+          "type": "video",
+          "settings": {
+            "color_scheme": "scheme-4",
+            "hide_on_desktop": false,
+            "hide_on_mobile": false,
+            "enable_text_parallax": false,
+            "video": "shopify://files/videos/Nuovo video tutorial.mp4",
+            "autoplay": true,
+            "show_controls": true,
+            "block_link": "",
+            "column_count": "12",
+            "row_count": 2,
+            "add_padding": false,
+            "subheading": "",
+            "subheading_style": "subheading",
+            "subheading_shadow": 0,
+            "title": "VIDEO TUTORIAL",
+            "heading_tag": "h2",
+            "heading_shadow": 85,
+            "content": "",
+            "content_shadow": 0,
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "button_shadow": 0,
+            "text_position": "place-self-start-center text-center",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0,
+            "gradient_overlay": "",
+            "mobile_padding_top": 30,
+            "mobile_padding_right": 0,
+            "mobile_padding_bottom": 0,
+            "mobile_padding_left": 0,
+            "desktop_padding_top": 0,
+            "desktop_padding_right": 0,
+            "desktop_padding_bottom": 0,
+            "desktop_padding_left": 0
+          }
+        }
+      },
+      "block_order": [
+        "image_npacCJ",
+        "video_PU8LBP"
+      ],
+      "name": "t:sections.media_grid.presets.media_grid.name",
+      "settings": {
+        "color_scheme": "",
+        "section_hide_on_mobile": false,
+        "section_hide_on_desktop": false,
+        "allow_transparent_header": true,
+        "separate_section_with_border": true,
+        "desktop_row_height": 370,
+        "mobile_row_height": 250,
+        "section_width": "full",
+        "mobile_spacing": "none",
+        "desktop_spacing": "none",
+        "desktop_outer_radius": 0,
+        "use_custom_section_spacing": false,
+        "mobile_section_spacing_top": 0,
+        "mobile_section_spacing_right": 0,
+        "mobile_section_spacing_bottom": 0,
+        "mobile_section_spacing_left": 0,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 0,
+        "subheading": "",
+        "title": "",
+        "content": ""
+      }
+    },
+    "rich_text_jqeaRX": {
+      "type": "rich-text",
+      "blocks": {
+        "subheading_E3jJjB": {
+          "type": "subheading",
+          "settings": {
+            "text": "Guida sul taglio"
+          }
+        },
+        "heading_4K69tc": {
+          "type": "heading",
+          "settings": {
+            "text": "INTRODUZIONE",
+            "heading_tag": "h1"
+          }
+        },
+        "richtext_RcGGja": {
+          "type": "richtext",
+          "settings": {
+            "content": "<p>La cintura risulta troppo lunga?</p><p>Nessun problema perché l'abbiamo creata in modo che possa essere accorciata facilmente in 2 minuti</p><p>Se hai problemi con il taglio della tua cintura, premi il pulsante WhatsApp in basso a destra e chiedi aiuto ad un nostro assistente personale</p>"
+          }
+        }
+      },
+      "block_order": [
+        "subheading_E3jJjB",
+        "heading_4K69tc",
+        "richtext_RcGGja"
+      ],
+      "name": "t:sections.rich_text.presets.rich_text.name",
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": false,
+        "content_width": "sm",
+        "text_position": "center",
+        "remove_vertical_spacing": false,
+        "use_custom_section_spacing": true,
+        "mobile_section_spacing_top": 40,
+        "mobile_section_spacing_right": 20,
+        "mobile_section_spacing_bottom": 40,
+        "mobile_section_spacing_left": 20,
+        "desktop_section_spacing_top": 60,
+        "desktop_section_spacing_right": 20,
+        "desktop_section_spacing_bottom": 60,
+        "desktop_section_spacing_left": 20
+      }
+    },
+    "scrollytelling_features_pNdGxK": {
+      "type": "scrollytelling-features",
+      "blocks": {
+        "feature_slide_qMTg6C": {
+          "type": "feature_slide",
+          "settings": {
+            "image": "shopify://shop_images/Taglio_cintura_MOTIFINO_-_Step_1_73074149-73b9-4fb5-aef3-6248746e1667.png",
+            "image_fit": "contain",
+            "text_alignment": "center",
+            "mobile_text_padding": 20,
+            "title": "Misura e Taglia",
+            "heading_size": "h2",
+            "margin_bottom_heading": 16,
+            "description": "<p>Indossa la cintura e porta la metà della cremagliera (i dentini) in corrispondenza del bottone dei pantaloni. Posiziona l'altra estremità (quella dove viene inserita la fibbia) sopra e taglia esattamente in corrispondenza del bottone.</p><p>Taglia un po' di meno al primo taglio per sicurezza </p>",
+            "margin_bottom_desc": 24,
+            "btn_label": "",
+            "btn_link": "",
+            "button_style": "solid",
+            "margin_bottom_btn": 0
+          }
+        },
+        "feature_slide_hbXnDy": {
+          "type": "feature_slide",
+          "settings": {
+            "image": "shopify://shop_images/Taglio_cintura_MOTIFINO_-_Step_2_0a92e1d3-a1a5-4838-813b-5b7b6e6a5dbe.png",
+            "image_fit": "contain",
+            "text_alignment": "center",
+            "mobile_text_padding": 20,
+            "title": "Inserisci la fibbia",
+            "heading_size": "h2",
+            "margin_bottom_heading": 16,
+            "description": "<p>Prendi l'estremità accorciata e inseriscila nello scomparto al di sotto della linguetta presente nella fibbia. Tenendo premuta la cintura contro la fibbia chiudi la linguetta facendo penetrare i denti nella pelle della cintura</p>",
+            "margin_bottom_desc": 24,
+            "btn_label": "",
+            "btn_link": "",
+            "button_style": "solid",
+            "margin_bottom_btn": 0
+          }
+        },
+        "feature_slide_w7fE7e": {
+          "type": "feature_slide",
+          "settings": {
+            "image": "shopify://shop_images/Taglio_cintura_MOTIFINO_-_Step_3_7bd92c50-82a7-49f1-8ffe-2ea816f98dfa.png",
+            "image_fit": "contain",
+            "text_alignment": "center",
+            "mobile_text_padding": 20,
+            "title": "Prova la cintura",
+            "heading_size": "h2",
+            "margin_bottom_heading": 16,
+            "description": "<p>Ora non rimane altro da fare se non indossare la cintura e vedere se il taglio fatto è abbastanza oppure bisogna accorciarla ulteriormente. Nel secondo caso ripetere il procedimento aprendo la linguetta della fibbia tramite il piccolo foro di apertura.</p>",
+            "margin_bottom_desc": 24,
+            "btn_label": "",
+            "btn_link": "",
+            "button_style": "solid",
+            "margin_bottom_btn": 0
+          }
+        }
+      },
+      "block_order": [
+        "feature_slide_qMTg6C",
+        "feature_slide_hbXnDy",
+        "feature_slide_w7fE7e"
+      ],
+      "name": "Sticky Scrollytelling",
+      "settings": {
+        "color_scheme": "",
+        "use_custom_section_spacing": false,
+        "mobile_section_spacing_top": 0,
+        "mobile_section_spacing_right": 0,
+        "mobile_section_spacing_bottom": 0,
+        "mobile_section_spacing_left": 0,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 0,
+        "zoom_scale": 100,
+        "float_intensity": 10,
+        "text_spacing": "sm"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "media_grid_LwMVWX",
+    "rich_text_jqeaRX",
+    "scrollytelling_features_pNdGxK"
+  ]
+}

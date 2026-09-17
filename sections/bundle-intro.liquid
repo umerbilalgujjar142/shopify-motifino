@@ -1,0 +1,159 @@
+<section class="bundle-intro">
+  <div class="bundle-intro__container">
+
+    <div class="bundle-intro__text">
+      {%- if section.settings.badge != blank -%}
+        <span class="bundle-intro__badge">{{ section.settings.badge }}</span>
+      {%- endif -%}
+      <h2 class="bundle-intro__heading">{{ section.settings.heading | default: "Come funziona il Bundle Builder" }}</h2>
+      <p class="bundle-intro__sub">{{ section.settings.subtext | default: "In tre semplici passi, crea la tua combinazione di cinture perfetta." }}</p>
+
+      <ol class="bundle-intro__steps">
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'step' -%}
+            <li class="bundle-intro__step" {{ block.shopify_attributes }}>
+              <span class="bundle-intro__step-num">{{ forloop.index }}</span>
+              <div class="bundle-intro__step-body">
+                <strong>{{ block.settings.title }}</strong>
+                <span>{{ block.settings.text }}</span>
+              </div>
+            </li>
+          {%- endif -%}
+        {%- endfor -%}
+      </ol>
+
+      {%- if section.settings.cta_label != blank -%}
+        <a href="{{ section.settings.cta_url | default: '/pages/bundle' }}?type=set-cinture-doppio" class="bundle-intro__cta">
+          {{ section.settings.cta_label }}
+        </a>
+      {%- endif -%}
+    </div>
+
+    <div class="bundle-intro__preview">
+      {%- if section.settings.preview_image -%}
+        <img src="{{ section.settings.preview_image | image_url: width: 600 }}"
+             alt="{{ section.settings.preview_image_alt | default: 'Bundle preview' }}"
+             width="600" height="auto" loading="lazy" class="bundle-intro__preview-img">
+      {%- else -%}
+        <!-- Placeholder: belt bundle visual -->
+        <div class="bundle-intro__preview-placeholder" aria-hidden="true">
+          <div class="bip__cards">
+            {%- assign tier_list = "Single,Double,Triple,Infinity" | split: "," -%}
+            {%- for tier in tier_list -%}
+              <div class="bip__card bip__card--{{ tier | downcase }}">
+                <div class="bip__card-icon">
+                  {%- case tier -%}
+                    {%- when 'Single' -%}
+                      <svg viewBox="0 0 40 40" width="32" height="32" fill="none"><rect x="8" y="17" width="24" height="6" rx="3" fill="#b8860b" opacity=".85"/><rect x="17" y="12" width="6" height="16" rx="2" fill="#b8860b"/></svg>
+                    {%- when 'Double' -%}
+                      <svg viewBox="0 0 40 40" width="32" height="32" fill="none"><rect x="6" y="14" width="22" height="5" rx="2.5" fill="#b8860b" opacity=".7"/><rect x="6" y="21" width="22" height="5" rx="2.5" fill="#b8860b"/><rect x="16" y="10" width="5" height="20" rx="2" fill="#b8860b" opacity=".5"/></svg>
+                    {%- when 'Triple' -%}
+                      <svg viewBox="0 0 40 40" width="32" height="32" fill="none"><rect x="5" y="12" width="20" height="4" rx="2" fill="#b8860b" opacity=".5"/><rect x="5" y="18" width="20" height="4" rx="2" fill="#b8860b" opacity=".75"/><rect x="5" y="24" width="20" height="4" rx="2" fill="#b8860b"/><rect x="15" y="9" width="4" height="22" rx="2" fill="#b8860b" opacity=".4"/></svg>
+                    {%- when 'Infinity' -%}
+                      <svg viewBox="0 0 40 40" width="32" height="32" fill="none"><path d="M8 20c0-3.3 2.7-6 6-6s6 3 8 6-2.7 6-8 6-6-2.7-6-6z" fill="#b8860b" opacity=".6"/><path d="M20 20c0-3 2.7-6 6-6s6 2.7 6 6-2.7 6-6 6-6-3-8-6z" fill="#b8860b" opacity=".9"/></svg>
+                  {%- endcase -%}
+                </div>
+                <span class="bip__card-name">{{ tier }}</span>
+              </div>
+            {%- endfor -%}
+          </div>
+        </div>
+      {%- endif -%}
+    </div>
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Bundle Intro",
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Step",
+      "limit": 5,
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Step title"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Step description"
+        }
+      ]
+    }
+  ],
+  "settings": [
+    {
+      "type": "text",
+      "id": "badge",
+      "label": "Badge label",
+      "default": "Come funziona"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Section heading",
+      "default": "Tre passi per il tuo Bundle perfetto"
+    },
+    {
+      "type": "textarea",
+      "id": "subtext",
+      "label": "Subtext",
+      "default": "Scegli il set, personalizza ogni cintura e aggiungi al carrello."
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "CTA label",
+      "default": "Inizia a comporre →"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "CTA URL"
+    },
+    {
+      "type": "image_picker",
+      "id": "preview_image",
+      "label": "Preview image (right side)"
+    },
+    {
+      "type": "text",
+      "id": "preview_image_alt",
+      "label": "Preview image alt text"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Bundle Intro",
+      "blocks": [
+        {
+          "type": "step",
+          "settings": {
+            "title": "Scegli il pacchetto",
+            "text": "Single (1 cintura), Double (2), Triple (3) o Infinity (illimitato)."
+          }
+        },
+        {
+          "type": "step",
+          "settings": {
+            "title": "Componi ogni cintura",
+            "text": "Seleziona lunghezza, fibbia e colore del cinturino per ciascuna."
+          }
+        },
+        {
+          "type": "step",
+          "settings": {
+            "title": "Aggiungi al carrello",
+            "text": "Rivedi il riepilogo e procedi al checkout sicuro."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

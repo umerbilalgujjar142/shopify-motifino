@@ -1,0 +1,1663 @@
+/* ============================================================
+   SHOPIFY BUNDLE BUILDER — bundle-builder.css
+   ============================================================ */
+
+/* ── Responsive type scale ───────────────────────────────────
+   All font-sizes in bb-*.css use these variables.
+   Mobile values are set here; desktop bumps them up.          */
+:root {
+  --bb-fs-2xs: 10px;
+  /* micro labels          */
+  --bb-fs-xs: 11px;
+  /* small captions        */
+  --bb-fs-sm: 12px;
+  /* secondary text        */
+  --bb-fs-base: 13px;
+  /* body / UI text        */
+  --bb-fs-md: 14px;
+  /* standard text         */
+  --bb-fs-lg: 16px;
+  /* emphasis / sub-heads  */
+  --bb-fs-xl: 18px;
+  /* section headings      */
+  --bb-fs-2xl: 22px;
+  /* hero / screen titles  */
+}
+
+@media (min-width: 768px) {
+  :root {
+    --bb-fs-2xs: 11px;
+    --bb-fs-xs: 12px;
+    --bb-fs-sm: 13px;
+    --bb-fs-base: 14px;
+    --bb-fs-md: 15px;
+    --bb-fs-lg: 17px;
+    --bb-fs-xl: 20px;
+    --bb-fs-2xl: 24px;
+  }
+}
+
+/* ── Nascondi la barra "Welcome to our store" del tema Dawn ── */
+#shopify-section-announcement-bar,
+.announcement-bar,
+.shopify-section-announcement-bar,
+announcement-bar,
+announcement-bar-section {
+  display: none !important;
+}
+
+
+/* ── Reset & base ─────────────────────────────────────────── */
+.bb-wrap *,
+.bb-wrap *::before,
+.bb-wrap *::after {
+  box-sizing: border-box;
+}
+
+/* Override Shopify Dawn theme blue links inside the builder */
+.bb-wrap a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Buttons that need white text — explicit overrides */
+.bb-wrap .bb-bundle-card__cta,
+.bb-wrap .bb-btn-primary,
+.bb-wrap .bb-wizard__step.is-active .bb-wizard__lbl {
+  color: #fff;
+}
+
+.bb-wrap {
+  --bb-accent: #b8860b;
+  --bb-dark: #1a1a1a;
+  --bb-mid: #555;
+  --bb-light: #f5f5f5;
+  --bb-border: #e0e0e0;
+  --bb-white: #ffffff;
+  --bb-radius: 24px;
+  --bb-shadow: 0 2px 16px rgba(0, 0, 0, .10);
+  --bb-combo-bg: rgb(241 241 241);
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  color: var(--bb-dark);
+  max-width: 480px;
+  margin: 0 auto;
+  background: var(--bb-white);
+  min-height: 100vh;
+  position: relative;
+}
+
+/* ── Screens ──────────────────────────────────────────────── */
+.bb-screen {
+  display: none;
+}
+
+.bb-screen.is-active {
+  display: block;
+}
+
+/* ── Hide bb-wrap card frame on summary screen ────────────── */
+.bb-wrap:has(#bb-screen-review.is-active) {
+  background: transparent;
+  box-shadow: none;
+  border: none;
+  border-radius: 0;
+  min-height: unset;
+  overflow: visible;
+}
+
+/* Composer: let the sticky combo-bar escape the rounded-card clip, while
+   keeping the card's other styling intact. Without this, .bb-wrap's
+   mobile overflow:hidden creates a non-scrolling container that voids
+   position:sticky on .bb-combo-bar. */
+.bb-wrap:has(#bb-screen-composer.is-active) {
+  overflow: visible;
+}
+
+/* Match the page-level background to the combo-bar when composer is active,
+   so any sliver visible past the bar (tablet side gutters, scroll-bottom
+   overshoot) blends instead of showing the default light-gray frame. */
+.bb-wrap-outer:has(#bb-screen-composer.is-active) {
+  background: var(--bb-combo-bg, rgb(241 241 241));
+}
+
+.bb-wrap-outer:has(#bb-screen-review.is-active) {
+  background: transparent;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+/* ── Navigation bar ───────────────────────────────────────── */
+.bb-nav {
+  display: flex;
+  border-bottom: 1px solid var(--bb-border);
+  background: var(--bb-white);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.bb-nav__item {
+  flex: 1;
+  padding: 12px 6px;
+  font-size: var(--bb-fs-2xs);
+  text-align: center;
+  color: var(--bb-mid);
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  line-height: 1.3;
+  transition: color .2s, border-color .2s;
+}
+
+.bb-nav__item.is-active {
+  color: var(--bb-accent);
+  border-color: var(--bb-accent);
+  font-weight: 600;
+  background-color: #F0EFEB;
+}
+
+.bb-nav__icon {
+  display: block;
+  width: 20px;
+  height: 20px;
+  margin: 0 auto 4px;
+}
+
+
+/* ── Screen header ────────────────────────────────────────── */
+.bb-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 16px 0;
+  gap: 8px;
+}
+
+.bb-header__title {
+  font-size: var(--bb-fs-xl);
+  font-weight: 700;
+  flex: 1;
+  text-align: center;
+}
+
+.bb-header__sub {
+  font-size: var(--bb-fs-sm);
+  color: var(--bb-mid);
+  text-align: center;
+  padding: 4px 16px 0;
+}
+
+/* ── Back / icon buttons ──────────────────────────────────── */
+.bb-btn-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--bb-border);
+  background: var(--bb-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background .2s;
+}
+
+.bb-btn-icon:hover {
+  background: var(--bb-light);
+}
+
+.bb-btn-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ── [Progress styles moved to bb-screen-review.css] ── */
+
+/* ── Primary / secondary buttons ─────────────────────────── */
+.bb-cta-bar {
+  padding: 18px 16px 14px;
+  /* 13→18: +5px = 13+1+18=32px gap totale */
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+  z-index: 10;
+  /* sopra ai carousel e a qualsiasi overlay */
+}
+
+.bb-btn-primary {
+  width: 100%;
+  padding: 15px;
+  border-radius: 10px;
+  border: none;
+  background: var(--bb-dark);
+  color: var(--bb-white);
+  font-size: var(--bb-fs-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s;
+  position: relative;
+  /* crea contesto di stacking sopra carousel */
+  z-index: 1;
+  touch-action: manipulation;
+  /* rimuove il 300ms delay su iOS, nessun blocco swipe */
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.bb-btn-primary svg {
+  flex-shrink: 0;
+}
+
+.bb-btn-secondary,
+.bb-btn-composer-back,
+.bb-btn-icon {
+  touch-action: manipulation;
+  pointer-events: auto;
+}
+
+.bb-btn-primary:hover {
+  background: #333;
+}
+
+.bb-btn-primary.is-accent {
+  background: var(--bb-dark);
+  border: none;
+  color: var(--bb-white);
+}
+
+.bb-btn-primary.is-accent:hover {
+  filter: brightness(1.08);
+}
+
+.bb-btn-secondary {
+  width: 100%;
+  padding: 13px;
+  border-radius: 10px;
+  border: 1.5px solid var(--bb-border);
+  background: var(--bb-white);
+  font-size: var(--bb-fs-md);
+  cursor: pointer;
+  transition: background .2s;
+}
+
+.bb-btn-secondary:hover {
+  background: var(--bb-light);
+}
+
+/* ── SCREEN 0 — Bundle selector ───────────────────────────── */
+.bb-selector {
+  padding: 16px;
+}
+
+.bb-selector__title {
+  font-size: var(--bb-fs-2xl);
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.bb-selector__sub {
+  font-size: var(--bb-fs-base);
+  color: var(--bb-mid);
+  margin-bottom: 20px;
+  line-height: 1.4;
+}
+
+.bb-bundle-card {
+  border: 1.5px solid var(--bb-border);
+  border-radius: var(--bb-radius);
+  padding: 16px;
+  margin-bottom: 14px;
+  cursor: pointer;
+  transition: border-color .2s, box-shadow .2s;
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.bb-bundle-card:hover,
+.bb-bundle-card.is-selected {
+  border-color: var(--bb-accent);
+  box-shadow: 0 2px 12px rgba(184, 134, 11, .15);
+}
+
+.bb-bundle-card__icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 10px;
+  background: var(--bb-light);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.bb-bundle-card__icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bb-bundle-card__body {
+  flex: 1;
+}
+
+.bb-bundle-card__name {
+  font-size: var(--bb-fs-md);
+  font-weight: 700;
+  margin-bottom: 3px;
+}
+
+.bb-bundle-card__includes {
+  font-size: var(--bb-fs-sm);
+  color: var(--bb-mid);
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.bb-bundle-card__price {
+  font-size: var(--bb-fs-lg);
+  font-weight: 700;
+  color: var(--bb-accent);
+}
+
+.bb-bundle-card--infinity {
+  border-color: var(--bb-accent);
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1400 100%);
+}
+
+.bb-badge--infinity {
+  background: linear-gradient(90deg, #b8860b, #d4a017);
+  color: #fff;
+}
+
+.bb-bundle-card__badge {
+  font-size: var(--bb-fs-2xs);
+  font-weight: 600;
+  background: #f0e8d0;
+  color: var(--bb-accent);
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-left: 6px;
+}
+
+.bb-bundle-card__cta {
+  display: block;
+  text-align: center;
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  background: var(--bb-dark);
+  color: #fff;
+  font-size: var(--bb-fs-base);
+  font-weight: 600;
+}
+
+/* ── [Review screen styles moved to bb-screen-review.css] ── */
+
+/* ── SCREEN: Cart ─────────────────────────────────────────── */
+.bb-cart {
+  padding: 0 16px;
+}
+
+.bb-cart__bundle {
+  border: 1px solid var(--bb-border);
+  border-radius: var(--bb-radius);
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.bb-cart__bundle-header {
+  background: var(--bb-light);
+  padding: 10px 14px;
+  font-size: var(--bb-fs-base);
+  font-weight: 700;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bb-cart__bundle-body {
+  padding: 14px;
+}
+
+/* Per-belt compact card in cart */
+.bb-cart__belt-card {
+  display: flex;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--bb-border);
+  align-items: flex-start;
+}
+
+.bb-cart__belt-card:last-child {
+  border-bottom: none;
+}
+
+.bb-cart__belt-mockup {
+  flex-shrink: 0;
+  width: 80px;
+  height: 40px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--bb-light);
+}
+
+.bb-cart__belt-mockup img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bb-cart__belt-info {
+  flex: 1;
+}
+
+.bb-cart__belt-num {
+  font-size: var(--bb-fs-2xs);
+  font-weight: 700;
+  color: var(--bb-mid);
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-bottom: 4px;
+}
+
+.bb-cart__belt-specs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px 10px;
+}
+
+.bb-cart__belt-spec {
+  font-size: var(--bb-fs-xs);
+  color: #555;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.bb-cart__belt-spec strong {
+  color: var(--bb-dark);
+  font-weight: 600;
+}
+
+.bb-cart__qty {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.bb-cart__qty-btn {
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--bb-border);
+  border-radius: 6px;
+  background: var(--bb-white);
+  font-size: var(--bb-fs-lg);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .2s;
+}
+
+.bb-cart__qty-btn:hover {
+  background: var(--bb-light);
+}
+
+.bb-cart__qty-num {
+  font-size: var(--bb-fs-md);
+  font-weight: 600;
+  min-width: 20px;
+  text-align: center;
+}
+
+.bb-cart__remove {
+  font-size: var(--bb-fs-sm);
+  color: #cc0000;
+  cursor: pointer;
+  text-decoration: underline;
+  margin-left: auto;
+}
+
+.bb-cart__total-bar {
+  display: flex;
+  justify-content: space-between;
+  padding: 14px 0;
+  font-size: var(--bb-fs-lg);
+  font-weight: 700;
+  border-top: 2px solid var(--bb-dark);
+}
+
+.bb-cart__notes {
+  font-size: var(--bb-fs-xs);
+  color: var(--bb-mid);
+  text-align: center;
+  padding: 8px 0 16px;
+  line-height: 1.5;
+}
+
+/* ── SCREEN: Confirm order drawer ────────────────────────── */
+.bb-confirm {
+  padding: 16px;
+}
+
+.bb-confirm__title {
+  font-size: var(--bb-fs-xl);
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.bb-confirm__bundle {
+  display: flex;
+  border: 1px solid var(--bb-border);
+  border-radius: var(--bb-radius);
+  overflow: hidden;
+  margin-bottom: 12px;
+  font-size: var(--bb-fs-base);
+  line-height: 1.6;
+}
+
+.bb-confirm__bundle-photo {
+  flex-shrink: 0;
+  width: 110px;
+  background: linear-gradient(160deg, #111 0%, #1a1400 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 10px;
+}
+
+.bb-confirm__bundle-detail {
+  flex: 1;
+  padding: 12px;
+}
+
+.bb-confirm__bundle-title {
+  font-weight: 700;
+  margin-bottom: 6px;
+  font-size: var(--bb-fs-md);
+}
+
+.bb-confirm__belt-line {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: var(--bb-fs-sm);
+  color: var(--bb-mid);
+  margin-bottom: 2px;
+}
+
+.bb-confirm__bundle-price {
+  margin-top: 8px;
+  font-weight: 700;
+  font-size: var(--bb-fs-md);
+  color: var(--bb-accent);
+}
+
+.bb-confirm__trust {
+  display: flex;
+  gap: 16px;
+  margin: 16px 0;
+  font-size: var(--bb-fs-sm);
+  color: var(--bb-mid);
+}
+
+.bb-confirm__trust-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.bb-confirm__trust-item svg {
+  width: 18px;
+  height: 18px;
+  color: var(--bb-accent);
+}
+
+.bb-confirm__shipping {
+  font-size: var(--bb-fs-sm);
+  color: var(--bb-accent);
+  cursor: pointer;
+  text-decoration: underline;
+  margin-bottom: 16px;
+  display: block;
+}
+
+/* ── Order confirmed ──────────────────────────────────────── */
+.bb-confirmed {
+  padding: 40px 24px;
+  text-align: center;
+}
+
+.bb-confirmed__icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #e8f5e9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+}
+
+.bb-confirmed__icon svg {
+  width: 36px;
+  height: 36px;
+  color: #2e7d32;
+}
+
+.bb-confirmed__title {
+  font-size: var(--bb-fs-2xl);
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.bb-confirmed__sub {
+  font-size: var(--bb-fs-md);
+  color: var(--bb-mid);
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
+
+.bb-confirmed__order {
+  background: var(--bb-light);
+  border-radius: var(--bb-radius);
+  padding: 16px;
+  font-size: var(--bb-fs-base);
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.bb-confirmed__order-title {
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+/* Prevent page scroll while any modal is open */
+body.bb-modal-open {
+  overflow: hidden;
+}
+
+/* ── Modal overlay ────────────────────────────────────────── */
+.bb-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, .85);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.bb-modal.is-open {
+  display: flex;
+}
+
+.bb-modal__close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  background: rgba(255, 255, 255, .15);
+  border-radius: 50%;
+  border: none;
+  color: #fff;
+  font-size: var(--bb-fs-xl);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bb-modal__content {
+  width: 100%;
+  max-width: 480px;
+  max-height: 80vh;
+  overflow: auto;
+  border-radius: 16px 16px 0 0;
+  background: #000;
+  position: absolute;
+  bottom: 0;
+}
+
+.bb-modal__img {
+  width: 100%;
+  display: block;
+  border-radius: 16px 16px 0 0;
+}
+
+.bb-modal__placeholder {
+  width: 100%;
+  min-height: 280px;
+  background: #1e1e1e;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: #555;
+  font-size: var(--bb-fs-base);
+  border-radius: 16px 16px 0 0;
+}
+
+.bb-modal__caption {
+  padding: 16px;
+  color: #fff;
+  font-size: var(--bb-fs-md);
+}
+
+.bb-modal__caption strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: var(--bb-fs-lg);
+}
+
+/* ── Recap drawer — slides in from the right ─────────────── */
+.bb-modal--recap {
+  flex-direction: row;
+  align-items: stretch;
+  justify-content: flex-end;
+}
+
+.bb-modal--recap .bb-modal__content {
+  position: relative;
+  bottom: auto;
+  top: 0;
+  height: 100vh;
+  max-height: 100vh;
+  width: 75%;
+  max-width: 480px;
+  background: #f5f5f5;
+  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.bb-recap__header {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 20px;
+  background: #fff;
+  border-bottom: 1px solid var(--bb-border);
+}
+
+.bb-recap__close {
+  position: absolute;
+  top: 14px;
+  right: calc(min(75vw, 480px) + 12px);
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--bb-accent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .25);
+  z-index: 2;
+}
+
+/* Recap close button reused on indossata + 360 modals — right side, smaller */
+#bb-modal-indossata .bb-recap__close,
+.bb-modal--360 > .bb-recap__close,
+.bb-360-viewer .bb-recap__close {
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+}
+
+#bb-modal-indossata .bb-recap__close svg,
+.bb-modal--360 > .bb-recap__close svg,
+.bb-360-viewer .bb-recap__close svg {
+  width: 16px;
+  height: 16px;
+}
+
+.bb-360-viewer .bb-recap__close {
+  z-index: 20;
+}
+
+.bb-recap__title {
+  font-size: var(--bb-fs-xl);
+  font-weight: 800;
+  color: var(--bb-dark);
+  letter-spacing: -.01em;
+}
+
+.bb-recap__body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 14px 0px 24px;
+  background-color: var(--bb-white);
+}
+
+.bb-combo-recap {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.bb-combo-recap__item {
+  background: transparent;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.bb-combo-recap__head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  padding: 0 8px 8px;
+  position: relative;
+}
+
+.bb-combo-recap__title-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bb-combo-recap__sub-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+  width: 100%;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+.bb-combo-recap__length {
+  background: var(--bb-dark);
+  color: #fff;
+  font-size: var(--bb-fs-2xs);
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+  line-height: 1.4;
+  flex: 0 0 auto;
+}
+
+.bb-combo-recap__title {
+  font-size: var(--bb-fs-md);
+  font-weight: 700;
+  color: var(--bb-dark);
+}
+
+.bb-combo-recap__sub {
+  font-size: var(--bb-fs-xs);
+  color: #444;
+  line-height: 1.35;
+  white-space: nowrap;
+  /* overflow: hidden;
+  text-overflow: ellipsis; */
+  min-width: 0;
+}
+
+.bb-combo-recap__img {
+  width: 100%;
+  height: 120px;
+  display: block;
+  object-fit: cover;
+}
+
+.bb-combo-recap__img--empty {
+  height: 140px;
+  background: #f2f2f2;
+  border: 1px dashed var(--bb-mid);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bb-combo-recap__item--placeholder {
+  opacity: 0.55;
+  padding: 0 10px;
+}
+
+.bb-combo-recap__item--placeholder .bb-combo-recap__sub {
+  font-style: italic;
+  color: var(--bb-mid);
+}
+
+.bb-combo-recap__empty {
+  text-align: center;
+  padding: 40px 16px;
+  color: var(--bb-mid);
+  font-size: var(--bb-fs-md);
+}
+
+/* 360° modal — full-screen, no scroll */
+.bb-modal--360 .bb-modal__content {
+  position: fixed;
+  inset: 0;
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.bb-modal--360 .bb-modal__video-info {
+  flex-shrink: 0;
+}
+
+/* ── 360° Sirv viewer wrapper ─────────────────────────── */
+.bb-360-viewer {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  background: #000;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bb-360-viewer .Sirv {
+  width: 100%;
+  height: 100%;
+}
+
+/* ── 360° swipe hint overlay (centred, fades on first drag) ── */
+@keyframes bb-swipe-hint {
+  0% {
+    transform: translateX(-7px);
+  }
+
+  50% {
+    transform: translateX(7px);
+  }
+
+  100% {
+    transform: translateX(-7px);
+  }
+}
+
+.bb-360-hint {
+  position: absolute;
+  inset: 0;
+  z-index: 15;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  transition: opacity .5s ease;
+}
+
+.bb-360-hint.is-hidden {
+  opacity: 0;
+}
+
+.bb-360-swipe-icon {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  transform: translateY(-80px);
+}
+
+.bb-360-swipe-icon svg {
+  animation: bb-swipe-hint 2.5s ease-in-out infinite;
+  /* filter: drop-shadow(0 2px 10px rgba(0, 0, 0, .7)); */
+}
+
+.bb-360-swipe-icon svg path {
+  fill: #777;
+}
+
+.bb-360-hint-label {
+  font-size: var(--bb-fs-base);
+  color: #777;
+  white-space: nowrap;
+  font-family: sans-serif;
+  font-weight: 500;
+  text-align: center;
+  line-height: 1.3;
+  letter-spacing: .02em;
+}
+
+/* Close button overlaid inside the viewer (top-right) */
+.bb-360-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 20;
+  width: 36px;
+  height: 36px;
+  background: rgba(255, 255, 255, .18);
+  border: none;
+  border-radius: 50%;
+  color: #fff;
+  font-size: var(--bb-fs-xl);
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .2s;
+}
+
+.bb-360-close:hover {
+  background: rgba(255, 255, 255, .35);
+}
+
+/* Hide any Sirv-rendered fullscreen button as a belt-and-suspenders measure */
+/* Hide Sirv fullscreen button — multiple selectors to cover all Sirv versions */
+[class*="sirv-fullscreen"],
+[class*="sirv"][class*="fullscreen"],
+[class*="sirv"][class*="full-screen"],
+.sirv-viewer [title="Fullscreen"],
+.sirv-viewer [title="fullscreen"],
+.sirv-viewer [aria-label="Fullscreen"],
+.sirv-viewer [aria-label="fullscreen"],
+.bb-360-viewer [title*="ullscreen"],
+.bb-360-viewer [aria-label*="ullscreen"] {
+  display: none !important;
+}
+
+/* Centre Sirv's hint badge vertically */
+.bb-360-viewer .sirv-hint {
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+}
+
+.bb-360-viewer .sirv-hint.spin-hint-horizontal-animation .sirv-hint-message::before,
+.bb-360-viewer .sirv-hint.spin-hint-horizontal-animation .sirv-hint-message::after {
+  content: '';
+  width: 15px;
+  height: 10px;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 8px;
+  background-image: url(https://scripts.sirv.com/sirvjs/v3/graphics/hint/hint.arrow.03.svg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  display: block;
+}
+
+.bb-360-viewer .sirv-hint.spin-hint-horizontal-animation .sirv-hint-message::after {
+  left: auto;
+  right: 8px;
+  transform: translateY(-50%) rotate(180deg);
+}
+
+.bb-360-viewer .sirv-hint.spin-hint-horizontal-animation .sirv-hint-message {
+  padding-left: 2em;
+  padding-right: 2em;
+}
+
+.bb-modal__video-info {
+  padding: 12px 16px 20px;
+  background: #111;
+}
+
+.bb-modal__video-title {
+  color: #fff;
+  font-weight: 700;
+  font-size: var(--bb-fs-md);
+  margin-bottom: 4px;
+}
+
+.bb-modal__video-sub {
+  color: #aaa;
+  font-size: var(--bb-fs-sm);
+}
+
+/* ── Utility ──────────────────────────────────────────────── */
+.bb-mt-8 {
+  margin-top: 8px;
+}
+
+.bb-mt-14 {
+  margin-top: 14px;
+}
+
+.bb-mt-16 {
+  margin-top: 16px;
+}
+
+.bb-divider {
+  height: 1px;
+  background: var(--bb-border);
+  margin: 16px 0;
+}
+
+.bb-badge {
+  display: inline-block;
+  font-size: var(--bb-fs-2xs);
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.bb-badge--gold {
+  background: #f0e8d0;
+  color: var(--bb-accent);
+}
+
+/* responsive */
+@media (min-width: 768px) {
+  .bb-wrap {
+    border: 1px solid var(--bb-border);
+    border-radius: 20px;
+    margin: 24px auto;
+    box-shadow: var(--bb-shadow);
+    min-height: auto;
+  }
+
+  /* Non-composer screens stay centred */
+  #bb-screen-selector,
+  #bb-screen-review,
+  #bb-screen-cart,
+  #bb-screen-confirm,
+  #bb-screen-confirmed {
+    max-width: 460px;
+    margin: 0 auto;
+  }
+}
+
+/* ── Composer screen styles (success overlay, carousels, wizard) → bb-screen-composer.css ── */
+
+
+/* ════════════════════════════════════════════════════════════
+   BUNDLE INTRO
+   ════════════════════════════════════════════════════════════ */
+.bundle-intro {
+  padding: 80px 24px;
+  background: var(--color-bg);
+}
+
+.bundle-intro__container {
+  max-width: var(--page-width);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: center;
+}
+
+@media (max-width: 900px) {
+  .bundle-intro__container {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+}
+
+.bundle-intro__badge {
+  display: inline-block;
+  background: var(--color-primary-light);
+  color: var(--color-primary-dark);
+  font-size: var(--bb-fs-xs);
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-bottom: 16px;
+}
+
+.bundle-intro__heading {
+  font-size: clamp(26px, 3.5vw, 38px);
+  font-weight: 800;
+  letter-spacing: -.02em;
+  line-height: 1.2;
+  margin-bottom: 12px;
+}
+
+.bundle-intro__sub {
+  font-size: var(--bb-fs-md);
+  color: var(--color-text-muted);
+  line-height: 1.65;
+  margin-bottom: 32px;
+}
+
+.bundle-intro__steps {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.bundle-intro__step {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.bundle-intro__step-num {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: var(--bb-fs-sm);
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+}
+
+.bundle-intro__step-body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.bundle-intro__step-body strong {
+  font-size: var(--bb-fs-md);
+  font-weight: 700;
+}
+
+.bundle-intro__step-body span {
+  font-size: var(--bb-fs-base);
+  color: var(--color-text-muted);
+}
+
+.bundle-intro__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: var(--bb-fs-md);
+  font-weight: 700;
+  padding: 12px 26px;
+  border-radius: 30px;
+  transition: background var(--transition), transform var(--transition);
+}
+
+.bundle-intro__cta:hover {
+  background: var(--color-primary-dark);
+  transform: translateY(-1px);
+}
+
+/* Preview placeholder */
+.bundle-intro__preview-placeholder {
+  background: var(--color-surface);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 40px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 320px;
+}
+
+.bip__cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  width: 100%;
+}
+
+.bip__card {
+  background: var(--color-bg);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.bip__card:hover {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(184, 134, 11, .08);
+}
+
+.bip__card--infinity {
+  background: linear-gradient(135deg, #fff8e8, #fffbf0);
+  border-color: var(--color-primary);
+}
+
+.bip__card-name {
+  font-size: var(--bb-fs-sm);
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: .02em;
+}
+
+/* ════════════════════════════════════════════════════════════
+   BUNDLE PAGE HERO
+   ════════════════════════════════════════════════════════════ */
+.bundle-page-hero {
+  background: var(--color-header-bg);
+  padding: 32px 0;
+}
+
+.bundle-page-hero__container {
+  max-width: var(--page-width);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.bundle-page-hero__breadcrumb {
+  font-size: var(--bb-fs-sm);
+  color: rgba(255, 255, 255, .4);
+  margin-bottom: 24px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.bundle-page-hero__breadcrumb a {
+  color: rgba(255, 255, 255, .55);
+  transition: color var(--transition);
+}
+
+.bundle-page-hero__breadcrumb a:hover {
+  color: #fff;
+}
+
+.bundle-page-hero__content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+}
+
+@media (max-width: 860px) {
+  .bundle-page-hero__content {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+}
+
+.bundle-page-hero__badge {
+  display: inline-block;
+  background: rgba(184, 134, 11, .18);
+  border: 1px solid rgba(184, 134, 11, .35);
+  color: #e4b840;
+  font-size: var(--bb-fs-xs);
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-bottom: 12px;
+}
+
+.bundle-page-hero__title {
+  font-size: clamp(24px, 3.5vw, 38px);
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.15;
+  letter-spacing: -.02em;
+  margin-bottom: 12px;
+}
+
+.bundle-page-hero__sub {
+  font-size: var(--bb-fs-md);
+  color: rgba(255, 255, 255, .65);
+  line-height: 1.6;
+  max-width: 460px;
+  margin-bottom: 20px;
+}
+
+.bundle-page-hero__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.bundle-page-hero__trust {
+  font-size: var(--bb-fs-sm);
+  color: rgba(255, 255, 255, .55);
+  background: rgba(255, 255, 255, .06);
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, .1);
+}
+
+/* Tier summary (right column) */
+.bundle-page-hero__tier-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bph-tier {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(255, 255, 255, .06);
+  border: 1px solid rgba(255, 255, 255, .1);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  transition: background var(--transition), border-color var(--transition);
+}
+
+.bph-tier:hover {
+  background: rgba(255, 255, 255, .1);
+  border-color: rgba(184, 134, 11, .4);
+}
+
+.bph-tier--infinity {
+  background: rgba(184, 134, 11, .1);
+  border-color: rgba(184, 134, 11, .3);
+}
+
+.bph-tier__icon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(184, 134, 11, .15);
+  border-radius: var(--radius-sm);
+}
+
+.bph-tier__body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.bph-tier__body strong {
+  font-size: var(--bb-fs-base);
+  font-weight: 700;
+  color: #fff;
+}
+
+.bph-tier__body span {
+  font-size: var(--bb-fs-sm);
+  color: rgba(255, 255, 255, .55);
+}
+
+.bph-tier__body em {
+  font-style: normal;
+  color: #e4b840;
+  margin-left: 6px;
+}
+
+/* ════════════════════════════════════════════════════════════
+   BUNDLE BUILDER WRAPPER
+   ════════════════════════════════════════════════════════════ */
+/* The bundle builder section renders with its own CSS (bundle-builder.css)
+   but we add context-aware container styles here.
+   Matches the screenshot: light grey page bg, white card centered, subtle shadow */
+.bb-wrap-outer {
+  background: #f4f5f7;
+  padding: 40px 16px 80px;
+}
+
+.bb-wrap-outer .bb-wrap {
+  max-width: 480px;
+  /* matches the mobile-first card width from the screenshot */
+  margin: 0 auto;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, .12);
+  overflow: hidden;
+}
+
+/* On very small screens: full-width card, no border radius, matches app-like feel */
+@media (max-width: 520px) {
+  .bb-wrap-outer {
+    padding: 0;
+    background: #ffffff;
+  }
+
+  .bb-wrap-outer .bb-wrap {
+    border-radius: 0;
+    box-shadow: none;
+    max-width: 100%;
+  }
+}
+
+/* Desktop: expand wrapper for two-column composer; must come after the base
+   .bb-wrap-outer .bb-wrap rule above so cascade order overrides overflow:hidden */
+@media (min-width: 768px) {
+  .bb-wrap-outer {
+    padding: 32px 24px 80px;
+    min-height: calc(100vh - var(--header-height));
+  }
+
+  .bb-wrap-outer .bb-wrap {
+    max-width: 960px;
+    overflow: visible;
+    border-radius: 20px;
+  }
+}
+
+/* ── Size selector buttons (130cm / 150cm) ──────────────────
+   bb-length-selector is rendered by JS inside #bb-length-selector.
+   These rules ensure the 2 pill buttons match the screenshot toggle style */
+.bb-length-selector {
+  display: flex;
+  gap: 8px;
+  flex-wrap: nowrap;
+}
+
+/* Override bundle-builder.css button styles with screenshot-accurate pills */
+.bb-length-selector .bb-length-btn {
+  flex: 1;
+  /* padding: 6px 0; */
+  border: 1px solid var(--color-border,#a09e9e);
+  border-radius: 24px;
+  background: #fff;
+  /* font-size: var(--bb-fs-md); */
+  font-weight: 600;
+  color: #1a1c22;
+  cursor: pointer;
+  text-align: center;
+  transition: border-color .15s, background .15s, color .15s;
+}
+
+.bb-length-selector .bb-length-btn.is-selected,
+.bb-length-selector .bb-length-btn[aria-selected="true"] {
+  color: #111;
+}
+
+.bb-length-selector .bb-length-btn:hover:not(.is-selected) {
+  border-color: #b8860b;
+  color: #b8860b;
+}
+
+/* ── Cart: bundle composition block ───────────────────────── */
+.bb-cart-composition {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-top: 6px;
+}
+
+/* "Cintura N:" — bold + underlined section header */
+.bb-cart-composition__header {
+  font-size: 11px;
+  font-weight: 700 !important;
+  color: #1a1a1a;
+  margin-bottom: 2px;
+}
+
+.bb-cart-composition__header:first-child {
+  margin-top: 0;
+}
+
+/* Two-column grid for aligned key: value rows */
+.bb-cart-composition__row {
+  display: grid;
+  grid-template-columns: 70px 1fr;
+  gap: 0 4px;
+  font-size: 11px;
+  line-height: 1.6;
+  padding-left: 6px;
+}
+
+.bb-cart-composition__key {
+  color: #888;
+}
+
+.bb-cart-composition__val {
+  color: #333;
+  font-weight: 500;
+}
+
+/* ── Gift badge ────────────────────────────────────────────── */
+.gift-badge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 14px 0 4px;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #fff8e8 0%, #fffbf2 100%);
+  border: 1.5px solid #e8c96a;
+  border-radius: 12px;
+}
+
+.gift-badge__text {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1a;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.gift-badge__free {
+  background: #b8860b;
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: .04em;
+  padding: 2px 8px;
+  border-radius: 20px;
+  text-transform: uppercase;
+}
+
+@keyframes bb-chk-spin { to { transform: rotate(360deg); } }
+.bb-checkout-spinner {
+  display: inline-block;
+  flex-shrink: 0;
+  vertical-align: middle;
+  margin-right: 6px;
+  animation: bb-chk-spin 0.7s linear infinite;
+}
+.bb-btn-primary:disabled { opacity: 0.7; cursor: default; }

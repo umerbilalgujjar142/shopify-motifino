@@ -1,0 +1,588 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "spacer_zNmLjJ": {
+          "type": "spacer",
+          "settings": {
+            "height_desktop": 40,
+            "height_mobile": 16
+          }
+        },
+        "loox_reviews_loox_rating_3QBn8V": {
+          "type": "shopify://apps/loox-reviews/blocks/loox-rating/5c3b337f-fd14-4df5-b1d6-80ec13e6e28e",
+          "settings": {
+            "contentSize": 14,
+            "pattern": "",
+            "hideText": false,
+            "alignment": "",
+            "layout": "",
+            "textColor": "",
+            "starColor": "#b98141",
+            "showAllReviews": true,
+            "looxOpenFloatingWidget": true,
+            "emptyRatingWidget": false
+          }
+        },
+        "spacer_3UXfMf": {
+          "type": "spacer",
+          "settings": {
+            "height_desktop": 0,
+            "height_mobile": 4
+          }
+        },
+        "title": {
+          "type": "title",
+          "settings": {
+            "heading_tag": "h3"
+          }
+        },
+        "badges_9jy7Fh": {
+          "type": "badges",
+          "settings": {}
+        },
+        "spacer_BbRMxF": {
+          "type": "spacer",
+          "disabled": true,
+          "settings": {
+            "height_desktop": 24,
+            "height_mobile": 16
+          }
+        },
+        "price": {
+          "type": "price",
+          "settings": {
+            "show_taxes_notice": false
+          }
+        },
+        "separator_HEpdxX": {
+          "type": "separator",
+          "disabled": true,
+          "settings": {}
+        },
+        "description": {
+          "type": "description",
+          "settings": {
+            "collapse_content": false,
+            "show_below_gallery": false
+          }
+        },
+        "text_tFWrUV": {
+          "type": "text",
+          "disabled": true,
+          "settings": {
+            "text": "<ul><li>bottone di regolazione</li><li>allentala senza slacciarla</li><li>accorciabile su misura</li></ul>"
+          }
+        },
+        "text_eKCKCi": {
+          "type": "text",
+          "disabled": true,
+          "settings": {
+            "text": "<p><a href=\"#shopify-section-template--27598334099782__tabs_FUAGrg\" title=\"#shopify-section-template--27598334099782__tabs_FUAGrg\">Vedi tutti i dettagli...</a></p>"
+          }
+        },
+        "spacer_zVPWj7": {
+          "type": "spacer",
+          "disabled": true,
+          "settings": {
+            "height_desktop": 24,
+            "height_mobile": 16
+          }
+        },
+        "button_UPULxq": {
+          "type": "button",
+          "disabled": true,
+          "settings": {
+            "link": "",
+            "text": "{{ product.metafields.custom.call_to_action_scelta_cinture_e_fibbie.value }}",
+            "stretch": true,
+            "background": "",
+            "text_color": ""
+          }
+        },
+        "buy_buttons_8FMGri": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_payment_button": false,
+            "show_gift_card_recipient": false,
+            "atc_button_background": "",
+            "atc_button_text_color": "",
+            "payment_button_background": "",
+            "payment_button_text_color": ""
+          }
+        },
+        "spacer_Xq3dqK": {
+          "type": "spacer",
+          "disabled": true,
+          "settings": {
+            "height_desktop": 20,
+            "height_mobile": 12
+          }
+        },
+        "image_G7Kg4K": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/Trust_pilot_eccellente.webp",
+            "link": "https://it.trustpilot.com/review/motifino.com",
+            "alignment": "center",
+            "width_mode": "custom",
+            "max_width": 300,
+            "mobile_max_width": 200
+          }
+        },
+        "spacer_TaRX4D": {
+          "type": "spacer",
+          "settings": {
+            "height_desktop": 20,
+            "height_mobile": 24
+          }
+        },
+        "separator_DG6bC8": {
+          "type": "separator",
+          "settings": {}
+        },
+        "feature_with_icon_TP8rxC": {
+          "type": "feature_with_icon",
+          "settings": {
+            "text": "Garanzia 2 anni",
+            "link": "",
+            "icon": "picto-shield",
+            "icon_width": 16,
+            "background": "rgba(0,0,0,0)",
+            "text_color": "#6b6b6b",
+            "border_color": ""
+          }
+        },
+        "feature_with_icon_PG7eny": {
+          "type": "feature_with_icon",
+          "settings": {
+            "text": "Ricevilo in 24/72h",
+            "link": "",
+            "icon": "picto-delivery-truck",
+            "icon_width": 16,
+            "background": "rgba(0,0,0,0)",
+            "text_color": "#6b6b6b",
+            "border_color": ""
+          }
+        },
+        "feature_with_icon_6E3KEw": {
+          "type": "feature_with_icon",
+          "settings": {
+            "text": "Resi gratis in 30g",
+            "link": "",
+            "icon": "picto-return",
+            "icon_width": 16,
+            "background": "rgba(0,0,0,0)",
+            "text_color": "#6b6b6b",
+            "border_color": ""
+          }
+        },
+        "feature_with_icon_eU3YHk": {
+          "type": "feature_with_icon",
+          "settings": {
+            "text": "Contrassegno",
+            "link": "",
+            "icon": "picto-box",
+            "icon_width": 16,
+            "background": "rgba(0,0,0,0)",
+            "text_color": "#6b6b6b",
+            "border_color": ""
+          }
+        },
+        "spacer_wmjjEj": {
+          "type": "spacer",
+          "settings": {
+            "height_desktop": 24,
+            "height_mobile": 8
+          }
+        }
+      },
+      "block_order": [
+        "spacer_zNmLjJ",
+        "loox_reviews_loox_rating_3QBn8V",
+        "spacer_3UXfMf",
+        "title",
+        "badges_9jy7Fh",
+        "spacer_BbRMxF",
+        "price",
+        "separator_HEpdxX",
+        "description",
+        "text_tFWrUV",
+        "text_eKCKCi",
+        "spacer_zVPWj7",
+        "button_UPULxq",
+        "buy_buttons_8FMGri",
+        "spacer_Xq3dqK",
+        "image_G7Kg4K",
+        "spacer_TaRX4D",
+        "separator_DG6bC8",
+        "feature_with_icon_TP8rxC",
+        "feature_with_icon_PG7eny",
+        "feature_with_icon_6E3KEw",
+        "feature_with_icon_eU3YHk",
+        "spacer_wmjjEj"
+      ],
+      "settings": {
+        "color_scheme": "scheme-2",
+        "use_custom_section_spacing": false,
+        "mobile_section_spacing_top": 0,
+        "mobile_section_spacing_right": 20,
+        "mobile_section_spacing_bottom": 50,
+        "mobile_section_spacing_left": 20,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 0,
+        "allow_transparent_header": false,
+        "transparent_header_use_primary_colors": true,
+        "container_size": "full",
+        "product_info_size": 40,
+        "mobile_product_gap": 0,
+        "show_sticky_add_to_cart": true,
+        "center_basic_info": false,
+        "mobile_image_aspect_ratio": "5:4",
+        "desktop_media_layout": "grid",
+        "desktop_media_grid_gap": 0,
+        "mobile_controls": "dots",
+        "enable_media_autoplay": false,
+        "enable_video_looping": true,
+        "enable_image_zoom": true,
+        "max_image_zoom_level": 3
+      }
+    },
+    "17761166034ed9bfed": {
+      "type": "apps",
+      "blocks": {
+        "reelup_shoppable_videos_reels_reelup_playlist_A4CKtL": {
+          "type": "shopify://apps/reelup-shoppable-videos-reels/blocks/reelup_playlist/a8ec9e4d-d192-44f7-9c23-595f9ee7dd5b",
+          "settings": {
+            "playlist_id": "rl_pl_16368"
+          }
+        }
+      },
+      "block_order": [
+        "reelup_shoppable_videos_reels_reelup_playlist_A4CKtL"
+      ],
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": false,
+        "remove_vertical_spacing": true,
+        "remove_horizontal_spacing": true,
+        "use_custom_section_spacing": true,
+        "mobile_section_spacing_top": 0,
+        "mobile_section_spacing_right": 0,
+        "mobile_section_spacing_bottom": 0,
+        "mobile_section_spacing_left": 0,
+        "desktop_section_spacing_top": 50,
+        "desktop_section_spacing_right": 100,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 100
+      }
+    },
+    "tabs_FUAGrg": {
+      "type": "tabs",
+      "blocks": {
+        "tab_bkkBC6": {
+          "type": "tab",
+          "settings": {
+            "title": "Taglie e Dettagli Tecnici",
+            "content": "<p><strong>TAGLIE<br/></strong>Tutte le cinture sono alte 3,5cm<br/>Sono disponibili in 2 taglie:<br/>- 130cm (copre fino alla 56 IT di pantaloni)<br/>- 150cm (copre fino alla 66 IT di pantaloni)<br/><br/>Le cinture possono essere <strong>accorciate su misura</strong> in modo estremamente semplice. Guarda il <a href=\"/pages/istruzioni-taglio-cintura\" title=\"Istruzioni Taglio cintura\">tutorial</a><strong><br/><br/>MATERIALI<br/></strong>Cinture: 70% pelle di vitello, 30% PU<br/>Fibbie: Lega di zinco<br/>Le fibbie contengono una percentuale bassissima di Nichel</p><p></p>",
+            "page": "",
+            "open_on_mobile": true
+          }
+        },
+        "tab_Xtb8QR": {
+          "type": "tab",
+          "settings": {
+            "title": "Spedizione e Consegna",
+            "content": "<p>Tutte le spedizioni partono prima delle 15:00 dal Lunedì al Venerdì. In media tutti i pacchi vengono consegnati in <strong>24/72h</strong><br/><br/>Gli ordini vengono controllati ogni giorno dal nostro staff e per qualsiasi problema nella spedizioni verrai contattato.<br/><br/>Puoi leggere ulteriori informazioni sulla spedizione <a href=\"/policies/shipping-policy\" title=\"Shipping Policy\">QUI</a></p>",
+            "page": "",
+            "open_on_mobile": false
+          }
+        },
+        "tab_QN7aVQ": {
+          "type": "tab",
+          "settings": {
+            "title": "Contrassegno, Klarna, Paypal",
+            "content": "<p>Dopo aver scelto il tuo set e creato le tue cinture potrai procedere al checkout dove troverai questi metodi di pagamento:<br/><br/>- Paypal<br/>- Klarna<br/>- Contrassegno<br/>- Bonifico Bancario<br/>- Carta di credito (Mastercard, Visa, Amex ecc...)</p>",
+            "page": "",
+            "open_on_mobile": false
+          }
+        },
+        "tab_J43x9V": {
+          "type": "tab",
+          "settings": {
+            "title": "Resi e Garanzie",
+            "content": "<p><strong>RESI GRATUITI</strong><br/>Se ricevi la cintura e ritenessi che non sia all'altezza delle tue aspettative, contattaci senza pensieri. Organizzeremo un reso per te gratuitamente nei primi 30 giorni<br/><br/><strong>GARANZIA 2 ANNI</strong><br/>Assieme alle nostre cinture riceverai un certificato di autenticità che attesterà la garanzia di 2 anni per quel prodotto in questione. Qualsiasi problema non esitare a contattarci.<br/><br/>Vedi le <a href=\"/policies/refund-policy\" title=\"Refund Policy\">Informative sui Resi e Rimborsi</a> per ulteriori informazioni</p>",
+            "page": "",
+            "open_on_mobile": false
+          }
+        }
+      },
+      "block_order": [
+        "tab_bkkBC6",
+        "tab_Xtb8QR",
+        "tab_QN7aVQ",
+        "tab_J43x9V"
+      ],
+      "disabled": true,
+      "name": "t:sections.tabs.presets.tab.name",
+      "settings": {
+        "color_scheme": "",
+        "use_custom_section_spacing": true,
+        "mobile_section_spacing_top": 20,
+        "mobile_section_spacing_right": 20,
+        "mobile_section_spacing_bottom": 40,
+        "mobile_section_spacing_left": 20,
+        "desktop_section_spacing_top": 40,
+        "desktop_section_spacing_right": 100,
+        "desktop_section_spacing_bottom": 50,
+        "desktop_section_spacing_left": 100,
+        "separate_section_with_border": false,
+        "subheading": "",
+        "title": "",
+        "text_alignment": "start",
+        "enable_auto_close": true
+      }
+    },
+    "multi_column_yGDHbx": {
+      "type": "multi-column",
+      "blocks": {
+        "image_with_text_tmCCUg": {
+          "type": "image_with_text",
+          "settings": {
+            "image": "shopify://shop_images/Progetto_senza_titolo_2.png",
+            "title": "Un'ottima azienda.",
+            "heading_tag": "h6",
+            "content": "<p>Un'ottima azienda.. dalla qualità del prodotto, al confezionamento, alla rapidità nella spedizione, alla gestione del cliente e del post vendita.. </p>",
+            "link_url": "https://it.trustpilot.com/review/motifino.com",
+            "link_text": "Sergio Scognamiglio"
+          }
+        },
+        "image_with_text_KBN98R": {
+          "type": "image_with_text",
+          "settings": {
+            "image": "shopify://shop_images/Progetto_senza_titolo_2.png",
+            "title": "Queste cinture sono stupende ..non",
+            "heading_tag": "h6",
+            "content": "<p>Queste cinture sono stupende ..non hanno difetti .. sono belle esteticamente ed altissima qualità... sarò cliente fisso</p>",
+            "link_url": "https://it.trustpilot.com/review/motifino.com",
+            "link_text": "Crescenzo Piscopo"
+          }
+        },
+        "image_with_text_r3dVWY": {
+          "type": "image_with_text",
+          "settings": {
+            "image": "shopify://shop_images/Progetto_senza_titolo_2.png",
+            "title": "Acquistata giovedì ed è arrivata oggi",
+            "heading_tag": "h6",
+            "content": "<p>Acquistata giovedì ed è arrivata oggi, a prima vista il prodotto sembrerebbe molto, molto di qualità dal momento che è un regalo lo consegneremo a metà mese. Sono certo che sarà gradito... Grazie a voi</p>",
+            "link_url": "https://it.trustpilot.com/review/motifino.com",
+            "link_text": "lionello lossi"
+          }
+        },
+        "image_with_text_PEErby": {
+          "type": "image_with_text",
+          "settings": {
+            "image": "shopify://shop_images/Progetto_senza_titolo_2.png",
+            "title": "Cinture oltre le aspettative",
+            "heading_tag": "h6",
+            "content": "<p>Cinture oltre le aspettative….<br/>Ne ho acquistate 2 ed in futuro ne acquisterò certamente altre…<br/>Ottimo rapporto qualità prezzo.<br/>Ordine ricevuto in Sardegna entro i 3 giorni lavorativi….ottimo!</p>",
+            "link_url": "https://it.trustpilot.com/review/motifino.com",
+            "link_text": "Salvatore Pischedda"
+          }
+        },
+        "image_with_text_HMqTai": {
+          "type": "image_with_text",
+          "settings": {
+            "image": "shopify://shop_images/Progetto_senza_titolo_2.png",
+            "title": "L'ho regalata a mio marito a Natale",
+            "heading_tag": "h6",
+            "content": "<p>L'ho regalata a mio marito a Natale ,si è trovato benissimo che per la festa del papà ne ho prese altre tre</p>",
+            "link_url": "https://it.trustpilot.com/review/motifino.com",
+            "link_text": "Elisa Mercandelli"
+          }
+        },
+        "image_with_text_4dP4xr": {
+          "type": "image_with_text",
+          "settings": {
+            "image": "shopify://shop_images/Progetto_senza_titolo_2.png",
+            "title": "Tutto Ottimo",
+            "heading_tag": "h6",
+            "content": "<p>Spedizione Rapidissima, ottimi prodotti ben confezionati. Le cinture possono essere anche un ottimo regalo per qualunque occasione. Consigliatissime</p>",
+            "link_url": "https://it.trustpilot.com/review/motifino.com",
+            "link_text": "Carmelo Morelli"
+          }
+        },
+        "image_with_text_fYMxp9": {
+          "type": "image_with_text",
+          "settings": {
+            "image": "shopify://shop_images/Progetto_senza_titolo_2.png",
+            "title": "Ti mette di buon umore 😉",
+            "heading_tag": "h6",
+            "content": "<p>Regolare la comodità del tuo punto vita a seconda della giornata non ha prezzo. Davvero comoda e ti mette di buon umore. Consigliatissima 👍🏻</p>",
+            "link_url": "https://it.trustpilot.com/review/motifino.com",
+            "link_text": "Luca Pitone"
+          }
+        },
+        "image_with_text_zd8ePM": {
+          "type": "image_with_text",
+          "settings": {
+            "image": "shopify://shop_images/Progetto_senza_titolo_2.png",
+            "title": "Fatto bene",
+            "heading_tag": "h6",
+            "content": "<p>Fatto bene, confezionato in una elegante confezione. Spiegazioni di utilizzo e consegna ottimi. Ottimi in tutto.</p>",
+            "link_url": "https://it.trustpilot.com/review/motifino.com",
+            "link_text": "Duccio Picchi"
+          }
+        }
+      },
+      "block_order": [
+        "image_with_text_tmCCUg",
+        "image_with_text_KBN98R",
+        "image_with_text_r3dVWY",
+        "image_with_text_PEErby",
+        "image_with_text_HMqTai",
+        "image_with_text_4dP4xr",
+        "image_with_text_fYMxp9",
+        "image_with_text_zd8ePM"
+      ],
+      "name": "t:sections.multi_column.presets.multi_column.name",
+      "settings": {
+        "color_scheme": "scheme-2",
+        "separate_section_with_border": false,
+        "use_custom_section_spacing": false,
+        "mobile_section_spacing_top": 0,
+        "mobile_section_spacing_right": 0,
+        "mobile_section_spacing_bottom": 0,
+        "mobile_section_spacing_left": 0,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 0,
+        "columns_per_row": 4,
+        "stack_on_mobile": false,
+        "mobile_card_width": 75,
+        "overlap_image": false,
+        "content_alignment": "center",
+        "text_alignment": "start",
+        "card_color_scheme": "scheme-1",
+        "card_padding": 16,
+        "card_border_radius": 8,
+        "image_max_width": 100,
+        "heading_max_lines": 1,
+        "text_max_lines": 5,
+        "spacing": "xs",
+        "subheading": "Le migliori di sempre",
+        "title": "Tutti parlano delle cinture MOTIFINO",
+        "content": ""
+      }
+    },
+    "rich_text_3ReVRi": {
+      "type": "rich-text",
+      "blocks": {
+        "image_RwPGUR": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/Progetto_senza_titolo_3.png",
+            "width_mode": "custom",
+            "max_width": 140,
+            "mobile_max_width": 140
+          }
+        },
+        "richtext_ezKrKM": {
+          "type": "richtext",
+          "settings": {
+            "content": "<p>Valutati <strong>4.8</strong> su <strong>5</strong> sulla base di più di 200 recensioni. Le  nostre recensioni a 5 stelle</p>"
+          }
+        },
+        "button_bhhdR6": {
+          "type": "button",
+          "settings": {
+            "style": "solid",
+            "text": "Vedi le recensioni su Trustpilot",
+            "url": "https://it.trustpilot.com/review/motifino.com",
+            "background": "",
+            "text_color": ""
+          }
+        }
+      },
+      "block_order": [
+        "image_RwPGUR",
+        "richtext_ezKrKM",
+        "button_bhhdR6"
+      ],
+      "name": "t:sections.rich_text.presets.rich_text.name",
+      "settings": {
+        "color_scheme": "scheme-2",
+        "separate_section_with_border": false,
+        "content_width": "xs",
+        "text_position": "center",
+        "remove_vertical_spacing": true,
+        "use_custom_section_spacing": true,
+        "mobile_section_spacing_top": 0,
+        "mobile_section_spacing_right": 20,
+        "mobile_section_spacing_bottom": 30,
+        "mobile_section_spacing_left": 20,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 40,
+        "desktop_section_spacing_left": 0
+      }
+    },
+    "177611758203d6640d": {
+      "type": "apps",
+      "blocks": {
+        "loox_reviews_loox_dynamic_section_jNgnyh": {
+          "type": "shopify://apps/loox-reviews/blocks/loox-dynamic-section/5c3b337f-fd14-4df5-b1d6-80ec13e6e28e",
+          "settings": {
+            "reviews_to_display": "",
+            "default_tab": "automatic",
+            "only_photos": false,
+            "aggregated": true,
+            "limit": 10,
+            "hide_thumbnails": false,
+            "maxwidth": 1440,
+            "is_sample": true
+          }
+        }
+      },
+      "block_order": [
+        "loox_reviews_loox_dynamic_section_jNgnyh"
+      ],
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": false,
+        "remove_vertical_spacing": false,
+        "remove_horizontal_spacing": true,
+        "use_custom_section_spacing": false,
+        "mobile_section_spacing_top": 0,
+        "mobile_section_spacing_right": 0,
+        "mobile_section_spacing_bottom": 0,
+        "mobile_section_spacing_left": 0,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 0
+      }
+    }
+  },
+  "order": [
+    "main",
+    "17761166034ed9bfed",
+    "tabs_FUAGrg",
+    "multi_column_yGDHbx",
+    "rich_text_3ReVRi",
+    "177611758203d6640d"
+  ]
+}

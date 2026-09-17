@@ -1,0 +1,960 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-cart",
+      "settings": {
+        "color_scheme": "",
+        "use_custom_section_spacing": false,
+        "mobile_section_spacing_top": 40,
+        "mobile_section_spacing_right": 20,
+        "mobile_section_spacing_bottom": 10,
+        "mobile_section_spacing_left": 20,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 0,
+        "show_cart_note": false,
+        "allow_discount_application": true,
+        "show_order_weight": false,
+        "show_shipping_text": false,
+        "show_accelerated_buttons": false,
+        "show_shipping_estimator": false
+      }
+    },
+    "belt_suggestions": {
+      "type": "cart-belt-suggestions",
+      "blocks": {
+        "combo_3": {
+          "type": "combination",
+          "settings": {
+            "buckle_slot": "luxury",
+            "strap_slot": "nera"
+          }
+        },
+        "combo_1": {
+          "type": "combination",
+          "settings": {
+            "buckle_slot": "classica",
+            "strap_slot": "nera"
+          }
+        },
+        "combo_2": {
+          "type": "combination",
+          "settings": {
+            "buckle_slot": "classica",
+            "strap_slot": "blu"
+          }
+        },
+        "combination_EKdktG": {
+          "type": "combination",
+          "settings": {
+            "buckle_slot": "gold",
+            "strap_slot": "neracoccodrillo"
+          }
+        },
+        "combo_4": {
+          "type": "combination",
+          "settings": {
+            "buckle_slot": "gold",
+            "strap_slot": "cammello"
+          }
+        },
+        "combination_4nQkqR": {
+          "type": "combination",
+          "settings": {
+            "buckle_slot": "silver",
+            "strap_slot": "blu"
+          }
+        },
+        "combination_LBEHdm": {
+          "type": "combination",
+          "settings": {
+            "buckle_slot": "classica",
+            "strap_slot": "marrone"
+          }
+        },
+        "combination_LfY9Xx": {
+          "type": "combination",
+          "settings": {
+            "buckle_slot": "luxury",
+            "strap_slot": "bianca"
+          }
+        },
+        "combination_yw4pgH": {
+          "type": "combination",
+          "settings": {
+            "buckle_slot": "silver",
+            "strap_slot": "marronecoccodrillo"
+          }
+        },
+        "combination_i8Uar4": {
+          "type": "combination",
+          "settings": {
+            "buckle_slot": "luxury",
+            "strap_slot": "grigia"
+          }
+        },
+        "combination_QkXPQG": {
+          "type": "combination",
+          "settings": {
+            "buckle_slot": "silver",
+            "strap_slot": "marrone"
+          }
+        },
+        "combination_mp98By": {
+          "type": "combination",
+          "settings": {
+            "buckle_slot": "gold",
+            "strap_slot": "beige"
+          }
+        }
+      },
+      "block_order": [
+        "combo_3",
+        "combo_1",
+        "combo_2",
+        "combination_EKdktG",
+        "combo_4",
+        "combination_4nQkqR",
+        "combination_LBEHdm",
+        "combination_LfY9Xx",
+        "combination_yw4pgH",
+        "combination_i8Uar4",
+        "combination_QkXPQG",
+        "combination_mp98By"
+      ],
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": false,
+        "title": "Acquista altre cinture e risparmia",
+        "subheading": "Le più acquistate",
+        "atc_button_text": "Aggiungi al Carrello",
+        "size_1_label": "130cm",
+        "size_2_label": "150cm",
+        "use_custom_section_spacing": false,
+        "mobile_section_spacing_top": 40,
+        "mobile_section_spacing_right": 20,
+        "mobile_section_spacing_bottom": 40,
+        "mobile_section_spacing_left": 20,
+        "desktop_section_spacing_top": 60,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 60,
+        "desktop_section_spacing_left": 0
+      }
+    },
+    "featured_collections_Amdakg": {
+      "type": "featured-collections",
+      "blocks": {
+        "collection_yzYp37": {
+          "type": "collection",
+          "settings": {
+            "collection": "scopri-tutti-i-bundle",
+            "products_count": 8,
+            "title": "",
+            "link_url": "",
+            "link_text": "View all"
+          }
+        }
+      },
+      "block_order": [
+        "collection_yzYp37"
+      ],
+      "name": "t:sections.featured_collections.presets.featured_collections.name",
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": true,
+        "use_custom_section_spacing": false,
+        "mobile_section_spacing_top": 0,
+        "mobile_section_spacing_right": 0,
+        "mobile_section_spacing_bottom": 0,
+        "mobile_section_spacing_left": 0,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 0,
+        "hide_product_information": false,
+        "stack_products": false,
+        "products_per_row_mobile": "2",
+        "products_per_row_desktop": 4,
+        "horizontal_spacing_factor": 1,
+        "vertical_spacing_factor": 1,
+        "subheading": "Featured collection",
+        "hide_collection_title": false
+      }
+    },
+    "faq_y9kK7f": {
+      "type": "faq",
+      "blocks": {
+        "question_ccnTJ8": {
+          "type": "question",
+          "settings": {
+            "question": "Come funziona il reso?",
+            "answer": "<p>Il reso è totalmente gratuito e valido nei primi 30 giorni dopo la consegna del pacco.<br/><br/>Ci assicuriamo di darvi meno pensieri possibili. Perciò in caso voleste richiedere il reso sarà sufficiente scrivere alla nostra assistenza su Whatsapp premendo il pulsante verde in basso a destra.<br/><br/>Un nostro operatore si occuperà di tutto e vi seguirà dalla richiesta, fino al rimborso finale. In caso voleste assicurarvene, vi invitiamo a scrivere alla nostra assistenza e chiedere ulteriori informazioni. Trovate tutte le informazioni anche \"<a href=\"/policies/refund-policy\" title=\"Refund Policy\">qui\"</a></p>"
+          }
+        },
+        "question_4ffNqc": {
+          "type": "question",
+          "settings": {
+            "question": "Posso pagare alla consegna?",
+            "answer": "<p>Certamente! Andando alla cassa lo troverai tra i metodi di pagamento. Non ci sono costi aggiuntivi.</p>"
+          }
+        },
+        "question_PXmfqE": {
+          "type": "question",
+          "settings": {
+            "question": "C'è una garanzia?",
+            "answer": "<p>Si, ogni set composto da cinturino, fibbia e passante è coperto da una garanzia di 2 anni.<br/><br/>Troverai la garanzia con il suo numero seriale all'interno del cofanetto. Scopri come funziona <a href=\"/policies/refund-policy\" title=\"Refund Policy\">qui</a></p>"
+          }
+        },
+        "question_LhWi7i": {
+          "type": "question",
+          "settings": {
+            "question": "In caso avessi problemi con la spedizione?",
+            "answer": "<p>Saremo noi stessi a contattarti.<br/><br/>Ogni giorno i  nostri assistenti controllano tutte le spedizioni, assicurandosi che raggiungano la destinazione.<br/><br/>In caso di problemi saremo noi a contattarti via Whatsapp, o email, per chiederti ulteriori informazioni per la gestione della spedizione.<br/><br/>Siamo disponibili al 100% su Whatsapp, perciò vi preghiamo di scriverci per qualsiasi cosa.</p>"
+          }
+        },
+        "question_dTQ3tD": {
+          "type": "question",
+          "settings": {
+            "question": "Le cinture arrivano in scatole separate?",
+            "answer": "<p>Si ogni cintura che aggiungi al carrello arriva nella sua scatola, Quindi se ordini 3 cinture, riceverai 3 scatole separate, così da poter fare quanti regali che preferisci.</p>"
+          }
+        },
+        "question_bHXkhG": {
+          "type": "question",
+          "settings": {
+            "question": "Le scatole sono ben protette per la spedizione?",
+            "answer": "<p>Assolutamente si!<br/>Abbiamo migliorato ulteriormente la consegna usando una seconda scatola di cartone molto spesso per proteggere la scatola regalo all'interno.<br/><br/>Ci teniamo che possiate dare i vostri regali senza nessun ammaccatura dovuta al corriere.</p>"
+          }
+        },
+        "question_d4XXaW": {
+          "type": "question",
+          "settings": {
+            "question": "Cos'è la Privilege Card in omaggio?",
+            "answer": "<p>Scaricando la nostra applicazione da google play o apple store potrai collegare la tua Privilege Card NFC.<br/><br/>Essa ti permetterà di creare il tuo personale biglietto da visita digitale, inserendo indirizzi, numeri, email, pdf, immagini e molto altro.<br/><br/>Appoggiandola dietro ad un telefono qualunque verrà visualizzato il tuo biglietto da visita.<br/><br/>Ne riceverai una per ogni cintura acquistata, così potrai regalarle anche ai tuoi conoscenti. É un servizio totalmente gratuito solo per i clienti MOTIFINO!</p>"
+          }
+        }
+      },
+      "block_order": [
+        "question_ccnTJ8",
+        "question_4ffNqc",
+        "question_PXmfqE",
+        "question_LhWi7i",
+        "question_dTQ3tD",
+        "question_bHXkhG",
+        "question_d4XXaW"
+      ],
+      "name": "t:sections.faq.presets.faq.name",
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": false,
+        "use_custom_section_spacing": true,
+        "mobile_section_spacing_top": 40,
+        "mobile_section_spacing_right": 20,
+        "mobile_section_spacing_bottom": 40,
+        "mobile_section_spacing_left": 20,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 0,
+        "show_categories": false,
+        "subheading": "",
+        "title": "Dubbi o domande?",
+        "content": ""
+      }
+    },
+    "text_with_icons_4Jdw7t": {
+      "type": "text-with-icons",
+      "blocks": {
+        "item_pkEzzL": {
+          "type": "item",
+          "settings": {
+            "icon": "picto-delivery-truck",
+            "icon_width": 40,
+            "mobile_icon_width": 32,
+            "title": "",
+            "content": "<p>Spedizioni gratis in 24/72h</p>"
+          }
+        },
+        "item_X3HRiB": {
+          "type": "item",
+          "settings": {
+            "icon": "picto-credit-card",
+            "icon_width": 40,
+            "mobile_icon_width": 32,
+            "title": "",
+            "content": "<p>PayPal, Klarna, contrassegno</p>"
+          }
+        },
+        "item_aEweVE": {
+          "type": "item",
+          "settings": {
+            "icon": "picto-return",
+            "icon_width": 40,
+            "mobile_icon_width": 32,
+            "title": "",
+            "content": "<p>Resi gratis, 2 anni di garanzia</p>"
+          }
+        },
+        "item_N83wym": {
+          "type": "item",
+          "settings": {
+            "icon": "picto-customer-support",
+            "icon_width": 40,
+            "mobile_icon_width": 32,
+            "title": "",
+            "content": "<p>Assistenza 24/7 Whatsapp</p>"
+          }
+        }
+      },
+      "block_order": [
+        "item_pkEzzL",
+        "item_X3HRiB",
+        "item_aEweVE",
+        "item_N83wym"
+      ],
+      "custom_css": [],
+      "settings": {
+        "color_scheme": "",
+        "use_custom_section_spacing": true,
+        "mobile_section_spacing_top": 26,
+        "mobile_section_spacing_right": 20,
+        "mobile_section_spacing_bottom": 70,
+        "mobile_section_spacing_left": 20,
+        "desktop_section_spacing_top": 30,
+        "desktop_section_spacing_right": 20,
+        "desktop_section_spacing_bottom": 60,
+        "desktop_section_spacing_left": 20,
+        "separate_section_with_border": false,
+        "stack_on_mobile": true,
+        "icon_color": "#b98141",
+        "text_color": "",
+        "text_alignment": "center"
+      }
+    },
+    "media_grid_gzfeUE": {
+      "type": "media-grid",
+      "blocks": {
+        "image_C7dTzb": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "",
+            "hide_on_desktop": false,
+            "hide_on_mobile": false,
+            "enable_text_parallax": false,
+            "image": "shopify://shop_images/IMG20260701165039_1.jpg",
+            "desktop_image_fit": "cover",
+            "mobile_image_fit": "cover",
+            "block_link": "",
+            "column_count": "6",
+            "row_count": 2,
+            "add_padding": false,
+            "subheading": "",
+            "subheading_style": "subheading",
+            "subheading_shadow": 0,
+            "title": "",
+            "heading_tag": "h4",
+            "heading_shadow": 0,
+            "content": "",
+            "content_shadow": 0,
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "button_shadow": 0,
+            "text_position": "place-self-center text-center",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0,
+            "gradient_overlay": "",
+            "mobile_padding_top": 0,
+            "mobile_padding_right": 0,
+            "mobile_padding_bottom": 0,
+            "mobile_padding_left": 0,
+            "desktop_padding_top": 0,
+            "desktop_padding_right": 0,
+            "desktop_padding_bottom": 0,
+            "desktop_padding_left": 0
+          }
+        },
+        "image_acmCeB": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "",
+            "hide_on_desktop": false,
+            "hide_on_mobile": false,
+            "enable_text_parallax": false,
+            "image": "shopify://shop_images/WhatsApp_Image_2026-07-01_at_15.40.40_1.jpg",
+            "desktop_image_fit": "cover",
+            "mobile_image_fit": "cover",
+            "block_link": "",
+            "column_count": "3",
+            "row_count": 2,
+            "add_padding": false,
+            "subheading": "",
+            "subheading_style": "subheading",
+            "subheading_shadow": 0,
+            "title": "",
+            "heading_tag": "h4",
+            "heading_shadow": 0,
+            "content": "",
+            "content_shadow": 0,
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "button_shadow": 0,
+            "text_position": "place-self-center text-center",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0,
+            "gradient_overlay": "",
+            "mobile_padding_top": 0,
+            "mobile_padding_right": 0,
+            "mobile_padding_bottom": 0,
+            "mobile_padding_left": 0,
+            "desktop_padding_top": 0,
+            "desktop_padding_right": 0,
+            "desktop_padding_bottom": 0,
+            "desktop_padding_left": 0
+          }
+        },
+        "image_WrgrwQ": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "",
+            "hide_on_desktop": false,
+            "hide_on_mobile": false,
+            "enable_text_parallax": false,
+            "image": "shopify://shop_images/WhatsApp_Image_2026-07-01_at_15.40.37.jpg",
+            "desktop_image_fit": "cover",
+            "mobile_image_fit": "cover",
+            "block_link": "",
+            "column_count": "3",
+            "row_count": 2,
+            "add_padding": false,
+            "subheading": "",
+            "subheading_style": "subheading",
+            "subheading_shadow": 0,
+            "title": "",
+            "heading_tag": "h4",
+            "heading_shadow": 0,
+            "content": "",
+            "content_shadow": 0,
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "button_shadow": 0,
+            "text_position": "place-self-center text-center",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0,
+            "gradient_overlay": "",
+            "mobile_padding_top": 0,
+            "mobile_padding_right": 0,
+            "mobile_padding_bottom": 0,
+            "mobile_padding_left": 0,
+            "desktop_padding_top": 0,
+            "desktop_padding_right": 0,
+            "desktop_padding_bottom": 0,
+            "desktop_padding_left": 0
+          }
+        },
+        "image_gnTKRf": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "",
+            "hide_on_desktop": false,
+            "hide_on_mobile": false,
+            "enable_text_parallax": false,
+            "image": "shopify://shop_images/WhatsApp_Image_2026-07-01_at_15.40.36_2.jpg",
+            "desktop_image_fit": "cover",
+            "mobile_image_fit": "cover",
+            "block_link": "",
+            "column_count": "6",
+            "row_count": 1,
+            "add_padding": false,
+            "subheading": "",
+            "subheading_style": "subheading",
+            "subheading_shadow": 0,
+            "title": "",
+            "heading_tag": "h4",
+            "heading_shadow": 0,
+            "content": "",
+            "content_shadow": 0,
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "button_shadow": 0,
+            "text_position": "place-self-center text-center",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0,
+            "gradient_overlay": "",
+            "mobile_padding_top": 0,
+            "mobile_padding_right": 0,
+            "mobile_padding_bottom": 0,
+            "mobile_padding_left": 0,
+            "desktop_padding_top": 0,
+            "desktop_padding_right": 0,
+            "desktop_padding_bottom": 0,
+            "desktop_padding_left": 0
+          }
+        },
+        "image_fWQFPf": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "",
+            "hide_on_desktop": false,
+            "hide_on_mobile": false,
+            "enable_text_parallax": false,
+            "image": "shopify://shop_images/WhatsApp_Image_2026-07-01_at_15.40.40.jpg",
+            "desktop_image_fit": "cover",
+            "mobile_image_fit": "cover",
+            "block_link": "",
+            "column_count": "6",
+            "row_count": 1,
+            "add_padding": false,
+            "subheading": "",
+            "subheading_style": "subheading",
+            "subheading_shadow": 0,
+            "title": "",
+            "heading_tag": "h4",
+            "heading_shadow": 0,
+            "content": "",
+            "content_shadow": 0,
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "button_shadow": 0,
+            "text_position": "place-self-center text-center",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0,
+            "gradient_overlay": "",
+            "mobile_padding_top": 0,
+            "mobile_padding_right": 0,
+            "mobile_padding_bottom": 0,
+            "mobile_padding_left": 0,
+            "desktop_padding_top": 0,
+            "desktop_padding_right": 0,
+            "desktop_padding_bottom": 0,
+            "desktop_padding_left": 0
+          }
+        },
+        "image_rByja4": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "",
+            "hide_on_desktop": false,
+            "hide_on_mobile": false,
+            "enable_text_parallax": false,
+            "image": "shopify://shop_images/WhatsApp_Image_2026-07-01_at_15.40.39_2.jpg",
+            "desktop_image_fit": "cover",
+            "mobile_image_fit": "cover",
+            "block_link": "",
+            "column_count": "6",
+            "row_count": 2,
+            "add_padding": false,
+            "subheading": "",
+            "subheading_style": "subheading",
+            "subheading_shadow": 0,
+            "title": "",
+            "heading_tag": "h4",
+            "heading_shadow": 0,
+            "content": "",
+            "content_shadow": 0,
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "button_shadow": 0,
+            "text_position": "place-self-center text-center",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0,
+            "gradient_overlay": "",
+            "mobile_padding_top": 0,
+            "mobile_padding_right": 0,
+            "mobile_padding_bottom": 0,
+            "mobile_padding_left": 0,
+            "desktop_padding_top": 0,
+            "desktop_padding_right": 0,
+            "desktop_padding_bottom": 0,
+            "desktop_padding_left": 0
+          }
+        },
+        "image_zLRFdC": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "",
+            "hide_on_desktop": false,
+            "hide_on_mobile": false,
+            "enable_text_parallax": false,
+            "image": "shopify://shop_images/WhatsApp_Image_2026-07-01_at_15.40.38.jpg",
+            "desktop_image_fit": "cover",
+            "mobile_image_fit": "cover",
+            "block_link": "",
+            "column_count": "6",
+            "row_count": 1,
+            "add_padding": false,
+            "subheading": "",
+            "subheading_style": "subheading",
+            "subheading_shadow": 0,
+            "title": "",
+            "heading_tag": "h4",
+            "heading_shadow": 0,
+            "content": "",
+            "content_shadow": 0,
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "button_shadow": 0,
+            "text_position": "place-self-center text-center",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0,
+            "gradient_overlay": "",
+            "mobile_padding_top": 0,
+            "mobile_padding_right": 0,
+            "mobile_padding_bottom": 0,
+            "mobile_padding_left": 0,
+            "desktop_padding_top": 0,
+            "desktop_padding_right": 0,
+            "desktop_padding_bottom": 0,
+            "desktop_padding_left": 0
+          }
+        },
+        "image_Qc4nxy": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "",
+            "hide_on_desktop": false,
+            "hide_on_mobile": false,
+            "enable_text_parallax": false,
+            "image": "shopify://shop_images/IMG20260701165705_1.jpg",
+            "desktop_image_fit": "cover",
+            "mobile_image_fit": "cover",
+            "block_link": "",
+            "column_count": "6",
+            "row_count": 1,
+            "add_padding": false,
+            "subheading": "",
+            "subheading_style": "subheading",
+            "subheading_shadow": 0,
+            "title": "",
+            "heading_tag": "h4",
+            "heading_shadow": 0,
+            "content": "",
+            "content_shadow": 0,
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "button_shadow": 0,
+            "text_position": "place-self-center text-center",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0,
+            "gradient_overlay": "",
+            "mobile_padding_top": 0,
+            "mobile_padding_right": 0,
+            "mobile_padding_bottom": 0,
+            "mobile_padding_left": 0,
+            "desktop_padding_top": 0,
+            "desktop_padding_right": 0,
+            "desktop_padding_bottom": 0,
+            "desktop_padding_left": 0
+          }
+        },
+        "image_pLA3QN": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "",
+            "hide_on_desktop": false,
+            "hide_on_mobile": false,
+            "enable_text_parallax": false,
+            "image": "shopify://shop_images/IMG20260701165955_1.jpg",
+            "desktop_image_fit": "cover",
+            "mobile_image_fit": "cover",
+            "block_link": "",
+            "column_count": "6",
+            "row_count": 2,
+            "add_padding": false,
+            "subheading": "",
+            "subheading_style": "subheading",
+            "subheading_shadow": 0,
+            "title": "",
+            "heading_tag": "h4",
+            "heading_shadow": 0,
+            "content": "",
+            "content_shadow": 0,
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "button_shadow": 0,
+            "text_position": "place-self-center text-center",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0,
+            "gradient_overlay": "",
+            "mobile_padding_top": 0,
+            "mobile_padding_right": 0,
+            "mobile_padding_bottom": 0,
+            "mobile_padding_left": 0,
+            "desktop_padding_top": 0,
+            "desktop_padding_right": 0,
+            "desktop_padding_bottom": 0,
+            "desktop_padding_left": 0
+          }
+        },
+        "image_QCXAjD": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "",
+            "hide_on_desktop": false,
+            "hide_on_mobile": false,
+            "enable_text_parallax": false,
+            "image": "shopify://shop_images/WhatsApp_Image_2026-07-01_at_15.40.39_1.jpg",
+            "desktop_image_fit": "cover",
+            "mobile_image_fit": "cover",
+            "block_link": "",
+            "column_count": "6",
+            "row_count": 1,
+            "add_padding": false,
+            "subheading": "",
+            "subheading_style": "subheading",
+            "subheading_shadow": 0,
+            "title": "",
+            "heading_tag": "h4",
+            "heading_shadow": 0,
+            "content": "",
+            "content_shadow": 0,
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "button_shadow": 0,
+            "text_position": "place-self-center text-center",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0,
+            "gradient_overlay": "",
+            "mobile_padding_top": 0,
+            "mobile_padding_right": 0,
+            "mobile_padding_bottom": 0,
+            "mobile_padding_left": 0,
+            "desktop_padding_top": 0,
+            "desktop_padding_right": 0,
+            "desktop_padding_bottom": 0,
+            "desktop_padding_left": 0
+          }
+        },
+        "image_pLwhQD": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "",
+            "hide_on_desktop": false,
+            "hide_on_mobile": false,
+            "enable_text_parallax": false,
+            "image": "shopify://shop_images/WhatsApp_Image_2026-07-01_at_15.40.39_3.jpg",
+            "desktop_image_fit": "cover",
+            "mobile_image_fit": "cover",
+            "block_link": "",
+            "column_count": "6",
+            "row_count": 2,
+            "add_padding": false,
+            "subheading": "",
+            "subheading_style": "subheading",
+            "subheading_shadow": 0,
+            "title": "",
+            "heading_tag": "h4",
+            "heading_shadow": 0,
+            "content": "",
+            "content_shadow": 0,
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "button_shadow": 0,
+            "text_position": "place-self-center text-center",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0,
+            "gradient_overlay": "",
+            "mobile_padding_top": 0,
+            "mobile_padding_right": 0,
+            "mobile_padding_bottom": 0,
+            "mobile_padding_left": 0,
+            "desktop_padding_top": 0,
+            "desktop_padding_right": 0,
+            "desktop_padding_bottom": 0,
+            "desktop_padding_left": 0
+          }
+        },
+        "image_f8cJcz": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "",
+            "hide_on_desktop": false,
+            "hide_on_mobile": false,
+            "enable_text_parallax": false,
+            "image": "shopify://shop_images/WhatsApp_Image_2026-07-01_at_15.40.39.jpg",
+            "desktop_image_fit": "cover",
+            "mobile_image_fit": "cover",
+            "block_link": "",
+            "column_count": "6",
+            "row_count": 1,
+            "add_padding": false,
+            "subheading": "",
+            "subheading_style": "subheading",
+            "subheading_shadow": 0,
+            "title": "",
+            "heading_tag": "h4",
+            "heading_shadow": 0,
+            "content": "",
+            "content_shadow": 0,
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "button_shadow": 0,
+            "text_position": "place-self-center text-center",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0,
+            "gradient_overlay": "",
+            "mobile_padding_top": 0,
+            "mobile_padding_right": 0,
+            "mobile_padding_bottom": 0,
+            "mobile_padding_left": 0,
+            "desktop_padding_top": 0,
+            "desktop_padding_right": 0,
+            "desktop_padding_bottom": 0,
+            "desktop_padding_left": 0
+          }
+        },
+        "image_T67GDF": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "",
+            "hide_on_desktop": false,
+            "hide_on_mobile": false,
+            "enable_text_parallax": false,
+            "image": "shopify://shop_images/WhatsApp_Image_2026-07-01_at_15.40.35.jpg",
+            "desktop_image_fit": "cover",
+            "mobile_image_fit": "cover",
+            "block_link": "",
+            "column_count": "6",
+            "row_count": 2,
+            "add_padding": false,
+            "subheading": "",
+            "subheading_style": "subheading",
+            "subheading_shadow": 0,
+            "title": "",
+            "heading_tag": "h4",
+            "heading_shadow": 0,
+            "content": "",
+            "content_shadow": 0,
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "button_shadow": 0,
+            "text_position": "place-self-center text-center",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0,
+            "gradient_overlay": "",
+            "mobile_padding_top": 0,
+            "mobile_padding_right": 0,
+            "mobile_padding_bottom": 0,
+            "mobile_padding_left": 0,
+            "desktop_padding_top": 0,
+            "desktop_padding_right": 0,
+            "desktop_padding_bottom": 0,
+            "desktop_padding_left": 0
+          }
+        },
+        "image_FVBXFT": {
+          "type": "image",
+          "settings": {
+            "color_scheme": "",
+            "hide_on_desktop": false,
+            "hide_on_mobile": false,
+            "enable_text_parallax": false,
+            "image": "shopify://shop_images/WhatsApp_Image_2026-07-01_at_15.40.34.jpg",
+            "desktop_image_fit": "cover",
+            "mobile_image_fit": "cover",
+            "block_link": "",
+            "column_count": "6",
+            "row_count": 2,
+            "add_padding": false,
+            "subheading": "",
+            "subheading_style": "subheading",
+            "subheading_shadow": 0,
+            "title": "",
+            "heading_tag": "h4",
+            "heading_shadow": 0,
+            "content": "",
+            "content_shadow": 0,
+            "link_text": "",
+            "link_url": "",
+            "link_style": "link",
+            "button_shadow": 0,
+            "text_position": "place-self-center text-center",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0,
+            "gradient_overlay": "",
+            "mobile_padding_top": 0,
+            "mobile_padding_right": 0,
+            "mobile_padding_bottom": 0,
+            "mobile_padding_left": 0,
+            "desktop_padding_top": 0,
+            "desktop_padding_right": 0,
+            "desktop_padding_bottom": 0,
+            "desktop_padding_left": 0
+          }
+        }
+      },
+      "block_order": [
+        "image_C7dTzb",
+        "image_acmCeB",
+        "image_WrgrwQ",
+        "image_gnTKRf",
+        "image_fWQFPf",
+        "image_rByja4",
+        "image_zLRFdC",
+        "image_Qc4nxy",
+        "image_pLA3QN",
+        "image_QCXAjD",
+        "image_pLwhQD",
+        "image_f8cJcz",
+        "image_T67GDF",
+        "image_FVBXFT"
+      ],
+      "name": "t:sections.media_grid.presets.media_grid.name",
+      "settings": {
+        "color_scheme": "",
+        "section_hide_on_mobile": false,
+        "section_hide_on_desktop": false,
+        "allow_transparent_header": false,
+        "separate_section_with_border": false,
+        "desktop_row_height": 290,
+        "mobile_row_height": 190,
+        "section_width": "lg",
+        "mobile_spacing": "none",
+        "desktop_spacing": "none",
+        "desktop_outer_radius": 0,
+        "use_custom_section_spacing": true,
+        "mobile_section_spacing_top": 0,
+        "mobile_section_spacing_right": 0,
+        "mobile_section_spacing_bottom": 0,
+        "mobile_section_spacing_left": 0,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 0,
+        "subheading": "Galleria",
+        "title": "Foto dai nostri clienti",
+        "content": ""
+      }
+    }
+  },
+  "order": [
+    "main",
+    "belt_suggestions",
+    "featured_collections_Amdakg",
+    "faq_y9kK7f",
+    "text_with_icons_4Jdw7t",
+    "media_grid_gzfeUE"
+  ]
+}

@@ -1,0 +1,207 @@
+{%- assign color_scheme_hash = section.settings.color_scheme.settings.background_gradient | default: section.settings.color_scheme.settings.background | md5 -%}
+
+{%- if section.settings.use_custom_section_spacing -%}
+  <style>
+    #shopify-section-{{ section.id }} .section-spacing.section-spacing--custom-bbox {
+      padding-block-start: var(--main-page-bbox-pt);
+      padding-inline-end: var(--main-page-bbox-pr);
+      padding-block-end: var(--main-page-bbox-pb);
+      padding-inline-start: var(--main-page-bbox-pl);
+    }
+
+    @media screen and (min-width: 700px) {
+      #shopify-section-{{ section.id }} .section-spacing.section-spacing--custom-bbox {
+        padding-block-start: var(--main-page-bbox-pt-d);
+        padding-inline-end: var(--main-page-bbox-pr-d);
+        padding-block-end: var(--main-page-bbox-pb-d);
+        padding-inline-start: var(--main-page-bbox-pl-d);
+      }
+    }
+
+    #shopify-section-{{ section.id }} .section-spacing.section-spacing--custom-bbox .container {
+      margin-inline-start: max(0px, 50% - var(--container-max-width) / 2);
+      margin-inline-end: max(0px, 50% - var(--container-max-width) / 2);
+    }
+  </style>
+{%- endif -%}
+
+<div class="section-spacing{% if section.settings.use_custom_section_spacing %} section-spacing--custom-bbox{% else %} section-spacing--tight{% endif %} color-scheme color-scheme--{{ section.settings.color_scheme.id }} color-scheme--bg-{{ color_scheme_hash }}"{% if section.settings.use_custom_section_spacing %} style="--main-page-bbox-pt: {{ section.settings.mobile_section_spacing_top | default: 0 }}px; --main-page-bbox-pr: {{ section.settings.mobile_section_spacing_right | default: 0 }}px; --main-page-bbox-pb: {{ section.settings.mobile_section_spacing_bottom | default: 0 }}px; --main-page-bbox-pl: {{ section.settings.mobile_section_spacing_left | default: 0 }}px; --main-page-bbox-pt-d: {{ section.settings.desktop_section_spacing_top | default: 0 }}px; --main-page-bbox-pr-d: {{ section.settings.desktop_section_spacing_right | default: 0 }}px; --main-page-bbox-pb-d: {{ section.settings.desktop_section_spacing_bottom | default: 0 }}px; --main-page-bbox-pl-d: {{ section.settings.desktop_section_spacing_left | default: 0 }}px;"{% endif %}>
+  <div class="container container--{{ section.settings.page_width }}">
+    <div class="section-stack">
+      {%- if section.settings.show_title -%}
+        <div class="section-header justify-self-center text-center">
+          <h1 class="h2">{{ page.title }}</h1>
+        </div>
+      {%- endif -%}
+
+      {%- if page.content != empty %}
+        <div class="prose">
+          {{- page.content -}}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+{% schema %}
+{
+  "name": "t:sections.main_page.name",
+  "class": "shopify-section--main-page",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:global.colors.scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_custom_section_spacing",
+      "label": "Use custom section spacing",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Mobile section spacing",
+      "info": "Requires 'Use custom section spacing' to be checked",
+      "visible_if": "{{ section.settings.use_custom_section_spacing }}"
+    },
+    {
+      "type": "range",
+      "id": "mobile_section_spacing_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 0,
+      "info": "Requires 'Use custom section spacing' to be checked",
+      "visible_if": "{{ section.settings.use_custom_section_spacing }}"
+    },
+    {
+      "type": "range",
+      "id": "mobile_section_spacing_right",
+      "label": "Padding right",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 0,
+      "info": "Requires 'Use custom section spacing' to be checked",
+      "visible_if": "{{ section.settings.use_custom_section_spacing }}"
+    },
+    {
+      "type": "range",
+      "id": "mobile_section_spacing_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 0,
+      "info": "Requires 'Use custom section spacing' to be checked",
+      "visible_if": "{{ section.settings.use_custom_section_spacing }}"
+    },
+    {
+      "type": "range",
+      "id": "mobile_section_spacing_left",
+      "label": "Padding left",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 0,
+      "info": "Requires 'Use custom section spacing' to be checked",
+      "visible_if": "{{ section.settings.use_custom_section_spacing }}"
+    },
+    {
+      "type": "header",
+      "content": "Desktop section spacing",
+      "info": "Requires 'Use custom section spacing' to be checked",
+      "visible_if": "{{ section.settings.use_custom_section_spacing }}"
+    },
+    {
+      "type": "range",
+      "id": "desktop_section_spacing_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 0,
+      "info": "Requires 'Use custom section spacing' to be checked",
+      "visible_if": "{{ section.settings.use_custom_section_spacing }}"
+    },
+    {
+      "type": "range",
+      "id": "desktop_section_spacing_right",
+      "label": "Padding right",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 0,
+      "info": "Requires 'Use custom section spacing' to be checked",
+      "visible_if": "{{ section.settings.use_custom_section_spacing }}"
+    },
+    {
+      "type": "range",
+      "id": "desktop_section_spacing_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 0,
+      "info": "Requires 'Use custom section spacing' to be checked",
+      "visible_if": "{{ section.settings.use_custom_section_spacing }}"
+    },
+    {
+      "type": "range",
+      "id": "desktop_section_spacing_left",
+      "label": "Padding left",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 0,
+      "info": "Requires 'Use custom section spacing' to be checked",
+      "visible_if": "{{ section.settings.use_custom_section_spacing }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_title",
+      "label": "t:sections.main_page.show_title",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "page_width",
+      "label": "t:sections.main_page.page_width",
+      "options": [
+        {
+          "value": "xs",
+          "label": "t:global.sizes.x_small"
+        },
+        {
+          "value": "sm",
+          "label": "t:global.sizes.small"
+        },
+        {
+          "value": "md",
+          "label": "t:global.sizes.medium"
+        },
+        {
+          "value": "lg",
+          "label": "t:global.sizes.large"
+        },
+        {
+          "value": "full",
+          "label": "t:global.sizes.full_width"
+        }
+      ],
+      "default": "xs"
+    }
+  ]
+}
+{% endschema %}

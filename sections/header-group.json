@@ -1,0 +1,89 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "type": "header",
+  "name": "Header group",
+  "sections": {
+    "announcement_bar_dQRVaA": {
+      "type": "announcement-bar",
+      "blocks": {
+        "message_ikJwtV": {
+          "type": "message",
+          "settings": {
+            "text": "RESI GRATIS"
+          }
+        },
+        "message_ARkCkM": {
+          "type": "message",
+          "settings": {
+            "text": "GARANZIA 2 ANNI SULL'USURA"
+          }
+        },
+        "message_aRn4LC": {
+          "type": "message",
+          "settings": {
+            "text": "PAGA ALLA CONSEGNA - PAYPAL"
+          }
+        }
+      },
+      "block_order": [
+        "message_ikJwtV",
+        "message_ARkCkM",
+        "message_aRn4LC"
+      ],
+      "name": "t:sections.announcement_bar.name",
+      "settings": {
+        "color_scheme": "scheme-42cd0d21-8619-4e40-9d8a-c2f85d99b1a8",
+        "enable_sticky": false,
+        "autoplay": true,
+        "cycle_speed": 3,
+        "desktop_font_size": 14,
+        "mobile_font_size": 14
+      }
+    },
+    "header": {
+      "type": "header",
+      "custom_css": [],
+      "settings": {
+        "color_scheme": "scheme-3",
+        "enable_sticky": false,
+        "hide_on_scroll": true,
+        "show_separation_border": true,
+        "reduce_padding": true,
+        "logo": "shopify://shop_images/Logo_bianco_MOTIFINO_senza_scritta_sotto_f8bf6a34-5808-4a44-88c4-08bc8b2e27c1.png",
+        "logo_max_width": 130,
+        "logo_mobile_max_width": 110,
+        "menu": "main-menu",
+        "sidebar_menu": "",
+        "customer_account_menu": "customer-account-main-menu",
+        "menu_open_trigger": "hover",
+        "menu_text_font": "body",
+        "enable_search": false,
+        "sidebar_color_scheme": "scheme-1",
+        "sidebar_text_font": "body",
+        "sidebar_show_dividers": false,
+        "sidebar_open_second_level_menus": false,
+        "layout": "logo_left_navigation_inline",
+        "show_icons": true,
+        "show_country_selector": true,
+        "show_country_name": false,
+        "show_country_flag": true,
+        "show_locale_selector": true,
+        "enable_transparent_header": false,
+        "transparent_header_text_color": "#000000",
+        "transparent_logo": "shopify://shop_images/Logo_Scritta_Nera_PNG.png"
+      }
+    }
+  },
+  "order": [
+    "announcement_bar_dQRVaA",
+    "header"
+  ]
+}

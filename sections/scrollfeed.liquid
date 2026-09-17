@@ -1,0 +1,908 @@
+{%- comment -%}
+  Scroll feed: mobile-only hero — 100svh snap feed, scroll guard (pointer-events). Self-contained; no global asset edits.
+{%- endcomment -%}
+
+{%- liquid
+  assign color_scheme_hash = section.settings.color_scheme.settings.background_gradient | default: section.settings.color_scheme.settings.background | md5
+-%}
+
+<div
+  class="{% unless section.settings.remove_vertical_spacing %}section-spacing {% endunless %}color-scheme color-scheme--{{ section.settings.color_scheme.id }} color-scheme--bg-{{ color_scheme_hash }} {% if section.settings.separate_section_with_border %}bordered-section{% endif %}"
+  {% if section.settings.allow_transparent_header %}
+    allow-transparent-header
+  {% endif %}
+>
+  {%- if section.blocks.size > 0 -%}
+    <style>
+      #shopify-section-{{ section.id }} .scrollfeed-mobile-only {
+        display: block;
+      }
+
+      @media screen and (min-width: 700px) {
+        #shopify-section-{{ section.id }} .scrollfeed-mobile-only {
+          display: none !important;
+        }
+      }
+
+      @media screen and (max-width: 699px) {
+        #shopify-section-{{ section.id }} .scrollfeed-hide-on-mobile {
+          display: none !important;
+        }
+      }
+
+      {%- if section.settings.allow_transparent_header -%}
+      #shopify-section-{{ section.id }} {
+        margin-block-start: 0 !important;
+      }
+
+      #shopify-section-{{ section.id }} [allow-transparent-header] {
+        margin-block-start: 0 !important;
+        padding-block-start: 0 !important;
+      }
+      {%- endif -%}
+    </style>
+
+    <style>
+      #shopify-section-{{ section.id }} .scrollfeed-m-feed {
+        min-height: 100svh;
+        min-height: -webkit-fill-available;
+        height: 100svh;
+        max-height: 100svh;
+        overflow-y: auto;
+        overflow-x: hidden;
+        scroll-snap-type: y mandatory;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+
+      #shopify-section-{{ section.id }} social-feed-scrollytelling:not([data-is-docked="true"]) .scrollfeed-m-feed,
+      #shopify-section-{{ section.id }} social-feed-scrollytelling:not([data-is-docked="true"]) .scrollfeed-m-prose {
+        pointer-events: none;
+      }
+
+      #shopify-section-{{ section.id }} social-feed-scrollytelling:not([data-is-docked="true"]) .scrollfeed-m-feed {
+        touch-action: auto;
+      }
+
+      #shopify-section-{{ section.id }} social-feed-scrollytelling[data-is-docked="true"] .scrollfeed-m-feed,
+      #shopify-section-{{ section.id }} social-feed-scrollytelling[data-is-docked="true"] .scrollfeed-m-prose {
+        pointer-events: auto;
+      }
+
+      #shopify-section-{{ section.id }} social-feed-scrollytelling[data-is-docked="true"] .scrollfeed-m-feed {
+        touch-action: pan-y;
+      }
+
+      #shopify-section-{{ section.id }} .scrollfeed-m-feed::-webkit-scrollbar {
+        display: none;
+      }
+
+      #shopify-section-{{ section.id }} .scrollfeed-m-slide {
+        scroll-snap-align: start;
+        scroll-snap-stop: always;
+        min-height: 100svh;
+        min-height: -webkit-fill-available;
+        height: 100svh;
+        position: relative;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+      }
+
+      #shopify-section-{{ section.id }} .scrollfeed-m-slide-bg {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+      }
+
+      #shopify-section-{{ section.id }} .scrollfeed-m-slide-bg .content-over-media {
+        min-height: 100%;
+        height: 100%;
+      }
+
+      #shopify-section-{{ section.id }} .scrollfeed-m-prose {
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        z-index: 1;
+        flex-shrink: 0;
+        min-width: 0;
+        overflow: hidden;
+      }
+
+      #shopify-section-{{ section.id }} .scrollfeed-m-prose > p,
+      #shopify-section-{{ section.id }} .scrollfeed-m-prose > .rte {
+        width: 100%;
+        max-width: 100%;
+      }
+
+      #shopify-section-{{ section.id }} .scrollfeed-m-prose .rte {
+        text-align: inherit;
+      }
+
+      #shopify-section-{{ section.id }} .scrollfeed-m-prose .button-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        width: 100%;
+        justify-content: var(--scrollfeed-btn-justify, flex-start);
+      }
+    </style>
+
+    <social-feed-scrollytelling
+      id="SocialFeedScrolly-{{ section.id }}"
+      class="scrollfeed-root{% if section.settings.hide_on_mobile %} scrollfeed-hide-on-mobile{% endif %}"
+    >
+      {%- comment -%} Mobile: vertical snap feed {%- endcomment -%}
+      <div
+        class="scrollfeed-mobile scrollfeed-mobile-only{% if section.settings.hide_on_mobile %} scrollfeed-hide-on-mobile{% endif %}"
+        data-scrollfeed-mobile-root
+      >
+        <div
+          class="scrollfeed-m-feed"
+          data-scrollfeed-mobile-feed
+          tabindex="0"
+        >
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'slide' -%}
+              {%- liquid
+                assign overlay_op = block.settings.overlay_opacity | divided_by: 100.0
+                assign vid_autoplay = block.settings.video_autoplay
+                assign vid_loop = block.settings.video_loop
+                assign mob_vid = block.settings.mobile_video
+                assign mob_img = block.settings.mobile_image
+                assign pos = block.settings.mobile_content_position | default: 'bottom-left'
+                case pos
+                  when 'top-left'
+                    assign sf_jc = 'flex-start'
+                    assign sf_ai_cross = 'flex-start'
+                    assign sf_ai = 'flex-start'
+                    assign sf_ta = 'left'
+                    assign sf_btn = 'flex-start'
+                  when 'top-center'
+                    assign sf_jc = 'flex-start'
+                    assign sf_ai_cross = 'center'
+                    assign sf_ai = 'center'
+                    assign sf_ta = 'center'
+                    assign sf_btn = 'center'
+                  when 'top-right'
+                    assign sf_jc = 'flex-start'
+                    assign sf_ai_cross = 'flex-end'
+                    assign sf_ai = 'flex-end'
+                    assign sf_ta = 'right'
+                    assign sf_btn = 'flex-end'
+                  when 'center-left'
+                    assign sf_jc = 'center'
+                    assign sf_ai_cross = 'flex-start'
+                    assign sf_ai = 'flex-start'
+                    assign sf_ta = 'left'
+                    assign sf_btn = 'flex-start'
+                  when 'center-center'
+                    assign sf_jc = 'center'
+                    assign sf_ai_cross = 'center'
+                    assign sf_ai = 'center'
+                    assign sf_ta = 'center'
+                    assign sf_btn = 'center'
+                  when 'center-right'
+                    assign sf_jc = 'center'
+                    assign sf_ai_cross = 'flex-end'
+                    assign sf_ai = 'flex-end'
+                    assign sf_ta = 'right'
+                    assign sf_btn = 'flex-end'
+                  when 'bottom-left'
+                    assign sf_jc = 'flex-end'
+                    assign sf_ai_cross = 'flex-start'
+                    assign sf_ai = 'flex-start'
+                    assign sf_ta = 'left'
+                    assign sf_btn = 'flex-start'
+                  when 'bottom-center'
+                    assign sf_jc = 'flex-end'
+                    assign sf_ai_cross = 'center'
+                    assign sf_ai = 'center'
+                    assign sf_ta = 'center'
+                    assign sf_btn = 'center'
+                  when 'bottom-right'
+                    assign sf_jc = 'flex-end'
+                    assign sf_ai_cross = 'flex-end'
+                    assign sf_ai = 'flex-end'
+                    assign sf_ta = 'right'
+                    assign sf_btn = 'flex-end'
+                  else
+                    assign sf_jc = 'flex-end'
+                    assign sf_ai_cross = 'flex-start'
+                    assign sf_ai = 'flex-start'
+                    assign sf_ta = 'left'
+                    assign sf_btn = 'flex-start'
+                endcase
+                assign gap_t = block.settings.inner_text_gap_top | default: 5
+                assign gap_r = block.settings.inner_text_gap_right | default: 5
+                assign gap_b = block.settings.inner_text_gap_bottom | default: 5
+                assign gap_l = block.settings.inner_text_gap_left | default: 5
+                assign pad_t = block.settings.inner_padding_top | default: 20
+                assign pad_r = block.settings.inner_padding_right | default: 20
+                assign pad_b = block.settings.inner_padding_bottom | default: 20
+                assign pad_l = block.settings.inner_padding_left | default: 20
+                assign box_radius = block.settings.text_box_radius | default: 0
+              -%}
+              <div
+                class="scrollfeed-m-slide"
+                data-scrollfeed-m-slide
+                data-slide-index="{{ forloop.index0 }}"
+                {{ block.shopify_attributes }}
+                style="justify-content: {{ sf_jc }}; align-items: {{ sf_ai_cross }};"
+              >
+                <style>
+                  #scrollfeed-m-{{ section.id }}-{{ block.id }} img,
+                  #scrollfeed-m-{{ section.id }}-{{ block.id }} video {
+                    object-fit: {{ block.settings.mobile_image_fit | default: 'cover' }} !important;
+                  }
+                </style>
+                <div class="scrollfeed-m-slide-bg">
+                  <div
+                    id="scrollfeed-m-{{ section.id }}-{{ block.id }}"
+                    class="content-over-media content-over-media--spacing color-scheme color-scheme--{{ block.settings.color_scheme.id }} group"
+                    style="
+                      --content-over-media-height: 100%;
+                      --content-over-media-overlay: {{ block.settings.overlay_color.rgb }} / {{ overlay_op }};
+                      {% if block.settings.gradient_overlay != blank %}--content-over-media-gradient-overlay: {{ block.settings.gradient_overlay }};{% endif %}
+                    "
+                  >
+                    {%- if mob_vid != blank -%}
+                      {%- render 'media',
+                        media: mob_vid,
+                        autoplay: vid_autoplay,
+                        loop: vid_loop,
+                        controls: false,
+                        muted: true,
+                        playsinline: true,
+                        preload: forloop.first,
+                        class: 'scrollfeed-cover-media'
+                      -%}
+                    {%- elsif mob_img != blank -%}
+                      {{-
+                        mob_img
+                        | image_url: width: mob_img.width
+                        | image_tag:
+                          loading: 'lazy',
+                          sizes: '100vw',
+                          widths: '400,600,800,1000,1200,1400,1600',
+                          class: 'scrollfeed-cover-media'
+                      -}}
+                    {%- else -%}
+                      {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder' }}
+                    {%- endif -%}
+                  </div>
+                </div>
+
+                <div
+                  class="prose prose--tight scrollfeed-m-prose color-scheme color-scheme--{{ block.settings.color_scheme.id }}"
+                  style="
+                    box-sizing: border-box;
+                    margin: {{ gap_t }}% {{ gap_r }}% {{ gap_b }}% {{ gap_l }}%;
+                    padding: {{ pad_t }}px {{ pad_r }}px {{ pad_b }}px {{ pad_l }}px;
+                    width: calc(100% - {{ gap_l }}% - {{ gap_r }}%);
+                    max-width: min(48rem, calc(100% - {{ gap_l }}% - {{ gap_r }}%));
+                    border-radius: {{ box_radius }}px;
+                    align-items: {{ sf_ai }};
+                    text-align: {{ sf_ta }};
+                    --scrollfeed-btn-justify: {{ sf_btn }};
+                  "
+                >
+                  {%- if block.settings.subheading != blank -%}
+                    <p class="{{ block.settings.subheading_style }}">{{ block.settings.subheading | escape }}</p>
+                  {%- endif -%}
+                  {%- if block.settings.heading != blank -%}
+                    <p class="{{ block.settings.heading_style }}">{{ block.settings.heading | escape }}</p>
+                  {%- endif -%}
+                  {%- if block.settings.content != blank -%}
+                    <div class="rte">{{ block.settings.content }}</div>
+                  {%- endif -%}
+                  {%- if block.settings.button_1_text != blank or block.settings.button_2_text != blank -%}
+                    <div class="button-group">
+                      {%- if block.settings.button_1_text != blank -%}
+                        {%- render 'button',
+                          href: block.settings.button_1_link,
+                          content: block.settings.button_1_text,
+                          style: block.settings.button_1_style,
+                          background: block.settings.button_1_background,
+                          text_color: block.settings.button_1_text_color
+                        -%}
+                      {%- endif -%}
+                      {%- if block.settings.button_2_text != blank -%}
+                        {%- render 'button',
+                          href: block.settings.button_2_link,
+                          content: block.settings.button_2_text,
+                          style: block.settings.button_2_style,
+                          background: block.settings.button_2_background,
+                          text_color: block.settings.button_2_text_color
+                        -%}
+                      {%- endif -%}
+                    </div>
+                  {%- endif -%}
+                </div>
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+
+    </social-feed-scrollytelling>
+
+    <style>
+      #shopify-section-{{ section.id }} .scrollfeed-cover-media {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      #shopify-section-{{ section.id }} social-feed-scrollytelling {
+        display: block;
+      }
+    </style>
+
+    <script>
+      (function () {
+        class SocialFeedScrollytelling extends HTMLElement {
+          connectedCallback() {
+            this._mobileFeed = this.querySelector('[data-scrollfeed-mobile-feed]');
+            this._mobileSlides = this.querySelectorAll('[data-scrollfeed-m-slide]');
+            this._blocksCount = this._mobileSlides.length;
+            this._ioSection = null;
+            this._mobileObservers = [];
+            this._feedBoundaryRelease = false;
+            this._feedTouchStartY = 0;
+            this._onMobileScrollDock = this._onMobileScrollDock.bind(this);
+            this._onFeedScroll = this._onFeedScroll.bind(this);
+            this._onFeedTouchStart = this._onFeedTouchStart.bind(this);
+            this._onFeedTouchMove = this._onFeedTouchMove.bind(this);
+
+            if (this._blocksCount === 0) return;
+
+            this._setupMobileScrollDock();
+            this._onMobileScrollDock();
+
+            this._setupVideos();
+            this._setupSectionObserver();
+            this._setupMobileVideoObservers();
+          }
+
+          disconnectedCallback() {
+            window.removeEventListener('scroll', this._onMobileScrollDock);
+            window.removeEventListener('resize', this._onMobileScrollDock);
+            this.removeEventListener('touchmove', this._onMobileScrollDock);
+            if (this._mobileFeed) {
+              this._mobileFeed.removeEventListener('scroll', this._onFeedScroll);
+              this._mobileFeed.removeEventListener('touchstart', this._onFeedTouchStart);
+              this._mobileFeed.removeEventListener('touchmove', this._onFeedTouchMove);
+            }
+            if (window.visualViewport) {
+              window.visualViewport.removeEventListener('scroll', this._onMobileScrollDock);
+              window.visualViewport.removeEventListener('resize', this._onMobileScrollDock);
+            }
+            if (this._ioSection) this._ioSection.disconnect();
+            this._mobileObservers.forEach((o) => o.disconnect());
+            this._mobileObservers = [];
+            this._pauseAllVideos();
+          }
+
+          _setupVideos() {
+            this.querySelectorAll('video-media video').forEach((v) => {
+              v.setAttribute('playsinline', '');
+              v.setAttribute('webkit-playsinline', '');
+              v.playsInline = true;
+            });
+          }
+
+          _setupMobileScrollDock() {
+            if (!this._mobileFeed) return;
+            window.addEventListener('scroll', this._onMobileScrollDock, { passive: true });
+            window.addEventListener('resize', this._onMobileScrollDock, { passive: true });
+            this.addEventListener('touchmove', this._onMobileScrollDock, { passive: true });
+            this._mobileFeed.addEventListener('scroll', this._onFeedScroll, { passive: true });
+            this._mobileFeed.addEventListener('touchstart', this._onFeedTouchStart, { passive: true });
+            this._mobileFeed.addEventListener('touchmove', this._onFeedTouchMove, { passive: true });
+            if (window.visualViewport) {
+              window.visualViewport.addEventListener('scroll', this._onMobileScrollDock, { passive: true });
+              window.visualViewport.addEventListener('resize', this._onMobileScrollDock, { passive: true });
+            }
+          }
+
+          _checkFeedBoundaries() {
+            if (!this._mobileFeed) {
+              return { atTop: false, atBottom: false };
+            }
+            const el = this._mobileFeed;
+            const st = el.scrollTop;
+            const ch = el.clientHeight;
+            const sh = el.scrollHeight;
+            return {
+              atTop: st <= 2,
+              atBottom: st + ch >= sh - 2,
+            };
+          }
+
+          _isBaseDocked() {
+            const rect = this.getBoundingClientRect();
+            const vv = window.visualViewport;
+            const scrollY = Math.max(0, window.scrollY);
+            const isAtTop = scrollY < 10;
+            let top = rect.top;
+            if (vv && typeof vv.offsetTop === 'number') {
+              top = rect.top - vv.offsetTop;
+            }
+            const isPinned = Math.floor(top) <= 1;
+            return isAtTop || isPinned;
+          }
+
+          _onFeedScroll() {
+            const el = this._mobileFeed;
+            if (!el) return;
+            const { atTop, atBottom } = this._checkFeedBoundaries();
+            if (el.scrollHeight > el.clientHeight + 4 && !atTop && !atBottom) {
+              this._feedBoundaryRelease = false;
+            }
+            this._onMobileScrollDock();
+          }
+
+          _onFeedTouchStart(e) {
+            if (!e.touches || !e.touches[0]) return;
+            this._feedTouchStartY = e.touches[0].clientY;
+          }
+
+          _onFeedTouchMove(e) {
+            if (!this._mobileFeed || !e.touches || !e.touches[0]) return;
+            const baseDocked = this._isBaseDocked();
+            if (!baseDocked) {
+              this._feedBoundaryRelease = false;
+              this._onMobileScrollDock();
+              return;
+            }
+            const { atTop, atBottom } = this._checkFeedBoundaries();
+            const clientY = e.touches[0].clientY;
+            const deltaY = clientY - this._feedTouchStartY;
+            if (atBottom && deltaY < 0) {
+              this._feedBoundaryRelease = true;
+              this.setAttribute('data-is-docked', 'false');
+              return;
+            }
+            if (atTop && deltaY > 0) {
+              this._feedBoundaryRelease = true;
+              this.setAttribute('data-is-docked', 'false');
+              return;
+            }
+            this._onMobileScrollDock();
+          }
+
+          _onMobileScrollDock() {
+            const baseDocked = this._isBaseDocked();
+            if (!baseDocked) {
+              this._feedBoundaryRelease = false;
+            }
+            const docked = baseDocked && !this._feedBoundaryRelease;
+            this.setAttribute('data-is-docked', docked ? 'true' : 'false');
+          }
+
+          _pauseAllVideos() {
+            this.querySelectorAll('video-media video').forEach((v) => {
+              v.pause();
+            });
+          }
+
+          _setupSectionObserver() {
+            this._ioSection = new IntersectionObserver(
+              (entries) => {
+                const on = entries.some((e) => e.isIntersecting);
+                if (!on) this._pauseAllVideos();
+              },
+              { root: null, rootMargin: '0px', threshold: 0 }
+            );
+            this._ioSection.observe(this);
+          }
+
+          _setupMobileVideoObservers() {
+            if (!this._mobileFeed || !this._mobileSlides.length) return;
+
+            this._mobileSlides.forEach((slide) => {
+              const io = new IntersectionObserver(
+                (entries) => {
+                  const e = entries[0];
+                  if (!e) return;
+                  const v = slide.querySelector('video-media video');
+                  if (!v) return;
+                  if (e.intersectionRatio >= 0.5) {
+                    this.querySelectorAll('[data-scrollfeed-m-slide] video-media video').forEach((node) => {
+                      if (node !== v) node.pause();
+                    });
+                    v.play().catch(() => {});
+                  } else {
+                    v.pause();
+                  }
+                },
+                { root: this._mobileFeed, threshold: [0, 0.5, 1] }
+              );
+              io.observe(slide);
+              this._mobileObservers.push(io);
+            });
+          }
+        }
+
+        if (!customElements.get('social-feed-scrollytelling')) {
+          customElements.define('social-feed-scrollytelling', SocialFeedScrollytelling);
+        }
+      })();
+    </script>
+  {%- else -%}
+    <div class="container">
+      <p>Add one or more slides in the theme editor.</p>
+    </div>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Scroll feed",
+  "class": "shopify-section--scrollfeed",
+  "tag": "section",
+  "disabled_on": {
+    "groups": ["header", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "remove_vertical_spacing",
+      "label": "Remove vertical spacing",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "separate_section_with_border",
+      "label": "Separate section with border",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "allow_transparent_header",
+      "label": "Allow transparent header",
+      "info": "When this section is first on the page, the header can appear transparent over this content.",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_on_mobile",
+      "label": "Hide on mobile",
+      "default": false
+    }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide",
+      "settings": [
+        {
+          "type": "color_scheme",
+          "id": "color_scheme",
+          "label": "Color scheme",
+          "default": "scheme-4"
+        },
+        {
+          "type": "header",
+          "content": "Media"
+        },
+        {
+          "type": "image_picker",
+          "id": "mobile_image",
+          "label": "Image"
+        },
+        {
+          "type": "video",
+          "id": "mobile_video",
+          "label": "Video"
+        },
+        {
+          "type": "select",
+          "id": "mobile_image_fit",
+          "label": "Image fit",
+          "options": [
+            { "value": "cover", "label": "Cover" },
+            { "value": "contain", "label": "Contain" }
+          ],
+          "default": "cover"
+        },
+        {
+          "type": "checkbox",
+          "id": "video_autoplay",
+          "label": "Enable video autoplay",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "video_loop",
+          "label": "Enable video loop",
+          "default": true
+        },
+        {
+          "type": "header",
+          "content": "Overlay"
+        },
+        {
+          "type": "color",
+          "id": "overlay_color",
+          "label": "Overlay color",
+          "default": "#000000"
+        },
+        {
+          "type": "range",
+          "id": "overlay_opacity",
+          "label": "Overlay opacity",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "default": 30
+        },
+        {
+          "type": "color_background",
+          "id": "gradient_overlay",
+          "label": "Gradient overlay",
+          "default": "linear-gradient(180deg, rgba(54, 54, 54, 0.2) 0%, rgba(4, 4, 4, 0.65) 100%)"
+        },
+        {
+          "type": "header",
+          "content": "Layout"
+        },
+        {
+          "type": "select",
+          "id": "mobile_content_position",
+          "label": "Content position",
+          "options": [
+            { "value": "top-left", "label": "Top left" },
+            { "value": "top-center", "label": "Top center" },
+            { "value": "top-right", "label": "Top right" },
+            { "value": "center-left", "label": "Center left" },
+            { "value": "center-center", "label": "Center center" },
+            { "value": "center-right", "label": "Center right" },
+            { "value": "bottom-left", "label": "Bottom left" },
+            { "value": "bottom-center", "label": "Bottom center" },
+            { "value": "bottom-right", "label": "Bottom right" }
+          ],
+          "default": "bottom-left"
+        },
+        {
+          "type": "header",
+          "content": "Inner text safe zone"
+        },
+        {
+          "type": "range",
+          "id": "inner_text_gap_top",
+          "label": "Top",
+          "min": 0,
+          "max": 40,
+          "step": 1,
+          "unit": "%",
+          "default": 5
+        },
+        {
+          "type": "range",
+          "id": "inner_text_gap_bottom",
+          "label": "Bottom",
+          "min": 0,
+          "max": 40,
+          "step": 1,
+          "unit": "%",
+          "default": 5
+        },
+        {
+          "type": "range",
+          "id": "inner_text_gap_left",
+          "label": "Left",
+          "min": 0,
+          "max": 40,
+          "step": 1,
+          "unit": "%",
+          "default": 5
+        },
+        {
+          "type": "range",
+          "id": "inner_text_gap_right",
+          "label": "Right",
+          "min": 0,
+          "max": 40,
+          "step": 1,
+          "unit": "%",
+          "default": 5
+        },
+        {
+          "type": "header",
+          "content": "Text Box Internal Padding"
+        },
+        {
+          "type": "range",
+          "id": "inner_padding_top",
+          "label": "Top",
+          "min": 0,
+          "max": 80,
+          "step": 2,
+          "unit": "px",
+          "default": 20
+        },
+        {
+          "type": "range",
+          "id": "inner_padding_right",
+          "label": "Right",
+          "min": 0,
+          "max": 80,
+          "step": 2,
+          "unit": "px",
+          "default": 20
+        },
+        {
+          "type": "range",
+          "id": "inner_padding_bottom",
+          "label": "Bottom",
+          "min": 0,
+          "max": 80,
+          "step": 2,
+          "unit": "px",
+          "default": 20
+        },
+        {
+          "type": "range",
+          "id": "inner_padding_left",
+          "label": "Left",
+          "min": 0,
+          "max": 80,
+          "step": 2,
+          "unit": "px",
+          "default": 20
+        },
+        {
+          "type": "range",
+          "id": "text_box_radius",
+          "label": "Box Corner Radius",
+          "min": 0,
+          "max": 50,
+          "step": 2,
+          "unit": "px",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "Text"
+        },
+        {
+          "type": "text",
+          "id": "subheading",
+          "label": "Subheading"
+        },
+        {
+          "type": "select",
+          "id": "subheading_style",
+          "label": "Subheading style",
+          "options": [
+            { "value": "h6", "label": "H6" },
+            { "value": "h5", "label": "H5" },
+            { "value": "h4", "label": "H4" },
+            { "value": "h3", "label": "H3" },
+            { "value": "h2", "label": "H2" },
+            { "value": "h1", "label": "H1" }
+          ],
+          "default": "h6"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading"
+        },
+        {
+          "type": "select",
+          "id": "heading_style",
+          "label": "Heading style",
+          "options": [
+            { "value": "h6", "label": "H6" },
+            { "value": "h5", "label": "H5" },
+            { "value": "h4", "label": "H4" },
+            { "value": "h3", "label": "H3" },
+            { "value": "h2", "label": "H2" },
+            { "value": "h1", "label": "H1" }
+          ],
+          "default": "h2"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Content"
+        },
+        {
+          "type": "header",
+          "content": "Button 1"
+        },
+        {
+          "type": "text",
+          "id": "button_1_text",
+          "label": "Label"
+        },
+        {
+          "type": "url",
+          "id": "button_1_link",
+          "label": "Link"
+        },
+        {
+          "type": "select",
+          "id": "button_1_style",
+          "label": "Style",
+          "options": [
+            { "value": "solid", "label": "Solid" },
+            { "value": "outline", "label": "Outline" },
+            { "value": "link", "label": "Link" }
+          ],
+          "default": "solid"
+        },
+        {
+          "type": "color",
+          "id": "button_1_background",
+          "label": "Background"
+        },
+        {
+          "type": "color",
+          "id": "button_1_text_color",
+          "label": "Text color"
+        },
+        {
+          "type": "header",
+          "content": "Button 2"
+        },
+        {
+          "type": "text",
+          "id": "button_2_text",
+          "label": "Label"
+        },
+        {
+          "type": "url",
+          "id": "button_2_link",
+          "label": "Link"
+        },
+        {
+          "type": "select",
+          "id": "button_2_style",
+          "label": "Style",
+          "options": [
+            { "value": "solid", "label": "Solid" },
+            { "value": "outline", "label": "Outline" },
+            { "value": "link", "label": "Link" }
+          ],
+          "default": "outline"
+        },
+        {
+          "type": "color",
+          "id": "button_2_background",
+          "label": "Background"
+        },
+        {
+          "type": "color",
+          "id": "button_2_text_color",
+          "label": "Text color"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Scroll feed",
+      "blocks": [
+        { "type": "slide" },
+        { "type": "slide" },
+        { "type": "slide" }
+      ]
+    }
+  ]
+}
+{% endschema %}

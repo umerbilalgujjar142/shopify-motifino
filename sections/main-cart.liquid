@@ -1,0 +1,736 @@
+<style>
+  .line-item__quantity { margin-block-start: 0.2rem; }
+  body.bb-cart-busy .line-item__quantity { pointer-events: none; opacity: 0.45; }
+
+  /* One layout on every screen: price row under the title, stepper under it,
+     and no separate total column. */
+  #shopify-section-{{ section.id }} .order-summary__header,
+  #shopify-section-{{ section.id }} .order-summary__body td:nth-child(n + 2) {
+    display: none;
+  }
+
+  #shopify-section-{{ section.id }} .line-item { column-gap: 0.4rem; }
+
+  /* The info column must be width-bound, or a long title grows the row instead
+     of truncating. */
+  #shopify-section-{{ section.id }} .line-item-info {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  #shopify-section-{{ section.id }} .line-item-info .v-stack,
+  #shopify-section-{{ section.id }} .bb-title-actions,
+  #shopify-section-{{ section.id }} .bb-li-pricerow {
+    width: 100%;
+    min-width: 0;
+  }
+
+  /* The discount badge takes the far right of the price row at every width. */
+  #shopify-section-{{ section.id }} .bb-li-discount.discount-badge {
+    margin-inline-start: auto;
+  }
+
+  @media screen and (min-width: 700px) {
+    #shopify-section-{{ section.id }} .order-summary .line-item-info {
+      max-width: none;
+    }
+  }
+
+  /* Mobile only: the length is pinned right so it lines up down the column,
+     whether the name truncated or not. */
+  @media screen and (max-width: 699px) {
+    #shopify-section-{{ section.id }} .bb-li-title__variant {
+      margin-inline-start: auto;
+    }
+  }
+
+  .bb-privilege-remove-btn {
+    width: 3.4rem;
+    height: 3.4rem;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgb(var(--border-color));
+    background: transparent;
+    color: rgb(var(--text-color) / 0.6);
+    cursor: pointer;
+    padding: 0;
+  }
+  .bb-privilege-remove-btn:hover { color: rgb(var(--text-color)); }
+  .bb-privilege-remove-btn:disabled { opacity: 0.35; cursor: default; }
+
+  @media screen and (min-width: 990px) {
+    .cart-footer {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 2rem;
+    }
+    .cart-footer .cart-note {
+      flex: 1;
+    }
+    .cart-footer .bb-cart-recap {
+      min-width: 360px;
+      max-width: 400px;
+      flex-shrink: 0;
+      margin-left: auto;
+    }
+  }
+</style>
+
+{%- assign color_scheme_hash = section.settings.color_scheme.settings.background_gradient
+  | default: section.settings.color_scheme.settings.background
+  | md5
+-%}
+
+{%- if section.settings.use_custom_section_spacing -%}
+  <style>
+    #shopify-section-{{ section.id }} .section-spacing.section-spacing--custom-bbox {
+      padding-block-start: var(--main-cart-bbox-pt);
+      padding-inline-end: var(--main-cart-bbox-pr);
+      padding-block-end: var(--main-cart-bbox-pb);
+      padding-inline-start: var(--main-cart-bbox-pl);
+    }
+
+    @media screen and (min-width: 700px) {
+      #shopify-section-{{ section.id }} .section-spacing.section-spacing--custom-bbox {
+        padding-block-start: var(--main-cart-bbox-pt-d);
+        padding-inline-end: var(--main-cart-bbox-pr-d);
+        padding-block-end: var(--main-cart-bbox-pb-d);
+        padding-inline-start: var(--main-cart-bbox-pl-d);
+      }
+    }
+
+    #shopify-section-{{ section.id }} .section-spacing.section-spacing--custom-bbox .container {
+      margin-inline-start: max(0px, 50% - var(--container-max-width) / 2);
+      margin-inline-end: max(0px, 50% - var(--container-max-width) / 2);
+    }
+  </style>
+{%- endif -%}
+
+<div
+  class="section-spacing{% if section.settings.use_custom_section_spacing %} section-spacing--custom-bbox{% else %} section-spacing--tight{% endif %} color-scheme color-scheme--{{ section.settings.color_scheme.id }} color-scheme--bg-{{ color_scheme_hash }}"
+  {% if section.settings.use_custom_section_spacing %}
+    style="--main-cart-bbox-pt: {{ section.settings.mobile_section_spacing_top | default: 0 }}px; --main-cart-bbox-pr: {{ section.settings.mobile_section_spacing_right | default: 0 }}px; --main-cart-bbox-pb: {{ section.settings.mobile_section_spacing_bottom | default: 0 }}px; --main-cart-bbox-pl: {{ section.settings.mobile_section_spacing_left | default: 0 }}px; --main-cart-bbox-pt-d: {{ section.settings.desktop_section_spacing_top | default: 0 }}px; --main-cart-bbox-pr-d: {{ section.settings.desktop_section_spacing_right | default: 0 }}px; --main-cart-bbox-pb-d: {{ section.settings.desktop_section_spacing_bottom | default: 0 }}px; --main-cart-bbox-pl-d: {{ section.settings.desktop_section_spacing_left | default: 0 }}px;"
+  {% endif %}
+>
+  {%- if cart.empty? -%}
+    <div class="container container--xs">
+      <div class="empty-state">
+        <div class="prose">
+          <h1 class="h4">{{ 'cart.general.title' | t }}</h1>
+          <p>{{ 'cart.general.empty' | t }}</p>
+
+          {%- assign button_content = 'cart.general.continue_shopping' | t -%}
+          {%- render 'button', content: button_content, href: settings.cart_empty_cart_link -%}
+        </div>
+      </div>
+    </div>
+  {%- else -%}
+    <div class="container container--sm">
+      <div class="section-stack">
+        {%- comment -%}
+          One belt = one unit of a "Combinazione cintura" product (belt + buckle already
+          combined). Quantities count, so two units of the same combination are two belts —
+          two boxes, two privilege cards.
+        {%- endcomment -%}
+        {%- assign _cart_belt_count = 0 -%}
+        {%- assign _cart_card_count = 0 -%}
+        {%- for _ci in cart.items -%}
+          {%- if _ci.product.type == 'Combinazione cintura' -%}
+            {%- assign _cart_belt_count = _cart_belt_count | plus: _ci.quantity -%}
+          {%- endif -%}
+          {%- if _ci.product.handle == 'privilege-card-black' -%}
+            {%- assign _cart_card_count = _cart_card_count | plus: _ci.quantity -%}
+          {%- endif -%}
+        {%- endfor -%}
+        {%- if _cart_belt_count == 0 -%}
+          {%- assign _next_belt_price = '49,99' -%}
+        {%- elsif _cart_belt_count == 1 -%}
+          {%- assign _next_belt_price = '34,99' -%}
+        {%- elsif _cart_belt_count == 2 -%}
+          {%- assign _next_belt_price = '24,99' -%}
+        {%- else -%}
+          {%- assign _next_belt_price = '24,99' -%}
+        {%- endif -%}
+        {%- assign _next_belt_num = _cart_belt_count | plus: 1 -%}
+        <a href="/pages/bundle?type=set-cintura-singola" class="bb-cart-upsell__card">
+          <img
+            src="https://cdn.shopify.com/s/files/1/0829/7909/4854/files/Foto_set_singolo_con_lati_grigi_7b7b67c2-c112-4007-a730-0202d47dfe5a.webp?v=1775591318"
+            alt="Cintura"
+            class="bb-cart-upsell__img"
+            loading="lazy"
+          >
+          <div class="bb-cart-upsell__right">
+            <strong class="bb-cart-upsell__title">Aggiungi una {{ _next_belt_num }}° cintura</strong>
+            <div class="bb-cart-upsell__prices">
+              <span class="bb-cart-upsell__new-price">€{{ _next_belt_price }}</span>
+              {%- if _cart_belt_count > 0 -%}
+                <span class="bb-cart-upsell__old-price">€49,99</span>
+              {%- endif -%}
+            </div>
+            <span class="bb-cart-upsell__action">+ Aggiungi</span>
+          </div>
+        </a>
+
+        <div class="section-header justify-self-center text-center">
+          <div class="v-stack gap-1">
+            <h1 class="h2">{{ 'cart.general.title' | t }}</h1>
+
+            {%- if settings.cart_show_free_shipping_bar -%}
+              {%- render 'free-shipping-bar' -%}
+            {%- endif -%}
+          </div>
+        </div>
+
+        <form action="{{ routes.cart_url }}" method="POST" class="cart-page">
+          <input type="hidden" name="attributes[products_mobile_grid_mode]" value="">
+          <input type="hidden" name="attributes[products_desktop_grid_mode]" value="">
+
+          <div class="v-stack gap-6" style="gap: 1rem;">
+            {%- comment -%}
+              ----------------------------------------------------------------------------------------------------------------
+              ORDER SUMMARY
+              ----------------------------------------------------------------------------------------------------------------
+            {%- endcomment -%}
+            <table class="order-summary table--reduce-border">
+              <thead class="order-summary__header">
+                <tr>
+                  <th>{{ 'cart.order.product' | t }}</th>
+                  <th class="text-end">{{ 'cart.order.total' | t }}</th>
+                </tr>
+              </thead>
+
+              <tbody class="order-summary__body">
+                {%- comment -%}
+                  Every row is a real Shopify line item — the same items the customer
+                  sees at checkout. No synthesised belt rows, no hidden component lines.
+                {%- endcomment -%}
+                {%- comment -%}
+                  Two passes so the free Privilege Card always sits under the belts,
+                  whatever order Shopify added the lines in.
+                {%- endcomment -%}
+                {%- for _pass in (1..2) -%}
+                {%- for line_item in cart.items -%}
+                  {%- assign _is_card = false -%}
+                  {%- if line_item.product.handle == 'privilege-card-black' -%}
+                    {%- assign _is_card = true -%}
+                  {%- endif -%}
+                  {%- if _pass == 1 and _is_card -%}{%- continue -%}{%- endif -%}
+                  {%- if _pass == 2 and _is_card == false -%}{%- continue -%}{%- endif -%}
+                  {%- comment -%}
+                    A theme add-to-cart lands here before the card count has caught up.
+                    Skip the stale row — the corrected one is drawn after the loop.
+                  {%- endcomment -%}
+                  {%- if _is_card and _cart_belt_count != _cart_card_count -%}{%- continue -%}{%- endif -%}
+                  <tr>
+                    <td>
+                      {%- render 'line-item', line_item: line_item, show_quantity_selector: true -%}
+                    </td>
+                    <td class="text-end" style="vertical-align:middle;">
+                      {%- if line_item.product.handle == 'privilege-card-black' -%}
+                        {{- 0 | money_with_currency -}}
+                      {%- else -%}
+                        {%- if settings.currency_code_enabled -%}
+                          {{- line_item.final_line_price | money_with_currency -}}
+                        {%- else -%}
+                          {{- line_item.final_line_price | money -}}
+                        {%- endif -%}
+                        {%- if line_item.original_line_price > line_item.final_line_price -%}
+                          <br>
+                          <span class="bb-li-original-price">
+                            {{- line_item.original_line_price | money -}}
+                          </span>
+                        {%- endif -%}
+                      {%- endif -%}
+                    </td>
+                  </tr>
+                {%- endfor -%}
+                {%- endfor -%}
+
+                {%- comment -%}
+                  One free card per belt. When the cart arrives out of step the row is
+                  drawn from the belt count straight away, and the sync below makes it
+                  real — so the customer never watches the number correct itself.
+                {%- endcomment -%}
+                {%- if _cart_belt_count != _cart_card_count and _cart_belt_count > 0 -%}
+                  {%- assign _pc = all_products['privilege-card-black'] -%}
+                  {%- assign _pc_value = _cart_belt_count | times: 1999 -%}
+                  <tr>
+                    <td>
+                      <line-item class="line-item">
+                        <div class="bb-line-item-img-wrap">
+                          {{-
+                            _pc.featured_image
+                            | image_url: width: 360
+                            | image_tag:
+                              loading: 'lazy',
+                              sizes: '(max-width: 699px) 70px, 120px',
+                              widths: '70,120,140,210,240,360',
+                              class: 'line-item__media'
+                          -}}
+                        </div>
+                        <div class="line-item-info">
+                          <div class="v-stack">
+                            <div class="v-stack justify-items-start gap-1">
+                              <div class="bb-title-actions">
+                                <p style="font-weight:700;margin:0;">
+                                  {{- _pc.title }}{% if _cart_belt_count > 1 %} x{{ _cart_belt_count }}{% endif -%}
+                                </p>
+                              </div>
+                            </div>
+                            <div class="v-stack justify-items-start gap-1">
+                              <div class="h-stack gap-2" style="align-items:center;">
+                                <span style="color:#000;font-weight:400;">GRATIS</span>
+                                <span style="font-size:13px;color:#c0392b;text-decoration:line-through;">
+                                  {{- _pc_value | money -}}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </line-item>
+                    </td>
+                    <td class="text-end" style="vertical-align:middle;">
+                      {{- 0 | money_with_currency -}}
+                    </td>
+                  </tr>
+                {%- endif -%}
+              </tbody>
+            </table>
+
+            {%- comment -%}
+              ----------------------------------------------------------------------------------------------------------------
+              CART FOOTER
+              ----------------------------------------------------------------------------------------------------------------
+            {%- endcomment -%}
+            <div class="cart-footer">
+              {%- if section.settings.show_cart_note -%}
+                <cart-note class="cart-note">
+                  {%- assign order_note = 'cart.general.add_order_note' | t -%}
+                  {%- assign placeholder = 'cart.general.note_placeholder' | t -%}
+                  {%- render 'input',
+                    name: 'note',
+                    multiline: 3,
+                    label: order_note,
+                    value: cart.note,
+                    placeholder: placeholder,
+                    show_label_as_block: true
+                  -%}
+                </cart-note>
+              {%- endif -%}
+
+              <div class="bb-cart-recap">
+                {%- render 'cart-discount' -%}
+
+                {%- comment -%}
+                  Totals come straight from Shopify, so the recap can never disagree with
+                  what is charged at checkout.
+                    original_total_price  — before any discount
+                    items_subtotal_price  — after line-level discounts (the set offer)
+                    total_price           — after cart-level discounts too (coupon codes)
+                {%- endcomment -%}
+                {%- assign _bb_offerta_total = cart.original_total_price | minus: cart.items_subtotal_price -%}
+                {%- assign _shipping_threshold_cents = settings.cart_free_shipping_threshold | times: 100 -%}
+
+                <div class="bb-recap-row">
+                  <span>Importo:</span>
+                  <span>
+                    {%- if _bb_offerta_total > 0 -%}
+                      <span class="bb-li-original-price">{{ cart.original_total_price | money }}</span>
+                      <span class="bb-recap-off">(-{{ _bb_offerta_total | money }})</span>
+                    {%- else -%}
+                      {{ cart.original_total_price | money }}
+                    {%- endif -%}
+                  </span>
+                </div>
+
+                {%- if cart.total_price >= _shipping_threshold_cents -%}
+                  <div class="bb-recap-row">
+                    <span>Spedizione:</span>
+                    <span>Gratis</span>
+                  </div>
+                {%- endif -%}
+
+                {%- if cart.cart_level_discount_applications.size > 0 -%}
+                  <div class="bb-recap-coupons">
+                    {%- for discount_application in cart.cart_level_discount_applications -%}
+                      <span class="discount-badge text-xs">
+                        {%- render 'icon' with 'discount', width: 12 -%}
+                        {{- discount_application.title -}}
+                        (-{{ discount_application.total_allocated_amount | money }})
+                        {%- if section.settings.allow_discount_application and discount_application.type != '' -%}
+                          <cart-discount-remove-button
+                            discount-code="{{ discount_application.title | escape }}"
+                            class="h-stack align-center"
+                          >
+                            <button type="button">{%- render 'icon' with 'close', width: 8 -%}</button>
+                          </cart-discount-remove-button>
+                        {%- endif -%}
+                      </span>
+                    {%- endfor -%}
+                  </div>
+                {%- endif -%}
+
+                {%- for block in section.blocks -%}
+                  {%- if block.type == '@app' -%}{%- render block -%}{%- endif -%}
+                {%- endfor -%}
+
+                <div class="bb-recap-row bb-recap-row--total">
+                  <span>{{ 'cart.general.total' | t }}:</span>
+                  <span>{{ cart.total_price | money_with_currency }}</span>
+                </div>
+
+                <div class="delivery-widget__manual"></div>
+
+                {%- if section.settings.show_accelerated_buttons and additional_checkout_buttons -%}
+                  <div class="additional-checkout-buttons additional-checkout-buttons--vertical">
+                    {{- content_for_additional_checkout_buttons -}}
+                  </div>
+                {%- endif -%}
+
+                <noscript>
+                  {%- assign update_button = 'cart.general.update_cart' | t -%}
+                  {%- render 'button', type: 'submit', content: update_button, style: 'outline' -%}
+                </noscript>
+
+                <button type="submit" name="checkout" class="bb-checkout-btn">
+                  {{ 'cart.general.checkout' | t }}
+                </button>
+
+                {%- if shop.enabled_payment_types.size > 0 -%}
+                  <ul class="payment-methods unstyled-list bb-cart-payment-icons">
+                    {%- for type in shop.enabled_payment_types -%}
+                      <li>{{- type | payment_type_svg_tag -}}</li>
+                    {%- endfor -%}
+                  </ul>
+                {%- endif -%}
+              </div>
+            </div>
+          </div>
+
+          {%- comment -%}
+            ----------------------------------------------------------------------------------------------------------------
+            SHIPPING ESTIMATOR
+            ----------------------------------------------------------------------------------------------------------------
+          {%- endcomment -%}
+
+          {%- if section.settings.show_shipping_estimator and cart.requires_shipping -%}
+            {%- render 'shipping-estimator' -%}
+          {%- endif -%}
+        </form>
+      </div>
+    </div>
+  {%- endif -%}
+</div>
+
+<script>
+  /* Privilege Card (Silver/Gold): standalone gifted product, qty capped at 1 — remove-only control.
+     Registered unconditionally (not gated on bundle presence) so it works in a cart with no belts too. */
+  (function () {
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest('.bb-privilege-remove-btn');
+      if (!btn) return;
+      e.preventDefault();
+      btn.disabled = true;
+      document.body.classList.add('bb-cart-busy');
+
+      var section = '{{ section.id }}';
+
+      fetch('{{ routes.cart_change_url }}.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ id: btn.dataset.lineKey, quantity: 0, sections: section })
+      }).then(function (r) { return r.json(); })
+        .then(function (payload) {
+          var B = window.MotifinoBelt;
+          if (!B || !B.renderSections(payload, [section])) { window.location.reload(); return; }
+          document.body.classList.remove('bb-cart-busy');
+        })
+        .catch(function () {
+          btn.disabled = false;
+          document.body.classList.remove('bb-cart-busy');
+        });
+    });
+  })();
+</script>
+
+<style>
+  @keyframes bb-chk-spin { to { transform: rotate(360deg); } }
+  .bb-checkout-spinner {
+    display: inline-block;
+    flex-shrink: 0;
+    vertical-align: middle;
+    margin-right: 6px;
+    animation: bb-chk-spin 0.7s linear infinite;
+  }
+  .bb-checkout-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+</style>
+
+{{ 'belt-combination.js' | asset_url | script_tag }}
+
+<script>
+  /*
+   * Cart quantity controls.
+   *
+   * A change is one /cart/change.js that renders the cart sections back with it,
+   * so the page never reloads. The only derived line is the free Privilege Card
+   * Black — one per belt — and it is only touched when it is out of step.
+   */
+  (function () {
+    var SECTIONS = '{{ section.id }}';
+
+    function changeQuantity(lineKey, quantity) {
+      return fetch('{{ routes.cart_change_url }}.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ id: lineKey, quantity: quantity, sections: SECTIONS })
+      }).then(function (r) {
+        if (!r.ok) throw new Error('cart_change_failed');
+        return r.json();
+      });
+    }
+
+    function render(payload) {
+      var B = window.MotifinoBelt;
+      if (!B || !B.renderSections(payload, [SECTIONS])) {
+        window.location.reload();
+        return;
+      }
+      document.body.classList.remove('bb-cart-busy');
+    }
+
+    /* A theme add-to-cart (product page, quick add) doesn't know the one-card-per-belt
+       rule and navigates here before any sync can finish, so the page can arrive with
+       the wrong card count. Correct it in place rather than reloading. */
+    function reconcileOnLoad(belts, cards) {
+      if (belts === cards || !window.MotifinoBelt) return;
+      document.body.classList.add('bb-cart-busy');
+      window.MotifinoBelt.syncPrivilegeCard(null, SECTIONS)
+        .then(function (payload) {
+          if (payload) { render(payload); return; }
+          document.body.classList.remove('bb-cart-busy');
+        })
+        .catch(function (e) {
+          console.warn('[Cart] Privilege card sync failed:', e);
+          window.location.reload();
+        });
+    }
+
+    function applyChange(lineKey, quantity) {
+      return changeQuantity(lineKey, quantity)
+        .then(function (cart) {
+          var sync = window.MotifinoBelt
+            && window.MotifinoBelt.syncPrivilegeCard(cart, SECTIONS);
+          if (!sync) return cart;
+          return sync
+            .then(function (after) { return after || cart; })
+            .catch(function (e) {
+              console.warn('[Cart] Privilege card sync failed:', e);
+              return cart;
+            });
+        })
+        .then(render);
+    }
+
+    /* Theme stepper links (- and + are /cart/change?id=...&quantity=... anchors) (/cart/change?id=...&quantity=0) */
+    document.addEventListener('click', function (e) {
+      var link = e.target.closest('a[href*="/cart/change"]');
+      if (!link) return;
+      var url = new URL(link.href, window.location.origin);
+      var id  = url.searchParams.get('id');
+      var qty = parseInt(url.searchParams.get('quantity'), 10);
+      if (!id || isNaN(qty)) return;
+
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      document.body.classList.add('bb-cart-busy');
+      applyChange(id, qty)
+        .catch(function () { document.body.classList.remove('bb-cart-busy'); });
+    }, { capture: true });
+
+    /* Theme quantity inputs */
+    document.addEventListener('change', function (e) {
+      var input = e.target;
+      if (!input.dataset || !input.dataset.lineKey) return;
+      var qty = parseInt(input.value, 10);
+      if (isNaN(qty)) return;
+
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      document.body.classList.add('bb-cart-busy');
+      applyChange(input.dataset.lineKey, qty)
+        .catch(function () { document.body.classList.remove('bb-cart-busy'); });
+    }, { capture: true });
+
+    reconcileOnLoad({{ _cart_belt_count | default: 0 }}, {{ _cart_card_count | default: 0 }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "t:sections.main_cart.name",
+  "class": "shopify-section--main-cart",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:global.colors.scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_custom_section_spacing",
+      "label": "Use custom section spacing",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Mobile section spacing",
+      "info": "Requires 'Use custom section spacing' to be checked",
+      "visible_if": "{{ section.settings.use_custom_section_spacing }}"
+    },
+    {
+      "type": "range",
+      "id": "mobile_section_spacing_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 0,
+      "info": "Requires 'Use custom section spacing' to be checked",
+      "visible_if": "{{ section.settings.use_custom_section_spacing }}"
+    },
+    {
+      "type": "range",
+      "id": "mobile_section_spacing_right",
+      "label": "Padding right",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 0,
+      "info": "Requires 'Use custom section spacing' to be checked",
+      "visible_if": "{{ section.settings.use_custom_section_spacing }}"
+    },
+    {
+      "type": "range",
+      "id": "mobile_section_spacing_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 0,
+      "info": "Requires 'Use custom section spacing' to be checked",
+      "visible_if": "{{ section.settings.use_custom_section_spacing }}"
+    },
+    {
+      "type": "range",
+      "id": "mobile_section_spacing_left",
+      "label": "Padding left",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 0,
+      "info": "Requires 'Use custom section spacing' to be checked",
+      "visible_if": "{{ section.settings.use_custom_section_spacing }}"
+    },
+    {
+      "type": "header",
+      "content": "Desktop section spacing",
+      "info": "Requires 'Use custom section spacing' to be checked",
+      "visible_if": "{{ section.settings.use_custom_section_spacing }}"
+    },
+    {
+      "type": "range",
+      "id": "desktop_section_spacing_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 0,
+      "info": "Requires 'Use custom section spacing' to be checked",
+      "visible_if": "{{ section.settings.use_custom_section_spacing }}"
+    },
+    {
+      "type": "range",
+      "id": "desktop_section_spacing_right",
+      "label": "Padding right",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 0,
+      "info": "Requires 'Use custom section spacing' to be checked",
+      "visible_if": "{{ section.settings.use_custom_section_spacing }}"
+    },
+    {
+      "type": "range",
+      "id": "desktop_section_spacing_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 0,
+      "info": "Requires 'Use custom section spacing' to be checked",
+      "visible_if": "{{ section.settings.use_custom_section_spacing }}"
+    },
+    {
+      "type": "range",
+      "id": "desktop_section_spacing_left",
+      "label": "Padding left",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 0,
+      "info": "Requires 'Use custom section spacing' to be checked",
+      "visible_if": "{{ section.settings.use_custom_section_spacing }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_cart_note",
+      "label": "t:sections.main_cart.show_cart_note",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "allow_discount_application",
+      "label": "t:sections.main_cart.allow_discount_application",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_order_weight",
+      "label": "t:sections.main_cart.show_order_weight",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_shipping_text",
+      "label": "t:sections.main_cart.show_shipping_text",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_accelerated_buttons",
+      "label": "t:sections.main_cart.show_accelerated_buttons",
+      "info": "t:sections.main_cart.show_accelerated_buttons_info",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_shipping_estimator",
+      "label": "t:sections.main_cart.show_shipping_estimator",
+      "default": true
+    }
+  ],
+
+  "blocks": [{ "type": "@app" }]
+}
+{% endschema %}

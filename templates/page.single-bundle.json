@@ -1,0 +1,1473 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "single-bundle-builder": {
+      "type": "single-bundle-builder",
+      "blocks": {
+        "gallery_dygPab": {
+          "type": "gallery",
+          "settings": {
+            "worn_btn_label": "Vedi indossato",
+            "worn_btn_back_label": "Vista prodotto",
+            "worn_btn_style": "solid",
+            "worn_btn_font_size": 13,
+            "worn_btn_bottom": 22,
+            "worn_btn_pad_v": 8,
+            "worn_btn_pad_h": 18,
+            "worn_btn_bg": "",
+            "worn_btn_color": "",
+            "worn_btn_font_size_desk": 13,
+            "worn_btn_bottom_desk": 40,
+            "worn_btn_pad_v_desk": 8,
+            "worn_btn_pad_h_desk": 24,
+            "worn_btn_bg_desk": "",
+            "worn_btn_color_desk": "",
+            "desk_size_mode": "custom",
+            "aspect_ratio_desktop": "4/5",
+            "desk_custom_width": 50,
+            "desk_height_mode": "minus_both",
+            "img_position_desktop": "center center",
+            "aspect_ratio": "5/4",
+            "img_position": "center center",
+            "margin_top": 0,
+            "margin_bottom": 0,
+            "padding_top": 0,
+            "padding_bottom": 0,
+            "show_on_desktop": true,
+            "show_on_mobile": true
+          }
+        },
+        "buckle_dropdown_FrjHEg": {
+          "type": "buckle_dropdown",
+          "settings": {
+            "label": "Fibbia",
+            "show_label": false,
+            "placeholder": "Seleziona fibbia…",
+            "margin_top": 0,
+            "margin_bottom": 0,
+            "padding_top": 0,
+            "padding_bottom": 0,
+            "show_on_desktop": true,
+            "show_on_mobile": true
+          }
+        },
+        "strap_dropdown_GW9cMn": {
+          "type": "strap_dropdown",
+          "settings": {
+            "label": "Colore Pelle",
+            "show_label": false,
+            "placeholder": "Seleziona cinturino…",
+            "margin_top": 0,
+            "margin_bottom": 0,
+            "padding_top": 0,
+            "padding_bottom": 0,
+            "show_on_desktop": true,
+            "show_on_mobile": true
+          }
+        },
+        "custom_liquid_AjEA69": {
+          "type": "custom_liquid",
+          "settings": {
+            "custom_liquid": "{% if shop.metafields.loox[\"global_stats\"] %}\n{% assign looxstats = shop.metafields.loox[\"global_stats\"] | split: ',' %} \n<div class=\"loox-rating loox-rating-hp\" data-rating=\"{{ looxstats[0] }}\" data-raters=\"{{ looxstats[1] }}\"></div> \n{% endif %}",
+            "margin_top": 0,
+            "margin_bottom": 0,
+            "padding_top": 0,
+            "padding_bottom": 0,
+            "show_on_desktop": true,
+            "show_on_mobile": true
+          }
+        },
+        "title_nfMRwU": {
+          "type": "title",
+          "settings": {
+            "product_title": "Classic Matt - Black",
+            "font_size": 22,
+            "margin_top": 0,
+            "margin_bottom": 0,
+            "padding_top": 0,
+            "padding_bottom": 0,
+            "show_on_desktop": true,
+            "show_on_mobile": true
+          }
+        },
+        "price_mwX4Jr": {
+          "type": "price",
+          "settings": {
+            "price_size": 20,
+            "price_color": "#535353",
+            "margin_top": 0,
+            "margin_bottom": 8,
+            "padding_top": 0,
+            "padding_bottom": 0,
+            "show_on_desktop": true,
+            "show_on_mobile": true
+          }
+        },
+        "buckle_dropdown_desktop_gG7Mgc": {
+          "type": "buckle_dropdown_desktop",
+          "settings": {
+            "label": "Fibbia",
+            "show_label": false,
+            "placeholder": "Seleziona fibbia…",
+            "margin_top": 0,
+            "margin_bottom": 0,
+            "show_on_desktop": true,
+            "show_on_mobile": true
+          }
+        },
+        "strap_dropdown_desktop_D7AhhW": {
+          "type": "strap_dropdown_desktop",
+          "settings": {
+            "label": "Colore pelle",
+            "show_label": false,
+            "placeholder": "Seleziona cinturino…",
+            "margin_top": 0,
+            "margin_bottom": 0,
+            "show_on_desktop": true,
+            "show_on_mobile": true
+          }
+        },
+        "custom_liquid_AMR4iy": {
+          "type": "custom_liquid",
+          "settings": {
+            "custom_liquid": "<div class=\"delivery-widget__manual\"></div>",
+            "margin_top": 0,
+            "margin_bottom": 0,
+            "padding_top": 0,
+            "padding_bottom": 0,
+            "show_on_desktop": true,
+            "show_on_mobile": true
+          }
+        },
+        "description_WzWh9x": {
+          "type": "description",
+          "settings": {
+            "description": "<p>Comodità, durata e regolazione estrema. Crea <strong>le tue cinture MOTIFINO</strong> e di addio ai buchi rovinati</p>",
+            "margin_top": 0,
+            "margin_bottom": 8,
+            "padding_top": 0,
+            "padding_bottom": 0,
+            "show_on_desktop": true,
+            "show_on_mobile": true
+          }
+        },
+        "taglia_DUDVYC": {
+          "type": "taglia",
+          "settings": {
+            "show_label": false,
+            "label": "Taglia",
+            "size_1_label": "130 cm",
+            "size_1_value": "130cm",
+            "size_2_label": "150 cm",
+            "size_2_value": "150cm",
+            "pill_padding_v": 7,
+            "pill_padding_h": 18,
+            "pill_font_size": 14,
+            "margin_top": 0,
+            "margin_bottom": 16,
+            "padding_top": 0,
+            "padding_bottom": 0,
+            "show_on_desktop": true,
+            "show_on_mobile": true
+          }
+        },
+        "buttons_LcjHMY": {
+          "type": "buttons",
+          "settings": {
+            "text": "Vedi taglie e dettagli",
+            "link": "#shopify-section-template--28657540202822__tabs_RWKN4K",
+            "style": "link",
+            "stretch": false,
+            "alignment": "left",
+            "margin_top": 0,
+            "margin_bottom": 20,
+            "padding_top": 0,
+            "padding_bottom": 0,
+            "show_on_desktop": false,
+            "show_on_mobile": true
+          }
+        },
+        "cta_button_icABpQ": {
+          "type": "cta_button",
+          "settings": {
+            "button_text": "Aggiungi al Carrello",
+            "alignment": "left",
+            "btn_width_type": "full",
+            "btn_custom_width": 300,
+            "alignment_desktop": "left",
+            "btn_width_type_desktop": "full",
+            "btn_custom_width_desktop": 300,
+            "font_size": 16,
+            "bg_color": "#141311",
+            "text_color": "#ffffff",
+            "margin_top": 0,
+            "margin_bottom": 0,
+            "padding_top": 8,
+            "padding_bottom": 8,
+            "show_on_desktop": true,
+            "show_on_mobile": true
+          }
+        },
+        "image_t7tgQA": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/Trust_pilot_eccellente.webp",
+            "link": "#shopify-section-template--28657540202822__multi_column_QJebqB",
+            "caption": "",
+            "alignment": "center",
+            "img_width_type": "custom",
+            "img_max_width": 300,
+            "img_max_width_mobile": 200,
+            "aspect_ratio": "auto",
+            "img_position": "center center",
+            "margin_top": 12,
+            "margin_bottom": 0,
+            "padding_top": 0,
+            "padding_bottom": 0,
+            "show_on_desktop": true,
+            "show_on_mobile": true
+          }
+        },
+        "accordion_yMjWjz": {
+          "type": "accordion",
+          "settings": {
+            "tab_1_title": "Taglie e Dettagli Tecnici",
+            "tab_1_content": "<p><strong>TAGLIE<br/></strong>Tutte le cinture sono alte 3,5cm<br/>Sono disponibili in 2 taglie:<br/>- 130cm (copre fino alla 56 IT di pantaloni)<br/>- 150cm (copre fino alla 66 IT di pantaloni)<br/><br/>Le cinture possono essere <strong>accorciate su misura</strong> in modo estremamente semplice. Guarda il <a href=\"/pages/istruzioni-taglio-cintura\" title=\"Istruzioni Taglio cintura\">tutorial</a><strong><br/><br/>MATERIALI<br/></strong>Cinture: 70% pelle di vitello, 30% PU<br/>Fibbie: Lega di zinco<br/>Le fibbie contengono una percentuale bassissima di Nichel</p><p></p>",
+            "tab_2_title": "Spedizione Gratuita in 24/72h",
+            "tab_2_content": "<p>Tutte le spedizioni partono prima delle 15:00 dal Lunedì al Venerdì. In media tutti i pacchi vengono consegnati in <strong>24/72h</strong><br/><br/>Gli ordini vengono controllati ogni giorno dal nostro staff e per qualsiasi problema nella spedizioni verrai contattato.<br/><br/>Puoi leggere ulteriori informazioni sulla spedizione <a href=\"/policies/shipping-policy\" title=\"Shipping Policy\">QUI</a></p>",
+            "tab_3_title": "Contrassegno, Klarna, PayPal",
+            "tab_3_content": "<p>Dopo aver scelto il tuo set e creato le tue cinture potrai procedere al checkout dove troverai questi metodi di pagamento:<br/><br/>- Paypal<br/>- Klarna<br/>- Contrassegno<br/>- Bonifico Bancario<br/>- Carta di credito (Mastercard, Visa, Amex ecc...)</p>",
+            "tab_4_title": "Reso Gratuito e Garanzia 2 Anni",
+            "tab_4_content": "<p><strong>RESI GRATUITI</strong><br/>Se ricevi la cintura e ritenessi che non sia all'altezza delle tue aspettative, contattaci senza pensieri. Organizzeremo un reso per te gratuitamente nei primi 30 giorni<br/><br/><strong>GARANZIA 2 ANNI</strong><br/>Assieme alle nostre cinture riceverai un certificato di autenticità che attesterà la garanzia di 2 anni per quel prodotto in questione. Qualsiasi problema non esitare a contattarci.<br/><br/>Vedi le <a href=\"/policies/refund-policy\" title=\"Refund Policy\">Informative sui Resi e Rimborsi</a> per ulteriori informazioni</p>",
+            "margin_top": 20,
+            "margin_bottom": 0,
+            "padding_top": 0,
+            "padding_bottom": 0,
+            "show_on_desktop": true,
+            "show_on_mobile": false
+          }
+        }
+      },
+      "block_order": [
+        "gallery_dygPab",
+        "buckle_dropdown_FrjHEg",
+        "strap_dropdown_GW9cMn",
+        "custom_liquid_AjEA69",
+        "title_nfMRwU",
+        "price_mwX4Jr",
+        "buckle_dropdown_desktop_gG7Mgc",
+        "strap_dropdown_desktop_D7AhhW",
+        "custom_liquid_AMR4iy",
+        "description_WzWh9x",
+        "taglia_DUDVYC",
+        "buttons_LcjHMY",
+        "cta_button_icABpQ",
+        "image_t7tgQA",
+        "accordion_yMjWjz"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "bg_color": "",
+        "info_pad_top": 80,
+        "info_pad_right": 20,
+        "info_pad_bottom": 20,
+        "info_pad_left": 20,
+        "info_col_max_width": 620,
+        "info_col_position": "center",
+        "sticky_info_col": true,
+        "dropdown_border_width": 1,
+        "dropdown_border_color": "#e0e0e0",
+        "allow_transparent_header": true,
+        "transparent_header_use_primary_colors": false
+      }
+    },
+    "apps_section": {
+      "type": "apps",
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": false,
+        "remove_vertical_spacing": true,
+        "remove_horizontal_spacing": true,
+        "use_custom_section_spacing": false,
+        "mobile_section_spacing_top": 0,
+        "mobile_section_spacing_right": 0,
+        "mobile_section_spacing_bottom": 0,
+        "mobile_section_spacing_left": 0,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 0
+      }
+    },
+    "1785158573c299ff67": {
+      "type": "apps",
+      "blocks": {
+        "reelup_shoppable_videos_reels_reelup_playlist_3ehngq": {
+          "type": "shopify://apps/reelup-shoppable-videos-reels/blocks/reelup_playlist/a8ec9e4d-d192-44f7-9c23-595f9ee7dd5b",
+          "settings": {
+            "playlist_id": "rl_pl_16368"
+          }
+        }
+      },
+      "block_order": [
+        "reelup_shoppable_videos_reels_reelup_playlist_3ehngq"
+      ],
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": false,
+        "remove_vertical_spacing": true,
+        "remove_horizontal_spacing": false,
+        "use_custom_section_spacing": false,
+        "mobile_section_spacing_top": 0,
+        "mobile_section_spacing_right": 0,
+        "mobile_section_spacing_bottom": 0,
+        "mobile_section_spacing_left": 0,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 0
+      }
+    },
+    "tabs_RWKN4K": {
+      "type": "tabs",
+      "blocks": {
+        "tab_yBWTAA": {
+          "type": "tab",
+          "settings": {
+            "title": "Taglie e Dettagli Tecnici",
+            "content": "<p><strong>TAGLIE<br/></strong>Tutte le cinture sono alte 3,5cm<br/>Sono disponibili in 2 taglie:<br/>- 130cm (copre fino alla 56 IT di pantaloni)<br/>- 150cm (copre fino alla 66 IT di pantaloni)<br/><br/>Le cinture possono essere <strong>accorciate su misura</strong> a casa con delle semplici forbici.<br/><strong><br/>MATERIALI<br/></strong>Cinture: 70% pelle di vitello, 30% PU<br/>Fibbie: Lega di zinco<br/>Le fibbie contengono una percentuale bassissima di Nichel</p><p></p>",
+            "page": "",
+            "open_on_mobile": true
+          }
+        },
+        "tab_Q6BwKa": {
+          "type": "tab",
+          "settings": {
+            "title": "Spedizione Gratuita in 24/72h",
+            "content": "<p>Tutte le spedizioni partono prima delle 15:00 dal Lunedì al Venerdì. In media tutti i pacchi vengono consegnati in <strong>24/72h</strong><br/><br/>Gli ordini vengono controllati ogni giorno dal nostro staff e per qualsiasi problema nella spedizioni verrai contattato.<br/><br/>Puoi leggere ulteriori informazioni sulla spedizione <a href=\"/policies/shipping-policy\" title=\"Shipping Policy\">QUI</a></p>",
+            "page": "",
+            "open_on_mobile": false
+          }
+        },
+        "tab_agVcCf": {
+          "type": "tab",
+          "settings": {
+            "title": "Contrassegno, Klarna, Paypal",
+            "content": "<p>Dopo aver scelto il tuo set e creato le tue cinture potrai procedere al checkout dove troverai questi metodi di pagamento:<br/><br/>- Paypal<br/>- Klarna<br/>- Pagamento alla consegna<br/>- Bonifico Bancario<br/>- Carta di credito (Mastercard, Visa, Amex ecc...)</p>",
+            "page": "",
+            "open_on_mobile": false
+          }
+        },
+        "tab_aGW4Vh": {
+          "type": "tab",
+          "settings": {
+            "title": "Reso Gratuito e Garanzia 2 anni",
+            "content": "<p><strong>RESI GRATUITI</strong><br/>Se ricevi la cintura e ritenessi che non sia all'altezza delle tue aspettative, contattaci senza pensieri. Organizzeremo un reso per te gratuitamente nei primi 30 giorni<br/><br/><strong>GARANZIA 2 ANNI</strong><br/>Assieme alle nostre cinture riceverai un certificato di autenticità che attesterà la garanzia di 2 anni per quel prodotto in questione. Qualsiasi problema non esitare a contattarci.<br/><br/>Vedi le <a href=\"/policies/refund-policy\" title=\"Refund Policy\">Informative sui Resi e Rimborsi</a> per ulteriori informazioni</p>",
+            "page": "",
+            "open_on_mobile": false
+          }
+        }
+      },
+      "block_order": [
+        "tab_yBWTAA",
+        "tab_Q6BwKa",
+        "tab_agVcCf",
+        "tab_aGW4Vh"
+      ],
+      "name": "t:sections.tabs.presets.tab.name",
+      "settings": {
+        "color_scheme": "",
+        "use_custom_section_spacing": true,
+        "mobile_section_spacing_top": 20,
+        "mobile_section_spacing_right": 20,
+        "mobile_section_spacing_bottom": 40,
+        "mobile_section_spacing_left": 20,
+        "desktop_section_spacing_top": 40,
+        "desktop_section_spacing_right": 100,
+        "desktop_section_spacing_bottom": 50,
+        "desktop_section_spacing_left": 100,
+        "separate_section_with_border": false,
+        "subheading": "",
+        "title": "",
+        "text_alignment": "start",
+        "enable_auto_close": true
+      }
+    },
+    "rich_text_7cgq9c": {
+      "type": "rich-text",
+      "blocks": {
+        "subheading_NgHjbB": {
+          "type": "subheading",
+          "settings": {
+            "text": "Il futuro delle cinture"
+          }
+        },
+        "heading_H79zzw": {
+          "type": "heading",
+          "settings": {
+            "text": "Scopri l'estrema comodità",
+            "heading_tag": "h1"
+          }
+        }
+      },
+      "block_order": [
+        "subheading_NgHjbB",
+        "heading_H79zzw"
+      ],
+      "name": "t:sections.rich_text.presets.rich_text.name",
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": false,
+        "content_width": "sm",
+        "text_position": "center",
+        "remove_vertical_spacing": true,
+        "use_custom_section_spacing": false,
+        "mobile_section_spacing_top": 0,
+        "mobile_section_spacing_right": 0,
+        "mobile_section_spacing_bottom": 0,
+        "mobile_section_spacing_left": 0,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 0
+      }
+    },
+    "video_k7YPV8": {
+      "type": "video",
+      "name": "t:sections.video.presets.video.name",
+      "settings": {
+        "autoplay": true,
+        "show_controls": false,
+        "video_size": "md",
+        "video": "shopify://files/videos/Video sales page utilizzo cintura_d571c559-6849-477c-99c5-41b392a77452.mp4",
+        "external_video_url": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+        "text_color": "#ffffff",
+        "use_custom_section_spacing": false,
+        "mobile_section_spacing_top": 0,
+        "mobile_section_spacing_right": 0,
+        "mobile_section_spacing_bottom": 0,
+        "mobile_section_spacing_left": 0,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 0
+      }
+    },
+    "image_with_text_nfzQkK": {
+      "type": "image-with-text",
+      "blocks": {
+        "subheading_c8xbYF": {
+          "type": "subheading",
+          "settings": {
+            "text": "Regolabile ogni 5mm"
+          }
+        },
+        "heading_qr3DB3": {
+          "type": "heading",
+          "settings": {
+            "text": "ZERO LIMITI!",
+            "heading_tag": "h1"
+          }
+        },
+        "richtext_XVQxWQ": {
+          "type": "richtext",
+          "settings": {
+            "content": "<p>Non dovrai più cercare il buco giusto. Ora con il sistema \"HoLess\" la cintura si regola millimetricamente al tuo corpo in modo estremamente perfetto</p>"
+          }
+        }
+      },
+      "block_order": [
+        "subheading_c8xbYF",
+        "heading_qr3DB3",
+        "richtext_XVQxWQ"
+      ],
+      "custom_css": [
+        "@media screen and (min-width: 768px) {{display: none !important; }}"
+      ],
+      "name": "t:sections.image_with_text.presets.image_with_text.name",
+      "settings": {
+        "color_scheme": "scheme-2",
+        "separate_section_with_border": false,
+        "image": "shopify://shop_images/bbbbytfubyju.webp",
+        "reveal_on_scroll": true,
+        "image_position": "start",
+        "content_width": "sm",
+        "remove_vertical_spacing": true,
+        "use_custom_section_spacing": true,
+        "mobile_section_spacing_top": 40,
+        "mobile_section_spacing_right": 0,
+        "mobile_section_spacing_bottom": 0,
+        "mobile_section_spacing_left": 0,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 0
+      }
+    },
+    "image_with_text_awMXKJ": {
+      "type": "image-with-text",
+      "blocks": {
+        "subheading_wVRRPE": {
+          "type": "subheading",
+          "settings": {
+            "text": "Alla guida, a tavola, in pubblico"
+          }
+        },
+        "heading_mQVaLn": {
+          "type": "heading",
+          "settings": {
+            "text": "ALLENTALA CON UN BOTTONE",
+            "heading_tag": "h1"
+          }
+        },
+        "richtext_fK9bnU": {
+          "type": "richtext",
+          "settings": {
+            "content": "<p>Addio buchi. Ora in qualsiasi momento potrai allentare la cintura premendo il bottone, liberandoti da qualsiasi fastidio</p>"
+          }
+        },
+        "liquid_gPkM73": {
+          "type": "liquid",
+          "settings": {
+            "liquid": "<div style=\"height: 15px; width: 100%; clear: both;\" aria-hidden=\"true\"></div>"
+          }
+        },
+        "button_WwiKaR": {
+          "type": "button",
+          "settings": {
+            "style": "solid",
+            "text": "Scegli il colore",
+            "url": "#shopify-section-template--28657540202822__single-bundle-builder",
+            "background": "",
+            "text_color": ""
+          }
+        }
+      },
+      "block_order": [
+        "subheading_wVRRPE",
+        "heading_mQVaLn",
+        "richtext_fK9bnU",
+        "liquid_gPkM73",
+        "button_WwiKaR"
+      ],
+      "custom_css": [
+        "@media screen and (min-width: 768px) {{display: none !important; }}"
+      ],
+      "name": "t:sections.image_with_text.presets.image_with_text.name",
+      "settings": {
+        "color_scheme": "scheme-2",
+        "separate_section_with_border": false,
+        "image": "shopify://shop_images/CIntura_con_bottone_-_MOTIFINO_-_Copyright_24549131656854_1f2746ac-ad7e-4d52-9720-fa3d381e3bcd.webp",
+        "reveal_on_scroll": true,
+        "image_position": "start",
+        "content_width": "sm",
+        "remove_vertical_spacing": true,
+        "use_custom_section_spacing": false,
+        "mobile_section_spacing_top": 0,
+        "mobile_section_spacing_right": 0,
+        "mobile_section_spacing_bottom": 0,
+        "mobile_section_spacing_left": 0,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 0
+      }
+    },
+    "carosello_N87d8V": {
+      "type": "carosello",
+      "blocks": {
+        "slide_Czdrhd": {
+          "type": "slide",
+          "settings": {
+            "color_scheme": "",
+            "product": "",
+            "hide_on_desktop": false,
+            "hide_on_mobile": false,
+            "media_position": "above",
+            "image": "shopify://shop_images/Scatola_regalo_-_MOTIFINO_b5584a3b-23dc-4d85-ac13-482e78fdef37.webp",
+            "image_link": "",
+            "focal_point": "center",
+            "text_alignment": "left",
+            "content_position": "place-self-end-start text-start",
+            "subheading": "Per regali perfetti",
+            "subheading_size": "h6",
+            "heading": "GIFT BOX PREMIUM",
+            "heading_size": "h4",
+            "text": "<p>Una box magnetica con trama in pelle, per far fare a te e al tuo regalo un'ottima figura</p>",
+            "show_product_title": true,
+            "show_product_price": true,
+            "price_text": "",
+            "price_size": "h6",
+            "button_1_text": "",
+            "button_1_link": "",
+            "button_1_style": "link",
+            "button_2_text": "",
+            "button_2_link": "",
+            "button_2_style": "outline",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0,
+            "gradient_overlay": "linear-gradient(180deg, rgba(54, 54, 54, 0.2) 0%, rgba(4, 4, 4, 0.65) 100%)"
+          }
+        },
+        "slide_m8Tnej": {
+          "type": "slide",
+          "settings": {
+            "color_scheme": "",
+            "product": "",
+            "hide_on_desktop": false,
+            "hide_on_mobile": false,
+            "media_position": "above",
+            "image": "shopify://shop_images/Immagini_11_7.png",
+            "image_link": "",
+            "focal_point": "center",
+            "text_alignment": "left",
+            "content_position": "place-self-end-start text-start",
+            "subheading": "Passante integrato",
+            "subheading_size": "h6",
+            "heading": "CINTURA IN PELLE",
+            "heading_size": "h4",
+            "text": "<p>Cintura da 130cm o 150cm accorciabile su misura tagliandola con una semplice forbice</p>",
+            "show_product_title": true,
+            "show_product_price": true,
+            "price_text": "",
+            "price_size": "h6",
+            "button_1_text": "",
+            "button_1_link": "",
+            "button_1_style": "link",
+            "button_2_text": "",
+            "button_2_link": "",
+            "button_2_style": "outline",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0,
+            "gradient_overlay": "linear-gradient(180deg, rgba(54, 54, 54, 0.2) 0%, rgba(4, 4, 4, 0.65) 100%)"
+          }
+        },
+        "slide_TQF3Fc": {
+          "type": "slide",
+          "settings": {
+            "color_scheme": "",
+            "product": "",
+            "hide_on_desktop": false,
+            "hide_on_mobile": false,
+            "media_position": "above",
+            "image": "shopify://shop_images/Fibbia_oro_3D_fef84ba2-1eaa-45b7-a985-f9d505bab60d.webp",
+            "image_link": "",
+            "focal_point": "center",
+            "text_alignment": "left",
+            "content_position": "place-self-end-start text-start",
+            "subheading": "Fibbia staccabile",
+            "subheading_size": "h6",
+            "heading": "CON PULSANTE",
+            "heading_size": "h4",
+            "text": "<p>Dimentica la cintura con i buchi e scopri la comodità di allentarla con il bottone di regolazione</p>",
+            "show_product_title": true,
+            "show_product_price": true,
+            "price_text": "",
+            "price_size": "h6",
+            "button_1_text": "",
+            "button_1_link": "",
+            "button_1_style": "link",
+            "button_2_text": "",
+            "button_2_link": "",
+            "button_2_style": "outline",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0,
+            "gradient_overlay": "linear-gradient(180deg, rgba(54, 54, 54, 0.2) 0%, rgba(4, 4, 4, 0.65) 100%)"
+          }
+        },
+        "slide_eifLHw": {
+          "type": "slide",
+          "settings": {
+            "color_scheme": "",
+            "product": "",
+            "hide_on_desktop": false,
+            "hide_on_mobile": false,
+            "media_position": "above",
+            "image": "shopify://shop_images/Come_funziona_la_carta_NFC_di_MOTIFINO.webp",
+            "image_link": "",
+            "focal_point": "center",
+            "text_alignment": "left",
+            "content_position": "place-self-end-start text-start",
+            "subheading": "Certificato di autenticità",
+            "subheading_size": "h6",
+            "heading": "PRIVILEGE CARD",
+            "heading_size": "h4",
+            "text": "<p>Certificato di autenticità e una NFC Card in omaggio con funzioni esclusive per i membri MOTIFINO</p>",
+            "show_product_title": true,
+            "show_product_price": true,
+            "price_text": "",
+            "price_size": "h6",
+            "button_1_text": "",
+            "button_1_link": "",
+            "button_1_style": "link",
+            "button_2_text": "",
+            "button_2_link": "",
+            "button_2_style": "outline",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0,
+            "gradient_overlay": "linear-gradient(180deg, rgba(54, 54, 54, 0.2) 0%, rgba(4, 4, 4, 0.65) 100%)"
+          }
+        }
+      },
+      "block_order": [
+        "slide_Czdrhd",
+        "slide_m8Tnej",
+        "slide_TQF3Fc",
+        "slide_eifLHw"
+      ],
+      "name": "Carosello",
+      "settings": {
+        "color_scheme": "",
+        "text_layout": "under",
+        "image_aspect_ratio": "1_1",
+        "custom_image_height": 400,
+        "stack_mobile": false,
+        "desktop_slides_visible": 4,
+        "mobile_slide_width": 85,
+        "heading_alignment": "start",
+        "subheading": "Farai un figurone",
+        "title": "IL REGALO PERFETTO",
+        "content": "<p>Zero problemi con le taglie, scatola di trasporto protettiva e una gift box elegantissima.</p>",
+        "show_navigation": true,
+        "navigation_style": "side_arrows_minimal",
+        "navigation_background": "#141311",
+        "navigation_text": "#b98141",
+        "separate_section_with_border": false,
+        "padding_top": 40,
+        "padding_bottom": 52,
+        "desktop_padding_horizontal": 100,
+        "slide_gap": 20,
+        "slide_media_inner_padding": 0,
+        "slide_content_inner_padding": 16,
+        "slide_inner_gap": 10,
+        "media_border_radius": 8
+      }
+    },
+    "text_with_icons_fU4qXK": {
+      "type": "text-with-icons",
+      "blocks": {
+        "item_ecNWPx": {
+          "type": "item",
+          "settings": {
+            "icon": "picto-delivery-truck",
+            "icon_width": 40,
+            "mobile_icon_width": 32,
+            "title": "",
+            "content": "<p>Spedizioni gratis in 24/72h</p>"
+          }
+        },
+        "item_niQc8N": {
+          "type": "item",
+          "settings": {
+            "icon": "picto-return",
+            "icon_width": 40,
+            "mobile_icon_width": 32,
+            "title": "",
+            "content": "<p>Resi entro 30 giorni, 2 anni garanzia</p>"
+          }
+        },
+        "item_DxdQVY": {
+          "type": "item",
+          "settings": {
+            "icon": "picto-credit-card",
+            "icon_width": 40,
+            "mobile_icon_width": 32,
+            "title": "",
+            "content": "<p>PayPal, Klarna, contrassegno</p>"
+          }
+        },
+        "item_J3Bnnt": {
+          "type": "item",
+          "settings": {
+            "icon": "picto-customer-support",
+            "icon_width": 40,
+            "mobile_icon_width": 32,
+            "title": "",
+            "content": "<p>Assistenza 24/7 Whatsapp</p>"
+          }
+        }
+      },
+      "block_order": [
+        "item_ecNWPx",
+        "item_niQc8N",
+        "item_DxdQVY",
+        "item_J3Bnnt"
+      ],
+      "custom_css": [],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "use_custom_section_spacing": true,
+        "mobile_section_spacing_top": 0,
+        "mobile_section_spacing_right": 20,
+        "mobile_section_spacing_bottom": 40,
+        "mobile_section_spacing_left": 20,
+        "desktop_section_spacing_top": 30,
+        "desktop_section_spacing_right": 100,
+        "desktop_section_spacing_bottom": 60,
+        "desktop_section_spacing_left": 100,
+        "separate_section_with_border": false,
+        "stack_on_mobile": true,
+        "icon_color": "#b98141",
+        "text_color": "",
+        "text_alignment": "center"
+      }
+    },
+    "carosello_yMa77a": {
+      "type": "carosello",
+      "blocks": {
+        "slide_QcnA9T": {
+          "type": "slide",
+          "settings": {
+            "color_scheme": "scheme-3",
+            "product": "",
+            "hide_on_desktop": false,
+            "hide_on_mobile": false,
+            "media_position": "above",
+            "image": "shopify://shop_images/2_e0650b63-cbf9-4580-8f5f-c29c90a5de54.jpg",
+            "image_link": "",
+            "focal_point": "center",
+            "text_alignment": "left",
+            "content_position": "place-self-end-start text-start",
+            "subheading": "",
+            "subheading_size": "h6",
+            "heading": "BUSINESS CARD",
+            "heading_size": "h3",
+            "text": "<p>Addio biglietti da visita cartacei. Ora potrai presentarti ai clienti, colleghi e fornitori con un'ottima presentazione</p>",
+            "show_product_title": true,
+            "show_product_price": true,
+            "price_text": "",
+            "price_size": "h6",
+            "button_1_text": "",
+            "button_1_link": "",
+            "button_1_style": "link",
+            "button_2_text": "",
+            "button_2_link": "",
+            "button_2_style": "outline",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0,
+            "gradient_overlay": "linear-gradient(180deg, rgba(54, 54, 54, 0.2) 0%, rgba(4, 4, 4, 0.65) 100%)"
+          }
+        },
+        "slide_KQgNEK": {
+          "type": "slide",
+          "settings": {
+            "color_scheme": "scheme-3",
+            "product": "",
+            "hide_on_desktop": false,
+            "hide_on_mobile": false,
+            "media_position": "above",
+            "image": "shopify://shop_images/3_739b1e62-8b60-4b94-aa84-b86b6fa8416f.jpg",
+            "image_link": "",
+            "focal_point": "center",
+            "text_alignment": "left",
+            "content_position": "place-self-end-start text-start",
+            "subheading": "",
+            "subheading_size": "h6",
+            "heading": "IL TUO PROFILO",
+            "heading_size": "h4",
+            "text": "<p>Ora basterà appoggiare la card al telefono dell'altra persona per condividere il tuo profilo con tutto ciò che vuoi</p>",
+            "show_product_title": true,
+            "show_product_price": true,
+            "price_text": "",
+            "price_size": "h6",
+            "button_1_text": "",
+            "button_1_link": "",
+            "button_1_style": "link",
+            "button_2_text": "",
+            "button_2_link": "",
+            "button_2_style": "outline",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0,
+            "gradient_overlay": "linear-gradient(180deg, rgba(54, 54, 54, 0.2) 0%, rgba(4, 4, 4, 0.65) 100%)"
+          }
+        },
+        "slide_KmHYwM": {
+          "type": "slide",
+          "settings": {
+            "color_scheme": "scheme-3",
+            "product": "",
+            "hide_on_desktop": false,
+            "hide_on_mobile": false,
+            "media_position": "above",
+            "image": "shopify://shop_images/ijgwrgqeibie3fgbwribgw.jpg",
+            "image_link": "",
+            "focal_point": "center",
+            "text_alignment": "left",
+            "content_position": "place-self-end-start text-start",
+            "subheading": "",
+            "subheading_size": "h6",
+            "heading": "...TUTTO CIÒ CHE VUOI",
+            "heading_size": "h3",
+            "text": "<p>Pulsante che riporta alla tua chat Whatsapp, foto e video, cataloghi, menù, links e tutti i tuoi dati. Tutto a portata di mano in un istante </p>",
+            "show_product_title": true,
+            "show_product_price": true,
+            "price_text": "",
+            "price_size": "h6",
+            "button_1_text": "",
+            "button_1_link": "",
+            "button_1_style": "link",
+            "button_2_text": "",
+            "button_2_link": "",
+            "button_2_style": "outline",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0,
+            "gradient_overlay": "linear-gradient(180deg, rgba(54, 54, 54, 0.2) 0%, rgba(4, 4, 4, 0.65) 100%)"
+          }
+        },
+        "slide_3nAFkR": {
+          "type": "slide",
+          "settings": {
+            "color_scheme": "scheme-3",
+            "product": "",
+            "hide_on_desktop": false,
+            "hide_on_mobile": false,
+            "media_position": "above",
+            "image": "shopify://shop_images/4_e4b140b0-567c-449b-9331-55813a8253fb.jpg",
+            "image_link": "",
+            "focal_point": "center",
+            "text_alignment": "left",
+            "content_position": "place-self-end-start text-start",
+            "subheading": "",
+            "subheading_size": "h6",
+            "heading": "IL MONDO MOTIFINO",
+            "heading_size": "h3",
+            "text": "<p>Zero costi e solo per voi. Gestisci ordini e garanzie, ottieni punti, sconti a vita e tanto altro sull'app a voi dedicata. Acquista una cintura ed entra nella community!</p>",
+            "show_product_title": true,
+            "show_product_price": true,
+            "price_text": "",
+            "price_size": "h6",
+            "button_1_text": "",
+            "button_1_link": "",
+            "button_1_style": "link",
+            "button_2_text": "",
+            "button_2_link": "",
+            "button_2_style": "outline",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0,
+            "gradient_overlay": "linear-gradient(180deg, rgba(54, 54, 54, 0.2) 0%, rgba(4, 4, 4, 0.65) 100%)"
+          }
+        }
+      },
+      "block_order": [
+        "slide_QcnA9T",
+        "slide_KQgNEK",
+        "slide_KmHYwM",
+        "slide_3nAFkR"
+      ],
+      "name": "Carosello",
+      "settings": {
+        "color_scheme": "scheme-3",
+        "text_layout": "under",
+        "image_aspect_ratio": "auto",
+        "custom_image_height": 400,
+        "stack_mobile": false,
+        "desktop_slides_visible": 5,
+        "mobile_slide_width": 100,
+        "heading_alignment": "start",
+        "subheading": "",
+        "title": "Ma a cosa serve la NFC Card in omaggio?",
+        "content": "",
+        "show_navigation": true,
+        "navigation_style": "side_arrows_minimal",
+        "navigation_background": "#6b4f2a",
+        "navigation_text": "#ffffff",
+        "separate_section_with_border": true,
+        "padding_top": 36,
+        "padding_bottom": 12,
+        "desktop_padding_horizontal": 0,
+        "slide_gap": 16,
+        "slide_media_inner_padding": 0,
+        "slide_content_inner_padding": 14,
+        "slide_inner_gap": 0,
+        "media_border_radius": 12
+      }
+    },
+    "rich_text_CFXWkT": {
+      "type": "rich-text",
+      "blocks": {
+        "button_eJftMQ": {
+          "type": "button",
+          "settings": {
+            "style": "solid",
+            "text": "Componi la tua cintura",
+            "url": "#shopify-section-template--28657540202822__single-bundle-builder",
+            "background": "",
+            "text_color": ""
+          }
+        },
+        "video_biQ6yA": {
+          "type": "video",
+          "disabled": true,
+          "settings": {
+            "video": "shopify://files/videos/Video sales page utilizzo cintura_d571c559-6849-477c-99c5-41b392a77452.mp4"
+          }
+        },
+        "spacer_jj3yk3": {
+          "type": "spacer",
+          "disabled": true,
+          "settings": {
+            "height_desktop": 40,
+            "height_mobile": 10
+          }
+        }
+      },
+      "block_order": [
+        "button_eJftMQ",
+        "video_biQ6yA",
+        "spacer_jj3yk3"
+      ],
+      "name": "t:sections.rich_text.presets.rich_text.name",
+      "settings": {
+        "color_scheme": "scheme-3",
+        "separate_section_with_border": false,
+        "content_width": "sm",
+        "text_position": "center",
+        "remove_vertical_spacing": false,
+        "use_custom_section_spacing": false,
+        "mobile_section_spacing_top": 0,
+        "mobile_section_spacing_right": 0,
+        "mobile_section_spacing_bottom": 0,
+        "mobile_section_spacing_left": 0,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 0
+      }
+    },
+    "multi_column_QJebqB": {
+      "type": "multi-column",
+      "blocks": {
+        "image_with_text_9VC3N4": {
+          "type": "image_with_text",
+          "settings": {
+            "image": "shopify://shop_images/Progetto_senza_titolo_2.png",
+            "title": "Un'ottima azienda.",
+            "heading_tag": "h6",
+            "content": "<p>Un'ottima azienda.. dalla qualità del prodotto, al confezionamento, alla rapidità nella spedizione, alla gestione del cliente e del post vendita.. </p>",
+            "link_url": "https://it.trustpilot.com/review/motifino.com",
+            "link_text": "Sergio Scognamiglio"
+          }
+        },
+        "image_with_text_GAdNVX": {
+          "type": "image_with_text",
+          "settings": {
+            "image": "shopify://shop_images/Progetto_senza_titolo_2.png",
+            "title": "Queste cinture sono stupende ..non",
+            "heading_tag": "h6",
+            "content": "<p>Queste cinture sono stupende ..non hanno difetti .. sono belle esteticamente ed altissima qualità... sarò cliente fisso</p>",
+            "link_url": "https://it.trustpilot.com/review/motifino.com",
+            "link_text": "Crescenzo Piscopo"
+          }
+        },
+        "image_with_text_PAVxwQ": {
+          "type": "image_with_text",
+          "settings": {
+            "image": "shopify://shop_images/Progetto_senza_titolo_2.png",
+            "title": "Acquistata giovedì ed è arrivata oggi",
+            "heading_tag": "h6",
+            "content": "<p>Acquistata giovedì ed è arrivata oggi, a prima vista il prodotto sembrerebbe molto, molto di qualità dal momento che è un regalo lo consegneremo a metà mese. Sono certo che sarà gradito... Grazie a voi</p>",
+            "link_url": "https://it.trustpilot.com/review/motifino.com",
+            "link_text": "lionello lossi"
+          }
+        },
+        "image_with_text_XtpxNi": {
+          "type": "image_with_text",
+          "settings": {
+            "image": "shopify://shop_images/Progetto_senza_titolo_2.png",
+            "title": "Cinture oltre le aspettative",
+            "heading_tag": "h6",
+            "content": "<p>Cinture oltre le aspettative….<br/>Ne ho acquistate 2 ed in futuro ne acquisterò certamente altre…<br/>Ottimo rapporto qualità prezzo.<br/>Ordine ricevuto in Sardegna entro i 3 giorni lavorativi….ottimo!</p>",
+            "link_url": "https://it.trustpilot.com/review/motifino.com",
+            "link_text": "Salvatore Pischedda"
+          }
+        },
+        "image_with_text_kCeRB3": {
+          "type": "image_with_text",
+          "settings": {
+            "image": "shopify://shop_images/Progetto_senza_titolo_2.png",
+            "title": "L'ho regalata a mio marito a Natale",
+            "heading_tag": "h6",
+            "content": "<p>L'ho regalata a mio marito a Natale ,si è trovato benissimo che per la festa del papà ne ho prese altre tre</p>",
+            "link_url": "https://it.trustpilot.com/review/motifino.com",
+            "link_text": "Elisa Mercandelli"
+          }
+        },
+        "image_with_text_V94ENP": {
+          "type": "image_with_text",
+          "settings": {
+            "image": "shopify://shop_images/Progetto_senza_titolo_2.png",
+            "title": "Tutto Ottimo",
+            "heading_tag": "h6",
+            "content": "<p>Spedizione Rapidissima, ottimi prodotti ben confezionati. Le cinture possono essere anche un ottimo regalo per qualunque occasione. Consigliatissime</p>",
+            "link_url": "https://it.trustpilot.com/review/motifino.com",
+            "link_text": "Carmelo Morelli"
+          }
+        },
+        "image_with_text_BpDTRq": {
+          "type": "image_with_text",
+          "settings": {
+            "image": "shopify://shop_images/Progetto_senza_titolo_2.png",
+            "title": "Ti mette di buon umore 😉",
+            "heading_tag": "h6",
+            "content": "<p>Regolare la comodità del tuo punto vita a seconda della giornata non ha prezzo. Davvero comoda e ti mette di buon umore. Consigliatissima 👍🏻</p>",
+            "link_url": "https://it.trustpilot.com/review/motifino.com",
+            "link_text": "Luca Pitone"
+          }
+        },
+        "image_with_text_7NcHRB": {
+          "type": "image_with_text",
+          "settings": {
+            "image": "shopify://shop_images/Progetto_senza_titolo_2.png",
+            "title": "Fatto bene",
+            "heading_tag": "h6",
+            "content": "<p>Fatto bene, confezionato in una elegante confezione. Spiegazioni di utilizzo e consegna ottimi. Ottimi in tutto.</p>",
+            "link_url": "https://it.trustpilot.com/review/motifino.com",
+            "link_text": "Duccio Picchi"
+          }
+        }
+      },
+      "block_order": [
+        "image_with_text_9VC3N4",
+        "image_with_text_GAdNVX",
+        "image_with_text_PAVxwQ",
+        "image_with_text_XtpxNi",
+        "image_with_text_kCeRB3",
+        "image_with_text_V94ENP",
+        "image_with_text_BpDTRq",
+        "image_with_text_7NcHRB"
+      ],
+      "name": "t:sections.multi_column.presets.multi_column.name",
+      "settings": {
+        "color_scheme": "scheme-2",
+        "separate_section_with_border": false,
+        "use_custom_section_spacing": false,
+        "mobile_section_spacing_top": 0,
+        "mobile_section_spacing_right": 0,
+        "mobile_section_spacing_bottom": 0,
+        "mobile_section_spacing_left": 0,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 0,
+        "columns_per_row": 4,
+        "stack_on_mobile": false,
+        "mobile_card_width": 75,
+        "overlap_image": false,
+        "content_alignment": "center",
+        "text_alignment": "start",
+        "card_color_scheme": "scheme-1",
+        "card_padding": 16,
+        "card_border_radius": 8,
+        "image_max_width": 100,
+        "heading_max_lines": 1,
+        "text_max_lines": 5,
+        "spacing": "xs",
+        "subheading": "Le migliori di sempre",
+        "title": "Tutti parlano delle cinture MOTIFINO",
+        "content": ""
+      }
+    },
+    "rich_text_fXJEKW": {
+      "type": "rich-text",
+      "blocks": {
+        "image_VjhFif": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/Progetto_senza_titolo_3.png",
+            "width_mode": "custom",
+            "max_width": 140,
+            "mobile_max_width": 140
+          }
+        },
+        "richtext_AVH4ha": {
+          "type": "richtext",
+          "settings": {
+            "content": "<p>Valutati <strong>4.8</strong> su <strong>5</strong> sulla base di più di 200 recensioni. Le  nostre recensioni a 5 stelle</p>"
+          }
+        },
+        "button_kh7WPy": {
+          "type": "button",
+          "settings": {
+            "style": "solid",
+            "text": "Vedi le recensioni su Trustpilot",
+            "url": "https://it.trustpilot.com/review/motifino.com",
+            "background": "",
+            "text_color": ""
+          }
+        }
+      },
+      "block_order": [
+        "image_VjhFif",
+        "richtext_AVH4ha",
+        "button_kh7WPy"
+      ],
+      "name": "t:sections.rich_text.presets.rich_text.name",
+      "settings": {
+        "color_scheme": "scheme-2",
+        "separate_section_with_border": false,
+        "content_width": "xs",
+        "text_position": "center",
+        "remove_vertical_spacing": true,
+        "use_custom_section_spacing": true,
+        "mobile_section_spacing_top": 0,
+        "mobile_section_spacing_right": 20,
+        "mobile_section_spacing_bottom": 30,
+        "mobile_section_spacing_left": 20,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 40,
+        "desktop_section_spacing_left": 0
+      }
+    },
+    "carosello_Fc36Ht": {
+      "type": "carosello",
+      "blocks": {
+        "slide_EwkC9q": {
+          "type": "slide",
+          "disabled": true,
+          "settings": {
+            "color_scheme": "",
+            "product": "set-cintura-singola",
+            "hide_on_desktop": false,
+            "hide_on_mobile": false,
+            "media_position": "above",
+            "image_link": "shopify://products/set-cintura-singola",
+            "focal_point": "center",
+            "text_alignment": "center",
+            "content_position": "place-self-end-start text-start",
+            "subheading": "",
+            "subheading_size": "h6",
+            "heading": "{{ block.settings.product.title }}",
+            "heading_size": "h5",
+            "text": "",
+            "show_product_title": true,
+            "show_product_price": true,
+            "price_text": "",
+            "price_size": "h6",
+            "button_1_text": "Scegli il colore",
+            "button_1_link": "{{ block.settings.product.url }}",
+            "button_1_style": "solid",
+            "button_2_text": "",
+            "button_2_link": "",
+            "button_2_style": "outline",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0,
+            "gradient_overlay": "linear-gradient(180deg, rgba(54, 54, 54, 0.2) 0%, rgba(4, 4, 4, 0.65) 100%)"
+          }
+        },
+        "slide_rEzACU": {
+          "type": "slide",
+          "settings": {
+            "color_scheme": "",
+            "product": "set-cinture-doppio",
+            "hide_on_desktop": false,
+            "hide_on_mobile": false,
+            "media_position": "above",
+            "image_link": "shopify://products/set-cinture-doppio",
+            "focal_point": "center",
+            "text_alignment": "center",
+            "content_position": "place-self-end-start text-start",
+            "subheading": "",
+            "subheading_size": "h6",
+            "heading": "{{ block.settings.product.title }}",
+            "heading_size": "h5",
+            "text": "<p>NFC Card in omaggio con ogni cintura</p>",
+            "show_product_title": true,
+            "show_product_price": true,
+            "price_text": "",
+            "price_size": "h6",
+            "button_1_text": "Scegli i colori",
+            "button_1_link": "{{ block.settings.product.url }}",
+            "button_1_style": "solid",
+            "button_2_text": "",
+            "button_2_link": "",
+            "button_2_style": "outline",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0,
+            "gradient_overlay": "linear-gradient(180deg, rgba(54, 54, 54, 0.2) 0%, rgba(4, 4, 4, 0.65) 100%)"
+          }
+        },
+        "slide_TjRH33": {
+          "type": "slide",
+          "settings": {
+            "color_scheme": "",
+            "product": "set-cinture-triplo",
+            "hide_on_desktop": false,
+            "hide_on_mobile": false,
+            "media_position": "above",
+            "image_link": "shopify://products/set-cinture-triplo",
+            "focal_point": "center",
+            "text_alignment": "center",
+            "content_position": "place-self-end-start text-start",
+            "subheading": "",
+            "subheading_size": "h6",
+            "heading": "{{ block.settings.product.title }}",
+            "heading_size": "h5",
+            "text": "<p><em>36,65€ / cintura</em></p>",
+            "show_product_title": true,
+            "show_product_price": true,
+            "price_text": "",
+            "price_size": "h6",
+            "button_1_text": "Scegli i colori",
+            "button_1_link": "{{ block.settings.product.url }}",
+            "button_1_style": "solid",
+            "button_2_text": "",
+            "button_2_link": "",
+            "button_2_style": "outline",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0,
+            "gradient_overlay": "linear-gradient(180deg, rgba(54, 54, 54, 0.2) 0%, rgba(4, 4, 4, 0.65) 100%)"
+          }
+        }
+      },
+      "block_order": [
+        "slide_EwkC9q",
+        "slide_rEzACU",
+        "slide_TjRH33"
+      ],
+      "name": "Carosello",
+      "settings": {
+        "color_scheme": "",
+        "text_layout": "under",
+        "image_aspect_ratio": "4_3",
+        "custom_image_height": 200,
+        "stack_mobile": true,
+        "desktop_slides_visible": 3,
+        "mobile_slide_width": 90,
+        "heading_alignment": "center",
+        "subheading": "Risparmia con i set multipli",
+        "title": "SCEGLI IL SET CHE FA AL CASO TUO",
+        "content": "",
+        "show_navigation": false,
+        "navigation_style": "side_arrows_minimal",
+        "navigation_background": "#141311",
+        "navigation_text": "#b98141",
+        "separate_section_with_border": false,
+        "padding_top": 20,
+        "padding_bottom": 40,
+        "desktop_padding_horizontal": 100,
+        "slide_gap": 30,
+        "slide_media_inner_padding": 0,
+        "slide_content_inner_padding": 10,
+        "slide_inner_gap": 10,
+        "media_border_radius": 8
+      }
+    },
+    "apps_xPWxFr": {
+      "type": "apps",
+      "blocks": {
+        "loox_reviews_loox_agg_section_MdRYP8": {
+          "type": "shopify://apps/loox-reviews/blocks/loox-agg-section/5c3b337f-fd14-4df5-b1d6-80ec13e6e28e",
+          "settings": {
+            "reviews_to_display": "",
+            "default_tab": "automatic",
+            "only_photos": false,
+            "hide_thumbnails": true,
+            "product_handle": "",
+            "aggregated": true,
+            "data-limit": 20,
+            "maxwidth": 1920,
+            "is_sample": true
+          }
+        }
+      },
+      "block_order": [
+        "loox_reviews_loox_agg_section_MdRYP8"
+      ],
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": false,
+        "remove_vertical_spacing": false,
+        "remove_horizontal_spacing": true,
+        "use_custom_section_spacing": false,
+        "mobile_section_spacing_top": 0,
+        "mobile_section_spacing_right": 0,
+        "mobile_section_spacing_bottom": 0,
+        "mobile_section_spacing_left": 0,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 0
+      }
+    },
+    "rich_text_UR7Wen": {
+      "type": "rich-text",
+      "blocks": {
+        "button_EtmRhH": {
+          "type": "button",
+          "settings": {
+            "style": "solid",
+            "text": "Componi la tua cintura",
+            "url": "#shopify-section-template--28414180753734__single-bundle-builder",
+            "background": "",
+            "text_color": ""
+          }
+        },
+        "video_PW6zkV": {
+          "type": "video",
+          "disabled": true,
+          "settings": {
+            "video": "shopify://files/videos/Video sales page utilizzo cintura_d571c559-6849-477c-99c5-41b392a77452.mp4"
+          }
+        },
+        "spacer_bYhLJK": {
+          "type": "spacer",
+          "disabled": true,
+          "settings": {
+            "height_desktop": 40,
+            "height_mobile": 10
+          }
+        }
+      },
+      "block_order": [
+        "button_EtmRhH",
+        "video_PW6zkV",
+        "spacer_bYhLJK"
+      ],
+      "name": "t:sections.rich_text.presets.rich_text.name",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "separate_section_with_border": false,
+        "content_width": "sm",
+        "text_position": "center",
+        "remove_vertical_spacing": false,
+        "use_custom_section_spacing": false,
+        "mobile_section_spacing_top": 0,
+        "mobile_section_spacing_right": 0,
+        "mobile_section_spacing_bottom": 0,
+        "mobile_section_spacing_left": 0,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 0
+      }
+    }
+  },
+  "order": [
+    "single-bundle-builder",
+    "apps_section",
+    "1785158573c299ff67",
+    "tabs_RWKN4K",
+    "rich_text_7cgq9c",
+    "video_k7YPV8",
+    "image_with_text_nfzQkK",
+    "image_with_text_awMXKJ",
+    "carosello_N87d8V",
+    "text_with_icons_fU4qXK",
+    "carosello_yMa77a",
+    "rich_text_CFXWkT",
+    "multi_column_QJebqB",
+    "rich_text_fXJEKW",
+    "carosello_Fc36Ht",
+    "apps_xPWxFr",
+    "rich_text_UR7Wen"
+  ]
+}

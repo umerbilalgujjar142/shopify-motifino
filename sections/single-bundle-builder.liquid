@@ -1,0 +1,2053 @@
+{% comment %}
+  ============================================================
+  SINGLE BUNDLE BUILDER — sections/single-bundle-builder.liquid
+
+  Blocks (sortable, editable in Online Store Editor):
+    gallery         — left column image + annotations
+    buckle_dropdown — fibbia selector
+    strap_dropdown  — cinturino selector
+    taglia          — size pills
+    rating          — star rating
+    title           — product title (JS-updated)
+    price           — price display (JS-updated)
+    description     — description text
+    delivery        — delivery estimate
+    details_link    — "Vedi taglie e dettagli" link
+    cta_button      — add to cart button (JS-wired)
+    trust_bar       — 3 trust items
+    accordion       — 4 accordion tabs
+    trustpilot      — trustpilot badge
+
+  Every block exposes margin_top/bottom and padding_top/bottom
+  range sliders under "Spaziatura" in the editor.
+  Section settings: variant IDs only.
+  ============================================================
+{% endcomment %}
+
+{{ 'single-bundle-builder.css' | asset_url | stylesheet_tag }}
+
+{%- assign color_scheme_hash = section.settings.color_scheme.settings.background_gradient | default: section.settings.color_scheme.settings.background | md5 -%}
+{%- assign dd_bw = section.settings.dropdown_border_width | default: 1 -%}
+{%- assign dd_bc = section.settings.dropdown_border_color | default: '#e0e0e0' -%}
+<style>
+  #sbb-root {
+    --sbb-info-col-max-width: {{ section.settings.info_col_max_width | default: 540 }}px;
+  }
+  #sbb-root .sbb-dropdowns-row {
+    border-width: {{ dd_bw }}px;
+    border-color: {{ dd_bc }};
+  }
+  #sbb-root .sbb-dropdowns-row .sbb-selector-group + .sbb-selector-group {
+    border-left-width: {{ dd_bw }}px;
+    border-left-color: {{ dd_bc }};
+  }
+  #sbb-root .sbb-dropdowns-row:has(.sbb-dropdown.is-open) {
+    border-color: {{ dd_bc }};
+  }
+  /* block visibility toggles */
+  @media (min-width: 768px) { #sbb-root .sbb-vis--hide-desktop { display: none !important; } }
+  @media (max-width: 767px) { #sbb-root .sbb-vis--hide-mobile { display: none !important; } }
+  @media (min-width: 768px) {
+    #sbb-root .sbb-info {
+      padding: {{ section.settings.info_pad_top | default: 48 }}px {{ section.settings.info_pad_right | default: 40 }}px {{ section.settings.info_pad_bottom | default: 48 }}px {{ section.settings.info_pad_left | default: 48 }}px;
+    }
+    {%- assign col_pos = section.settings.info_col_position | default: 'left' -%}
+    #sbb-root .sbb-col-info {
+      margin-left: {% if col_pos == 'center' or col_pos == 'right' %}auto{% else %}0{% endif %};
+      margin-right: {% if col_pos == 'center' or col_pos == 'left' %}auto{% else %}0{% endif %};
+    }
+  }
+  {%- if section.settings.sticky_info_col -%}
+  @media (min-width: 768px) {
+    #sbb-root .sbb-info { position: sticky; top: var(--header-height, 0px); }
+  }
+  {%- endif -%}
+  /* viewport-critical: prevent flash before external CSS loads */
+  #sbb-root .sbb-selector-group--desktop-only { display: none; }
+  #sbb-root .sbb-selector-group--mobile-only { display: block; }
+  #sbb-root .sbb-dropdowns-row--desktop { display: none; }
+  @media (min-width: 768px) {
+    #sbb-root .sbb-selector-group--desktop-only { display: block; }
+    #sbb-root .sbb-selector-group--mobile-only { display: none; }
+    #sbb-root .sbb-dropdowns-row--desktop { display: grid; }
+    #sbb-root .sbb-dropdowns-row:not(.sbb-dropdowns-row--desktop) { display: none; }
+  }
+</style>
+
+<div
+  class="sbb-wrap color-scheme color-scheme--{{ section.settings.color_scheme.id }} color-scheme--bg-{{ color_scheme_hash }}"
+  id="sbb-root"
+  data-media-url="{{ 'bundle-builder-media.json' | asset_url }}"
+  data-catalog-url="{{ 'bundle-builder-catalog.json' | asset_url }}"
+  {% if section.settings.allow_transparent_header %}allow-transparent-header{% endif %}
+  {% if section.settings.bg_color != blank %}style="background-color:{{ section.settings.bg_color }};"{% endif %}
+>
+
+  {%- comment -%} Half-star SVG gradient — invisible {%- endcomment -%}
+  <svg width="0" height="0" style="position:absolute;overflow:hidden">
+    <defs>
+      <linearGradient id="sbb-half-grad" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="50%" stop-color="#c09a4e"/>
+        <stop offset="50%" stop-color="#e0e0e0"/>
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <div class="sbb-product-row">
+
+    {%- comment -%} ══ LEFT: gallery block ══════════════════════ {%- endcomment -%}
+    <div class="sbb-col-image">
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'gallery' -%}
+          {%- assign gallery_id = 'sbb-gallery-' | append: block.id -%}
+          {%- assign mob_ar        = block.settings.aspect_ratio | default: '4/5' -%}
+          {%- assign desk_ar       = block.settings.aspect_ratio_desktop | default: mob_ar -%}
+          {%- assign mob_pos       = block.settings.img_position | default: 'center center' -%}
+          {%- assign desk_pos      = block.settings.img_position_desktop | default: mob_pos -%}
+          {%- assign desk_mode   = block.settings.desk_size_mode | default: 'ratio' -%}
+          {%- assign desk_cust_w = block.settings.desk_custom_width | default: 100 -%}
+          {%- assign desk_h_mode = block.settings.desk_height_mode | default: 'minus_header' -%}
+          <style>
+            #{{ gallery_id }} { aspect-ratio: {{ mob_ar }}; }
+            #{{ gallery_id }} #sbb-main-img,
+            #{{ gallery_id }} #sbb-worn-img { object-position: {{ mob_pos }}; }
+            @media (min-width: 768px) {
+              {%- if desk_mode == 'custom' -%}
+              #sbb-root .sbb-col-image {
+                width: {{ desk_cust_w }}% !important;
+                {%- if desk_h_mode == 'minus_header_bar' -%}
+                height: calc(100vh - var(--header-height, 0px) - var(--announcement-bar-height, 0px)) !important;
+                {%- elsif desk_h_mode == 'minus_both' -%}
+                height: calc(100vh - var(--announcement-bar-height, 0px)) !important;
+                {%- elsif desk_h_mode == 'transparent' -%}
+                height: 100vh !important;
+                {%- else -%}
+                height: calc(100vh - var(--header-height, 0px)) !important;
+                {%- endif -%}
+              }
+              #{{ gallery_id }} { aspect-ratio: unset; height: 100%; }
+              {%- else -%}
+              #sbb-root .sbb-col-image { height: auto; align-self: flex-start; }
+              #{{ gallery_id }} { aspect-ratio: {{ desk_ar }}; height: auto; }
+              {%- endif -%}
+              #{{ gallery_id }} #sbb-main-img,
+              #{{ gallery_id }} #sbb-worn-img { object-position: {{ desk_pos }}; }
+            }
+          </style>
+          {%- if desk_mode == 'custom' -%}
+          <script>
+            (function() {
+              var mode = '{{ desk_h_mode }}';
+              function applyHeight() {
+                var col = document.querySelector('#sbb-root .sbb-col-image');
+                if (!col) return;
+                if (window.innerWidth < 768) { col.style.height = ''; return; }
+                var header = document.querySelector('.shopify-section--header');
+                var bar    = document.querySelector('.shopify-section--announcement-bar');
+                var offset = 0;
+                if (mode === 'minus_header_bar') {
+                  if (header) offset += header.clientHeight;
+                  if (bar)    offset += bar.clientHeight;
+                } else if (mode === 'minus_both') {
+                  if (bar) offset += bar.clientHeight;
+                } else if (mode === 'transparent') {
+                  offset = 0;
+                } else {
+                  if (header) offset += header.clientHeight;
+                }
+                col.style.setProperty('height', 'calc(100vh - ' + offset + 'px)', 'important');
+              }
+              applyHeight();
+              window.addEventListener('resize', applyHeight);
+            })();
+          </script>
+          {%- endif -%}
+          {%- assign worn_style    = block.settings.worn_btn_style | default: 'solid' -%}
+          {%- assign worn_fs       = block.settings.worn_btn_font_size | default: 13 -%}
+          {%- assign worn_fs_desk  = block.settings.worn_btn_font_size_desk | default: worn_fs -%}
+          {%- assign worn_bottom   = block.settings.worn_btn_bottom | default: 22 -%}
+          {%- assign worn_btm_desk = block.settings.worn_btn_bottom_desk | default: 40 -%}
+          {%- assign worn_pad_v    = block.settings.worn_btn_pad_v | default: 8 -%}
+          {%- assign worn_pad_v_d  = block.settings.worn_btn_pad_v_desk | default: 8 -%}
+          {%- assign worn_pad_h    = block.settings.worn_btn_pad_h | default: 18 -%}
+          {%- assign worn_pad_h_d  = block.settings.worn_btn_pad_h_desk | default: 24 -%}
+          <style>
+            #sbb-worn-toggle {
+              font-size: {{ worn_fs }}px;
+              bottom: {{ worn_bottom }}px;
+              padding: {{ worn_pad_v }}px {{ worn_pad_h }}px;
+              {%- unless block.settings.worn_btn_bg == blank %}background: {{ block.settings.worn_btn_bg }};{%- endunless %}
+              {%- unless block.settings.worn_btn_color == blank %}color: {{ block.settings.worn_btn_color }};{%- endunless %}
+            }
+            @media (min-width: 768px) {
+              #sbb-worn-toggle {
+                font-size: {{ worn_fs_desk }}px;
+                bottom: {{ worn_btm_desk }}px;
+                padding: {{ worn_pad_v_d }}px {{ worn_pad_h_d }}px;
+                {%- unless block.settings.worn_btn_bg_desk == blank %}background: {{ block.settings.worn_btn_bg_desk }};{%- endunless %}
+                {%- unless block.settings.worn_btn_color_desk == blank %}color: {{ block.settings.worn_btn_color_desk }};{%- endunless %}
+              }
+            }
+          </style>
+          <div
+            id="{{ gallery_id }}"
+            class="sbb-hero"
+            {{ block.shopify_attributes }}
+            style="margin-top:{{ block.settings.margin_top }}px;margin-bottom:{{ block.settings.margin_bottom }}px;padding-top:{{ block.settings.padding_top }}px;padding-bottom:{{ block.settings.padding_bottom }}px;width:100%;overflow:hidden;"
+          >
+            <img
+              id="sbb-main-img"
+              src=""
+              alt="Anteprima combinazione"
+              style="opacity:0;display:none;width:100%;height:100%;object-fit:cover;"
+            >
+            <img
+              id="sbb-worn-img"
+              src=""
+              alt="Indossato"
+              style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"
+            >
+            <div id="sbb-gallery-placeholder" class="sbb-hero__placeholder">
+              <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.2">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                <circle cx="8.5" cy="8.5" r="1.5"/>
+                <polyline points="21 15 16 10 5 21"/>
+              </svg>
+              <span>Caricamento anteprima…</span>
+            </div>
+            <button
+              class="sbb-worn-btn sbb-worn-btn--{{ worn_style }}"
+              id="sbb-worn-toggle"
+              type="button"
+              data-label="{{ block.settings.worn_btn_label | default: 'Vedi indossato' | escape }}"
+              data-label-back="{{ block.settings.worn_btn_back_label | default: 'Vista prodotto' | escape }}"
+              style="display:none;"
+            >
+              <span class="sbb-worn-btn__label">{{ block.settings.worn_btn_label | default: 'Vedi indossato' }}</span>
+            </button>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+    {%- comment -%} /.sbb-col-image {%- endcomment -%}
+
+    {%- comment -%} ══ RIGHT: info blocks ══════════════════════ {%- endcomment -%}
+    {%- comment -%} Detect adjacent dropdown pairs so rows render in HTML (FOUC-free) {%- endcomment -%}
+    {%- assign sbb_mobile_row = false -%}
+    {%- assign sbb_desktop_row = false -%}
+    {%- for _b in section.blocks -%}
+      {%- if _b.type == 'buckle_dropdown' -%}
+        {%- assign _ni = forloop.index0 | plus: 1 -%}
+        {%- if section.blocks[_ni].type == 'strap_dropdown' -%}{%- assign sbb_mobile_row = true -%}{%- endif -%}
+      {%- endif -%}
+      {%- if _b.type == 'buckle_dropdown_desktop' -%}
+        {%- assign _ni = forloop.index0 | plus: 1 -%}
+        {%- if section.blocks[_ni].type == 'strap_dropdown_desktop' -%}{%- assign sbb_desktop_row = true -%}{%- endif -%}
+      {%- endif -%}
+    {%- endfor -%}
+    <div class="sbb-col-info">
+      <div class="sbb-info">
+
+        {%- for block in section.blocks -%}
+          {%- assign vis_class = '' -%}
+          {%- if block.settings.show_on_desktop == false -%}{%- assign vis_class = vis_class | append: ' sbb-vis--hide-desktop' -%}{%- endif -%}
+          {%- if block.settings.show_on_mobile == false -%}{%- assign vis_class = vis_class | append: ' sbb-vis--hide-mobile' -%}{%- endif -%}
+          {%- case block.type -%}
+
+            {%- when 'gallery' -%}
+            {%- comment -%} rendered in left col — skip {%- endcomment -%}
+
+            {%- comment -%} ── buckle_dropdown ─────────────────── {%- endcomment -%}
+            {%- when 'buckle_dropdown' -%}
+            {%- if sbb_mobile_row -%}<div class="sbb-dropdowns-row">{%- endif -%}
+            <div
+              class="sbb-selector-group sbb-selector-group--mobile-only{{ vis_class }}"
+              {{ block.shopify_attributes }}
+              style="margin-top:{{ block.settings.margin_top }}px;margin-bottom:{{ block.settings.margin_bottom }}px;padding-top:{{ block.settings.padding_top }}px;padding-bottom:{{ block.settings.padding_bottom }}px;"
+            >
+              {%- unless block.settings.show_label == false -%}<div class="sbb-selector-label">{{ block.settings.label | default: 'Fibbia' }}</div>{%- endunless -%}
+              <div class="sbb-dropdown" id="sbb-buckle-dropdown">
+                <button
+                  class="sbb-dropdown__trigger"
+                  type="button"
+                  aria-expanded="false"
+                  aria-haspopup="listbox"
+                  aria-controls="sbb-buckle-list"
+                >
+                  <img class="sbb-dropdown__trigger-img" src="" alt="" style="display:none;" width="38" height="38">
+                  <span class="sbb-dropdown__trigger-label">{{ block.settings.label | default: 'Fibbia' }}</span>
+                  <span class="sbb-dropdown__trigger-name">{{ block.settings.placeholder | default: 'Seleziona fibbia…' }}</span>
+                  <svg class="sbb-dropdown__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"/>
+                  </svg>
+                </button>
+                <div class="sbb-dropdown__list" role="listbox" id="sbb-buckle-list"></div>
+              </div>
+            </div>
+
+            {%- comment -%} ── strap_dropdown ──────────────────── {%- endcomment -%}
+            {%- when 'strap_dropdown' -%}
+            <div
+              class="sbb-selector-group sbb-selector-group--mobile-only{{ vis_class }}"
+              {{ block.shopify_attributes }}
+              style="margin-top:{{ block.settings.margin_top }}px;margin-bottom:{{ block.settings.margin_bottom }}px;padding-top:{{ block.settings.padding_top }}px;padding-bottom:{{ block.settings.padding_bottom }}px;"
+            >
+              {%- unless block.settings.show_label == false -%}<div class="sbb-selector-label">{{ block.settings.label | default: 'Cinturino' }}</div>{%- endunless -%}
+              <div class="sbb-dropdown" id="sbb-strap-dropdown">
+                <button
+                  class="sbb-dropdown__trigger"
+                  type="button"
+                  aria-expanded="false"
+                  aria-haspopup="listbox"
+                  aria-controls="sbb-strap-list"
+                >
+                  <img class="sbb-dropdown__trigger-img" src="" alt="" style="display:none;" width="38" height="38">
+                  <div class="sbb-dropdown__trigger-swatch"></div>
+                  <span class="sbb-dropdown__trigger-label">{{ block.settings.label | default: 'Pelle' }}</span>
+                  <span class="sbb-dropdown__trigger-name">{{ block.settings.placeholder | default: 'Seleziona cinturino…' }}</span>
+                  <svg class="sbb-dropdown__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"/>
+                  </svg>
+                </button>
+                <div class="sbb-dropdown__list" role="listbox" id="sbb-strap-list"></div>
+              </div>
+            </div>
+            {%- if sbb_mobile_row -%}</div>{%- endif -%}
+
+            {%- comment -%} ── buckle_dropdown_desktop ─────────── {%- endcomment -%}
+            {%- when 'buckle_dropdown_desktop' -%}
+            {%- if sbb_desktop_row -%}<div class="sbb-dropdowns-row sbb-dropdowns-row--desktop">{%- endif -%}
+            <div
+              class="sbb-selector-group sbb-selector-group--desktop-only{{ vis_class }}"
+              {{ block.shopify_attributes }}
+              style="margin-top:{{ block.settings.margin_top }}px;margin-bottom:{{ block.settings.margin_bottom }}px;"
+            >
+              {%- unless block.settings.show_label == false -%}<div class="sbb-selector-label">{{ block.settings.label | default: 'Fibbia' }}</div>{%- endunless -%}
+              <div class="sbb-dropdown" id="sbb-buckle-dropdown-d">
+                <button class="sbb-dropdown__trigger" type="button" aria-expanded="false" aria-haspopup="listbox" aria-controls="sbb-buckle-list-d">
+                  <img class="sbb-dropdown__trigger-img" src="" alt="" style="display:none;" width="38" height="38">
+                  <span class="sbb-dropdown__trigger-label">{{ block.settings.label | default: 'Fibbia' }}</span>
+                  <span class="sbb-dropdown__trigger-name">{{ block.settings.placeholder | default: 'Seleziona fibbia…' }}</span>
+                  <svg class="sbb-dropdown__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"/>
+                  </svg>
+                </button>
+                <div class="sbb-dropdown__list" role="listbox" id="sbb-buckle-list-d"></div>
+              </div>
+            </div>
+
+            {%- comment -%} ── strap_dropdown_desktop ──────────── {%- endcomment -%}
+            {%- when 'strap_dropdown_desktop' -%}
+            <div
+              class="sbb-selector-group sbb-selector-group--desktop-only{{ vis_class }}"
+              {{ block.shopify_attributes }}
+              style="margin-top:{{ block.settings.margin_top }}px;margin-bottom:{{ block.settings.margin_bottom }}px;"
+            >
+              {%- unless block.settings.show_label == false -%}<div class="sbb-selector-label">{{ block.settings.label | default: 'Cinturino' }}</div>{%- endunless -%}
+              <div class="sbb-dropdown" id="sbb-strap-dropdown-d">
+                <button class="sbb-dropdown__trigger" type="button" aria-expanded="false" aria-haspopup="listbox" aria-controls="sbb-strap-list-d">
+                  <img class="sbb-dropdown__trigger-img" src="" alt="" style="display:none;" width="38" height="38">
+                  <div class="sbb-dropdown__trigger-swatch"></div>
+                  <span class="sbb-dropdown__trigger-label">{{ block.settings.label | default: 'Pelle' }}</span>
+                  <span class="sbb-dropdown__trigger-name">{{ block.settings.placeholder | default: 'Seleziona cinturino…' }}</span>
+                  <svg class="sbb-dropdown__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"/>
+                  </svg>
+                </button>
+                <div class="sbb-dropdown__list" role="listbox" id="sbb-strap-list-d"></div>
+              </div>
+            </div>
+            {%- if sbb_desktop_row -%}</div>{%- endif -%}
+
+            {%- comment -%} ── taglia ──────────────────────────── {%- endcomment -%}
+            {%- when 'taglia' -%}
+            {%- assign pill_pv = block.settings.pill_padding_v | default: 9 -%}
+            {%- assign pill_ph = block.settings.pill_padding_h | default: 22 -%}
+            {%- assign pill_fs = block.settings.pill_font_size | default: 14 -%}
+            <style>
+              #sbb-root .sbb-pills--{{ block.id }} .sbb-pill {
+                padding: {{ pill_pv }}px {{ pill_ph }}px;
+                font-size: {{ pill_fs }}px;
+              }
+            </style>
+            <div
+              class="sbb-selectors{{ vis_class }}"
+              {{ block.shopify_attributes }}
+              style="margin-top:{{ block.settings.margin_top }}px;margin-bottom:{{ block.settings.margin_bottom }}px;padding-top:{{ block.settings.padding_top }}px;padding-bottom:{{ block.settings.padding_bottom }}px;"
+            >
+              <div class="sbb-selector-group sbb-selector-group--full">
+                {%- unless block.settings.show_label == false -%}<div class="sbb-selector-label">{{ block.settings.label | default: 'Taglia' }}</div>{%- endunless -%}
+                <div class="sbb-pills sbb-pills--{{ block.id }}">
+                  <button class="sbb-pill is-selected" type="button" data-length="{{ block.settings.size_1_value | default: '130cm' }}">
+                    {{- block.settings.size_1_label | default: '130 cm' -}}
+                  </button>
+                  <button class="sbb-pill" type="button" data-length="{{ block.settings.size_2_value | default: '150cm' }}">
+                    {{- block.settings.size_2_label | default: '150 cm' -}}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {%- comment -%} ── rating ──────────────────────────── {%- endcomment -%}
+            {%- when 'rating' -%}
+            {%- assign rating_str   = block.settings.rating_value | default: '4.8' -%}
+            {%- assign rating_val   = rating_str | plus: 0 -%}
+            {%- assign rating_floor = rating_val | floor -%}
+            {%- assign rating_ceil  = rating_val | ceil -%}
+            {%- assign has_half     = false -%}
+            {%- if rating_val != rating_floor -%}{%- assign has_half = true -%}{%- endif -%}
+            <div
+              class="sbb-rating{{ vis_class }}"
+              {{ block.shopify_attributes }}
+              style="margin-top:{{ block.settings.margin_top }}px;margin-bottom:{{ block.settings.margin_bottom }}px;padding-top:{{ block.settings.padding_top }}px;padding-bottom:{{ block.settings.padding_bottom }}px;"
+            >
+              <div class="sbb-stars" aria-label="Valutazione {{ rating_str }} su 5">
+                {%- for i in (1..5) -%}
+                  {%- if i <= rating_floor -%}
+                    <svg class="sbb-star" viewBox="0 0 20 20"><path d="M10 1l2.4 7.2H19l-5.8 4.2 2.2 7L10 15.5l-5.4 3.9 2.2-7L1 8.2h6.6z"/></svg>
+                  {%- elsif i == rating_ceil and has_half -%}
+                    <svg class="sbb-star sbb-star--half" viewBox="0 0 20 20"><path d="M10 1l2.4 7.2H19l-5.8 4.2 2.2 7L10 15.5l-5.4 3.9 2.2-7L1 8.2h6.6z"/></svg>
+                  {%- else -%}
+                    <svg class="sbb-star" viewBox="0 0 20 20" style="fill:#e0e0e0"><path d="M10 1l2.4 7.2H19l-5.8 4.2 2.2 7L10 15.5l-5.4 3.9 2.2-7L1 8.2h6.6z"/></svg>
+                  {%- endif -%}
+                {%- endfor -%}
+              </div>
+              <span class="sbb-rating__text">
+                {{- rating_str -}}&nbsp;·&nbsp;<a href="#sbb-reviews" class="sbb-rating__link">{{- block.settings.rating_count | default: '200' -}}+ recensioni</a>
+              </span>
+            </div>
+
+            {%- comment -%} ── title ───────────────────────────── {%- endcomment -%}
+            {%- when 'title' -%}
+            <h1
+              class="sbb-title{{ vis_class }}"
+              id="sbb-title"
+              data-base-title="{{ block.settings.product_title | default: 'Set Cintura Singola' | escape }}"
+              {{ block.shopify_attributes }}
+              style="margin-top:{{ block.settings.margin_top }}px;margin-bottom:{{ block.settings.margin_bottom }}px;padding-top:{{ block.settings.padding_top }}px;padding-bottom:{{ block.settings.padding_bottom }}px;{% if block.settings.font_size != blank %}font-size:{{ block.settings.font_size }}px;{% endif %}"
+            >
+              {{- block.settings.product_title | default: 'Set Cintura Singola' -}}
+            </h1>
+
+            {%- comment -%} ── price ───────────────────────────── {%- endcomment -%}
+            {%- when 'price' -%}
+            <div
+              class="sbb-price-wrap{{ vis_class }}"
+              {{ block.shopify_attributes }}
+              style="margin-top:{{ block.settings.margin_top }}px;margin-bottom:{{ block.settings.margin_bottom }}px;padding-top:{{ block.settings.padding_top }}px;padding-bottom:{{ block.settings.padding_bottom }}px;"
+            >
+              <div class="sbb-price-row">
+                <span class="sbb-price" id="sbb-price" style="{% if block.settings.price_size != blank %}font-size:{{ block.settings.price_size }}px;{% endif %}{% if block.settings.price_color != blank %}color:{{ block.settings.price_color }};{% endif %}">€ 49,99</span>
+              </div>
+            </div>
+
+            {%- comment -%} ── description ─────────────────────── {%- endcomment -%}
+            {%- when 'description' -%}
+            <div
+              class="sbb-desc{{ vis_class }}"
+              {{ block.shopify_attributes }}
+              style="margin-top:{{ block.settings.margin_top }}px;margin-bottom:{{ block.settings.margin_bottom }}px;padding-top:{{ block.settings.padding_top }}px;padding-bottom:{{ block.settings.padding_bottom }}px;"
+            >
+              {%- if block.settings.description != blank -%}
+                {{ block.settings.description }}
+              {%- else -%}
+                <p>Comodità, durata e regolazione estrema. <strong>Crea la tua cintura MOTIFINO</strong> componendo fibbia e cinturino a tuo gusto.</p>
+              {%- endif -%}
+            </div>
+
+            {%- comment -%} ── delivery ────────────────────────── {%- endcomment -%}
+            {%- when 'delivery' -%}
+            <p
+              class="sbb-delivery{{ vis_class }}"
+              {{ block.shopify_attributes }}
+              style="margin-top:{{ block.settings.margin_top }}px;margin-bottom:{{ block.settings.margin_bottom }}px;padding-top:{{ block.settings.padding_top }}px;padding-bottom:{{ block.settings.padding_bottom }}px;"
+            >{{ block.settings.delivery_text }}</p>
+
+            {%- comment -%} ── details_link ─────────────────────── {%- endcomment -%}
+            {%- when 'details_link' -%}
+            {%- if block.settings.link_url != blank -%}
+            <a
+              href="{{ block.settings.link_url }}"
+              class="sbb-details-link{{ vis_class }}"
+              {{ block.shopify_attributes }}
+              style="margin-top:{{ block.settings.margin_top }}px;margin-bottom:{{ block.settings.margin_bottom }}px;padding-top:{{ block.settings.padding_top }}px;padding-bottom:{{ block.settings.padding_bottom }}px;"
+            >{{- block.settings.link_text | default: 'Vedi taglie e dettagli…' -}}</a>
+            {%- else -%}
+            <span
+              class="sbb-details-link{{ vis_class }}"
+              {{ block.shopify_attributes }}
+              style="margin-top:{{ block.settings.margin_top }}px;margin-bottom:{{ block.settings.margin_bottom }}px;padding-top:{{ block.settings.padding_top }}px;padding-bottom:{{ block.settings.padding_bottom }}px;"
+            >{{- block.settings.link_text | default: 'Vedi taglie e dettagli…' -}}</span>
+            {%- endif -%}
+
+            {%- comment -%} ── buttons ─────────────────────────── {%- endcomment -%}
+            {%- when 'buttons' -%}
+            {%- assign btn_style   = block.settings.style | default: 'outline' -%}
+            {%- assign btn_stretch = block.settings.stretch -%}
+            {%- assign btn_align   = block.settings.alignment | default: 'left' -%}
+            {%- if btn_align == 'center' -%}{%- assign justify = 'center' -%}
+            {%- elsif btn_align == 'right' -%}{%- assign justify = 'flex-end' -%}
+            {%- else -%}{%- assign justify = 'flex-start' -%}{%- endif -%}
+            <div
+              class="sbb-buttons-block{{ vis_class }}"
+              {{ block.shopify_attributes }}
+              style="margin-top:{{ block.settings.margin_top }}px;margin-bottom:{{ block.settings.margin_bottom }}px;padding-top:{{ block.settings.padding_top }}px;padding-bottom:{{ block.settings.padding_bottom }}px;{% unless btn_stretch %}justify-content:{{ justify }};{% endunless %}"
+            >
+              {%- if block.settings.text != blank -%}
+                {%- capture btn_class -%}sbb-btn sbb-btn--{{ btn_style }}{% if btn_stretch %} sbb-btn--stretch{% endif %}{%- endcapture -%}
+                <a href="{{ block.settings.link }}" class="{{ btn_class }}">{{ block.settings.text }}</a>
+              {%- endif -%}
+            </div>
+
+            {%- comment -%} ── cta_button ──────────────────────── {%- endcomment -%}
+            {%- when 'cta_button' -%}
+            {%- assign cta_align       = block.settings.alignment | default: 'left' -%}
+            {%- assign cta_wtype       = block.settings.btn_width_type | default: 'full' -%}
+            {%- assign cta_w           = block.settings.btn_custom_width | default: 300 -%}
+            {%- assign cta_align_d     = block.settings.alignment_desktop | default: cta_align -%}
+            {%- assign cta_wtype_d     = block.settings.btn_width_type_desktop | default: cta_wtype -%}
+            {%- assign cta_w_d         = block.settings.btn_custom_width_desktop | default: cta_w -%}
+            {%- assign cta_id          = 'sbb-cta-' | append: block.id -%}
+            <style>
+              #{{ cta_id }} { text-align: {{ cta_align }}; }
+              #{{ cta_id }} #sbb-atc-btn {
+                {% if cta_wtype == 'custom' %}width:{{ cta_w }}px;max-width:100%;display:inline-flex;{% else %}width:100%;display:flex;{% endif %}
+              }
+              @media (min-width: 768px) {
+                #{{ cta_id }} { text-align: {{ cta_align_d }}; }
+                #{{ cta_id }} #sbb-atc-btn {
+                  {% if cta_wtype_d == 'custom' %}width:{{ cta_w_d }}px;max-width:100%;display:inline-flex;{% else %}width:100%;display:flex;{% endif %}
+                }
+              }
+            </style>
+            <div
+              id="{{ cta_id }}"
+              class="{{ vis_class | strip }}"
+              {{ block.shopify_attributes }}
+              style="margin-top:{{ block.settings.margin_top }}px;margin-bottom:{{ block.settings.margin_bottom }}px;"
+            >
+              <button
+                class="sbb-btn-atc"
+                id="sbb-atc-btn"
+                type="button"
+                style="padding-top:{{ block.settings.padding_top }}px;padding-bottom:{{ block.settings.padding_bottom }}px;{% if block.settings.bg_color != blank %}background:{{ block.settings.bg_color }};{% endif %}{% if block.settings.text_color != blank %}color:{{ block.settings.text_color }};{% endif %}{% if block.settings.font_size != blank %}font-size:{{ block.settings.font_size }}px;{% endif %}"
+              >
+                {{ block.settings.button_text | default: 'Aggiungi al Carrello' }}
+              </button>
+            </div>
+
+            {%- comment -%} ── trust_bar ───────────────────────── {%- endcomment -%}
+            {%- when 'trust_bar' -%}
+            <div
+              class="sbb-trust{{ vis_class }}"
+              {{ block.shopify_attributes }}
+              style="margin-top:{{ block.settings.margin_top }}px;margin-bottom:{{ block.settings.margin_bottom }}px;padding-top:{{ block.settings.padding_top }}px;padding-bottom:{{ block.settings.padding_bottom }}px;"
+            >
+              <div class="sbb-trust__item">
+                <svg class="sbb-trust__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <path d="M1 3h15v13H1z"/>
+                  <path d="M16 8h4l3 3v5h-7V8z"/>
+                  <circle cx="5.5" cy="18.5" r="2.5"/>
+                  <circle cx="18.5" cy="18.5" r="2.5"/>
+                </svg>
+                {{ block.settings.item_1 | default: 'Spedizione gratuita' }}
+              </div>
+              <div class="sbb-trust__item">
+                <svg class="sbb-trust__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <polyline points="1 4 1 10 7 10"/>
+                  <path d="M3.51 15a9 9 0 1 0 .49-4"/>
+                </svg>
+                {{ block.settings.item_2 | default: 'Reso entro 30 giorni' }}
+              </div>
+              <div class="sbb-trust__item">
+                <svg class="sbb-trust__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+                {{ block.settings.item_3 | default: 'Garanzia 2 anni' }}
+              </div>
+            </div>
+
+            {%- comment -%} ── accordion ───────────────────────── {%- endcomment -%}
+            {%- when 'accordion' -%}
+            <div
+              class="sbb-tabs{{ vis_class }}"
+              {{ block.shopify_attributes }}
+              style="margin-top:{{ block.settings.margin_top }}px;margin-bottom:{{ block.settings.margin_bottom }}px;padding-top:{{ block.settings.padding_top }}px;padding-bottom:{{ block.settings.padding_bottom }}px;"
+            >
+              {%- if block.settings.tab_1_title != blank -%}
+              <div class="sbb-tab">
+                <button class="sbb-tab__trigger" type="button" aria-expanded="false">
+                  {{ block.settings.tab_1_title }}
+                  <svg class="sbb-tab__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="sbb-tab__body">{{ block.settings.tab_1_content }}</div>
+              </div>
+              {%- endif -%}
+
+              {%- if block.settings.tab_2_title != blank -%}
+              <div class="sbb-tab">
+                <button class="sbb-tab__trigger" type="button" aria-expanded="false">
+                  {{ block.settings.tab_2_title }}
+                  <svg class="sbb-tab__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="sbb-tab__body">{{ block.settings.tab_2_content }}</div>
+              </div>
+              {%- endif -%}
+
+              {%- if block.settings.tab_3_title != blank -%}
+              <div class="sbb-tab">
+                <button class="sbb-tab__trigger" type="button" aria-expanded="false">
+                  {{ block.settings.tab_3_title }}
+                  <svg class="sbb-tab__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="sbb-tab__body">{{ block.settings.tab_3_content }}</div>
+              </div>
+              {%- endif -%}
+
+              {%- if block.settings.tab_4_title != blank -%}
+              <div class="sbb-tab">
+                <button class="sbb-tab__trigger" type="button" aria-expanded="false">
+                  {{ block.settings.tab_4_title }}
+                  <svg class="sbb-tab__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="sbb-tab__body">{{ block.settings.tab_4_content }}</div>
+              </div>
+              {%- endif -%}
+            </div>
+
+            {%- comment -%} ── button ──────────────────────────── {%- endcomment -%}
+            {%- when 'button' -%}
+            {%- if block.settings.text != blank -%}
+            <div
+              class="{{ vis_class | strip }}"
+              {{ block.shopify_attributes }}
+              style="margin-top:{{ block.settings.margin_top }}px;margin-bottom:{{ block.settings.margin_bottom }}px;padding-top:{{ block.settings.padding_top }}px;padding-bottom:{{ block.settings.padding_bottom }}px;"
+            >
+              {%- render 'button',
+                content: block.settings.text,
+                href: block.settings.link,
+                stretch: block.settings.stretch,
+                background: block.settings.background,
+                text_color: block.settings.text_color,
+                block: block
+              -%}
+            </div>
+            {%- endif -%}
+
+            {%- comment -%} ── trustpilot ───────────────────────── {%- endcomment -%}
+            {%- when 'trustpilot' -%}
+            <div
+              class="sbb-trustpilot{{ vis_class }}"
+              {{ block.shopify_attributes }}
+              style="margin-top:{{ block.settings.margin_top }}px;margin-bottom:{{ block.settings.margin_bottom }}px;padding-top:{{ block.settings.padding_top }}px;padding-bottom:{{ block.settings.padding_bottom }}px;"
+            >
+              <svg class="sbb-trustpilot__star" viewBox="0 0 126.07 119.9" xmlns="http://www.w3.org/2000/svg">
+                <path d="M63 0l19.5 59.9H126L82.5 97l17 59.9L63 119.9l-36.5 37L43 97 0 59.9h43.5z" fill="#00b67a"/>
+              </svg>
+              <span class="sbb-trustpilot__name">Trustpilot</span>
+              <div class="sbb-trustpilot__squares">
+                {%- for i in (1..5) -%}
+                <div class="sbb-trustpilot__sq">
+                  <svg viewBox="0 0 126.07 119.9"><path d="M63 0l19.5 59.9H126L82.5 97l17 59.9L63 119.9l-36.5 37L43 97 0 59.9h43.5z" fill="#fff"/></svg>
+                </div>
+                {%- endfor -%}
+              </div>
+              <span class="sbb-trustpilot__label">{{ block.settings.label | default: 'Eccellente' }}</span>
+            </div>
+
+            {%- comment -%} ── image ────────────────────────────── {%- endcomment -%}
+            {%- when 'image' -%}
+            {%- assign img_ar     = block.settings.aspect_ratio | default: 'auto' -%}
+            {%- assign img_pos    = block.settings.img_position | default: 'center center' -%}
+            {%- assign img_align  = block.settings.alignment | default: 'left' -%}
+            {%- assign img_wtype  = block.settings.img_width_type | default: 'full' -%}
+            {%- assign img_blk_id = 'sbb-img-' | append: block.id -%}
+            {%- if img_ar == 'auto' -%}
+              {%- assign img_tag_style = 'width:100%;height:auto;display:block;' -%}
+            {%- else -%}
+              {%- assign img_tag_style = 'width:100%;height:100%;object-fit:cover;object-position:' | append: img_pos -%}
+            {%- endif -%}
+            {%- if img_wtype == 'custom' -%}
+            <style>
+              #{{ img_blk_id }} .sbb-block-image__wrap { max-width: {{ block.settings.img_max_width | default: 300 }}px; }
+              @media (max-width: 749px) {
+                #{{ img_blk_id }} .sbb-block-image__wrap { max-width: {{ block.settings.img_max_width_mobile | default: 200 }}px; }
+              }
+            </style>
+            {%- endif -%}
+            <div
+              id="{{ img_blk_id }}"
+              class="sbb-block-image{{ vis_class }}"
+              {{ block.shopify_attributes }}
+              style="margin-top:{{ block.settings.margin_top }}px;margin-bottom:{{ block.settings.margin_bottom }}px;padding-top:{{ block.settings.padding_top }}px;padding-bottom:{{ block.settings.padding_bottom }}px;text-align:{{ img_align }};"
+            >
+              {%- if block.settings.image != blank -%}
+                <div
+                  class="sbb-block-image__wrap"
+                  style="display:{% if img_wtype == 'custom' %}inline-block{% else %}block{% endif %};width:100%;{% unless img_ar == 'auto' %}aspect-ratio:{{ img_ar }};overflow:hidden;{% endunless %}"
+                >
+                  {%- assign img_tag = block.settings.image | image_url: width: 1200 | image_tag: loading: 'lazy', class: 'sbb-block-image__img', style: img_tag_style -%}
+                  {%- if block.settings.link != blank -%}
+                    <a href="{{ block.settings.link }}" target="_blank" rel="noopener">{{ img_tag }}</a>
+                  {%- else -%}
+                    {{ img_tag }}
+                  {%- endif -%}
+                </div>
+              {%- else -%}
+                <div class="sbb-block-image__placeholder">
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                </div>
+              {%- endif -%}
+              {%- if block.settings.caption != blank -%}
+                <p class="sbb-block-image__caption">{{ block.settings.caption }}</p>
+              {%- endif -%}
+            </div>
+
+            {%- comment -%} ── text ─────────────────────────────── {%- endcomment -%}
+            {%- when 'text' -%}
+            <div
+              class="sbb-block-text{{ vis_class }}"
+              {{ block.shopify_attributes }}
+              style="margin-top:{{ block.settings.margin_top }}px;margin-bottom:{{ block.settings.margin_bottom }}px;padding-top:{{ block.settings.padding_top }}px;padding-bottom:{{ block.settings.padding_bottom }}px;text-align:{{ block.settings.alignment }};{% if block.settings.text_color != blank %}color:{{ block.settings.text_color }};{% endif %}"
+            >
+              {%- if block.settings.heading != blank -%}
+                <h3 class="sbb-block-text__heading">{{ block.settings.heading }}</h3>
+              {%- endif -%}
+              {%- if block.settings.content != blank -%}
+                <div class="sbb-block-text__body">{{ block.settings.content }}</div>
+              {%- endif -%}
+            </div>
+
+            {%- comment -%} ── banner ───────────────────────────── {%- endcomment -%}
+            {%- when 'banner' -%}
+            <div
+              class="sbb-block-banner{{ vis_class }}"
+              {{ block.shopify_attributes }}
+              style="margin-top:{{ block.settings.margin_top }}px;margin-bottom:{{ block.settings.margin_bottom }}px;padding-top:{{ block.settings.padding_top }}px;padding-bottom:{{ block.settings.padding_bottom }}px;{% if block.settings.image != blank %}background-image:url('{{ block.settings.image | image_url: width: 1400 }}');{% endif %}{% if block.settings.bg_color != blank %}background-color:{{ block.settings.bg_color }};{% endif %}"
+            >
+              <div class="sbb-block-banner__overlay" style="background:rgba(0,0,0,{{ block.settings.overlay_opacity | divided_by: 100.0 }});"></div>
+              <div class="sbb-block-banner__content">
+                {%- if block.settings.heading != blank -%}
+                  <h3 class="sbb-block-banner__heading" style="{% if block.settings.text_color != blank %}color:{{ block.settings.text_color }};{% endif %}">{{ block.settings.heading }}</h3>
+                {%- endif -%}
+                {%- if block.settings.subtext != blank -%}
+                  <p class="sbb-block-banner__subtext" style="{% if block.settings.text_color != blank %}color:{{ block.settings.text_color }};{% endif %}">{{ block.settings.subtext }}</p>
+                {%- endif -%}
+                {%- if block.settings.button_label != blank and block.settings.button_url != blank -%}
+                  <a class="sbb-block-banner__btn" href="{{ block.settings.button_url }}">{{ block.settings.button_label }}</a>
+                {%- endif -%}
+              </div>
+            </div>
+
+            {%- comment -%} ── image_with_text ──────────────────── {%- endcomment -%}
+            {%- when 'image_with_text' -%}
+            <div
+              class="sbb-block-iwt{% if block.settings.image_position == 'right' %} sbb-block-iwt--img-right{% endif %}{{ vis_class }}"
+              {{ block.shopify_attributes }}
+              style="margin-top:{{ block.settings.margin_top }}px;margin-bottom:{{ block.settings.margin_bottom }}px;padding-top:{{ block.settings.padding_top }}px;padding-bottom:{{ block.settings.padding_bottom }}px;"
+            >
+              <div class="sbb-block-iwt__img-wrap">
+                {%- if block.settings.image != blank -%}
+                  {{ block.settings.image | image_url: width: 800 | image_tag: loading: 'lazy', class: 'sbb-block-iwt__img' }}
+                {%- else -%}
+                  <div class="sbb-block-image__placeholder">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                  </div>
+                {%- endif -%}
+              </div>
+              <div class="sbb-block-iwt__text" style="{% if block.settings.text_color != blank %}color:{{ block.settings.text_color }};{% endif %}">
+                {%- if block.settings.heading != blank -%}
+                  <h3 class="sbb-block-iwt__heading">{{ block.settings.heading }}</h3>
+                {%- endif -%}
+                {%- if block.settings.content != blank -%}
+                  <div class="sbb-block-iwt__body">{{ block.settings.content }}</div>
+                {%- endif -%}
+                {%- if block.settings.button_label != blank and block.settings.button_url != blank -%}
+                  <a class="sbb-block-iwt__btn" href="{{ block.settings.button_url }}">{{ block.settings.button_label }}</a>
+                {%- endif -%}
+              </div>
+            </div>
+
+            {%- comment -%} ── carousel ─────────────────────────── {%- endcomment -%}
+            {%- when 'carousel' -%}
+            {%- assign carousel_id  = 'sbb-carousel-' | append: block.id -%}
+            {%- assign car_ar       = block.settings.aspect_ratio | default: '4/5' -%}
+            {%- assign car_pos      = block.settings.img_position | default: 'center center' -%}
+            {%- assign car_img_style = 'width:100%;height:100%;object-fit:cover;object-position:' | append: car_pos -%}
+            <div
+              class="sbb-carousel{{ vis_class }}"
+              id="{{ carousel_id }}"
+              {{ block.shopify_attributes }}
+              data-autoplay="{{ block.settings.autoplay }}"
+              data-speed="{{ block.settings.autoplay_speed }}"
+              style="margin-top:{{ block.settings.margin_top }}px;margin-bottom:{{ block.settings.margin_bottom }}px;padding-top:{{ block.settings.padding_top }}px;padding-bottom:{{ block.settings.padding_bottom }}px;"
+            >
+              <div class="sbb-carousel__track">
+                {%- assign slide_count = 0 -%}
+                {%- for i in (1..6) -%}
+                  {%- assign img_key = 'image_' | append: i -%}
+                  {%- assign cap_key = 'caption_' | append: i -%}
+                  {%- if block.settings[img_key] != blank -%}
+                    {%- assign slide_count = slide_count | plus: 1 -%}
+                    <div class="sbb-carousel__slide{% if slide_count == 1 %} is-active{% endif %}" style="aspect-ratio:{{ car_ar }};overflow:hidden;">
+                      {{ block.settings[img_key] | image_url: width: 1400 | image_tag: loading: 'lazy', class: 'sbb-carousel__img', style: car_img_style }}
+                      {%- if block.settings[cap_key] != blank -%}
+                        <div class="sbb-carousel__caption">{{ block.settings[cap_key] }}</div>
+                      {%- endif -%}
+                    </div>
+                  {%- endif -%}
+                {%- endfor -%}
+              </div>
+              {%- if slide_count > 1 -%}
+              <button class="sbb-carousel__btn sbb-carousel__btn--prev" aria-label="Precedente">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+              </button>
+              <button class="sbb-carousel__btn sbb-carousel__btn--next" aria-label="Successivo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+              </button>
+              <div class="sbb-carousel__dots">
+                {%- for d in (1..slide_count) -%}
+                  <span class="sbb-carousel__dot{% if d == 1 %} is-active{% endif %}" data-index="{{ d | minus: 1 }}"></span>
+                {%- endfor -%}
+              </div>
+              {%- endif -%}
+            </div>
+
+            {%- comment -%} ── text_carousel ────────────────────── {%- endcomment -%}
+            {%- when 'text_carousel' -%}
+            {%- assign tc_id      = 'sbb-tc-' | append: block.id -%}
+            {%- assign tc_cs_hash = block.settings.color_scheme.settings.background_gradient | default: block.settings.color_scheme.settings.background | md5 -%}
+            <div
+              class="sbb-carousel sbb-text-carousel color-scheme color-scheme--{{ block.settings.color_scheme.id }} color-scheme--bg-{{ tc_cs_hash }}{{ vis_class }}"
+              id="{{ tc_id }}"
+              {{ block.shopify_attributes }}
+              data-autoplay="{{ block.settings.autoplay }}"
+              data-speed="{{ block.settings.autoplay_speed | default: 4000 }}"
+              style="margin-top:{{ block.settings.margin_top }}px;margin-bottom:{{ block.settings.margin_bottom }}px;padding-top:{{ block.settings.padding_top }}px;padding-bottom:{{ block.settings.padding_bottom }}px;text-align:{{ block.settings.text_align | default: 'left' }};"
+            >
+              <div class="sbb-carousel__track">
+                {%- assign tc_slide_count = 0 -%}
+                {%- for i in (1..5) -%}
+                  {%- assign tc_content_key = 'slide_' | append: i | append: '_content' -%}
+                  {%- assign tc_heading_key = 'slide_' | append: i | append: '_heading' -%}
+                  {%- if block.settings[tc_content_key] != blank -%}
+                    {%- assign tc_slide_count = tc_slide_count | plus: 1 -%}
+                    <div class="sbb-carousel__slide sbb-text-carousel__slide{% if tc_slide_count == 1 %} is-active{% endif %}">
+                      {%- if block.settings[tc_heading_key] != blank -%}
+                        <p class="sbb-text-carousel__heading">{{ block.settings[tc_heading_key] }}</p>
+                      {%- endif -%}
+                      <div class="sbb-text-carousel__body">{{ block.settings[tc_content_key] }}</div>
+                    </div>
+                  {%- endif -%}
+                {%- endfor -%}
+              </div>
+              {%- if tc_slide_count > 1 -%}
+              <button class="sbb-carousel__btn sbb-carousel__btn--prev" aria-label="Precedente">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+              </button>
+              <button class="sbb-carousel__btn sbb-carousel__btn--next" aria-label="Successivo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+              </button>
+              <div class="sbb-carousel__dots">
+                {%- for d in (1..tc_slide_count) -%}
+                  <span class="sbb-carousel__dot{% if d == 1 %} is-active{% endif %}" data-index="{{ d | minus: 1 }}"></span>
+                {%- endfor -%}
+              </div>
+              {%- endif -%}
+            </div>
+
+            {%- comment -%} ── footer ───────────────────────────── {%- endcomment -%}
+            {%- when 'footer' -%}
+            <div
+              class="sbb-block-footer{{ vis_class }}"
+              {{ block.shopify_attributes }}
+              style="margin-top:{{ block.settings.margin_top }}px;margin-bottom:{{ block.settings.margin_bottom }}px;padding-top:{{ block.settings.padding_top }}px;padding-bottom:{{ block.settings.padding_bottom }}px;{% if block.settings.bg_color != blank %}background:{{ block.settings.bg_color }};{% endif %}"
+            >
+              {%- if block.settings.logo != blank -%}
+                <div class="sbb-block-footer__logo">
+                  {{ block.settings.logo | image_url: width: 200 | image_tag: loading: 'lazy' }}
+                </div>
+              {%- endif -%}
+
+              {%- if block.settings.tagline != blank -%}
+                <p class="sbb-block-footer__tagline" style="{% if block.settings.text_color != blank %}color:{{ block.settings.text_color }};{% endif %}">{{ block.settings.tagline }}</p>
+              {%- endif -%}
+
+              {%- assign has_links = false -%}
+              {%- for i in (1..5) -%}
+                {%- assign lbl_key = 'link_' | append: i | append: '_label' -%}
+                {%- assign url_key = 'link_' | append: i | append: '_url' -%}
+                {%- if block.settings[lbl_key] != blank -%}{%- assign has_links = true -%}{%- endif -%}
+              {%- endfor -%}
+              {%- if has_links -%}
+              <nav class="sbb-block-footer__links">
+                {%- for i in (1..5) -%}
+                  {%- assign lbl_key = 'link_' | append: i | append: '_label' -%}
+                  {%- assign url_key = 'link_' | append: i | append: '_url' -%}
+                  {%- if block.settings[lbl_key] != blank -%}
+                    <a class="sbb-block-footer__link" href="{{ block.settings[url_key] | default: '#' }}" style="{% if block.settings.text_color != blank %}color:{{ block.settings.text_color }};{% endif %}">{{ block.settings[lbl_key] }}</a>
+                  {%- endif -%}
+                {%- endfor -%}
+              </nav>
+              {%- endif -%}
+
+              {%- assign has_socials = false -%}
+              {%- if block.settings.instagram_url != blank or block.settings.facebook_url != blank or block.settings.tiktok_url != blank or block.settings.youtube_url != blank or block.settings.pinterest_url != blank -%}
+                {%- assign has_socials = true -%}
+              {%- endif -%}
+              {%- if has_socials -%}
+              <div class="sbb-block-footer__socials">
+                {%- if block.settings.instagram_url != blank -%}
+                <a class="sbb-block-footer__social" href="{{ block.settings.instagram_url }}" target="_blank" rel="noopener" aria-label="Instagram" style="{% if block.settings.icon_color != blank %}color:{{ block.settings.icon_color }};{% endif %}">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4.5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+                </a>
+                {%- endif -%}
+                {%- if block.settings.facebook_url != blank -%}
+                <a class="sbb-block-footer__social" href="{{ block.settings.facebook_url }}" target="_blank" rel="noopener" aria-label="Facebook" style="{% if block.settings.icon_color != blank %}color:{{ block.settings.icon_color }};{% endif %}">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                </a>
+                {%- endif -%}
+                {%- if block.settings.tiktok_url != blank -%}
+                <a class="sbb-block-footer__social" href="{{ block.settings.tiktok_url }}" target="_blank" rel="noopener" aria-label="TikTok" style="{% if block.settings.icon_color != blank %}color:{{ block.settings.icon_color }};{% endif %}">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.16 8.16 0 0 0 4.77 1.52V6.73a4.85 4.85 0 0 1-1-.04z"/></svg>
+                </a>
+                {%- endif -%}
+                {%- if block.settings.youtube_url != blank -%}
+                <a class="sbb-block-footer__social" href="{{ block.settings.youtube_url }}" target="_blank" rel="noopener" aria-label="YouTube" style="{% if block.settings.icon_color != blank %}color:{{ block.settings.icon_color }};{% endif %}">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.97C5.12 20 12 20 12 20s6.88 0 8.59-.45a2.78 2.78 0 0 0 1.95-1.97A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" stroke="none" fill="currentColor"/></svg>
+                </a>
+                {%- endif -%}
+                {%- if block.settings.pinterest_url != blank -%}
+                <a class="sbb-block-footer__social" href="{{ block.settings.pinterest_url }}" target="_blank" rel="noopener" aria-label="Pinterest" style="{% if block.settings.icon_color != blank %}color:{{ block.settings.icon_color }};{% endif %}">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.24 2.65 7.86 6.39 9.29-.09-.78-.17-1.98.04-2.83.18-.76 1.22-5.15 1.22-5.15s-.31-.62-.31-1.55c0-1.45.84-2.54 1.89-2.54.89 0 1.32.67 1.32 1.47 0 .9-.57 2.24-.87 3.49-.25 1.04.52 1.89 1.54 1.89 1.84 0 3.08-2.37 3.08-5.18 0-2.14-1.44-3.64-3.5-3.64-2.39 0-3.79 1.79-3.79 3.64 0 .72.27 1.49.62 1.91.07.08.08.15.06.23-.06.26-.2.82-.23.94-.04.15-.13.18-.3.11C7.58 13.46 7 11.9 7 10.54 7 7.64 9.14 5 12.85 5c3.01 0 5.35 2.14 5.35 5.01 0 2.99-1.88 5.39-4.49 5.39-.88 0-1.7-.46-1.98-1l-.54 2.02c-.2.74-.72 1.67-1.07 2.23.81.25 1.66.38 2.54.38 5.52 0 10-4.48 10-10S17.52 2 12 2z"/></svg>
+                </a>
+                {%- endif -%}
+              </div>
+              {%- endif -%}
+
+              {%- if block.settings.copyright != blank -%}
+                <p class="sbb-block-footer__copyright" style="{% if block.settings.text_color != blank %}color:{{ block.settings.text_color }};{% endif %}">{{ block.settings.copyright }}</p>
+              {%- endif -%}
+            </div>
+
+            {%- comment -%} ── custom_liquid ────────────────────── {%- endcomment -%}
+            {%- when 'custom_liquid' -%}
+            <div
+              class="{{ vis_class | strip }}"
+              {{ block.shopify_attributes }}
+              style="margin-top:{{ block.settings.margin_top }}px;margin-bottom:{{ block.settings.margin_bottom }}px;padding-top:{{ block.settings.padding_top }}px;padding-bottom:{{ block.settings.padding_bottom }}px;"
+            >
+              {{ block.settings.custom_liquid }}
+            </div>
+
+            {%- when '@app' -%}
+            {{ block | render_block }}
+
+          {%- endcase -%}
+        {%- endfor -%}
+
+      </div>
+      {%- comment -%} /.sbb-info {%- endcomment -%}
+    </div>
+    {%- comment -%} /.sbb-col-info {%- endcomment -%}
+
+  </div>
+  {%- comment -%} /.sbb-product-row {%- endcomment -%}
+
+</div>
+{%- comment -%} /.sbb-wrap {%- endcomment -%}
+
+
+{{ 'belt-combination.js' | asset_url | script_tag }}
+{{ 'single-bundle-builder.js' | asset_url | script_tag }}
+
+{% schema %}
+{
+  "name": "Single Bundle Builder",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Aspetto sezione"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:global.colors.scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Colore sfondo sezione (override)"
+    },
+    {
+      "type": "header",
+      "content": "Colonna destra"
+    },
+    {
+      "type": "range",
+      "id": "info_pad_top",
+      "label": "Padding superiore",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "info_pad_right",
+      "label": "Padding destro",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "info_pad_bottom",
+      "label": "Padding inferiore",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "info_pad_left",
+      "label": "Padding sinistro",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "info_col_max_width",
+      "label": "Larghezza massima colonna destra (desktop)",
+      "min": 300,
+      "max": 800,
+      "step": 20,
+      "unit": "px",
+      "default": 540
+    },
+    {
+      "type": "select",
+      "id": "info_col_position",
+      "label": "Posizione colonna destra (desktop)",
+      "options": [
+        { "value": "left",   "label": "Sinistra" },
+        { "value": "center", "label": "Centro" },
+        { "value": "right",  "label": "Destra" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky_info_col",
+      "label": "Colonna destra fissa (sticky) su desktop",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Bordo Dropdown"
+    },
+    {
+      "type": "range",
+      "id": "dropdown_border_width",
+      "label": "Spessore bordo",
+      "min": 0,
+      "max": 6,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "color",
+      "id": "dropdown_border_color",
+      "label": "Colore bordo",
+      "default": "#e0e0e0"
+    },
+    {
+      "type": "checkbox",
+      "id": "allow_transparent_header",
+      "label": "t:global.section.allow_transparent_header",
+      "info": "t:global.section.allow_transparent_header_info",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "transparent_header_use_primary_colors",
+      "label": "t:global.section.transparent_header_use_primary_colors",
+      "default": false,
+      "visible_if": "{{ section.settings.allow_transparent_header }}"
+    },
+  ],
+  "blocks": [
+    {
+      "type": "gallery",
+      "name": "Galleria",
+      "limit": 1,
+      "settings": [
+        { "type": "header", "content": "Bottone indossato" },
+        { "type": "text",   "id": "worn_btn_label",      "label": "Testo (prodotto → indossato)", "default": "Vedi indossato" },
+        { "type": "text",   "id": "worn_btn_back_label", "label": "Testo (indossato → prodotto)",  "default": "Vista prodotto" },
+        {
+          "type": "select", "id": "worn_btn_style", "label": "Stile bottone",
+          "options": [
+            { "value": "solid",   "label": "Solid" },
+            { "value": "outline", "label": "Outline" },
+            { "value": "link",    "label": "Link" }
+          ],
+          "default": "solid"
+        },
+        { "type": "header", "content": "Mobile" },
+        { "type": "range", "id": "worn_btn_font_size",  "label": "Font size",             "min": 10, "max": 22, "step": 1, "unit": "px", "default": 13 },
+        { "type": "range", "id": "worn_btn_bottom",     "label": "Distanza dal basso",    "min": 8,  "max": 80, "step": 2, "unit": "px", "default": 22 },
+        { "type": "range", "id": "worn_btn_pad_v",      "label": "Padding verticale",     "min": 4,  "max": 24, "step": 2, "unit": "px", "default": 8 },
+        { "type": "range", "id": "worn_btn_pad_h",      "label": "Padding orizzontale",   "min": 8,  "max": 40, "step": 2, "unit": "px", "default": 18 },
+        { "type": "color",  "id": "worn_btn_bg",        "label": "Sfondo" },
+        { "type": "color",  "id": "worn_btn_color",     "label": "Colore testo" },
+        { "type": "header", "content": "Desktop" },
+        { "type": "range", "id": "worn_btn_font_size_desk", "label": "Font size",         "min": 10, "max": 22, "step": 1, "unit": "px", "default": 13 },
+        { "type": "range", "id": "worn_btn_bottom_desk",    "label": "Distanza dal basso","min": 8,  "max": 80, "step": 2, "unit": "px", "default": 40 },
+        { "type": "range", "id": "worn_btn_pad_v_desk",     "label": "Padding verticale", "min": 4,  "max": 24, "step": 2, "unit": "px", "default": 8 },
+        { "type": "range", "id": "worn_btn_pad_h_desk",     "label": "Padding orizzontale","min": 8, "max": 40, "step": 2, "unit": "px", "default": 24 },
+        { "type": "color",  "id": "worn_btn_bg_desk",   "label": "Sfondo" },
+        { "type": "color",  "id": "worn_btn_color_desk","label": "Colore testo" },
+        { "type": "header", "content": "Dimensioni — Desktop" },
+        {
+          "type": "select", "id": "desk_size_mode", "label": "Modalità dimensione",
+          "options": [
+            { "value": "ratio",  "label": "Proporzioni (ratio)" },
+            { "value": "custom", "label": "Personalizzato (px)" }
+          ],
+          "default": "ratio"
+        },
+        {
+          "type": "select", "id": "aspect_ratio_desktop", "label": "Proporzioni immagine",
+          "options": [
+            { "value": "1/1",   "label": "1:1 — Quadrato" },
+            { "value": "4/5",   "label": "4:5 — Ritratto" },
+            { "value": "5/4",   "label": "5:4 — Paesaggio" },
+            { "value": "3/4",   "label": "3:4 — Ritratto" },
+            { "value": "4/3",   "label": "4:3 — Paesaggio" },
+            { "value": "2/3",   "label": "2:3 — Ritratto" },
+            { "value": "3/2",   "label": "3:2 — Paesaggio" },
+            { "value": "9/16",  "label": "9:16 — Verticale" },
+            { "value": "16/9",  "label": "16:9 — Widescreen" },
+            { "value": "21/9",  "label": "21:9 — Ultra-wide" }
+          ],
+          "default": "4/5",
+          "visible_if": "{{ block.settings.desk_size_mode != 'custom' }}"
+        },
+        {
+          "type": "range", "id": "desk_custom_width",
+          "label": "Larghezza personalizzata",
+          "min": 10, "max": 100, "step": 5, "unit": "%", "default": 100,
+          "visible_if": "{{ block.settings.desk_size_mode == 'custom' }}"
+        },
+        {
+          "type": "select", "id": "desk_height_mode", "label": "Altezza galleria",
+          "options": [
+            { "value": "minus_header",     "label": "100vh − Header" },
+            { "value": "minus_header_bar", "label": "100vh − Header − Announcement bar" },
+            { "value": "minus_both",       "label": "100vh Header-transparent − Announcement bar" },
+            { "value": "transparent",      "label": "100vh − Header transparent" }
+          ],
+          "default": "minus_header",
+          "visible_if": "{{ block.settings.desk_size_mode == 'custom' }}"
+        },
+        {
+          "type": "select", "id": "img_position_desktop", "label": "Posizione immagine",
+          "options": [
+            { "value": "center center", "label": "Centro" },
+            { "value": "top center",    "label": "In alto" },
+            { "value": "bottom center", "label": "In basso" },
+            { "value": "center left",   "label": "Sinistra" },
+            { "value": "center right",  "label": "Destra" },
+            { "value": "top left",      "label": "In alto a sinistra" },
+            { "value": "top right",     "label": "In alto a destra" },
+            { "value": "bottom left",   "label": "In basso a sinistra" },
+            { "value": "bottom right",  "label": "In basso a destra" }
+          ],
+          "default": "center center"
+        },
+        { "type": "header", "content": "Dimensioni — Mobile" },
+        {
+          "type": "select", "id": "aspect_ratio", "label": "Proporzioni immagine",
+          "options": [
+            { "value": "1/1",   "label": "1:1 — Quadrato" },
+            { "value": "4/5",   "label": "4:5 — Ritratto" },
+            { "value": "5/4",   "label": "5:4 — Paesaggio" },
+            { "value": "3/4",   "label": "3:4 — Ritratto" },
+            { "value": "4/3",   "label": "4:3 — Paesaggio" },
+            { "value": "2/3",   "label": "2:3 — Ritratto" },
+            { "value": "3/2",   "label": "3:2 — Paesaggio" },
+            { "value": "9/16",  "label": "9:16 — Verticale" },
+            { "value": "16/9",  "label": "16:9 — Widescreen" },
+            { "value": "21/9",  "label": "21:9 — Ultra-wide" }
+          ],
+          "default": "4/5"
+        },
+        {
+          "type": "select", "id": "img_position", "label": "Posizione immagine",
+          "options": [
+            { "value": "center center", "label": "Centro" },
+            { "value": "top center",    "label": "In alto" },
+            { "value": "bottom center", "label": "In basso" },
+            { "value": "center left",   "label": "Sinistra" },
+            { "value": "center right",  "label": "Destra" },
+            { "value": "top left",      "label": "In alto a sinistra" },
+            { "value": "top right",     "label": "In alto a destra" },
+            { "value": "bottom left",   "label": "In basso a sinistra" },
+            { "value": "bottom right",  "label": "In basso a destra" }
+          ],
+          "default": "center center"
+        },
+        { "type": "header", "content": "Spaziatura" },
+        { "type": "range", "id": "margin_top",    "label": "Margine superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "margin_bottom", "label": "Margine inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_top",   "label": "Padding superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_bottom","label": "Padding inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "header", "content": "Visibilità" },
+        { "type": "checkbox", "id": "show_on_desktop", "label": "Visibile su desktop", "default": true },
+        { "type": "checkbox", "id": "show_on_mobile",  "label": "Visibile su mobile",  "default": true }
+      ]
+    },
+    {
+      "type": "buckle_dropdown",
+      "name": "Fibbia",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Etichetta",
+          "default": "Fibbia"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_label",
+          "label": "Mostra etichetta",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "placeholder",
+          "label": "Placeholder",
+          "default": "Seleziona fibbia…"
+        },
+        { "type": "header", "content": "Spaziatura" },
+        { "type": "range", "id": "margin_top",    "label": "Margine superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "margin_bottom", "label": "Margine inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_top",   "label": "Padding superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_bottom","label": "Padding inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "header", "content": "Visibilità" },
+        { "type": "checkbox", "id": "show_on_desktop", "label": "Visibile su desktop", "default": true },
+        { "type": "checkbox", "id": "show_on_mobile",  "label": "Visibile su mobile",  "default": true }
+      ]
+    },
+    {
+      "type": "strap_dropdown",
+      "name": "Cinturino",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Etichetta",
+          "default": "Cinturino"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_label",
+          "label": "Mostra etichetta",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "placeholder",
+          "label": "Placeholder",
+          "default": "Seleziona cinturino…"
+        },
+        { "type": "header", "content": "Spaziatura" },
+        { "type": "range", "id": "margin_top",    "label": "Margine superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "margin_bottom", "label": "Margine inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_top",   "label": "Padding superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_bottom","label": "Padding inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "header", "content": "Visibilità" },
+        { "type": "checkbox", "id": "show_on_desktop", "label": "Visibile su desktop", "default": true },
+        { "type": "checkbox", "id": "show_on_mobile",  "label": "Visibile su mobile",  "default": true }
+      ]
+    },
+    {
+      "type": "buckle_dropdown_desktop",
+      "name": "Fibbia Desktop",
+      "limit": 1,
+      "settings": [
+        { "type": "text",     "id": "label",      "label": "Etichetta",        "default": "Fibbia" },
+        { "type": "checkbox", "id": "show_label", "label": "Mostra etichetta", "default": false },
+        { "type": "text",     "id": "placeholder","label": "Placeholder",      "default": "Seleziona fibbia…" },
+        { "type": "header", "content": "Spaziatura" },
+        { "type": "range", "id": "margin_top",    "label": "Margine superiore", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "margin_bottom", "label": "Margine inferiore", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "header", "content": "Visibilità" },
+        { "type": "checkbox", "id": "show_on_desktop", "label": "Visibile su desktop", "default": true },
+        { "type": "checkbox", "id": "show_on_mobile",  "label": "Visibile su mobile",  "default": true }
+      ]
+    },
+    {
+      "type": "strap_dropdown_desktop",
+      "name": "Cinturino Desktop",
+      "limit": 1,
+      "settings": [
+        { "type": "text",     "id": "label",      "label": "Etichetta",        "default": "Cinturino" },
+        { "type": "checkbox", "id": "show_label", "label": "Mostra etichetta", "default": false },
+        { "type": "text",     "id": "placeholder","label": "Placeholder",      "default": "Seleziona cinturino…" },
+        { "type": "header", "content": "Spaziatura" },
+        { "type": "range", "id": "margin_top",    "label": "Margine superiore", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "margin_bottom", "label": "Margine inferiore", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "header", "content": "Visibilità" },
+        { "type": "checkbox", "id": "show_on_desktop", "label": "Visibile su desktop", "default": true },
+        { "type": "checkbox", "id": "show_on_mobile",  "label": "Visibile su mobile",  "default": true }
+      ]
+    },
+    {
+      "type": "taglia",
+      "name": "Taglia",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_label",
+          "label": "Mostra etichetta",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Etichetta",
+          "default": "Taglia"
+        },
+        {
+          "type": "text",
+          "id": "size_1_label",
+          "label": "Etichetta taglia 1",
+          "default": "130 cm"
+        },
+        {
+          "type": "text",
+          "id": "size_1_value",
+          "label": "Valore taglia 1",
+          "default": "130cm"
+        },
+        {
+          "type": "text",
+          "id": "size_2_label",
+          "label": "Etichetta taglia 2",
+          "default": "150 cm"
+        },
+        {
+          "type": "text",
+          "id": "size_2_value",
+          "label": "Valore taglia 2",
+          "default": "150cm"
+        },
+        { "type": "header", "content": "Stile capsule" },
+        { "type": "range", "id": "pill_padding_v", "label": "Padding verticale",    "min": 4,  "max": 24, "step": 1, "unit": "px", "default": 9  },
+        { "type": "range", "id": "pill_padding_h", "label": "Padding orizzontale",  "min": 8,  "max": 60, "step": 2, "unit": "px", "default": 22 },
+        { "type": "range", "id": "pill_font_size", "label": "Dimensione font",      "min": 10, "max": 24, "step": 1, "unit": "px", "default": 14 },
+        { "type": "header", "content": "Spaziatura" },
+        { "type": "range", "id": "margin_top",    "label": "Margine superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "margin_bottom", "label": "Margine inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_top",   "label": "Padding superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_bottom","label": "Padding inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "header", "content": "Visibilità" },
+        { "type": "checkbox", "id": "show_on_desktop", "label": "Visibile su desktop", "default": true },
+        { "type": "checkbox", "id": "show_on_mobile",  "label": "Visibile su mobile",  "default": true }
+      ]
+    },
+    {
+      "type": "title",
+      "name": "Titolo",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "product_title",
+          "label": "Titolo prodotto",
+          "default": "Set Cintura Singola"
+        },
+        { "type": "header", "content": "Stile" },
+        { "type": "range", "id": "font_size", "label": "Dimensione font", "min": 16, "max": 60, "step": 1, "unit": "px", "default": 28 },
+        { "type": "header", "content": "Spaziatura" },
+        { "type": "range", "id": "margin_top",    "label": "Margine superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "margin_bottom", "label": "Margine inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_top",   "label": "Padding superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_bottom","label": "Padding inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "header", "content": "Visibilità" },
+        { "type": "checkbox", "id": "show_on_desktop", "label": "Visibile su desktop", "default": true },
+        { "type": "checkbox", "id": "show_on_mobile",  "label": "Visibile su mobile",  "default": true }
+      ]
+    },
+    {
+      "type": "price",
+      "name": "Prezzo",
+      "limit": 1,
+      "settings": [
+        { "type": "header", "content": "Stile prezzo" },
+        { "type": "range", "id": "price_size", "label": "Dimensione font", "min": 14, "max": 48, "step": 1, "unit": "px", "default": 24 },
+        { "type": "color", "id": "price_color", "label": "Colore prezzo", "default": "#1a1a1a" },
+        { "type": "header", "content": "Spaziatura" },
+        { "type": "range", "id": "margin_top",    "label": "Margine superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "margin_bottom", "label": "Margine inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_top",   "label": "Padding superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_bottom","label": "Padding inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "header", "content": "Visibilità" },
+        { "type": "checkbox", "id": "show_on_desktop", "label": "Visibile su desktop", "default": true },
+        { "type": "checkbox", "id": "show_on_mobile",  "label": "Visibile su mobile",  "default": true }
+      ]
+    },
+    {
+      "type": "description",
+      "name": "Descrizione",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "description",
+          "label": "Descrizione",
+          "info": "Lascia vuoto per il testo predefinito"
+        },
+        { "type": "header", "content": "Spaziatura" },
+        { "type": "range", "id": "margin_top",    "label": "Margine superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "margin_bottom", "label": "Margine inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_top",   "label": "Padding superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_bottom","label": "Padding inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "header", "content": "Visibilità" },
+        { "type": "checkbox", "id": "show_on_desktop", "label": "Visibile su desktop", "default": true },
+        { "type": "checkbox", "id": "show_on_mobile",  "label": "Visibile su mobile",  "default": true }
+      ]
+    },
+    {
+      "type": "buttons",
+      "name": "Button",
+      "settings": [
+        { "type": "text", "id": "text", "label": "Button text" },
+        { "type": "url",  "id": "link", "label": "Button link", "info": "Defaults to the selected product URL when empty." },
+        { "type": "select", "id": "style", "label": "Button style", "options": [
+          { "value": "outline", "label": "Outline button" },
+          { "value": "solid",   "label": "Solid button"   },
+          { "value": "link",    "label": "Link"           }
+        ], "default": "outline" },
+        { "type": "checkbox", "id": "stretch", "label": "Stretch to full width", "default": false },
+        { "type": "select", "id": "alignment", "label": "Alignment", "options": [
+          { "value": "left",   "label": "Left"   },
+          { "value": "center", "label": "Center" },
+          { "value": "right",  "label": "Right"  }
+        ], "default": "left",
+          "info": "Active when not stretched.",
+          "visible_if": "{{ block.settings.stretch == false }}" },
+        { "type": "header", "content": "Spaziatura" },
+        { "type": "range", "id": "margin_top",    "label": "Margine superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "margin_bottom", "label": "Margine inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_top",   "label": "Padding superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_bottom","label": "Padding inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "header", "content": "Visibilità" },
+        { "type": "checkbox", "id": "show_on_desktop", "label": "Visibile su desktop", "default": true },
+        { "type": "checkbox", "id": "show_on_mobile",  "label": "Visibile su mobile",  "default": true }
+      ]
+    },
+    {
+      "type": "cta_button",
+      "name": "CTA Button",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "Testo pulsante",
+          "default": "Aggiungi al Carrello"
+        },
+        { "type": "header", "content": "Layout — Mobile" },
+        {
+          "type": "select", "id": "alignment", "label": "Allineamento",
+          "options": [
+            { "value": "left",   "label": "Sinistra" },
+            { "value": "center", "label": "Centro" },
+            { "value": "right",  "label": "Destra" }
+          ],
+          "default": "left"
+        },
+        {
+          "type": "radio", "id": "btn_width_type", "label": "Larghezza pulsante",
+          "options": [
+            { "value": "full",   "label": "Larghezza piena" },
+            { "value": "custom", "label": "Personalizzata" }
+          ],
+          "default": "full"
+        },
+        {
+          "type": "range", "id": "btn_custom_width", "label": "Larghezza (px)",
+          "min": 80, "max": 800, "step": 10, "unit": "px", "default": 300,
+          "visible_if": "{{ block.settings.btn_width_type == 'custom' }}"
+        },
+        { "type": "header", "content": "Layout — Desktop" },
+        {
+          "type": "select", "id": "alignment_desktop", "label": "Allineamento",
+          "options": [
+            { "value": "left",   "label": "Sinistra" },
+            { "value": "center", "label": "Centro" },
+            { "value": "right",  "label": "Destra" }
+          ],
+          "default": "left"
+        },
+        {
+          "type": "radio", "id": "btn_width_type_desktop", "label": "Larghezza pulsante",
+          "options": [
+            { "value": "full",   "label": "Larghezza piena" },
+            { "value": "custom", "label": "Personalizzata" }
+          ],
+          "default": "full"
+        },
+        {
+          "type": "range", "id": "btn_custom_width_desktop", "label": "Larghezza (px)",
+          "min": 80, "max": 800, "step": 10, "unit": "px", "default": 300,
+          "visible_if": "{{ block.settings.btn_width_type_desktop == 'custom' }}"
+        },
+        { "type": "header", "content": "Stile" },
+        { "type": "range", "id": "font_size", "label": "Dimensione font", "min": 12, "max": 28, "step": 1, "unit": "px", "default": 16 },
+        { "type": "header", "content": "Colori" },
+        {
+          "type": "color",
+          "id": "bg_color",
+          "label": "Colore sfondo",
+          "default": "#1a1a1a"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Colore testo",
+          "default": "#ffffff"
+        },
+        { "type": "header", "content": "Spaziatura" },
+        { "type": "range", "id": "margin_top",    "label": "Margine superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "margin_bottom", "label": "Margine inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_top",   "label": "Padding superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_bottom","label": "Padding inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "header", "content": "Visibilità" },
+        { "type": "checkbox", "id": "show_on_desktop", "label": "Visibile su desktop", "default": true },
+        { "type": "checkbox", "id": "show_on_mobile",  "label": "Visibile su mobile",  "default": true }
+      ]
+    },
+    {
+      "type": "trust_bar",
+      "name": "Trust Bar",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "item_1",
+          "label": "Elemento 1",
+          "default": "Spedizione gratuita"
+        },
+        {
+          "type": "text",
+          "id": "item_2",
+          "label": "Elemento 2",
+          "default": "Reso entro 30 giorni"
+        },
+        {
+          "type": "text",
+          "id": "item_3",
+          "label": "Elemento 3",
+          "default": "Garanzia 2 anni"
+        },
+        { "type": "header", "content": "Spaziatura" },
+        { "type": "range", "id": "margin_top",    "label": "Margine superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "margin_bottom", "label": "Margine inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_top",   "label": "Padding superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_bottom","label": "Padding inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "header", "content": "Visibilità" },
+        { "type": "checkbox", "id": "show_on_desktop", "label": "Visibile su desktop", "default": true },
+        { "type": "checkbox", "id": "show_on_mobile",  "label": "Visibile su mobile",  "default": true }
+      ]
+    },
+    {
+      "type": "accordion",
+      "name": "Accordion",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "tab_1_title",
+          "label": "Tab 1 — Titolo",
+          "default": "Taglie e Dettagli Tecnici"
+        },
+        {
+          "type": "richtext",
+          "id": "tab_1_content",
+          "label": "Tab 1 — Contenuto"
+        },
+        {
+          "type": "text",
+          "id": "tab_2_title",
+          "label": "Tab 2 — Titolo",
+          "default": "Spedizione Gratuita in 24\/72h"
+        },
+        {
+          "type": "richtext",
+          "id": "tab_2_content",
+          "label": "Tab 2 — Contenuto"
+        },
+        {
+          "type": "text",
+          "id": "tab_3_title",
+          "label": "Tab 3 — Titolo",
+          "default": "Contrassegno, Klarna, PayPal"
+        },
+        {
+          "type": "richtext",
+          "id": "tab_3_content",
+          "label": "Tab 3 — Contenuto"
+        },
+        {
+          "type": "text",
+          "id": "tab_4_title",
+          "label": "Tab 4 — Titolo",
+          "default": "Reso Gratuito e Garanzia 2 Anni"
+        },
+        {
+          "type": "richtext",
+          "id": "tab_4_content",
+          "label": "Tab 4 — Contenuto"
+        },
+        { "type": "header", "content": "Spaziatura" },
+        { "type": "range", "id": "margin_top",    "label": "Margine superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "margin_bottom", "label": "Margine inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_top",   "label": "Padding superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_bottom","label": "Padding inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "header", "content": "Visibilità" },
+        { "type": "checkbox", "id": "show_on_desktop", "label": "Visibile su desktop", "default": true },
+        { "type": "checkbox", "id": "show_on_mobile",  "label": "Visibile su mobile",  "default": true }
+      ]
+    },
+    {
+      "type": "image",
+      "name": "Image",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Immagine" },
+        { "type": "url",  "id": "link",    "label": "Link" },
+        { "type": "text", "id": "caption", "label": "Didascalia" },
+        { "type": "select", "id": "alignment", "label": "Allineamento",
+          "options": [
+            { "value": "left",   "label": "Sinistra" },
+            { "value": "center", "label": "Centro" },
+            { "value": "right",  "label": "Destra" }
+          ],
+          "default": "left"
+        },
+        { "type": "radio", "id": "img_width_type", "label": "Larghezza immagine",
+          "options": [
+            { "value": "full",   "label": "Larghezza piena" },
+            { "value": "custom", "label": "Personalizzata" }
+          ],
+          "default": "full"
+        },
+        { "type": "range", "id": "img_max_width",        "label": "Larghezza massima",         "min": 40, "max": 800, "step": 10, "unit": "px", "default": 300,
+          "visible_if": "{{ block.settings.img_width_type == 'custom' }}" },
+        { "type": "range", "id": "img_max_width_mobile", "label": "Larghezza massima (mobile)", "min": 40, "max": 600, "step": 10, "unit": "px", "default": 200,
+          "visible_if": "{{ block.settings.img_width_type == 'custom' }}" },
+        { "type": "header", "content": "Dimensioni" },
+        {
+          "type": "select", "id": "aspect_ratio", "label": "Proporzioni immagine",
+          "options": [
+            { "value": "auto",  "label": "Naturale (nessun ritaglio)" },
+            { "value": "1/1",   "label": "1:1 — Quadrato" },
+            { "value": "4/5",   "label": "4:5 — Ritratto" },
+            { "value": "5/4",   "label": "5:4 — Paesaggio" },
+            { "value": "3/4",   "label": "3:4 — Ritratto" },
+            { "value": "4/3",   "label": "4:3 — Paesaggio" },
+            { "value": "2/3",   "label": "2:3 — Ritratto" },
+            { "value": "3/2",   "label": "3:2 — Paesaggio" },
+            { "value": "9/16",  "label": "9:16 — Verticale" },
+            { "value": "16/9",  "label": "16:9 — Widescreen" },
+            { "value": "21/9",  "label": "21:9 — Ultra-wide" }
+          ],
+          "default": "auto"
+        },
+        {
+          "type": "select", "id": "img_position", "label": "Posizione immagine",
+          "options": [
+            { "value": "center center", "label": "Centro" },
+            { "value": "top center",    "label": "In alto" },
+            { "value": "bottom center", "label": "In basso" },
+            { "value": "center left",   "label": "Sinistra" },
+            { "value": "center right",  "label": "Destra" },
+            { "value": "top left",      "label": "In alto a sinistra" },
+            { "value": "top right",     "label": "In alto a destra" },
+            { "value": "bottom left",   "label": "In basso a sinistra" },
+            { "value": "bottom right",  "label": "In basso a destra" }
+          ],
+          "default": "center center",
+          "visible_if": "{{ block.settings.aspect_ratio != 'auto' }}"
+        },
+        { "type": "header", "content": "Spaziatura" },
+        { "type": "range", "id": "margin_top",    "label": "Margine superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "margin_bottom", "label": "Margine inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_top",   "label": "Padding superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_bottom","label": "Padding inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "header", "content": "Visibilità" },
+        { "type": "checkbox", "id": "show_on_desktop", "label": "Visibile su desktop", "default": true },
+        { "type": "checkbox", "id": "show_on_mobile",  "label": "Visibile su mobile",  "default": true }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "Text",
+      "settings": [
+        { "type": "text",     "id": "heading", "label": "Titolo" },
+        { "type": "richtext", "id": "content", "label": "Testo" },
+        { "type": "select",   "id": "alignment", "label": "Allineamento", "options": [
+          { "value": "left",   "label": "Sinistra" },
+          { "value": "center", "label": "Centro" },
+          { "value": "right",  "label": "Destra" }
+        ], "default": "left" },
+        { "type": "color", "id": "text_color", "label": "Colore testo" },
+        { "type": "header", "content": "Spaziatura" },
+        { "type": "range", "id": "margin_top",    "label": "Margine superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "margin_bottom", "label": "Margine inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_top",   "label": "Padding superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_bottom","label": "Padding inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "header", "content": "Visibilità" },
+        { "type": "checkbox", "id": "show_on_desktop", "label": "Visibile su desktop", "default": true },
+        { "type": "checkbox", "id": "show_on_mobile",  "label": "Visibile su mobile",  "default": true }
+      ]
+    },
+    {
+      "type": "text_carousel",
+      "name": "Text Carousel",
+      "settings": [
+        { "type": "color_scheme", "id": "color_scheme", "label": "t:global.colors.scheme", "default": "scheme-1" },
+        { "type": "select", "id": "text_align", "label": "Allineamento testo", "options": [
+          { "value": "left",   "label": "Sinistra" },
+          { "value": "center", "label": "Centro"   },
+          { "value": "right",  "label": "Destra"   }
+        ], "default": "left" },
+        { "type": "header", "content": "Slide 1" },
+        { "type": "text",     "id": "slide_1_heading", "label": "Titolo" },
+        { "type": "richtext", "id": "slide_1_content", "label": "Testo" },
+        { "type": "header", "content": "Slide 2" },
+        { "type": "text",     "id": "slide_2_heading", "label": "Titolo" },
+        { "type": "richtext", "id": "slide_2_content", "label": "Testo" },
+        { "type": "header", "content": "Slide 3" },
+        { "type": "text",     "id": "slide_3_heading", "label": "Titolo" },
+        { "type": "richtext", "id": "slide_3_content", "label": "Testo" },
+        { "type": "header", "content": "Slide 4" },
+        { "type": "text",     "id": "slide_4_heading", "label": "Titolo" },
+        { "type": "richtext", "id": "slide_4_content", "label": "Testo" },
+        { "type": "header", "content": "Slide 5" },
+        { "type": "text",     "id": "slide_5_heading", "label": "Titolo" },
+        { "type": "richtext", "id": "slide_5_content", "label": "Testo" },
+        { "type": "header", "content": "Autoplay" },
+        { "type": "checkbox", "id": "autoplay",       "label": "Autoplay abilitato", "default": false },
+        { "type": "range",    "id": "autoplay_speed", "label": "Velocità autoplay (ms)", "min": 2000, "max": 8000, "step": 500, "default": 4000,
+          "visible_if": "{{ block.settings.autoplay }}" },
+        { "type": "header", "content": "Spaziatura" },
+        { "type": "range", "id": "margin_top",    "label": "Margine superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "margin_bottom", "label": "Margine inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_top",   "label": "Padding superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_bottom","label": "Padding inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "header", "content": "Visibilità" },
+        { "type": "checkbox", "id": "show_on_desktop", "label": "Visibile su desktop", "default": true },
+        { "type": "checkbox", "id": "show_on_mobile",  "label": "Visibile su mobile",  "default": true }
+      ]
+    },
+    {
+      "type": "carousel",
+      "name": "Carousel",
+      "settings": [
+        { "type": "header", "content": "Slides (max 6)" },
+        { "type": "image_picker", "id": "image_1", "label": "Slide 1 — Immagine" },
+        { "type": "text",         "id": "caption_1", "label": "Slide 1 — Didascalia" },
+        { "type": "image_picker", "id": "image_2", "label": "Slide 2 — Immagine" },
+        { "type": "text",         "id": "caption_2", "label": "Slide 2 — Didascalia" },
+        { "type": "image_picker", "id": "image_3", "label": "Slide 3 — Immagine" },
+        { "type": "text",         "id": "caption_3", "label": "Slide 3 — Didascalia" },
+        { "type": "image_picker", "id": "image_4", "label": "Slide 4 — Immagine" },
+        { "type": "text",         "id": "caption_4", "label": "Slide 4 — Didascalia" },
+        { "type": "image_picker", "id": "image_5", "label": "Slide 5 — Immagine" },
+        { "type": "text",         "id": "caption_5", "label": "Slide 5 — Didascalia" },
+        { "type": "image_picker", "id": "image_6", "label": "Slide 6 — Immagine" },
+        { "type": "text",         "id": "caption_6", "label": "Slide 6 — Didascalia" },
+        { "type": "header", "content": "Autoplay" },
+        { "type": "checkbox", "id": "autoplay", "label": "Autoplay abilitato", "default": false },
+        { "type": "range", "id": "autoplay_speed", "label": "Velocità autoplay (ms)", "min": 2000, "max": 8000, "step": 500, "default": 4000 },
+        { "type": "header", "content": "Dimensioni" },
+        {
+          "type": "select", "id": "aspect_ratio", "label": "Proporzioni immagine",
+          "options": [
+            { "value": "1/1",   "label": "1:1 — Quadrato" },
+            { "value": "4/5",   "label": "4:5 — Ritratto" },
+            { "value": "5/4",   "label": "5:4 — Paesaggio" },
+            { "value": "3/4",   "label": "3:4 — Ritratto" },
+            { "value": "4/3",   "label": "4:3 — Paesaggio" },
+            { "value": "2/3",   "label": "2:3 — Ritratto" },
+            { "value": "3/2",   "label": "3:2 — Paesaggio" },
+            { "value": "9/16",  "label": "9:16 — Verticale" },
+            { "value": "16/9",  "label": "16:9 — Widescreen" },
+            { "value": "21/9",  "label": "21:9 — Ultra-wide" }
+          ],
+          "default": "4/5"
+        },
+        {
+          "type": "select", "id": "img_position", "label": "Posizione immagine",
+          "options": [
+            { "value": "center center", "label": "Centro" },
+            { "value": "top center",    "label": "In alto" },
+            { "value": "bottom center", "label": "In basso" },
+            { "value": "center left",   "label": "Sinistra" },
+            { "value": "center right",  "label": "Destra" },
+            { "value": "top left",      "label": "In alto a sinistra" },
+            { "value": "top right",     "label": "In alto a destra" },
+            { "value": "bottom left",   "label": "In basso a sinistra" },
+            { "value": "bottom right",  "label": "In basso a destra" }
+          ],
+          "default": "center center"
+        },
+        { "type": "header", "content": "Spaziatura" },
+        { "type": "range", "id": "margin_top",    "label": "Margine superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "margin_bottom", "label": "Margine inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_top",   "label": "Padding superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_bottom","label": "Padding inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "header", "content": "Visibilità" },
+        { "type": "checkbox", "id": "show_on_desktop", "label": "Visibile su desktop", "default": true },
+        { "type": "checkbox", "id": "show_on_mobile",  "label": "Visibile su mobile",  "default": true }
+      ]
+    },
+    {
+      "type": "custom_liquid",
+      "name": "Custom liquid",
+      "settings": [
+        {
+          "type": "liquid",
+          "id": "custom_liquid",
+          "label": "Liquid",
+          "info": "Add app-specific elements with custom Liquid code."
+        },
+        { "type": "header", "content": "Spaziatura" },
+        { "type": "range", "id": "margin_top",    "label": "Margine superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "margin_bottom", "label": "Margine inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_top",   "label": "Padding superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_bottom","label": "Padding inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "header", "content": "Visibilità" },
+        { "type": "checkbox", "id": "show_on_desktop", "label": "Visibile su desktop", "default": true },
+        { "type": "checkbox", "id": "show_on_mobile",  "label": "Visibile su mobile",  "default": true }
+      ]
+    },
+    {
+      "type": "rating",
+      "name": "Valutazione",
+      "limit": 1,
+      "settings": [
+        { "type": "text", "id": "rating_value", "label": "Valore valutazione", "default": "4.8" },
+        { "type": "text", "id": "rating_count",  "label": "Numero recensioni",  "default": "200" },
+        { "type": "header", "content": "Spaziatura" },
+        { "type": "range", "id": "margin_top",    "label": "Margine superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "margin_bottom", "label": "Margine inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_top",   "label": "Padding superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_bottom","label": "Padding inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "header", "content": "Visibilità" },
+        { "type": "checkbox", "id": "show_on_desktop", "label": "Visibile su desktop", "default": true },
+        { "type": "checkbox", "id": "show_on_mobile",  "label": "Visibile su mobile",  "default": true }
+      ]
+    },
+    {
+      "type": "delivery",
+      "name": "Consegna",
+      "limit": 1,
+      "settings": [
+        { "type": "text", "id": "delivery_text", "label": "Testo consegna" },
+        { "type": "header", "content": "Spaziatura" },
+        { "type": "range", "id": "margin_top",    "label": "Margine superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "margin_bottom", "label": "Margine inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_top",   "label": "Padding superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_bottom","label": "Padding inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "header", "content": "Visibilità" },
+        { "type": "checkbox", "id": "show_on_desktop", "label": "Visibile su desktop", "default": true },
+        { "type": "checkbox", "id": "show_on_mobile",  "label": "Visibile su mobile",  "default": true }
+      ]
+    },
+    {
+      "type": "details_link",
+      "name": "Link Dettagli",
+      "limit": 1,
+      "settings": [
+        { "type": "text", "id": "link_text", "label": "Testo link", "default": "Vedi taglie e dettagli…" },
+        { "type": "url",  "id": "link_url",  "label": "URL link" },
+        { "type": "header", "content": "Spaziatura" },
+        { "type": "range", "id": "margin_top",    "label": "Margine superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "margin_bottom", "label": "Margine inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_top",   "label": "Padding superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_bottom","label": "Padding inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "header", "content": "Visibilità" },
+        { "type": "checkbox", "id": "show_on_desktop", "label": "Visibile su desktop", "default": true },
+        { "type": "checkbox", "id": "show_on_mobile",  "label": "Visibile su mobile",  "default": true }
+      ]
+    },
+    {
+      "type": "trustpilot",
+      "name": "Trustpilot",
+      "limit": 1,
+      "settings": [
+        { "type": "text", "id": "label", "label": "Etichetta", "default": "Eccellente" },
+        { "type": "header", "content": "Spaziatura" },
+        { "type": "range", "id": "margin_top",    "label": "Margine superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "margin_bottom", "label": "Margine inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_top",   "label": "Padding superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_bottom","label": "Padding inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "header", "content": "Visibilità" },
+        { "type": "checkbox", "id": "show_on_desktop", "label": "Visibile su desktop", "default": true },
+        { "type": "checkbox", "id": "show_on_mobile",  "label": "Visibile su mobile",  "default": true }
+      ]
+    },
+    {
+      "type": "banner",
+      "name": "Banner",
+      "settings": [
+        { "type": "image_picker", "id": "image",       "label": "Immagine sfondo" },
+        { "type": "color",        "id": "bg_color",    "label": "Colore sfondo" },
+        { "type": "text",         "id": "heading",     "label": "Titolo" },
+        { "type": "text",         "id": "subtext",     "label": "Sottotitolo" },
+        { "type": "color",        "id": "text_color",  "label": "Colore testo" },
+        { "type": "range",        "id": "overlay_opacity", "label": "Opacità overlay", "min": 0, "max": 100, "step": 5, "default": 30 },
+        { "type": "text",         "id": "button_label","label": "Testo pulsante" },
+        { "type": "url",          "id": "button_url",  "label": "URL pulsante" },
+        { "type": "header", "content": "Spaziatura" },
+        { "type": "range", "id": "margin_top",    "label": "Margine superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "margin_bottom", "label": "Margine inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_top",   "label": "Padding superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_bottom","label": "Padding inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "header", "content": "Visibilità" },
+        { "type": "checkbox", "id": "show_on_desktop", "label": "Visibile su desktop", "default": true },
+        { "type": "checkbox", "id": "show_on_mobile",  "label": "Visibile su mobile",  "default": true }
+      ]
+    },
+    {
+      "type": "image_with_text",
+      "name": "Image with Text",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Immagine" },
+        { "type": "select", "id": "image_position", "label": "Posizione immagine", "options": [
+          { "value": "left",  "label": "Sinistra" },
+          { "value": "right", "label": "Destra" }
+        ], "default": "left" },
+        { "type": "text",     "id": "heading",      "label": "Titolo" },
+        { "type": "richtext", "id": "content",      "label": "Testo" },
+        { "type": "color",    "id": "text_color",   "label": "Colore testo" },
+        { "type": "text",     "id": "button_label", "label": "Testo pulsante" },
+        { "type": "url",      "id": "button_url",   "label": "URL pulsante" },
+        { "type": "header", "content": "Spaziatura" },
+        { "type": "range", "id": "margin_top",    "label": "Margine superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "margin_bottom", "label": "Margine inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_top",   "label": "Padding superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_bottom","label": "Padding inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "header", "content": "Visibilità" },
+        { "type": "checkbox", "id": "show_on_desktop", "label": "Visibile su desktop", "default": true },
+        { "type": "checkbox", "id": "show_on_mobile",  "label": "Visibile su mobile",  "default": true }
+      ]
+    },
+    {
+      "type": "footer",
+      "name": "Footer",
+      "limit": 1,
+      "settings": [
+        { "type": "image_picker", "id": "logo",         "label": "Logo" },
+        { "type": "text",         "id": "tagline",      "label": "Tagline" },
+        { "type": "color",        "id": "text_color",   "label": "Colore testo" },
+        { "type": "color",        "id": "icon_color",   "label": "Colore icone social" },
+        { "type": "color",        "id": "bg_color",     "label": "Colore sfondo" },
+        { "type": "text",         "id": "copyright",    "label": "Copyright" },
+        { "type": "header", "content": "Link (max 5)" },
+        { "type": "text", "id": "link_1_label", "label": "Link 1 — Testo" },
+        { "type": "url",  "id": "link_1_url",   "label": "Link 1 — URL" },
+        { "type": "text", "id": "link_2_label", "label": "Link 2 — Testo" },
+        { "type": "url",  "id": "link_2_url",   "label": "Link 2 — URL" },
+        { "type": "text", "id": "link_3_label", "label": "Link 3 — Testo" },
+        { "type": "url",  "id": "link_3_url",   "label": "Link 3 — URL" },
+        { "type": "text", "id": "link_4_label", "label": "Link 4 — Testo" },
+        { "type": "url",  "id": "link_4_url",   "label": "Link 4 — URL" },
+        { "type": "text", "id": "link_5_label", "label": "Link 5 — Testo" },
+        { "type": "url",  "id": "link_5_url",   "label": "Link 5 — URL" },
+        { "type": "header", "content": "Social" },
+        { "type": "url", "id": "instagram_url",  "label": "Instagram URL" },
+        { "type": "url", "id": "facebook_url",   "label": "Facebook URL" },
+        { "type": "url", "id": "tiktok_url",     "label": "TikTok URL" },
+        { "type": "url", "id": "youtube_url",    "label": "YouTube URL" },
+        { "type": "url", "id": "pinterest_url",  "label": "Pinterest URL" },
+        { "type": "header", "content": "Spaziatura" },
+        { "type": "range", "id": "margin_top",    "label": "Margine superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "margin_bottom", "label": "Margine inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_top",   "label": "Padding superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_bottom","label": "Padding inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "header", "content": "Visibilità" },
+        { "type": "checkbox", "id": "show_on_desktop", "label": "Visibile su desktop", "default": true },
+        { "type": "checkbox", "id": "show_on_mobile",  "label": "Visibile su mobile",  "default": true }
+      ]
+    },
+    {
+      "type": "button",
+      "name": "Button (custom)",
+      "settings": [
+        { "type": "text",         "id": "text",       "label": "Testo" },
+        { "type": "url",          "id": "link",       "label": "Link" },
+        { "type": "checkbox",     "id": "stretch",    "label": "Larghezza piena", "default": false },
+        { "type": "color",        "id": "background", "label": "Colore sfondo" },
+        { "type": "color",        "id": "text_color", "label": "Colore testo" },
+        { "type": "header", "content": "Spaziatura" },
+        { "type": "range", "id": "margin_top",    "label": "Margine superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "margin_bottom", "label": "Margine inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_top",   "label": "Padding superiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "range", "id": "padding_bottom","label": "Padding inferiore",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+        { "type": "header", "content": "Visibilità" },
+        { "type": "checkbox", "id": "show_on_desktop", "label": "Visibile su desktop", "default": true },
+        { "type": "checkbox", "id": "show_on_mobile",  "label": "Visibile su mobile",  "default": true }
+      ]
+    },
+    { "type": "@app" }
+  ],
+  "presets": [
+    {
+      "name": "Single Bundle Builder",
+      "blocks": [
+        {
+          "type": "gallery",
+          "settings": {}
+        },
+        { "type": "buckle_dropdown" },
+        { "type": "strap_dropdown" },
+        { "type": "taglia" },
+        { "type": "title" },
+        { "type": "price" },
+        { "type": "description" },
+        { "type": "buttons" },
+        { "type": "cta_button" },
+        { "type": "trust_bar" },
+        {
+          "type": "accordion",
+          "settings": {
+            "tab_1_title": "Taglie e Dettagli Tecnici",
+            "tab_2_title": "Spedizione Gratuita in 24\/72h",
+            "tab_3_title": "Contrassegno, Klarna, PayPal",
+            "tab_4_title": "Reso Gratuito e Garanzia 2 Anni"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

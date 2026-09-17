@@ -1,0 +1,927 @@
+{%- comment -%}
+  Dynamic scroll image — self-contained (CSS + JS inline). Uses Prestige image-with-text grid classes.
+{%- endcomment -%}
+
+{%- liquid
+  assign color_scheme_hash = section.settings.color_scheme.settings.background_gradient | default: section.settings.color_scheme.settings.background | md5
+  assign content_max_width = '100%'
+  if section.settings.content_width == 'sm'
+    assign content_max_width = '430px'
+  elsif section.settings.content_width == 'md'
+    assign content_max_width = '780px'
+  endif
+
+  assign ratio_string = '1 / 1'
+  case section.settings.image_aspect_ratio
+    when 'original'
+      assign ratio_string = ''
+      for block in section.blocks
+        if block.type == 'image_slide' and block.settings.image != blank
+          assign ar = block.settings.image.aspect_ratio
+          assign ratio_string = ar | append: ' / 1'
+          break
+        endif
+      endfor
+      if ratio_string == blank
+        assign ratio_string = '1 / 1'
+      endif
+    when '16_9'
+      assign ratio_string = '16 / 9'
+    when '9_16'
+      assign ratio_string = '9 / 16'
+    when '4_3'
+      assign ratio_string = '4 / 3'
+    when '3_4'
+      assign ratio_string = '3 / 4'
+    when '4_5'
+      assign ratio_string = '4 / 5'
+    when '1_1'
+      assign ratio_string = '1 / 1'
+    when 'custom'
+      assign cr = section.settings.custom_aspect_ratio | default: 1
+      assign ratio_string = cr | append: ' / 1'
+  endcase
+
+  assign prose_extra = 'text-center sm:text-start'
+  if section.settings.text_alignment == 'center'
+    assign prose_extra = 'text-center'
+  elsif section.settings.text_alignment == 'start'
+    assign prose_extra = 'text-start'
+  elsif section.settings.text_alignment == 'end'
+    assign prose_extra = 'text-end'
+  endif
+
+  assign image_reverse = false
+  if section.settings.image_position_desktop == 'end'
+    assign image_reverse = true
+  endif
+
+  assign mobile_text_first = false
+  if section.settings.image_position_mobile == 'text_first'
+    assign mobile_text_first = true
+  endif
+
+  assign gap_desktop = section.settings.image_text_gap
+  assign gap_large = gap_desktop | times: 1.5 | round
+
+  assign b1_classes = 'button'
+  if section.settings.button_1_style == 'outline'
+    assign b1_classes = 'button button--outline'
+  elsif section.settings.button_1_style == 'link'
+    assign b1_classes = 'link'
+  endif
+
+  assign b2_classes = 'button button--outline'
+  if section.settings.button_2_style == 'solid'
+    assign b2_classes = 'button'
+  elsif section.settings.button_2_style == 'link'
+    assign b2_classes = 'link'
+  endif
+
+  assign b1_inline = ''
+  if section.settings.button_1_style != 'link'
+    if section.settings.button_1_background != blank and section.settings.button_1_background != 'rgba(0,0,0,0)'
+      assign b1_inline = b1_inline | append: '--button-background: ' | append: section.settings.button_1_background.rgb | append: ';'
+      assign b1_inline = b1_inline | append: '--button-outline-color: ' | append: section.settings.button_1_background.rgb | append: ';'
+    endif
+    if section.settings.button_1_text_color != blank and section.settings.button_1_text_color != 'rgba(0,0,0,0)'
+      assign b1_inline = b1_inline | append: '--button-text-color: ' | append: section.settings.button_1_text_color.rgb | append: ';'
+    endif
+  endif
+
+  assign buttons_justify = 'flex-start'
+  if section.settings.text_alignment == 'center'
+    assign buttons_justify = 'center'
+  elsif section.settings.text_alignment == 'end'
+    assign buttons_justify = 'flex-end'
+  endif
+
+  assign b2_inline = ''
+  if section.settings.button_2_style != 'link'
+    if section.settings.button_2_background != blank and section.settings.button_2_background != 'rgba(0,0,0,0)'
+      assign b2_inline = b2_inline | append: '--button-background: ' | append: section.settings.button_2_background.rgb | append: ';'
+      assign b2_inline = b2_inline | append: '--button-outline-color: ' | append: section.settings.button_2_background.rgb | append: ';'
+    endif
+    if section.settings.button_2_text_color != blank and section.settings.button_2_text_color != 'rgba(0,0,0,0)'
+      assign b2_inline = b2_inline | append: '--button-text-color: ' | append: section.settings.button_2_text_color.rgb | append: ';'
+    endif
+  endif
+-%}
+
+<style>
+  #shopify-section-{{ section.id }} {
+    --image-with-text-content-max-width: {{ content_max_width }};
+  }
+
+  #shopify-section-{{ section.id }} .dynamic-scroll-image__aspect {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    aspect-ratio: {{ ratio_string }};
+    border-radius: {{ section.settings.image_border_radius }}px;
+  }
+
+  #shopify-section-{{ section.id }} .dynamic-scroll-image__layer {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  #shopify-section-{{ section.id }} dynamic-scroll-image[data-transition-style="fade"] .dynamic-scroll-image__layer {
+    transition: opacity 0.35s ease;
+  }
+
+  #shopify-section-{{ section.id }} dynamic-scroll-image[data-transition-style="snap"] .dynamic-scroll-image__layer {
+    transition: none;
+  }
+
+  {%- if gap_desktop > 0 -%}
+    @media screen and (min-width: 700px) {
+      #shopify-section-{{ section.id }} .image-with-text {
+        --image-with-text-gap: {{ gap_desktop }}px;
+      }
+    }
+    @media screen and (min-width: 1000px) {
+      #shopify-section-{{ section.id }} .image-with-text {
+        --image-with-text-gap: {{ gap_large }}px;
+      }
+    }
+  {%- endif -%}
+
+  @media screen and (min-width: 700px) {
+    #shopify-section-{{ section.id }} .image-with-text--reverse .dynamic-scroll-image__media {
+      order: 9999;
+    }
+    #shopify-section-{{ section.id }} .image-with-text--reverse > .prose {
+      margin-inline-start: auto;
+    }
+  }
+
+  @media screen and (max-width: 699px) {
+    #shopify-section-{{ section.id }} .dynamic-scroll-image--mobile-text-first .prose {
+      order: -1;
+    }
+    #shopify-section-{{ section.id }} .dynamic-scroll-image--mobile-text-first .dynamic-scroll-image__media {
+      order: 1;
+    }
+  }
+
+  @media screen and (min-width: 700px) {
+    #shopify-section-{{ section.id }} .dynamic-scroll-image__layer--hide-desktop {
+      display: none !important;
+    }
+  }
+
+  @media screen and (max-width: 699px) {
+    #shopify-section-{{ section.id }} .dynamic-scroll-image__layer--hide-mobile {
+      display: none !important;
+    }
+  }
+
+  #shopify-section-{{ section.id }} .dynamic-scroll-image__buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1rem;
+    align-items: center;
+    justify-content: {{ buttons_justify }};
+  }
+</style>
+
+{%- if section.settings.use_custom_section_spacing -%}
+  <style>
+    #shopify-section-{{ section.id }} .section-spacing.section-spacing--custom-bbox {
+      padding-block-start: var(--dynamic-scroll-image-bbox-pt);
+      padding-inline-end: var(--dynamic-scroll-image-bbox-pr);
+      padding-block-end: var(--dynamic-scroll-image-bbox-pb);
+      padding-inline-start: var(--dynamic-scroll-image-bbox-pl);
+    }
+
+    @media screen and (min-width: 700px) {
+      #shopify-section-{{ section.id }} .section-spacing.section-spacing--custom-bbox {
+        padding-block-start: var(--dynamic-scroll-image-bbox-pt-d);
+        padding-inline-end: var(--dynamic-scroll-image-bbox-pr-d);
+        padding-block-end: var(--dynamic-scroll-image-bbox-pb-d);
+        padding-inline-start: var(--dynamic-scroll-image-bbox-pl-d);
+      }
+    }
+
+    #shopify-section-{{ section.id }} .section-spacing.section-spacing--custom-bbox .container {
+      margin-inline-start: max(0px, 50% - var(--container-max-width) / 2);
+      margin-inline-end: max(0px, 50% - var(--container-max-width) / 2);
+    }
+  </style>
+{%- endif -%}
+
+<div
+  class="{% if section.settings.remove_vertical_spacing == false or section.settings.use_custom_section_spacing %}section-spacing{% endif %}{% if section.settings.use_custom_section_spacing %} section-spacing--custom-bbox{% endif %} color-scheme color-scheme--{{ section.settings.color_scheme.id }} color-scheme--bg-{{ color_scheme_hash }} {% if section.settings.separate_section_with_border %}bordered-section{% endif %}"
+  {% if section.settings.use_custom_section_spacing %}
+    style="--dynamic-scroll-image-bbox-pt: {{ section.settings.mobile_section_spacing_top | default: 0 }}px; --dynamic-scroll-image-bbox-pr: {{ section.settings.mobile_section_spacing_right | default: 0 }}px; --dynamic-scroll-image-bbox-pb: {{ section.settings.mobile_section_spacing_bottom | default: 0 }}px; --dynamic-scroll-image-bbox-pl: {{ section.settings.mobile_section_spacing_left | default: 0 }}px; --dynamic-scroll-image-bbox-pt-d: {{ section.settings.desktop_section_spacing_top | default: 0 }}px; --dynamic-scroll-image-bbox-pr-d: {{ section.settings.desktop_section_spacing_right | default: 0 }}px; --dynamic-scroll-image-bbox-pb-d: {{ section.settings.desktop_section_spacing_bottom | default: 0 }}px; --dynamic-scroll-image-bbox-pl-d: {{ section.settings.desktop_section_spacing_left | default: 0 }}px;"
+  {% endif %}
+>
+  <dynamic-scroll-image
+    class="image-with-text dynamic-scroll-image{% if image_reverse %} image-with-text--reverse{% endif %}{% if mobile_text_first %} dynamic-scroll-image--mobile-text-first{% endif %}"
+    data-transition-style="{{ section.settings.transition_style }}"
+    data-safe-zone="{{ section.settings.scroll_safe_zone }}"
+    data-fade-duration="{{ section.settings.fade_duration }}"
+  >
+    <div class="dynamic-scroll-image__media">
+      <div class="dynamic-scroll-image__aspect">
+        {%- if section.blocks.size == 0 -%}
+          <div class="dynamic-scroll-image__layer dynamic-scroll-image__layer--solo" data-layer-index="0">
+            {{- 'image' | placeholder_svg_tag: 'placeholder w-full h-full block' -}}
+          </div>
+        {%- else -%}
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'image_slide' -%}
+              {%- liquid
+                assign layer_classes = 'dynamic-scroll-image__layer'
+                if block.settings.hide_on_desktop
+                  assign layer_classes = layer_classes | append: ' dynamic-scroll-image__layer--hide-desktop'
+                endif
+                if block.settings.hide_on_mobile
+                  assign layer_classes = layer_classes | append: ' dynamic-scroll-image__layer--hide-mobile'
+                endif
+                assign desktop_img = block.settings.image
+                assign mobile_img = block.settings.mobile_image | default: block.settings.image
+                assign sizes_attr = '(max-width: 699px) 100vw, 50vw'
+                assign img_loading = 'lazy'
+                if forloop.first
+                  assign img_loading = 'eager'
+                endif
+              -%}
+              <div
+                class="{{ layer_classes }}"
+                data-layer-index="{{ forloop.index0 }}"
+                {{ block.shopify_attributes }}
+              >
+                {%- if desktop_img != blank -%}
+                  <picture class="block w-full h-full">
+                    {%- if block.settings.mobile_image != blank -%}
+                      <source
+                        media="(max-width: 699px)"
+                        srcset="{{ mobile_img | image_url: width: 400 }} 400w, {{ mobile_img | image_url: width: 600 }} 600w, {{ mobile_img | image_url: width: 800 }} 800w, {{ mobile_img | image_url: width: 1000 }} 1000w"
+                        width="{{ mobile_img.width }}"
+                        height="{{ mobile_img.height }}"
+                      >
+                    {%- endif -%}
+                    {{-
+                      desktop_img
+                      | image_url: width: desktop_img.width
+                      | image_tag:
+                        loading: img_loading,
+                        class: 'w-full h-full object-cover',
+                        sizes: sizes_attr,
+                        widths: '200,300,400,500,600,700,800,900,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000,3200'
+                    -}}
+                  </picture>
+                {%- else -%}
+                  {{- 'image' | placeholder_svg_tag: 'placeholder w-full h-full block object-cover' -}}
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        {%- endif -%}
+      </div>
+    </div>
+
+    <div class="prose {{ prose_extra }}">
+      {%- if section.settings.subheading != blank -%}
+        <p class="{{ section.settings.subheading_style | default: 'h6' }}">{{ section.settings.subheading }}</p>
+      {%- endif -%}
+
+      {%- if section.settings.heading != blank -%}
+        <p class="{{ section.settings.heading_style | default: 'h2' }}">{{ section.settings.heading }}</p>
+      {%- endif -%}
+
+      {%- if section.settings.content != blank -%}
+        <div class="rte">
+          {{- section.settings.content -}}
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.button_1_label != blank or section.settings.button_2_label != blank -%}
+        <div class="dynamic-scroll-image__buttons">
+          {%- if section.settings.button_1_label != blank -%}
+            {%- if section.settings.button_1_style == 'link' -%}
+              <a
+                href="{{ section.settings.button_1_link | default: '#' }}"
+                class="{{ b1_classes }}"
+              >
+                {{- section.settings.button_1_label | escape -}}
+              </a>
+            {%- else -%}
+              <a
+                href="{{ section.settings.button_1_link | default: '#' }}"
+                class="{{ b1_classes }}"
+                {% if b1_inline != blank %}
+                  style="{{ b1_inline }}"
+                {% endif %}
+              >
+                {{- section.settings.button_1_label | escape -}}
+              </a>
+            {%- endif -%}
+          {%- endif -%}
+
+          {%- if section.settings.button_2_label != blank -%}
+            {%- if section.settings.button_2_style == 'link' -%}
+              <a
+                href="{{ section.settings.button_2_link | default: '#' }}"
+                class="{{ b2_classes }}"
+              >
+                {{- section.settings.button_2_label | escape -}}
+              </a>
+            {%- else -%}
+              <a
+                href="{{ section.settings.button_2_link | default: '#' }}"
+                class="{{ b2_classes }}"
+                {% if b2_inline != blank %}
+                  style="{{ b2_inline }}"
+                {% endif %}
+              >
+                {{- section.settings.button_2_label | escape -}}
+              </a>
+            {%- endif -%}
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    </div>
+  </dynamic-scroll-image>
+</div>
+
+<script>
+  (function () {
+    if (window.customElements.get('dynamic-scroll-image')) {
+      return;
+    }
+    class DynamicScrollImage extends HTMLElement {
+      constructor() {
+        super();
+        this._onScroll = this._onScroll.bind(this);
+        this._onResize = this._onResize.bind(this);
+        this._onMqChange = this._onMqChange.bind(this);
+        this._mqDesktop = window.matchMedia('(min-width: 700px)');
+        this._prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+        this._raf = 0;
+        this._layers = [];
+      }
+      connectedCallback() {
+        this._layers = Array.from(this.querySelectorAll('.dynamic-scroll-image__layer'));
+        window.addEventListener('scroll', this._onScroll, { passive: true });
+        window.addEventListener('resize', this._onResize, { passive: true });
+        this._mqDesktop.addEventListener('change', this._onMqChange);
+        if (this._prefersReduced.addEventListener) {
+          this._prefersReduced.addEventListener('change', this._onMqChange);
+        }
+        this._applyFrame();
+      }
+      disconnectedCallback() {
+        window.removeEventListener('scroll', this._onScroll);
+        window.removeEventListener('resize', this._onResize);
+        this._mqDesktop.removeEventListener('change', this._onMqChange);
+        if (this._prefersReduced.removeEventListener) {
+          this._prefersReduced.removeEventListener('change', this._onMqChange);
+        }
+        if (this._raf) {
+          cancelAnimationFrame(this._raf);
+          this._raf = 0;
+        }
+      }
+      _onScroll() {
+        if (this._raf) {
+          return;
+        }
+        this._raf = requestAnimationFrame(function () {
+          this._raf = 0;
+          this._applyFrame();
+        }.bind(this));
+      }
+      _onResize() {
+        this._applyFrame();
+      }
+      _onMqChange() {
+        this._applyFrame();
+      }
+      _getVisibleLayers() {
+        var isDesktop = this._mqDesktop.matches;
+        return this._layers.filter(function (layer) {
+          if (layer.classList.contains('dynamic-scroll-image__layer--hide-desktop') && isDesktop) {
+            return false;
+          }
+          if (layer.classList.contains('dynamic-scroll-image__layer--hide-mobile') && !isDesktop) {
+            return false;
+          }
+          return true;
+        });
+      }
+      _applyFrame() {
+        var targetEl = this.querySelector('.dynamic-scroll-image__aspect');
+        if (!targetEl) return;
+        var rect = targetEl.getBoundingClientRect();
+
+        var vh = window.innerHeight;
+        var safeZonePerc = parseFloat(this.getAttribute('data-safe-zone')) || 30;
+        var safePx = vh * (safeZonePerc / 100);
+
+        // Track the absolute CENTER of the image
+        var centerTop = rect.top + rect.height / 2;
+
+        var startTop = vh - safePx;
+        var endTop = safePx;
+        var totalScrollDistance = startTop - endTop;
+
+        var p = 0;
+        if (totalScrollDistance !== 0) {
+          p = (startTop - centerTop) / totalScrollDistance;
+        }
+        p = Math.max(0, Math.min(1, p));
+
+        var visible = this._getVisibleLayers();
+        var n = visible.length;
+
+        this._layers.forEach(function (layer) {
+          layer.style.opacity = '0';
+        });
+
+        if (n === 0) return;
+        if (n === 1) {
+          visible[0].style.opacity = '1';
+          return;
+        }
+
+        var transitionStyle = this.getAttribute('data-transition-style') || 'fade';
+        var snapMode = this._prefersReduced.matches || transitionStyle === 'snap';
+
+        // Divide the journey by the number of images
+        var floatIndex = p * n;
+        var currentIndex = Math.floor(floatIndex);
+
+        if (currentIndex >= n) {
+          visible[n - 1].style.opacity = '1';
+          return;
+        }
+
+        var nextIndex = Math.min(currentIndex + 1, n - 1);
+        var localP = floatIndex - currentIndex;
+
+        if (snapMode || currentIndex === n - 1) {
+          visible[currentIndex].style.opacity = '1';
+          return;
+        }
+
+        var fadePerc = parseFloat(this.getAttribute('data-fade-duration'));
+        if (isNaN(fadePerc)) fadePerc = 20;
+        var fadeZone = fadePerc / 100;
+        var solidZone = 1 - fadeZone;
+
+        if (localP <= solidZone) {
+          visible[currentIndex].style.opacity = '1';
+        } else {
+          var fadeProgress = (localP - solidZone) / fadeZone;
+          visible[currentIndex].style.opacity = '1';
+          visible[nextIndex].style.opacity = String(fadeProgress);
+        }
+      }
+    }
+    window.customElements.define('dynamic-scroll-image', DynamicScrollImage);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Dynamic scroll image",
+  "class": "shopify-section--dynamic-scroll-image",
+  "tag": "section",
+  "max_blocks": 15,
+  "disabled_on": {
+    "groups": ["header", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "separate_section_with_border",
+      "label": "Separate section with border",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "image_aspect_ratio",
+      "label": "Image aspect ratio",
+      "options": [
+        { "value": "original", "label": "Original (first image)" },
+        { "value": "16_9", "label": "16:9" },
+        { "value": "9_16", "label": "9:16" },
+        { "value": "4_3", "label": "4:3" },
+        { "value": "3_4", "label": "3:4" },
+        { "value": "4_5", "label": "4:5" },
+        { "value": "1_1", "label": "1:1" },
+        { "value": "custom", "label": "Custom" }
+      ],
+      "default": "4_3"
+    },
+    {
+      "type": "range",
+      "id": "custom_aspect_ratio",
+      "min": 0.4,
+      "max": 2.5,
+      "step": 0.1,
+      "unit": ":1",
+      "label": "Custom aspect ratio (width:1)",
+      "default": 1.5,
+      "info": "Used when aspect ratio is set to Custom.",
+      "visible_if": "{{ section.settings.image_aspect_ratio == 'custom' }}"
+    },
+    {
+      "type": "select",
+      "id": "image_position_desktop",
+      "label": "Image position (desktop)",
+      "options": [
+        { "value": "start", "label": "Left" },
+        { "value": "end", "label": "Right" }
+      ],
+      "default": "start"
+    },
+    {
+      "type": "select",
+      "id": "image_position_mobile",
+      "label": "Image position (mobile)",
+      "options": [
+        { "value": "image_first", "label": "Image on top" },
+        { "value": "text_first", "label": "Text on top" }
+      ],
+      "default": "image_first"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "options": [
+        { "value": "start", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "end", "label": "Right" }
+      ],
+      "default": "start"
+    },
+    {
+      "type": "select",
+      "id": "content_width",
+      "label": "Content width",
+      "options": [
+        { "value": "sm", "label": "Small" },
+        { "value": "md", "label": "Medium" },
+        { "value": "lg", "label": "Large" }
+      ],
+      "default": "sm"
+    },
+    {
+      "type": "range",
+      "id": "image_text_gap",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "label": "Gap between image and text",
+      "default": 0,
+      "info": "0 uses theme default spacing."
+    },
+    {
+      "type": "range",
+      "id": "image_border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "label": "Image corner radius",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "transition_style",
+      "label": "Image transition",
+      "options": [
+        { "value": "fade", "label": "Fade" },
+        { "value": "snap", "label": "Snap" }
+      ],
+      "default": "fade"
+    },
+    {
+      "type": "range",
+      "id": "fade_duration",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "%",
+      "label": "Fade transition duration",
+      "default": 20,
+      "info": "Determines how much of the image's space is used for the crossfade. Only applies when Transition Style is Fade."
+    },
+    {
+      "type": "range",
+      "id": "scroll_safe_zone",
+      "min": 0,
+      "max": 40,
+      "step": 5,
+      "unit": "%",
+      "label": "Scroll safe zone (Top/Bottom offset)",
+      "default": 30,
+      "info": "Scroll progress is based on the image area only. Ignores this percentage of viewport height at top and bottom."
+    },
+    {
+      "type": "checkbox",
+      "id": "reveal_on_scroll",
+      "label": "Reveal images on scroll",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Text"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Subheading"
+    },
+    {
+      "type": "select",
+      "id": "subheading_style",
+      "label": "Subheading style",
+      "options": [
+        { "value": "h6", "label": "H6" },
+        { "value": "h5", "label": "H5" },
+        { "value": "h4", "label": "H4" },
+        { "value": "h3", "label": "H3" },
+        { "value": "h2", "label": "H2" },
+        { "value": "h1", "label": "H1" }
+      ],
+      "default": "h6"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Heading"
+    },
+    {
+      "type": "select",
+      "id": "heading_style",
+      "label": "Heading style",
+      "options": [
+        { "value": "h6", "label": "H6" },
+        { "value": "h5", "label": "H5" },
+        { "value": "h4", "label": "H4" },
+        { "value": "h3", "label": "H3" },
+        { "value": "h2", "label": "H2" },
+        { "value": "h1", "label": "H1" }
+      ],
+      "default": "h2"
+    },
+    {
+      "type": "richtext",
+      "id": "content",
+      "label": "Content",
+      "default": "<p>Share information about your brand or product.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Button 1"
+    },
+    {
+      "type": "text",
+      "id": "button_1_label",
+      "label": "Label"
+    },
+    {
+      "type": "url",
+      "id": "button_1_link",
+      "label": "Link"
+    },
+    {
+      "type": "select",
+      "id": "button_1_style",
+      "label": "Style",
+      "options": [
+        { "value": "solid", "label": "Solid" },
+        { "value": "outline", "label": "Outline" },
+        { "value": "link", "label": "Link" }
+      ],
+      "default": "solid"
+    },
+    {
+      "type": "color",
+      "id": "button_1_background",
+      "label": "Background color"
+    },
+    {
+      "type": "color",
+      "id": "button_1_text_color",
+      "label": "Text color"
+    },
+    {
+      "type": "header",
+      "content": "Button 2"
+    },
+    {
+      "type": "text",
+      "id": "button_2_label",
+      "label": "Label"
+    },
+    {
+      "type": "url",
+      "id": "button_2_link",
+      "label": "Link"
+    },
+    {
+      "type": "select",
+      "id": "button_2_style",
+      "label": "Style",
+      "options": [
+        { "value": "solid", "label": "Solid" },
+        { "value": "outline", "label": "Outline" },
+        { "value": "link", "label": "Link" }
+      ],
+      "default": "outline"
+    },
+    {
+      "type": "color",
+      "id": "button_2_background",
+      "label": "Background color"
+    },
+    {
+      "type": "color",
+      "id": "button_2_text_color",
+      "label": "Text color"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "checkbox",
+      "id": "remove_vertical_spacing",
+      "label": "Remove vertical spacing",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "use_custom_section_spacing",
+      "label": "Use custom section spacing",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Mobile section spacing",
+      "info": "Requires Use custom section spacing.",
+      "visible_if": "{{ section.settings.use_custom_section_spacing }}"
+    },
+    {
+      "type": "range",
+      "id": "mobile_section_spacing_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ section.settings.use_custom_section_spacing }}"
+    },
+    {
+      "type": "range",
+      "id": "mobile_section_spacing_right",
+      "label": "Padding right",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ section.settings.use_custom_section_spacing }}"
+    },
+    {
+      "type": "range",
+      "id": "mobile_section_spacing_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ section.settings.use_custom_section_spacing }}"
+    },
+    {
+      "type": "range",
+      "id": "mobile_section_spacing_left",
+      "label": "Padding left",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ section.settings.use_custom_section_spacing }}"
+    },
+    {
+      "type": "header",
+      "content": "Desktop section spacing",
+      "info": "Requires Use custom section spacing.",
+      "visible_if": "{{ section.settings.use_custom_section_spacing }}"
+    },
+    {
+      "type": "range",
+      "id": "desktop_section_spacing_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ section.settings.use_custom_section_spacing }}"
+    },
+    {
+      "type": "range",
+      "id": "desktop_section_spacing_right",
+      "label": "Padding right",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ section.settings.use_custom_section_spacing }}"
+    },
+    {
+      "type": "range",
+      "id": "desktop_section_spacing_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ section.settings.use_custom_section_spacing }}"
+    },
+    {
+      "type": "range",
+      "id": "desktop_section_spacing_left",
+      "label": "Padding left",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ section.settings.use_custom_section_spacing }}"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "image_slide",
+      "name": "Image slide",
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "hide_on_desktop",
+          "label": "Hide on desktop",
+          "default": false,
+          "info": "Show only below 700px width."
+        },
+        {
+          "type": "checkbox",
+          "id": "hide_on_mobile",
+          "label": "Hide on mobile",
+          "default": false,
+          "info": "Show only from 700px width and up."
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Desktop image"
+        },
+        {
+          "type": "image_picker",
+          "id": "mobile_image",
+          "label": "Mobile image",
+          "info": "Optional. Uses desktop image if empty."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Dynamic scroll image",
+      "category": "Storytelling",
+      "blocks": [
+        { "type": "image_slide" },
+        { "type": "image_slide" },
+        { "type": "image_slide" }
+      ]
+    }
+  ]
+}
+{% endschema %}
