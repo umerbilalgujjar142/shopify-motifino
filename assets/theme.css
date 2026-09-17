@@ -2089,9 +2089,14 @@ model-media model-viewer, model-media .shopify-model-viewer-ui {
 
 @media screen and (max-width: 699px) {
   .bb-li-discount.discount-badge {
-    font-size: 9.5px;
-    padding: 2px 5px;
+    font-size: 12px;
+    padding: 2px 6px;
     column-gap: 3px;
+  }
+
+  /* Mobile: only the amount, so it can be read at full size. */
+  .bb-li-discount__name {
+    display: none;
   }
 }
 
@@ -2144,6 +2149,22 @@ model-media model-viewer, model-media .shopify-model-viewer-ui {
 
 .bb-li-discount.discount-badge svg { color: #fff; }
 .bb-li-discount.discount-badge button { color: #fff; opacity: .8; }
+
+/* Free card: the stepper is shown but inert — quantity follows the belt count. */
+.bb-qty-locked {
+  pointer-events: none;
+  user-select: none;
+}
+
+.bb-qty-locked .quantity-selector__button {
+  background: #f2f2f2;
+  box-shadow: none;
+  color: #b5b5b5;
+}
+
+.bb-qty-locked .quantity-selector__input {
+  color: #777;
+}
 
 /* ── Strikethrough original price ───────────────── */
 .bb-li-original-price {

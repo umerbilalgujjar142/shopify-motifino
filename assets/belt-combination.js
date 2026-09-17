@@ -260,7 +260,15 @@
       swapped = true;
     });
 
-    if (swapped) document.dispatchEvent(new CustomEvent('cart:refresh'));
+    /* The payload of a cart write is the cart itself, so hand it to the theme
+       rather than firing cart:refresh, which costs another /cart.js read. */
+    if (swapped) {
+      if (payload && typeof payload.item_count === 'number') {
+        document.dispatchEvent(new CustomEvent('cart:change', { detail: { cart: payload } }));
+      } else {
+        document.dispatchEvent(new CustomEvent('cart:refresh'));
+      }
+    }
     return swapped;
   }
 
@@ -444,6 +452,7 @@
      add that happened while this script was not on the page. */
   function initAutoRepair() {
     if (!onCartPage()) { clearReloadBudget(); return; }
+    if (window.MOTIFINO_CART_PAGE_HANDLES_SYNC) return;
     repairCard(true);
   }
 

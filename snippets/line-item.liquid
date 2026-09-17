@@ -72,9 +72,6 @@
 
       <div class="v-stack justify-items-start gap-1">
         {%- assign _display_title = line_item.product.title | default: line_item.title -%}
-        {%- if _li_is_free_card and line_item.quantity > 1 -%}
-          {%- assign _display_title = _display_title | append: ' x' | append: line_item.quantity -%}
-        {%- endif -%}
         {%- comment -%}
           The length keeps its own span so a long name truncates instead of
           pushing it onto a second line.
@@ -176,6 +173,19 @@
       {%- if show_quantity_selector and _li_is_free_card == false and _li_is_privilege_card == false -%}
         <div class="line-item__quantity">
           {%- render 'quantity-selector', line_item: line_item, size: 'sm' -%}
+        </div>
+      {%- endif -%}
+
+      {%- if _li_is_free_card -%}
+        {%- comment -%}Derived from the belt count, so the stepper is display-only.{%- endcomment -%}
+        <div class="line-item__quantity">
+          <div class="quantity-selector quantity-selector--sm bb-qty-locked">
+            <span class="quantity-selector__button" aria-hidden="true">{%- render 'icon' with 'minus', width: 10 -%}</span>
+            <span class="quantity-selector__input-wrapper">
+              <span class="quantity-selector__input text-sm">{{ line_item.quantity }}</span>
+            </span>
+            <span class="quantity-selector__button" aria-hidden="true">{%- render 'icon' with 'plus', width: 10 -%}</span>
+          </div>
         </div>
       {%- endif -%}
 

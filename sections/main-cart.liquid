@@ -1,4 +1,57 @@
 <style>
+  .bb-trust-banner {
+    display: flex;
+    align-items: stretch;
+    background: #f4f4f4;
+    border-radius: 10px;
+    padding: 8px 4px;
+    /* Capped so it keeps its phone size on a wide screen instead of stretching. */
+    width: 100%;
+    max-width: 400px;
+    margin-inline: auto;
+  }
+
+  .bb-trust-banner__item {
+    flex: 1 1 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 2px 10px;
+    font-size: 14px;
+    line-height: 1.3;
+    text-align: center;
+  }
+
+  .bb-trust-banner__item + .bb-trust-banner__item {
+    border-inline-start: 1px solid rgba(0, 0, 0, 0.12);
+  }
+
+  /* Fixed at every width — the desktop type scale must not grow it. */
+  .bb-trust-banner__item svg {
+    flex-shrink: 0;
+    width: 16px;
+    height: auto;
+  }
+
+  .bb-eta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #f4f4f4;
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-block: 12px;
+    font-size: 14px;
+    line-height: 1.3;
+  }
+
+  .bb-eta svg {
+    flex-shrink: 0;
+    width: 22px;
+    height: auto;
+  }
+
   .line-item__quantity { margin-block-start: 0.2rem; }
   body.bb-cart-busy .line-item__quantity { pointer-events: none; opacity: 0.45; }
 
@@ -181,6 +234,23 @@
             {%- endif -%}
           </div>
         </div>
+
+        {%- if section.settings.show_trust_banner -%}
+          <div class="bb-trust-banner">
+            {%- if section.settings.trust_text_1 != blank -%}
+              <div class="bb-trust-banner__item">
+                {%- render 'icon' with section.settings.trust_icon_1, width: 18 -%}
+                <span>{{ section.settings.trust_text_1 }}</span>
+              </div>
+            {%- endif -%}
+            {%- if section.settings.trust_text_2 != blank -%}
+              <div class="bb-trust-banner__item">
+                {%- render 'icon' with section.settings.trust_icon_2, width: 18 -%}
+                <span>{{ section.settings.trust_text_2 }}</span>
+              </div>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
 
         <form action="{{ routes.cart_url }}" method="POST" class="cart-page">
           <input type="hidden" name="attributes[products_mobile_grid_mode]" value="">
@@ -380,7 +450,118 @@
                   <span>{{ cart.total_price | money_with_currency }}</span>
                 </div>
 
-                <div class="delivery-widget__manual"></div>
+                {%- if section.settings.show_delivery_estimate -%}
+                  {%- liquid
+                    assign _dw = ''
+                    if section.settings.delivery_work_sun
+                      assign _dw = _dw | append: '0,'
+                    endif
+                    if section.settings.delivery_work_mon
+                      assign _dw = _dw | append: '1,'
+                    endif
+                    if section.settings.delivery_work_tue
+                      assign _dw = _dw | append: '2,'
+                    endif
+                    if section.settings.delivery_work_wed
+                      assign _dw = _dw | append: '3,'
+                    endif
+                    if section.settings.delivery_work_thu
+                      assign _dw = _dw | append: '4,'
+                    endif
+                    if section.settings.delivery_work_fri
+                      assign _dw = _dw | append: '5,'
+                    endif
+                    if section.settings.delivery_work_sat
+                      assign _dw = _dw | append: '6,'
+                    endif
+
+                    assign _hol = section.settings.delivery_holidays | default: ''
+
+                    # Anchored at midday so whole-day steps never trip over a DST change.
+                    assign _today = 'now' | date: '%Y-%m-%d'
+                    assign _start = _today | append: ' 12:00:00' | date: '%s' | plus: 0
+
+                    assign _nh = 'now' | date: '%H'
+                    assign _nm = 'now' | date: '%M'
+                    assign _now_mins = _nh | times: 60 | plus: _nm
+                    assign _cut_mins = section.settings.delivery_cutoff_hour | times: 60 | plus: section.settings.delivery_cutoff_minute
+                    if _now_mins >= _cut_mins
+                      assign _start = _start | plus: 86400
+                    endif
+
+                    for i in (1..21)
+                      assign _dow = _start | date: '%w'
+                      assign _ymd = _start | date: '%Y-%m-%d'
+                      assign _ok = false
+                      if _dw contains _dow
+                        assign _ok = true
+                      endif
+                      if _hol contains _ymd
+                        assign _ok = false
+                      endif
+                      if _ok
+                        break
+                      endif
+                      assign _start = _start | plus: 86400
+                    endfor
+
+                    assign _min_add = section.settings.delivery_ready_min | plus: section.settings.delivery_days_min
+                    assign _max_add = section.settings.delivery_ready_max | plus: section.settings.delivery_days_max
+                    if _max_add < _min_add
+                      assign _max_add = _min_add
+                    endif
+
+                    assign _cur = _start
+                    assign _added = 0
+                    for i in (1..180)
+                      if _added >= _min_add
+                        break
+                      endif
+                      assign _cur = _cur | plus: 86400
+                      assign _dow = _cur | date: '%w'
+                      assign _ymd = _cur | date: '%Y-%m-%d'
+                      if _dw contains _dow
+                        unless _hol contains _ymd
+                          assign _added = _added | plus: 1
+                        endunless
+                      endif
+                    endfor
+                    assign _eta_from = _cur
+
+                    for i in (1..180)
+                      if _added >= _max_add
+                        break
+                      endif
+                      assign _cur = _cur | plus: 86400
+                      assign _dow = _cur | date: '%w'
+                      assign _ymd = _cur | date: '%Y-%m-%d'
+                      if _dw contains _dow
+                        unless _hol contains _ymd
+                          assign _added = _added | plus: 1
+                        endunless
+                      endif
+                    endfor
+                    assign _eta_to = _cur
+
+                    assign _wnames = 'Dom,Lun,Mar,Mer,Gio,Ven,Sab' | split: ','
+                    assign _i1 = _eta_from | date: '%w' | plus: 0
+                    assign _i2 = _eta_to | date: '%w' | plus: 0
+                    assign _d1 = _eta_from | date: '%-d'
+                    assign _d2 = _eta_to | date: '%-d'
+                    assign _label_from = _wnames[_i1] | append: ' ' | append: _d1
+                    assign _label_to = _wnames[_i2] | append: ' ' | append: _d2
+                  -%}
+                  <div class="bb-eta">
+                    {%- if section.settings.show_delivery_icon -%}
+                      {%- render 'icon' with section.settings.delivery_icon, width: 22 -%}
+                    {%- endif -%}
+                    <span>
+                      {{ section.settings.delivery_text }}
+                      <strong>{{ _label_from }}</strong>
+                      {%- if _eta_to > _eta_from %} - <strong>{{ _label_to }}</strong>{% endif -%}
+                    </span>
+                  </div>
+                {%- endif -%}
 
                 {%- if section.settings.show_accelerated_buttons and additional_checkout_buttons -%}
                   <div class="additional-checkout-buttons additional-checkout-buttons--vertical">
@@ -396,6 +577,19 @@
                 <button type="submit" name="checkout" class="bb-checkout-btn">
                   {{ 'cart.general.checkout' | t }}
                 </button>
+
+                {%- if section.settings.show_help_link and section.settings.help_link_text != blank -%}
+                  {%- assign _help_size = section.settings.help_link_size | default: 14 -%}
+                  {%- if section.settings.help_link != blank -%}
+                    <a class="bb-cart-help-link" style="font-size:{{ _help_size }}px" href="{{ section.settings.help_link }}">
+                      {{- section.settings.help_link_text -}}
+                    </a>
+                  {%- else -%}
+                    <span class="bb-cart-help-link" style="font-size:{{ _help_size }}px">
+                      {{- section.settings.help_link_text -}}
+                    </span>
+                  {%- endif -%}
+                {%- endif -%}
 
                 {%- if shop.enabled_payment_types.size > 0 -%}
                   <ul class="payment-methods unstyled-list bb-cart-payment-icons">
@@ -427,6 +621,14 @@
   /* Privilege Card (Silver/Gold): standalone gifted product, qty capped at 1 — remove-only control.
      Registered unconditionally (not gated on bundle presence) so it works in a cart with no belts too. */
   (function () {
+    /* Our own writes carry this header: belt-combination.js watches every cart
+       write and re-syncs (and reloads) the ones it didn't make. */
+    var CART_HEADERS = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'X-Motifino-Cart-Sync': '1'
+    };
+
     document.addEventListener('click', function (e) {
       var btn = e.target.closest('.bb-privilege-remove-btn');
       if (!btn) return;
@@ -438,7 +640,7 @@
 
       fetch('{{ routes.cart_change_url }}.js', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        headers: CART_HEADERS,
         body: JSON.stringify({ id: btn.dataset.lineKey, quantity: 0, sections: section })
       }).then(function (r) { return r.json(); })
         .then(function (payload) {
@@ -464,6 +666,18 @@
     animation: bb-chk-spin 0.7s linear infinite;
   }
   .bb-checkout-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+
+  .bb-cart-help-link {
+    display: block;
+    margin: 12px auto 4px;
+    text-align: center;
+    font-weight: 400;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    color: inherit;
+  }
+
+  .bb-cart-help-link:hover { opacity: 0.7; }
 </style>
 
 {{ 'belt-combination.js' | asset_url | script_tag }}
@@ -479,11 +693,26 @@
   (function () {
     var SECTIONS = '{{ section.id }}';
 
+    /* This page repairs the card count itself, in place. Tells the observer in
+       belt-combination.js to stand down so it doesn't read the cart again and
+       reload the page on top of us. */
+    window.MOTIFINO_CART_PAGE_HANDLES_SYNC = true;
+
+    /* Marks the write as ours — belt-combination.js re-syncs and reloads on any
+       cart write it didn't make, and this page syncs itself. */
+    var CART_HEADERS = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'X-Motifino-Cart-Sync': '1'
+    };
+
+    /* No sections here: the card sync writes straight after and renders them
+       once, instead of the server building the cart twice. */
     function changeQuantity(lineKey, quantity) {
       return fetch('{{ routes.cart_change_url }}.js', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({ id: lineKey, quantity: quantity, sections: SECTIONS })
+        headers: CART_HEADERS,
+        body: JSON.stringify({ id: lineKey, quantity: quantity })
       }).then(function (r) {
         if (!r.ok) throw new Error('cart_change_failed');
         return r.json();
@@ -529,7 +758,12 @@
               return cart;
             });
         })
-        .then(render);
+        .then(function (payload) {
+          /* The card was already in step, so nothing rendered the section — ask
+             for it on its own rather than reloading the page. */
+          if (payload && payload.sections) { render(payload); return; }
+          return refreshSection();
+        });
     }
 
     /* Theme stepper links (- and + are /cart/change?id=...&quantity=... anchors) (/cart/change?id=...&quantity=0) */
@@ -562,6 +796,43 @@
         .catch(function () { document.body.classList.remove('bb-cart-busy'); });
     }, { capture: true });
 
+    /* A cached copy of /cart can be shown long after it was rendered — old markup
+       and old totals until the visitor reloads by hand. Pull the section fresh
+       instead, so the page repairs itself. */
+    var RENDERED_AT = {{ 'now' | date: '%s' }};
+
+    function refreshSection() {
+      document.body.classList.add('bb-cart-busy');
+      /* Pinned to the theme that rendered this page, so a preview never gets the
+         published theme's section back. */
+      var themeId = window.Shopify && window.Shopify.theme && window.Shopify.theme.id;
+      var themeParam = themeId ? '&preview_theme_id=' + themeId : '';
+      return fetch('{{ routes.cart_url }}?section_id=' + SECTIONS + themeParam + '&_=' + Date.now(), {
+        headers: { 'Cache-Control': 'no-cache' }
+      })
+        .then(function (r) { return r.ok ? r.text() : Promise.reject(new Error('section_fetch_failed')); })
+        .then(function (html) {
+          var payload = { sections: {} };
+          payload.sections[SECTIONS] = html;
+          if (!window.MotifinoBelt || !window.MotifinoBelt.renderSections(payload, [SECTIONS])) {
+            document.body.classList.remove('bb-cart-busy');
+            return;
+          }
+          RENDERED_AT = Math.round(Date.now() / 1000);
+          document.body.classList.remove('bb-cart-busy');
+        })
+        .catch(function () { document.body.classList.remove('bb-cart-busy'); });
+    }
+
+    function refreshIfStale() {
+      if (Math.abs(Date.now() / 1000 - RENDERED_AT) > 60) refreshSection();
+    }
+
+    window.addEventListener('pageshow', function (e) {
+      if (e.persisted) refreshSection();
+    });
+
+    refreshIfStale();
     reconcileOnLoad({{ _cart_belt_count | default: 0 }}, {{ _cart_card_count | default: 0 }});
   })();
 </script>
@@ -728,6 +999,1060 @@
       "id": "show_shipping_estimator",
       "label": "t:sections.main_cart.show_shipping_estimator",
       "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_help_link",
+      "label": "Help link",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "help_link_text",
+      "label": "Text",
+      "default": "Hai dubbi o domande?",
+      "visible_if": "{{ section.settings.show_help_link }}"
+    },
+    {
+      "type": "range",
+      "id": "help_link_size",
+      "label": "Font size",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14,
+      "visible_if": "{{ section.settings.show_help_link }}"
+    },
+    {
+      "type": "url",
+      "id": "help_link",
+      "label": "Link",
+      "visible_if": "{{ section.settings.show_help_link }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_trust_banner",
+      "label": "Trust banner",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "trust_icon_1",
+      "label": "Icon 1",
+      "options": [
+        {
+          "value": "picto-award-gift",
+          "label": "t:global.icons.award_gift",
+          "group": "t:global.icons.shop_category"
+        },
+        {
+          "value": "picto-bag-handle",
+          "label": "t:global.icons.bag_handle",
+          "group": "t:global.icons.shop_category"
+        },
+        {
+          "value": "picto-building",
+          "label": "t:global.icons.building",
+          "group": "t:global.icons.shop_category"
+        },
+        {
+          "value": "picto-coupon",
+          "label": "t:global.icons.coupon",
+          "group": "t:global.icons.shop_category"
+        },
+        {
+          "value": "picto-gift",
+          "label": "t:global.icons.gift",
+          "group": "t:global.icons.shop_category"
+        },
+        {
+          "value": "picto-info",
+          "label": "t:global.icons.info",
+          "group": "t:global.icons.shop_category"
+        },
+        {
+          "value": "picto-love",
+          "label": "t:global.icons.love",
+          "group": "t:global.icons.shop_category"
+        },
+        {
+          "value": "picto-percent",
+          "label": "t:global.icons.percent",
+          "group": "t:global.icons.shop_category"
+        },
+        {
+          "value": "picto-star",
+          "label": "t:global.icons.star",
+          "group": "t:global.icons.shop_category"
+        },
+        {
+          "value": "picto-box",
+          "label": "t:global.icons.box",
+          "group": "t:global.icons.shipping_category"
+        },
+        {
+          "value": "picto-delivery-truck",
+          "label": "t:global.icons.delivery_truck",
+          "group": "t:global.icons.shipping_category"
+        },
+        {
+          "value": "picto-pin",
+          "label": "t:global.icons.pin",
+          "group": "t:global.icons.shipping_category"
+        },
+        {
+          "value": "picto-plane",
+          "label": "t:global.icons.plane",
+          "group": "t:global.icons.shipping_category"
+        },
+        {
+          "value": "picto-return",
+          "label": "t:global.icons.return",
+          "group": "t:global.icons.shipping_category"
+        },
+        {
+          "value": "picto-credit-card",
+          "label": "t:global.icons.credit_card",
+          "group": "t:global.icons.payment_and_security_category"
+        },
+        {
+          "value": "picto-lock",
+          "label": "t:global.icons.lock",
+          "group": "t:global.icons.payment_and_security_category"
+        },
+        {
+          "value": "picto-money",
+          "label": "t:global.icons.money",
+          "group": "t:global.icons.payment_and_security_category"
+        },
+        {
+          "value": "picto-secure-profile",
+          "label": "t:global.icons.secure_profile",
+          "group": "t:global.icons.payment_and_security_category"
+        },
+        {
+          "value": "picto-shield",
+          "label": "t:global.icons.shield",
+          "group": "t:global.icons.payment_and_security_category"
+        },
+        {
+          "value": "picto-earth",
+          "label": "t:global.icons.earth",
+          "group": "t:global.icons.ecology_category"
+        },
+        {
+          "value": "picto-leaf",
+          "label": "t:global.icons.leaf",
+          "group": "t:global.icons.ecology_category"
+        },
+        {
+          "value": "picto-recycle",
+          "label": "t:global.icons.recycle",
+          "group": "t:global.icons.ecology_category"
+        },
+        {
+          "value": "picto-tree",
+          "label": "t:global.icons.tree",
+          "group": "t:global.icons.ecology_category"
+        },
+        {
+          "value": "picto-at-sign",
+          "label": "t:global.icons.at_sign",
+          "group": "t:global.icons.tech_category"
+        },
+        {
+          "value": "picto-bluetooth",
+          "label": "t:global.icons.bluetooth",
+          "group": "t:global.icons.tech_category"
+        },
+        {
+          "value": "picto-camera",
+          "label": "t:global.icons.camera",
+          "group": "t:global.icons.tech_category"
+        },
+        {
+          "value": "picto-printer",
+          "label": "t:global.icons.printer",
+          "group": "t:global.icons.tech_category"
+        },
+        {
+          "value": "picto-smart-watch",
+          "label": "t:global.icons.smart_watch",
+          "group": "t:global.icons.tech_category"
+        },
+        {
+          "value": "picto-wifi",
+          "label": "t:global.icons.wifi",
+          "group": "t:global.icons.tech_category"
+        },
+        {
+          "value": "picto-avatar",
+          "label": "t:global.icons.avatar",
+          "group": "t:global.icons.communication_category"
+        },
+        {
+          "value": "picto-chat",
+          "label": "t:global.icons.chat",
+          "group": "t:global.icons.communication_category"
+        },
+        {
+          "value": "picto-calendar",
+          "label": "t:global.icons.calendar",
+          "group": "t:global.icons.communication_category"
+        },
+        {
+          "value": "picto-comment",
+          "label": "t:global.icons.comment",
+          "group": "t:global.icons.communication_category"
+        },
+        {
+          "value": "picto-customer-support",
+          "label": "t:global.icons.customer_support",
+          "group": "t:global.icons.communication_category"
+        },
+        {
+          "value": "picto-happy-face",
+          "label": "t:global.icons.happy_face",
+          "group": "t:global.icons.communication_category"
+        },
+        {
+          "value": "picto-mailbox",
+          "label": "t:global.icons.mailbox",
+          "group": "t:global.icons.communication_category"
+        },
+        {
+          "value": "picto-mobile-phone",
+          "label": "t:global.icons.mobile_phone",
+          "group": "t:global.icons.communication_category"
+        },
+        {
+          "value": "picto-operator",
+          "label": "t:global.icons.operator",
+          "group": "t:global.icons.communication_category"
+        },
+        {
+          "value": "picto-phone",
+          "label": "t:global.icons.phone",
+          "group": "t:global.icons.communication_category"
+        },
+        {
+          "value": "picto-send",
+          "label": "t:global.icons.send",
+          "group": "t:global.icons.communication_category"
+        },
+        {
+          "value": "picto-user",
+          "label": "t:global.icons.user",
+          "group": "t:global.icons.communication_category"
+        },
+        {
+          "value": "picto-burger",
+          "label": "t:global.icons.burger",
+          "group": "t:global.icons.food_category"
+        },
+        {
+          "value": "picto-beer",
+          "label": "t:global.icons.beer",
+          "group": "t:global.icons.food_category"
+        },
+        {
+          "value": "picto-coffee",
+          "label": "t:global.icons.coffee",
+          "group": "t:global.icons.food_category"
+        },
+        {
+          "value": "picto-pizza",
+          "label": "t:global.icons.pizza",
+          "group": "t:global.icons.food_category"
+        },
+        {
+          "value": "picto-bottle",
+          "label": "t:global.icons.bottle",
+          "group": "t:global.icons.food_category"
+        },
+        {
+          "value": "picto-document",
+          "label": "t:global.icons.document",
+          "group": "t:global.icons.other_category"
+        },
+        {
+          "value": "picto-error",
+          "label": "t:global.icons.error",
+          "group": "t:global.icons.other_category"
+        },
+        {
+          "value": "picto-file",
+          "label": "t:global.icons.file",
+          "group": "t:global.icons.other_category"
+        },
+        {
+          "value": "picto-jewelry",
+          "label": "t:global.icons.jewelry",
+          "group": "t:global.icons.other_category"
+        },
+        {
+          "value": "picto-mask",
+          "label": "t:global.icons.mask",
+          "group": "t:global.icons.other_category"
+        },
+        {
+          "value": "picto-music",
+          "label": "t:global.icons.music",
+          "group": "t:global.icons.other_category"
+        },
+        {
+          "value": "picto-not-allowed",
+          "label": "t:global.icons.not_allowed",
+          "group": "t:global.icons.other_category"
+        },
+        {
+          "value": "picto-target",
+          "label": "t:global.icons.target",
+          "group": "t:global.icons.other_category"
+        },
+        {
+          "value": "picto-timer",
+          "label": "t:global.icons.timer",
+          "group": "t:global.icons.other_category"
+        },
+        {
+          "value": "picto-success",
+          "label": "t:global.icons.success",
+          "group": "t:global.icons.other_category"
+        }
+      ],
+      "default": "picto-return",
+      "visible_if": "{{ section.settings.show_trust_banner }}"
+    },
+    {
+      "type": "text",
+      "id": "trust_text_1",
+      "label": "Text 1",
+      "default": "Resi Gratuiti",
+      "visible_if": "{{ section.settings.show_trust_banner }}"
+    },
+    {
+      "type": "select",
+      "id": "trust_icon_2",
+      "label": "Icon 2",
+      "options": [
+        {
+          "value": "picto-award-gift",
+          "label": "t:global.icons.award_gift",
+          "group": "t:global.icons.shop_category"
+        },
+        {
+          "value": "picto-bag-handle",
+          "label": "t:global.icons.bag_handle",
+          "group": "t:global.icons.shop_category"
+        },
+        {
+          "value": "picto-building",
+          "label": "t:global.icons.building",
+          "group": "t:global.icons.shop_category"
+        },
+        {
+          "value": "picto-coupon",
+          "label": "t:global.icons.coupon",
+          "group": "t:global.icons.shop_category"
+        },
+        {
+          "value": "picto-gift",
+          "label": "t:global.icons.gift",
+          "group": "t:global.icons.shop_category"
+        },
+        {
+          "value": "picto-info",
+          "label": "t:global.icons.info",
+          "group": "t:global.icons.shop_category"
+        },
+        {
+          "value": "picto-love",
+          "label": "t:global.icons.love",
+          "group": "t:global.icons.shop_category"
+        },
+        {
+          "value": "picto-percent",
+          "label": "t:global.icons.percent",
+          "group": "t:global.icons.shop_category"
+        },
+        {
+          "value": "picto-star",
+          "label": "t:global.icons.star",
+          "group": "t:global.icons.shop_category"
+        },
+        {
+          "value": "picto-box",
+          "label": "t:global.icons.box",
+          "group": "t:global.icons.shipping_category"
+        },
+        {
+          "value": "picto-delivery-truck",
+          "label": "t:global.icons.delivery_truck",
+          "group": "t:global.icons.shipping_category"
+        },
+        {
+          "value": "picto-pin",
+          "label": "t:global.icons.pin",
+          "group": "t:global.icons.shipping_category"
+        },
+        {
+          "value": "picto-plane",
+          "label": "t:global.icons.plane",
+          "group": "t:global.icons.shipping_category"
+        },
+        {
+          "value": "picto-return",
+          "label": "t:global.icons.return",
+          "group": "t:global.icons.shipping_category"
+        },
+        {
+          "value": "picto-credit-card",
+          "label": "t:global.icons.credit_card",
+          "group": "t:global.icons.payment_and_security_category"
+        },
+        {
+          "value": "picto-lock",
+          "label": "t:global.icons.lock",
+          "group": "t:global.icons.payment_and_security_category"
+        },
+        {
+          "value": "picto-money",
+          "label": "t:global.icons.money",
+          "group": "t:global.icons.payment_and_security_category"
+        },
+        {
+          "value": "picto-secure-profile",
+          "label": "t:global.icons.secure_profile",
+          "group": "t:global.icons.payment_and_security_category"
+        },
+        {
+          "value": "picto-shield",
+          "label": "t:global.icons.shield",
+          "group": "t:global.icons.payment_and_security_category"
+        },
+        {
+          "value": "picto-earth",
+          "label": "t:global.icons.earth",
+          "group": "t:global.icons.ecology_category"
+        },
+        {
+          "value": "picto-leaf",
+          "label": "t:global.icons.leaf",
+          "group": "t:global.icons.ecology_category"
+        },
+        {
+          "value": "picto-recycle",
+          "label": "t:global.icons.recycle",
+          "group": "t:global.icons.ecology_category"
+        },
+        {
+          "value": "picto-tree",
+          "label": "t:global.icons.tree",
+          "group": "t:global.icons.ecology_category"
+        },
+        {
+          "value": "picto-at-sign",
+          "label": "t:global.icons.at_sign",
+          "group": "t:global.icons.tech_category"
+        },
+        {
+          "value": "picto-bluetooth",
+          "label": "t:global.icons.bluetooth",
+          "group": "t:global.icons.tech_category"
+        },
+        {
+          "value": "picto-camera",
+          "label": "t:global.icons.camera",
+          "group": "t:global.icons.tech_category"
+        },
+        {
+          "value": "picto-printer",
+          "label": "t:global.icons.printer",
+          "group": "t:global.icons.tech_category"
+        },
+        {
+          "value": "picto-smart-watch",
+          "label": "t:global.icons.smart_watch",
+          "group": "t:global.icons.tech_category"
+        },
+        {
+          "value": "picto-wifi",
+          "label": "t:global.icons.wifi",
+          "group": "t:global.icons.tech_category"
+        },
+        {
+          "value": "picto-avatar",
+          "label": "t:global.icons.avatar",
+          "group": "t:global.icons.communication_category"
+        },
+        {
+          "value": "picto-chat",
+          "label": "t:global.icons.chat",
+          "group": "t:global.icons.communication_category"
+        },
+        {
+          "value": "picto-calendar",
+          "label": "t:global.icons.calendar",
+          "group": "t:global.icons.communication_category"
+        },
+        {
+          "value": "picto-comment",
+          "label": "t:global.icons.comment",
+          "group": "t:global.icons.communication_category"
+        },
+        {
+          "value": "picto-customer-support",
+          "label": "t:global.icons.customer_support",
+          "group": "t:global.icons.communication_category"
+        },
+        {
+          "value": "picto-happy-face",
+          "label": "t:global.icons.happy_face",
+          "group": "t:global.icons.communication_category"
+        },
+        {
+          "value": "picto-mailbox",
+          "label": "t:global.icons.mailbox",
+          "group": "t:global.icons.communication_category"
+        },
+        {
+          "value": "picto-mobile-phone",
+          "label": "t:global.icons.mobile_phone",
+          "group": "t:global.icons.communication_category"
+        },
+        {
+          "value": "picto-operator",
+          "label": "t:global.icons.operator",
+          "group": "t:global.icons.communication_category"
+        },
+        {
+          "value": "picto-phone",
+          "label": "t:global.icons.phone",
+          "group": "t:global.icons.communication_category"
+        },
+        {
+          "value": "picto-send",
+          "label": "t:global.icons.send",
+          "group": "t:global.icons.communication_category"
+        },
+        {
+          "value": "picto-user",
+          "label": "t:global.icons.user",
+          "group": "t:global.icons.communication_category"
+        },
+        {
+          "value": "picto-burger",
+          "label": "t:global.icons.burger",
+          "group": "t:global.icons.food_category"
+        },
+        {
+          "value": "picto-beer",
+          "label": "t:global.icons.beer",
+          "group": "t:global.icons.food_category"
+        },
+        {
+          "value": "picto-coffee",
+          "label": "t:global.icons.coffee",
+          "group": "t:global.icons.food_category"
+        },
+        {
+          "value": "picto-pizza",
+          "label": "t:global.icons.pizza",
+          "group": "t:global.icons.food_category"
+        },
+        {
+          "value": "picto-bottle",
+          "label": "t:global.icons.bottle",
+          "group": "t:global.icons.food_category"
+        },
+        {
+          "value": "picto-document",
+          "label": "t:global.icons.document",
+          "group": "t:global.icons.other_category"
+        },
+        {
+          "value": "picto-error",
+          "label": "t:global.icons.error",
+          "group": "t:global.icons.other_category"
+        },
+        {
+          "value": "picto-file",
+          "label": "t:global.icons.file",
+          "group": "t:global.icons.other_category"
+        },
+        {
+          "value": "picto-jewelry",
+          "label": "t:global.icons.jewelry",
+          "group": "t:global.icons.other_category"
+        },
+        {
+          "value": "picto-mask",
+          "label": "t:global.icons.mask",
+          "group": "t:global.icons.other_category"
+        },
+        {
+          "value": "picto-music",
+          "label": "t:global.icons.music",
+          "group": "t:global.icons.other_category"
+        },
+        {
+          "value": "picto-not-allowed",
+          "label": "t:global.icons.not_allowed",
+          "group": "t:global.icons.other_category"
+        },
+        {
+          "value": "picto-target",
+          "label": "t:global.icons.target",
+          "group": "t:global.icons.other_category"
+        },
+        {
+          "value": "picto-timer",
+          "label": "t:global.icons.timer",
+          "group": "t:global.icons.other_category"
+        },
+        {
+          "value": "picto-success",
+          "label": "t:global.icons.success",
+          "group": "t:global.icons.other_category"
+        }
+      ],
+      "default": "picto-shield",
+      "visible_if": "{{ section.settings.show_trust_banner }}"
+    },
+    {
+      "type": "text",
+      "id": "trust_text_2",
+      "label": "Text 2",
+      "default": "Garanzia 2 anni",
+      "visible_if": "{{ section.settings.show_trust_banner }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_delivery_estimate",
+      "label": "Delivery estimate",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_delivery_icon",
+      "label": "Icon",
+      "default": true,
+      "visible_if": "{{ section.settings.show_delivery_estimate }}"
+    },
+    {
+      "type": "select",
+      "id": "delivery_icon",
+      "label": "Icon",
+      "options": [
+        {
+          "value": "picto-award-gift",
+          "label": "t:global.icons.award_gift",
+          "group": "t:global.icons.shop_category"
+        },
+        {
+          "value": "picto-bag-handle",
+          "label": "t:global.icons.bag_handle",
+          "group": "t:global.icons.shop_category"
+        },
+        {
+          "value": "picto-building",
+          "label": "t:global.icons.building",
+          "group": "t:global.icons.shop_category"
+        },
+        {
+          "value": "picto-coupon",
+          "label": "t:global.icons.coupon",
+          "group": "t:global.icons.shop_category"
+        },
+        {
+          "value": "picto-gift",
+          "label": "t:global.icons.gift",
+          "group": "t:global.icons.shop_category"
+        },
+        {
+          "value": "picto-info",
+          "label": "t:global.icons.info",
+          "group": "t:global.icons.shop_category"
+        },
+        {
+          "value": "picto-love",
+          "label": "t:global.icons.love",
+          "group": "t:global.icons.shop_category"
+        },
+        {
+          "value": "picto-percent",
+          "label": "t:global.icons.percent",
+          "group": "t:global.icons.shop_category"
+        },
+        {
+          "value": "picto-star",
+          "label": "t:global.icons.star",
+          "group": "t:global.icons.shop_category"
+        },
+        {
+          "value": "picto-box",
+          "label": "t:global.icons.box",
+          "group": "t:global.icons.shipping_category"
+        },
+        {
+          "value": "picto-delivery-truck",
+          "label": "t:global.icons.delivery_truck",
+          "group": "t:global.icons.shipping_category"
+        },
+        {
+          "value": "picto-pin",
+          "label": "t:global.icons.pin",
+          "group": "t:global.icons.shipping_category"
+        },
+        {
+          "value": "picto-plane",
+          "label": "t:global.icons.plane",
+          "group": "t:global.icons.shipping_category"
+        },
+        {
+          "value": "picto-return",
+          "label": "t:global.icons.return",
+          "group": "t:global.icons.shipping_category"
+        },
+        {
+          "value": "picto-credit-card",
+          "label": "t:global.icons.credit_card",
+          "group": "t:global.icons.payment_and_security_category"
+        },
+        {
+          "value": "picto-lock",
+          "label": "t:global.icons.lock",
+          "group": "t:global.icons.payment_and_security_category"
+        },
+        {
+          "value": "picto-money",
+          "label": "t:global.icons.money",
+          "group": "t:global.icons.payment_and_security_category"
+        },
+        {
+          "value": "picto-secure-profile",
+          "label": "t:global.icons.secure_profile",
+          "group": "t:global.icons.payment_and_security_category"
+        },
+        {
+          "value": "picto-shield",
+          "label": "t:global.icons.shield",
+          "group": "t:global.icons.payment_and_security_category"
+        },
+        {
+          "value": "picto-earth",
+          "label": "t:global.icons.earth",
+          "group": "t:global.icons.ecology_category"
+        },
+        {
+          "value": "picto-leaf",
+          "label": "t:global.icons.leaf",
+          "group": "t:global.icons.ecology_category"
+        },
+        {
+          "value": "picto-recycle",
+          "label": "t:global.icons.recycle",
+          "group": "t:global.icons.ecology_category"
+        },
+        {
+          "value": "picto-tree",
+          "label": "t:global.icons.tree",
+          "group": "t:global.icons.ecology_category"
+        },
+        {
+          "value": "picto-at-sign",
+          "label": "t:global.icons.at_sign",
+          "group": "t:global.icons.tech_category"
+        },
+        {
+          "value": "picto-bluetooth",
+          "label": "t:global.icons.bluetooth",
+          "group": "t:global.icons.tech_category"
+        },
+        {
+          "value": "picto-camera",
+          "label": "t:global.icons.camera",
+          "group": "t:global.icons.tech_category"
+        },
+        {
+          "value": "picto-printer",
+          "label": "t:global.icons.printer",
+          "group": "t:global.icons.tech_category"
+        },
+        {
+          "value": "picto-smart-watch",
+          "label": "t:global.icons.smart_watch",
+          "group": "t:global.icons.tech_category"
+        },
+        {
+          "value": "picto-wifi",
+          "label": "t:global.icons.wifi",
+          "group": "t:global.icons.tech_category"
+        },
+        {
+          "value": "picto-avatar",
+          "label": "t:global.icons.avatar",
+          "group": "t:global.icons.communication_category"
+        },
+        {
+          "value": "picto-chat",
+          "label": "t:global.icons.chat",
+          "group": "t:global.icons.communication_category"
+        },
+        {
+          "value": "picto-calendar",
+          "label": "t:global.icons.calendar",
+          "group": "t:global.icons.communication_category"
+        },
+        {
+          "value": "picto-comment",
+          "label": "t:global.icons.comment",
+          "group": "t:global.icons.communication_category"
+        },
+        {
+          "value": "picto-customer-support",
+          "label": "t:global.icons.customer_support",
+          "group": "t:global.icons.communication_category"
+        },
+        {
+          "value": "picto-happy-face",
+          "label": "t:global.icons.happy_face",
+          "group": "t:global.icons.communication_category"
+        },
+        {
+          "value": "picto-mailbox",
+          "label": "t:global.icons.mailbox",
+          "group": "t:global.icons.communication_category"
+        },
+        {
+          "value": "picto-mobile-phone",
+          "label": "t:global.icons.mobile_phone",
+          "group": "t:global.icons.communication_category"
+        },
+        {
+          "value": "picto-operator",
+          "label": "t:global.icons.operator",
+          "group": "t:global.icons.communication_category"
+        },
+        {
+          "value": "picto-phone",
+          "label": "t:global.icons.phone",
+          "group": "t:global.icons.communication_category"
+        },
+        {
+          "value": "picto-send",
+          "label": "t:global.icons.send",
+          "group": "t:global.icons.communication_category"
+        },
+        {
+          "value": "picto-user",
+          "label": "t:global.icons.user",
+          "group": "t:global.icons.communication_category"
+        },
+        {
+          "value": "picto-burger",
+          "label": "t:global.icons.burger",
+          "group": "t:global.icons.food_category"
+        },
+        {
+          "value": "picto-beer",
+          "label": "t:global.icons.beer",
+          "group": "t:global.icons.food_category"
+        },
+        {
+          "value": "picto-coffee",
+          "label": "t:global.icons.coffee",
+          "group": "t:global.icons.food_category"
+        },
+        {
+          "value": "picto-pizza",
+          "label": "t:global.icons.pizza",
+          "group": "t:global.icons.food_category"
+        },
+        {
+          "value": "picto-bottle",
+          "label": "t:global.icons.bottle",
+          "group": "t:global.icons.food_category"
+        },
+        {
+          "value": "picto-document",
+          "label": "t:global.icons.document",
+          "group": "t:global.icons.other_category"
+        },
+        {
+          "value": "picto-error",
+          "label": "t:global.icons.error",
+          "group": "t:global.icons.other_category"
+        },
+        {
+          "value": "picto-file",
+          "label": "t:global.icons.file",
+          "group": "t:global.icons.other_category"
+        },
+        {
+          "value": "picto-jewelry",
+          "label": "t:global.icons.jewelry",
+          "group": "t:global.icons.other_category"
+        },
+        {
+          "value": "picto-mask",
+          "label": "t:global.icons.mask",
+          "group": "t:global.icons.other_category"
+        },
+        {
+          "value": "picto-music",
+          "label": "t:global.icons.music",
+          "group": "t:global.icons.other_category"
+        },
+        {
+          "value": "picto-not-allowed",
+          "label": "t:global.icons.not_allowed",
+          "group": "t:global.icons.other_category"
+        },
+        {
+          "value": "picto-target",
+          "label": "t:global.icons.target",
+          "group": "t:global.icons.other_category"
+        },
+        {
+          "value": "picto-timer",
+          "label": "t:global.icons.timer",
+          "group": "t:global.icons.other_category"
+        },
+        {
+          "value": "picto-success",
+          "label": "t:global.icons.success",
+          "group": "t:global.icons.other_category"
+        }
+      ],
+      "default": "picto-delivery-truck",
+      "visible_if": "{{ section.settings.show_delivery_estimate and section.settings.show_delivery_icon }}"
+    },
+    {
+      "type": "text",
+      "id": "delivery_text",
+      "label": "Text",
+      "default": "Consegna prevista tra:",
+      "visible_if": "{{ section.settings.show_delivery_estimate }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "delivery_work_mon",
+      "label": "Monday",
+      "default": true,
+      "visible_if": "{{ section.settings.show_delivery_estimate }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "delivery_work_tue",
+      "label": "Tuesday",
+      "default": true,
+      "visible_if": "{{ section.settings.show_delivery_estimate }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "delivery_work_wed",
+      "label": "Wednesday",
+      "default": true,
+      "visible_if": "{{ section.settings.show_delivery_estimate }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "delivery_work_thu",
+      "label": "Thursday",
+      "default": true,
+      "visible_if": "{{ section.settings.show_delivery_estimate }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "delivery_work_fri",
+      "label": "Friday",
+      "default": true,
+      "visible_if": "{{ section.settings.show_delivery_estimate }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "delivery_work_sat",
+      "label": "Saturday",
+      "default": false,
+      "visible_if": "{{ section.settings.show_delivery_estimate }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "delivery_work_sun",
+      "label": "Sunday",
+      "default": false,
+      "visible_if": "{{ section.settings.show_delivery_estimate }}"
+    },
+    {
+      "type": "range",
+      "id": "delivery_ready_min",
+      "label": "Ready days min",
+      "min": 0,
+      "max": 14,
+      "step": 1,
+      "default": 0,
+      "visible_if": "{{ section.settings.show_delivery_estimate }}"
+    },
+    {
+      "type": "range",
+      "id": "delivery_ready_max",
+      "label": "Ready days max",
+      "min": 0,
+      "max": 14,
+      "step": 1,
+      "default": 1,
+      "visible_if": "{{ section.settings.show_delivery_estimate }}"
+    },
+    {
+      "type": "range",
+      "id": "delivery_days_min",
+      "label": "Delivery days min",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "default": 1,
+      "visible_if": "{{ section.settings.show_delivery_estimate }}"
+    },
+    {
+      "type": "range",
+      "id": "delivery_days_max",
+      "label": "Delivery days max",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "default": 2,
+      "visible_if": "{{ section.settings.show_delivery_estimate }}"
+    },
+    {
+      "type": "range",
+      "id": "delivery_cutoff_hour",
+      "label": "Cutoff hour",
+      "min": 0,
+      "max": 23,
+      "step": 1,
+      "unit": "h",
+      "default": 11,
+      "visible_if": "{{ section.settings.show_delivery_estimate }}"
+    },
+    {
+      "type": "range",
+      "id": "delivery_cutoff_minute",
+      "label": "Cutoff minute",
+      "min": 0,
+      "max": 55,
+      "step": 5,
+      "unit": "min",
+      "default": 0,
+      "visible_if": "{{ section.settings.show_delivery_estimate }}"
+    },
+    {
+      "type": "text",
+      "id": "delivery_holidays",
+      "label": "Holidays",
+      "visible_if": "{{ section.settings.show_delivery_estimate }}"
     }
   ],
 
