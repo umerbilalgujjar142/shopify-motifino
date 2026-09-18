@@ -9,6 +9,46 @@
  */
 {
   "sections": {
+    "belt_tier_bar": {
+      "type": "belt-tier-bar",
+      "blocks": {
+        "step_1": {
+          "type": "step",
+          "settings": {
+            "price": "49,99€",
+            "image_url": "https://cdn.shopify.com/s/files/1/0677/2083/9299/files/single_set_1.jpg?v=1776238594"
+          }
+        },
+        "step_2": {
+          "type": "step",
+          "settings": {
+            "price": "34,99€",
+            "image_url": "https://cdn.shopify.com/s/files/1/0677/2083/9299/files/double_set.jpg?v=1776238592"
+          }
+        },
+        "step_3": {
+          "type": "step",
+          "settings": {
+            "price": "24,99€",
+            "image_url": "https://cdn.shopify.com/s/files/1/0677/2083/9299/files/triple_set_a555edc6-b5e9-4c42-84c9-b9ca4bb12b4d.jpg?v=1776238595"
+          }
+        }
+      },
+      "block_order": [
+        "step_1",
+        "step_2",
+        "step_3"
+      ],
+      "settings": {
+        "text_progress": "Aggiungi la [b][n]°[/b] cintura per [price].",
+        "text_unlocked": "Prezzo [b]VIP[/b] sbloccato. Approfittane e aggiungi altre cinture a [price].",
+        "link_text": "Premi qui",
+        "link_url": "/pages/bundle?type=set-cintura-singola",
+        "hide_when_empty": true,
+        "circle_size_mobile": 56,
+        "circle_size_desktop": 88
+      }
+    },
     "main": {
       "type": "main-cart",
       "settings": {
@@ -977,6 +1017,7 @@
     }
   },
   "order": [
+    "belt_tier_bar",
     "main",
     "belt_suggestions",
     "featured_collections_Amdakg",

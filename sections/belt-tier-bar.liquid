@@ -1,0 +1,708 @@
+{%- liquid
+  assign belts = 0
+  for item in cart.items
+    if item.product.type == 'Combinazione cintura'
+      assign belts = belts | plus: item.quantity
+    endif
+  endfor
+
+  assign steps = section.blocks.size
+  assign reached = belts
+  if reached > steps
+    assign reached = steps
+  endif
+
+  assign unlocked = false
+  if steps > 0 and belts >= steps
+    assign unlocked = true
+  endif
+
+  assign target = reached
+  if unlocked
+    assign target = steps | minus: 1
+  endif
+
+  # Part of the way into the segment that leads to the step not yet reached.
+  assign partial = section.settings.partial_fill | default: 72
+  assign fill_num = 0
+  assign fill_den = steps | minus: 1 | times: 100
+  if unlocked
+    assign fill_num = fill_den
+  elsif reached > 0
+    assign fill_num = reached | minus: 1 | times: 100 | plus: partial
+  endif
+
+  # Set photos shipped with the theme, used when a step has no image of its own.
+  assign default_images = 'https://cdn.shopify.com/s/files/1/0677/2083/9299/files/single_set_1.jpg?v=1776238594,https://cdn.shopify.com/s/files/1/0677/2083/9299/files/double_set.jpg?v=1776238592,https://cdn.shopify.com/s/files/1/0677/2083/9299/files/triple_set_a555edc6-b5e9-4c42-84c9-b9ca4bb12b4d.jpg?v=1776238595' | split: ','
+
+  assign anim_lead = 420
+  assign anim_dur = section.settings.anim_duration | default: 1800
+
+  # Layer 1: the gold runs left to right once and stays. Layer 2: a light band
+  # travels the same path on a loop, faint at the left and full strength by the
+  # time it reaches the end.
+  assign ring_ms = 420
+  assign fill_ms = anim_dur
+  assign chunks = section.settings.chunks | default: 60
+  assign fade2_ms = 400
+  assign pause2_ms = 600
+  assign rings = reached
+  assign fill_safe = fill_num
+  if fill_safe < 1
+    assign fill_safe = 1
+  endif
+  assign end_ms = rings | times: ring_ms | plus: fill_ms
+  assign gap_t = fill_ms | times: 100 | divided_by: fill_safe
+  assign last_gap = rings | minus: 1
+  assign span = steps | minus: 1
+  if span < 1
+    assign span = 1
+  endif
+  assign travel_ms = end_ms | plus: 400
+  assign cyc2 = travel_ms | plus: fade2_ms | plus: pause2_ms
+  assign q_end = travel_ms | times: 1000 | divided_by: cyc2
+  assign q_fade = travel_ms | plus: fade2_ms | times: 1000 | divided_by: cyc2
+  assign q_off = q_fade | plus: 1
+  assign gapt2 = travel_ms | times: 100 | divided_by: fill_safe
+  assign halfw = gapt2 | times: 35 | divided_by: 100
+  assign sweep_delay = anim_lead
+  assign gleft = section.settings.gold_1 | default: '#bf953f'
+  assign pale = section.settings.gold_2 | default: '#fcf6ba'
+  assign darkg = section.settings.gold_3 | default: '#b38728'
+
+  assign target_block = section.blocks[target]
+  assign target_price = target_block.settings.price
+
+  if unlocked
+    assign copy = section.settings.text_unlocked
+  else
+    assign copy = section.settings.text_progress
+  endif
+  assign next_num = belts | plus: 1 | append: ''
+  assign price_html = '<span class="bb-tier__hl">' | append: target_price | append: '</span>'
+  assign copy = copy | replace: '[b]', '<strong>' | replace: '[/b]', '</strong>' | replace: '[n]', next_num | replace: '[price]', price_html
+-%}
+
+{%- if steps > 0 -%}
+  {%- unless section.settings.hide_when_empty and belts == 0 -%}
+    <style>
+      #shopify-section-{{ section.id }} {
+        --bb-tier-bg: {{ section.settings.bg_color }};
+        --bb-tier-ink: {{ section.settings.text_color }};
+        --bb-tier-accent: {{ section.settings.accent_color }};
+        --bb-tier-idle: {{ section.settings.idle_color }};
+        --bb-tier-hl: {{ section.settings.highlight_color }};
+        --bb-tier-size: {{ section.settings.circle_size_mobile }}px;
+        --bb-tier-fs: {{ section.settings.text_size_mobile }}px;
+        --bb-tier-price-fs: {{ section.settings.price_size_mobile }}px;
+        --bb-tier-pad: {{ section.settings.padding_mobile }}px;
+        --bb-tier-pad-x: 14px;
+        --bb-tier-lead: {{ anim_lead }}ms;
+        --bb-tier-line-h: {{ section.settings.line_height | default: 3.5 }}px;
+        --bb-tier-ring-w: {{ section.settings.ring_width | default: 3.5 }}px;
+        --bb-tier-gold-1: {{ section.settings.gold_1 | default: '#bf953f' }};
+        --bb-tier-gold-2: {{ section.settings.gold_2 | default: '#fcf6ba' }};
+        --bb-tier-gold-3: {{ section.settings.gold_3 | default: '#b38728' }};
+        --bb-tier-gold: linear-gradient(45deg, var(--bb-tier-gold-1) 0%, var(--bb-tier-gold-2) 50%, var(--bb-tier-gold-3) 100%);
+        --bb-tier-cycle: {{ end_ms }}ms;
+        --bb-tier-cycle2: {{ cyc2 }}ms;
+        --bb-tier-band: 90px;
+      }
+
+      @media screen and (min-width: 750px) {
+        #shopify-section-{{ section.id }} {
+          --bb-tier-size: {{ section.settings.circle_size_desktop }}px;
+          --bb-tier-fs: {{ section.settings.text_size_desktop }}px;
+          --bb-tier-price-fs: {{ section.settings.price_size_desktop }}px;
+          --bb-tier-pad: {{ section.settings.padding_desktop }}px;
+          --bb-tier-pad-x: 16px;
+        }
+      }
+
+      #shopify-section-{{ section.id }} .bb-tier {
+        background: var(--bb-tier-bg);
+        padding: var(--bb-tier-pad) var(--bb-tier-pad-x);
+      }
+
+      #shopify-section-{{ section.id }} .bb-tier__inner {
+        max-width: {{ section.settings.max_width }}px;
+        margin-inline: auto;
+      }
+
+      #shopify-section-{{ section.id }} .bb-tier__text {
+        margin: 0;
+        text-align: center;
+        color: var(--bb-tier-ink);
+        font-size: var(--bb-tier-fs);
+        line-height: 1.35;
+      }
+
+      #shopify-section-{{ section.id }} .bb-tier__text strong { font-weight: 700; }
+
+      #shopify-section-{{ section.id }} .bb-tier__hl {
+        color: var(--bb-tier-hl);
+        font-weight: 700;
+        white-space: nowrap;
+      }
+
+      #shopify-section-{{ section.id }} .bb-tier__link {
+        color: inherit;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+
+      #shopify-section-{{ section.id }} .bb-tier__track {
+        position: relative;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-top: 16px;
+      }
+
+      #shopify-section-{{ section.id }} .bb-tier__line {
+        position: absolute;
+        top: calc(var(--bb-tier-size) / 2 - var(--bb-tier-line-h) / 2);
+        left: calc(var(--bb-tier-size) / 2);
+        right: calc(var(--bb-tier-size) / 2);
+        height: var(--bb-tier-line-h);
+        border-radius: 999px;
+        background: var(--bb-tier-idle);
+        overflow: hidden;
+        isolation: isolate;
+      }
+
+      #shopify-section-{{ section.id }} .bb-tier__line-fill {
+        position: relative;
+        display: block;
+        height: 100%;
+        width: 100%;
+        border-radius: 999px;
+        background-image: linear-gradient(90deg, {{ gleft }} 0%, {{ gleft }} 28%, {{ darkg }} 42%, {{ darkg }} 100%);
+        clip-path: inset(0 calc(100% - var(--bb-tier-target)) 0 0);
+      }
+
+      #shopify-section-{{ section.id }} .bb-tier__line-glow {
+        position: absolute;
+        inset-block: 0;
+        left: 0;
+        width: var(--bb-tier-band);
+        transform: translateX(-50%);
+        border-radius: 999px;
+        pointer-events: none;
+        opacity: 0;
+        mix-blend-mode: screen;
+        background: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, {{ pale }} 45%, {{ pale }} 55%, rgba(0, 0, 0, 0) 100%);
+      }
+
+      @media screen and (prefers-reduced-motion: no-preference) {
+        /* Layer 1 — runs once, then stays. */
+        #shopify-section-{{ section.id }} .bb-tier--anim .bb-tier__line-fill {
+          animation: bb-tier-fill var(--bb-tier-cycle) linear var(--bb-tier-lead) both;
+        }
+
+        /* Layer 2 — the band, on a loop, once layer 1 has finished. */
+        #shopify-section-{{ section.id }} .bb-tier--anim .bb-tier__line-glow {
+          animation: bb-tier-band var(--bb-tier-cycle2) linear {{ sweep_delay }}ms infinite;
+        }
+        {%- for k in (1..rings) -%}
+        #shopify-section-{{ section.id }} .bb-tier--anim .bb-tier__step--r{{ k }} .bb-tier__circle::before {
+          animation: bb-tier-draw-{{ k }} var(--bb-tier-cycle) linear var(--bb-tier-lead) both;
+        }
+        #shopify-section-{{ section.id }} .bb-tier--anim .bb-tier__step--r{{ k }} .bb-tier__circle::after {
+          animation: bb-tier-lit-{{ k }} var(--bb-tier-cycle2) linear {{ sweep_delay }}ms infinite;
+        }
+        {%- endfor -%}
+      }
+
+      {%- if fill_num > 0 and steps > 1 -%}
+      {%- assign pm0 = ring_ms | times: 1000 | divided_by: end_ms -%}
+      @keyframes bb-tier-fill {
+        0%, {{ pm0 | divided_by: 10.0 }}% { clip-path: inset(0 100% 0 0); }
+        {%- for k in (1..last_gap) -%}
+          {%- assign tt = k | times: gap_t -%}
+          {%- assign t_end = k | times: ring_ms | plus: tt -%}
+          {%- assign pa = t_end | times: 1000 | divided_by: end_ms -%}
+          {%- assign pb = t_end | plus: ring_ms | times: 1000 | divided_by: end_ms -%}
+          {%- assign px = k | times: 100 -%}
+        {{ pa | divided_by: 10.0 }}%, {{ pb | divided_by: 10.0 }}% { clip-path: inset(0 calc(100% - 100% * {{ px }} / {{ fill_den }}) 0 0); }
+        {%- endfor -%}
+        100% { clip-path: inset(0 calc(100% - var(--bb-tier-target)) 0 0); }
+      }
+
+      {%- for k in (1..rings) -%}
+        {%- assign tt = k | minus: 1 | times: gap_t -%}
+        {%- assign t_on = k | minus: 1 | times: ring_ms | plus: tt -%}
+        {%- assign p_on = t_on | times: 1000 | divided_by: end_ms -%}
+        {%- assign p_drawn = t_on | plus: ring_ms | times: 1000 | divided_by: end_ms -%}
+      @keyframes bb-tier-draw-{{ k }} {
+        {% if p_on > 0 %}0%, {% endif %}{{ p_on | divided_by: 10.0 }}% { clip-path: inset(0 100% 0 0); }
+        {{ p_drawn | divided_by: 10.0 }}%, 100% { clip-path: inset(0 0 0 0); }
+      }
+      {%- endfor -%}
+
+      @keyframes bb-tier-band {
+        0% { left: 0%; opacity: 0.3; animation-timing-function: steps({{ chunks }}, end); }
+        {{ q_end | divided_by: 10.0 }}% { left: var(--bb-tier-target); opacity: 1; }
+        {{ q_fade | divided_by: 10.0 }}% { left: var(--bb-tier-target); opacity: 0; }
+        {{ q_off | divided_by: 10.0 }}%, 100% { left: 0%; opacity: 0; }
+      }
+
+      {%- for k in (1..rings) -%}
+        {%- assign arrival = k | minus: 1 | times: gapt2 -%}
+        {%- assign t_on = arrival | minus: halfw -%}
+        {%- if t_on < 0 %}{% assign t_on = 0 %}{% endif -%}
+        {%- assign t_off = arrival | plus: halfw -%}
+        {%- assign t_cap = travel_ms | plus: fade2_ms -%}
+        {%- if t_off > t_cap %}{% assign t_off = t_cap %}{% endif -%}
+        {%- assign qon = t_on | times: 1000 | divided_by: cyc2 -%}
+        {%- assign qpk = arrival | times: 1000 | divided_by: cyc2 -%}
+        {%- assign qoff = t_off | times: 1000 | divided_by: cyc2 -%}
+        {%- assign peak = arrival | times: 70 | divided_by: travel_ms | plus: 30 -%}
+      @keyframes bb-tier-lit-{{ k }} {
+        {% if qon > 0 %}0%, {{ qon | divided_by: 10.0 }}% { opacity: 0; }
+        {% endif %}{{ qpk | divided_by: 10.0 }}% { opacity: {{ peak | divided_by: 100.0 }}; }
+        {{ qoff | divided_by: 10.0 }}%, 100% { opacity: 0; }
+      }
+      {%- endfor -%}
+      {%- endif -%}
+
+      #shopify-section-{{ section.id }} .bb-tier__step {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: var(--bb-tier-size);
+        flex: 0 0 auto;
+      }
+
+      #shopify-section-{{ section.id }} .bb-tier__circle {
+        width: var(--bb-tier-size);
+        height: var(--bb-tier-size);
+        border-radius: 50%;
+        border: var(--bb-tier-ring-w) solid var(--bb-tier-idle);
+        background: #fff;
+        padding: 3px;
+        box-sizing: border-box;
+        position: relative;
+        isolation: isolate;
+        transition: border-color 0.35s ease;
+      }
+
+      /* The gold ring, wiped in left to right along with everything else. */
+      #shopify-section-{{ section.id }} .bb-tier__step.is-done .bb-tier__circle::before {
+        content: '';
+        position: absolute;
+        inset: calc(-1 * var(--bb-tier-ring-w));
+        border-radius: 50%;
+        pointer-events: none;
+        opacity: 1;
+        background-image: linear-gradient(90deg, var(--bb-tier-gold-1), var(--bb-tier-gold-3));
+        -webkit-mask: radial-gradient(closest-side, transparent calc(100% - var(--bb-tier-ring-w)), #000 calc(100% - var(--bb-tier-ring-w)));
+        mask: radial-gradient(closest-side, transparent calc(100% - var(--bb-tier-ring-w)), #000 calc(100% - var(--bb-tier-ring-w)));
+      }
+
+      #shopify-section-{{ section.id }} .bb-tier__step.is-done .bb-tier__circle::after {
+        content: '';
+        position: absolute;
+        inset: calc(-1 * var(--bb-tier-ring-w));
+        border-radius: 50%;
+        pointer-events: none;
+        opacity: 0;
+        mix-blend-mode: screen;
+        background: {{ pale }};
+        -webkit-mask: radial-gradient(closest-side, transparent calc(100% - var(--bb-tier-ring-w)), #000 calc(100% - var(--bb-tier-ring-w)));
+        mask: radial-gradient(closest-side, transparent calc(100% - var(--bb-tier-ring-w)), #000 calc(100% - var(--bb-tier-ring-w)));
+      }
+
+      {%- if steps > 1 -%}
+      {%- for k in (1..steps) -%}
+        {%- assign tk = k | minus: 1 | times: 1000 | divided_by: span -%}
+        {%- assign pa = tk | minus: 90 -%}
+        {%- if pa < 0 %}{% assign pa = 0 %}{% endif -%}
+        {%- assign pb = tk | plus: 90 -%}
+        {%- if pb > 1000 %}{% assign pb = 1000 %}{% endif -%}
+        {%- if pa <= 280 -%}
+          {%- assign ca = gleft -%}
+        {%- elsif pa >= 420 -%}
+          {%- assign ca = darkg -%}
+        {%- else -%}
+          {%- assign w = 420 | minus: pa | times: 100 | divided_by: 140 -%}
+          {%- assign ca = gleft | color_mix: darkg, w -%}
+        {%- endif -%}
+        {%- if pb <= 280 -%}
+          {%- assign cb = gleft -%}
+        {%- elsif pb >= 420 -%}
+          {%- assign cb = darkg -%}
+        {%- else -%}
+          {%- assign w = 420 | minus: pb | times: 100 | divided_by: 140 -%}
+          {%- assign cb = gleft | color_mix: darkg, w -%}
+        {%- endif -%}
+      #shopify-section-{{ section.id }} .bb-tier__step.is-done.bb-tier__step--r{{ k }} .bb-tier__circle::before {
+        background-image: linear-gradient(90deg, {{ ca }}, {{ cb }});
+      }
+      {%- endfor -%}
+      {%- endif -%}
+
+      #shopify-section-{{ section.id }} .bb-tier__circle img,
+      #shopify-section-{{ section.id }} .bb-tier__circle svg {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+      }
+
+      #shopify-section-{{ section.id }} .bb-tier__price {
+        margin-top: 8px;
+        text-align: center;
+        color: var(--bb-tier-ink);
+        font-size: var(--bb-tier-price-fs);
+        line-height: 1.2;
+        white-space: nowrap;
+      }
+
+      #shopify-section-{{ section.id }} .bb-tier__price.is-target { color: var(--bb-tier-hl); }
+    </style>
+
+    <div class="bb-tier{% if section.settings.animate %} bb-tier--anim{% endif %}" data-cart-live-section="{{ section.id }}">
+      <div class="bb-tier__inner">
+        <p class="bb-tier__text">
+          {{ copy }}
+          {%- if section.settings.link_text != blank -%}
+            <a class="bb-tier__link" href="{{ section.settings.link_url | default: '#' }}">{{ section.settings.link_text }}</a>
+          {%- endif -%}
+        </p>
+
+        <div class="bb-tier__track">
+          {%- if steps > 1 -%}
+            <div class="bb-tier__line" style="--bb-tier-target: calc(100% * {{ fill_num }} / {{ fill_den }});">
+              <span class="bb-tier__line-fill"></span>
+              <span class="bb-tier__line-glow"></span>
+            </div>
+          {%- endif -%}
+
+          {%- for block in section.blocks -%}
+            {%- assign done = false -%}
+            {%- if forloop.index <= reached -%}
+              {%- assign done = true -%}
+            {%- endif -%}
+            <div class="bb-tier__step{% if done %} is-done bb-tier__step--r{{ forloop.index }}{% endif %}" {{ block.shopify_attributes }}>
+              <div class="bb-tier__circle">
+                {%- if block.settings.image != blank -%}
+                  <img
+                    src="{{ block.settings.image | image_url: width: 300 }}"
+                    alt="{{ block.settings.image.alt | escape }}"
+                    width="{{ block.settings.image.width }}"
+                    height="{{ block.settings.image.height }}"
+                    loading="lazy"
+                  >
+                {%- else -%}
+                  {%- assign step_img = block.settings.image_url -%}
+                  {%- if step_img == blank -%}
+                    {%- assign fb_i = forloop.index0 -%}
+                    {%- if fb_i > 2 -%}{%- assign fb_i = 2 -%}{%- endif -%}
+                    {%- assign step_img = default_images[fb_i] -%}
+                  {%- endif -%}
+                  {%- if step_img != blank -%}
+                    <img src="{{ step_img }}" alt="" loading="lazy">
+                  {%- else -%}
+                    {{ 'product-1' | placeholder_svg_tag }}
+                  {%- endif -%}
+                {%- endif -%}
+              </div>
+              <span class="bb-tier__price{% if forloop.index0 == target %} is-target{% endif %}">{{ block.settings.price }}</span>
+            </div>
+          {%- endfor -%}
+        </div>
+      </div>
+    </div>
+  {%- endunless -%}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Belt tier bar",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Each step is a block. Step 1 = first belt in the cart, step 2 = second, and so on. Prices here are text only — the real price comes from the discount rules."
+    },
+    {
+      "type": "text",
+      "id": "text_progress",
+      "label": "Text (steps left)",
+      "default": "Aggiungi la [b][n]°[/b] cintura per [price].",
+      "info": "[n] = next belt number, [price] = that step's price (shown in the highlight colour), [b]...[/b] = bold."
+    },
+    {
+      "type": "text",
+      "id": "text_unlocked",
+      "label": "Text (all steps reached)",
+      "default": "Prezzo [b]VIP[/b] sbloccato. Approfittane e aggiungi altre cinture a [price].",
+      "info": "[price] here is the last step's price."
+    },
+    {
+      "type": "text",
+      "id": "link_text",
+      "label": "Link text",
+      "default": "Premi qui"
+    },
+    {
+      "type": "url",
+      "id": "link_url",
+      "label": "Link"
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_when_empty",
+      "label": "Hide when the cart has no belts",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Colours"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background",
+      "default": "#f1f1f1"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Progress (gold)",
+      "default": "#c8a24a"
+    },
+    {
+      "type": "color",
+      "id": "gold_1",
+      "label": "Gold gradient start",
+      "default": "#bf953f"
+    },
+    {
+      "type": "color",
+      "id": "gold_2",
+      "label": "Gold gradient middle",
+      "default": "#fcf6ba"
+    },
+    {
+      "type": "color",
+      "id": "gold_3",
+      "label": "Gold gradient end",
+      "default": "#b38728"
+    },
+    {
+      "type": "color",
+      "id": "idle_color",
+      "label": "Not reached yet",
+      "default": "#e0e0e0"
+    },
+    {
+      "type": "color",
+      "id": "highlight_color",
+      "label": "Highlight price",
+      "default": "#e01b1b"
+    },
+    {
+      "type": "header",
+      "content": "Animation"
+    },
+    {
+      "type": "checkbox",
+      "id": "animate",
+      "label": "Animate the bar filling up",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "partial_fill",
+      "label": "Progress into the next step",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "%",
+      "default": 72,
+      "info": "How far the gold line runs past the last reached step, towards the next one."
+    },
+    {
+      "type": "range",
+      "id": "chunks",
+      "label": "Light steps",
+      "min": 4,
+      "max": 80,
+      "step": 2,
+      "default": 60,
+      "info": "Higher is smoother. Lower makes the light move in visible chunks."
+    },
+    {
+      "type": "range",
+      "id": "anim_duration",
+      "label": "Fill speed",
+      "min": 400,
+      "max": 4000,
+      "step": 100,
+      "unit": "ms",
+      "default": 1800
+    },
+    {
+      "type": "header",
+      "content": "Size"
+    },
+    {
+      "type": "range",
+      "id": "circle_size_mobile",
+      "label": "Image size (mobile)",
+      "min": 36,
+      "max": 140,
+      "step": 2,
+      "unit": "px",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "circle_size_desktop",
+      "label": "Image size (desktop)",
+      "min": 36,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "default": 88
+    },
+    {
+      "type": "range",
+      "id": "text_size_mobile",
+      "label": "Text size (mobile)",
+      "min": 11,
+      "max": 26,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "text_size_desktop",
+      "label": "Text size (desktop)",
+      "min": 12,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "price_size_mobile",
+      "label": "Price size (mobile)",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "price_size_desktop",
+      "label": "Price size (desktop)",
+      "min": 10,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 17
+    },
+    {
+      "type": "range",
+      "id": "line_height",
+      "label": "Line thickness",
+      "min": 0.5,
+      "max": 14,
+      "step": 0.5,
+      "unit": "px",
+      "default": 3.5
+    },
+    {
+      "type": "range",
+      "id": "ring_width",
+      "label": "Circle ring thickness",
+      "min": 0.5,
+      "max": 14,
+      "step": 0.5,
+      "unit": "px",
+      "default": 3.5
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Max width",
+      "min": 320,
+      "max": 1200,
+      "step": 20,
+      "unit": "px",
+      "default": 720
+    },
+    {
+      "type": "range",
+      "id": "padding_mobile",
+      "label": "Padding top/bottom (mobile)",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "padding_desktop",
+      "label": "Padding top/bottom (desktop)",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 28
+    }
+  ],
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Step",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "image_url",
+          "label": "Image URL",
+          "info": "Used only when no image is picked above."
+        },
+        {
+          "type": "text",
+          "id": "price",
+          "label": "Price",
+          "default": "49,99€"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 8,
+  "presets": [
+    {
+      "name": "Belt tier bar",
+      "blocks": [
+        { "type": "step", "settings": { "price": "49,99€", "image_url": "https://cdn.shopify.com/s/files/1/0677/2083/9299/files/single_set_1.jpg?v=1776238594" } },
+        { "type": "step", "settings": { "price": "34,99€", "image_url": "https://cdn.shopify.com/s/files/1/0677/2083/9299/files/double_set.jpg?v=1776238592" } },
+        { "type": "step", "settings": { "price": "24,99€", "image_url": "https://cdn.shopify.com/s/files/1/0677/2083/9299/files/triple_set_a555edc6-b5e9-4c42-84c9-b9ca4bb12b4d.jpg?v=1776238595" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

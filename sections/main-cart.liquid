@@ -200,35 +200,6 @@
             {%- assign _cart_card_count = _cart_card_count | plus: _ci.quantity -%}
           {%- endif -%}
         {%- endfor -%}
-        {%- if _cart_belt_count == 0 -%}
-          {%- assign _next_belt_price = '49,99' -%}
-        {%- elsif _cart_belt_count == 1 -%}
-          {%- assign _next_belt_price = '34,99' -%}
-        {%- elsif _cart_belt_count == 2 -%}
-          {%- assign _next_belt_price = '24,99' -%}
-        {%- else -%}
-          {%- assign _next_belt_price = '24,99' -%}
-        {%- endif -%}
-        {%- assign _next_belt_num = _cart_belt_count | plus: 1 -%}
-        <a href="/pages/bundle?type=set-cintura-singola" class="bb-cart-upsell__card">
-          <img
-            src="https://cdn.shopify.com/s/files/1/0829/7909/4854/files/Foto_set_singolo_con_lati_grigi_7b7b67c2-c112-4007-a730-0202d47dfe5a.webp?v=1775591318"
-            alt="Cintura"
-            class="bb-cart-upsell__img"
-            loading="lazy"
-          >
-          <div class="bb-cart-upsell__right">
-            <strong class="bb-cart-upsell__title">Aggiungi una {{ _next_belt_num }}° cintura</strong>
-            <div class="bb-cart-upsell__prices">
-              <span class="bb-cart-upsell__new-price">€{{ _next_belt_price }}</span>
-              {%- if _cart_belt_count > 0 -%}
-                <span class="bb-cart-upsell__old-price">€49,99</span>
-              {%- endif -%}
-            </div>
-            <span class="bb-cart-upsell__action">+ Aggiungi</span>
-          </div>
-        </a>
-
         <div class="section-header justify-self-center text-center">
           <div class="v-stack gap-1">
             <h1 class="h2">{{ 'cart.general.title' | t }}</h1>
@@ -640,7 +611,7 @@
       btn.disabled = true;
       document.body.classList.add('bb-cart-busy');
 
-      var section = '{{ section.id }}';
+      var section = window.MOTIFINO_CART_SECTIONS || '{{ section.id }}';
 
       fetch('{{ routes.cart_change_url }}.js', {
         method: 'POST',
@@ -649,7 +620,7 @@
       }).then(function (r) { return r.json(); })
         .then(function (payload) {
           var B = window.MotifinoBelt;
-          if (!B || !B.renderSections(payload, [section])) { window.location.reload(); return; }
+          if (!B || !B.renderSections(payload, section.split(','))) { window.location.reload(); return; }
           document.body.classList.remove('bb-cart-busy');
         })
         .catch(function () {
@@ -695,7 +666,15 @@
    * Black — one per belt — and it is only touched when it is out of step.
    */
   (function () {
+    /* Any section that must refresh with the cart tags itself with
+       data-cart-live-section — the tier bar above the cart does. */
     var SECTIONS = '{{ section.id }}';
+    Array.prototype.forEach.call(document.querySelectorAll('[data-cart-live-section]'), function (el) {
+      var id = el.getAttribute('data-cart-live-section');
+      if (id && SECTIONS.split(',').indexOf(id) === -1) SECTIONS += ',' + id;
+    });
+    var SECTION_IDS = SECTIONS.split(',');
+    window.MOTIFINO_CART_SECTIONS = SECTIONS;
 
     /* This page repairs the card count itself, in place. Tells the observer in
        belt-combination.js to stand down so it doesn't read the cart again and
@@ -725,7 +704,7 @@
 
     function render(payload) {
       var B = window.MotifinoBelt;
-      if (!B || !B.renderSections(payload, [SECTIONS])) {
+      if (!B || !B.renderSections(payload, SECTION_IDS)) {
         window.location.reload();
         return;
       }
@@ -811,14 +790,13 @@
          published theme's section back. */
       var themeId = window.Shopify && window.Shopify.theme && window.Shopify.theme.id;
       var themeParam = themeId ? '&preview_theme_id=' + themeId : '';
-      return fetch('{{ routes.cart_url }}?section_id=' + SECTIONS + themeParam + '&_=' + Date.now(), {
+      return fetch('{{ routes.cart_url }}?sections=' + SECTIONS + themeParam + '&_=' + Date.now(), {
         headers: { 'Cache-Control': 'no-cache' }
       })
-        .then(function (r) { return r.ok ? r.text() : Promise.reject(new Error('section_fetch_failed')); })
-        .then(function (html) {
-          var payload = { sections: {} };
-          payload.sections[SECTIONS] = html;
-          if (!window.MotifinoBelt || !window.MotifinoBelt.renderSections(payload, [SECTIONS])) {
+        .then(function (r) { return r.ok ? r.json() : Promise.reject(new Error('section_fetch_failed')); })
+        .then(function (sections) {
+          var payload = { sections: sections };
+          if (!window.MotifinoBelt || !window.MotifinoBelt.renderSections(payload, SECTION_IDS)) {
             document.body.classList.remove('bb-cart-busy');
             return;
           }
