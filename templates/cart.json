@@ -6,21 +6,21 @@
         "step_1": {
           "type": "step",
           "settings": {
-            "image_url": "https://cdn.shopify.com/s/files/1/0677/2083/9299/files/single_set_1.jpg?v=1776238594",
+            "image_url": "https://cdn.shopify.com/s/files/1/0829/7909/4854/files/Foto_set_singolo_con_lati_grigi_7b7b67c2-c112-4007-a730-0202d47dfe5a.webp?v=1775591318",
             "price": "49,99€"
           }
         },
         "step_2": {
           "type": "step",
           "settings": {
-            "image_url": "https://cdn.shopify.com/s/files/1/0677/2083/9299/files/double_set.jpg?v=1776238592",
+            "image_url": "https://cdn.shopify.com/s/files/1/0829/7909/4854/files/Foto_set_doppio.webp?v=1775600454",
             "price": "34,99€"
           }
         },
         "step_3": {
           "type": "step",
           "settings": {
-            "image_url": "https://cdn.shopify.com/s/files/1/0677/2083/9299/files/triple_set_a555edc6-b5e9-4c42-84c9-b9ca4bb12b4d.jpg?v=1776238595",
+            "image_url": "https://cdn.shopify.com/s/files/1/0829/7909/4854/files/Foto_Set_triplo.webp?v=1775609271",
             "price": "24,99€"
           }
         }

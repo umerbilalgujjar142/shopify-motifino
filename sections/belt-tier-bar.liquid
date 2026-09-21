@@ -33,7 +33,7 @@
   endif
 
   # Set photos shipped with the theme, used when a step has no image of its own.
-  assign default_images = 'https://cdn.shopify.com/s/files/1/0677/2083/9299/files/single_set_1.jpg?v=1776238594,https://cdn.shopify.com/s/files/1/0677/2083/9299/files/double_set.jpg?v=1776238592,https://cdn.shopify.com/s/files/1/0677/2083/9299/files/triple_set_a555edc6-b5e9-4c42-84c9-b9ca4bb12b4d.jpg?v=1776238595' | split: ','
+  assign default_images = 'https://cdn.shopify.com/s/files/1/0829/7909/4854/files/Foto_set_singolo_con_lati_grigi_7b7b67c2-c112-4007-a730-0202d47dfe5a.webp?v=1775591318,https://cdn.shopify.com/s/files/1/0829/7909/4854/files/Foto_set_doppio.webp?v=1775600454,https://cdn.shopify.com/s/files/1/0829/7909/4854/files/Foto_Set_triplo.webp?v=1775609271' | split: ','
 
   assign anim_lead = 420
   assign anim_dur = section.settings.anim_duration | default: 1800
@@ -282,7 +282,8 @@
         border-radius: 50%;
         border: var(--bb-tier-ring-w) solid var(--bb-tier-idle);
         background: #fff;
-        padding: 3px;
+        /* No inset: the photo runs right up to the ring. */
+        padding: 0;
         box-sizing: border-box;
         position: relative;
         isolation: isolate;
@@ -351,6 +352,17 @@
         height: 100%;
         object-fit: cover;
         border-radius: 50%;
+        /* The set photos carry their own white margin; zooming in trims it so the
+           product fills the circle instead of floating in it. */
+        transform: scale(1.12);
+      }
+
+      #shopify-section-{{ section.id }} .bb-tier__thumb {
+        display: block;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        overflow: hidden;
       }
 
       #shopify-section-{{ section.id }} .bb-tier__price {
@@ -389,6 +401,7 @@
             {%- endif -%}
             <div class="bb-tier__step{% if done %} is-done bb-tier__step--r{{ forloop.index }}{% endif %}" {{ block.shopify_attributes }}>
               <div class="bb-tier__circle">
+                <span class="bb-tier__thumb">
                 {%- if block.settings.image != blank -%}
                   <img
                     src="{{ block.settings.image | image_url: width: 300 }}"
@@ -410,6 +423,7 @@
                     {{ 'product-1' | placeholder_svg_tag }}
                   {%- endif -%}
                 {%- endif -%}
+                </span>
               </div>
               <span class="bb-tier__price{% if forloop.index0 == target %} is-target{% endif %}">{{ block.settings.price }}</span>
             </div>
@@ -698,9 +712,9 @@
     {
       "name": "Belt tier bar",
       "blocks": [
-        { "type": "step", "settings": { "price": "49,99€", "image_url": "https://cdn.shopify.com/s/files/1/0677/2083/9299/files/single_set_1.jpg?v=1776238594" } },
-        { "type": "step", "settings": { "price": "34,99€", "image_url": "https://cdn.shopify.com/s/files/1/0677/2083/9299/files/double_set.jpg?v=1776238592" } },
-        { "type": "step", "settings": { "price": "24,99€", "image_url": "https://cdn.shopify.com/s/files/1/0677/2083/9299/files/triple_set_a555edc6-b5e9-4c42-84c9-b9ca4bb12b4d.jpg?v=1776238595" } }
+        { "type": "step", "settings": { "price": "49,99€", "image_url": "https://cdn.shopify.com/s/files/1/0829/7909/4854/files/Foto_set_singolo_con_lati_grigi_7b7b67c2-c112-4007-a730-0202d47dfe5a.webp?v=1775591318" } },
+        { "type": "step", "settings": { "price": "34,99€", "image_url": "https://cdn.shopify.com/s/files/1/0829/7909/4854/files/Foto_set_doppio.webp?v=1775600454" } },
+        { "type": "step", "settings": { "price": "24,99€", "image_url": "https://cdn.shopify.com/s/files/1/0829/7909/4854/files/Foto_Set_triplo.webp?v=1775609271" } }
       ]
     }
   ]

@@ -20,6 +20,9 @@
     #shopify-section-{{ section.id }} {
       --bs-gap: 12px;
       --bs-per-row: {{ section.settings.products_per_row_mobile | default: 1.7 }};
+      /* Widens each card past its share of the row, so a little less of the
+         next one peeks in. Phones only — the desktop row has to stay exact. */
+      --bs-widen: 10px;
       --bs-radius: {{ section.settings.card_radius | default: 14 }}px;
       --bs-media-bg: {{ section.settings.media_bg | default: '#f1f1f1' }};
       --bs-btn-bg: {{ section.settings.button_bg | default: '#111111' }};
@@ -30,6 +33,7 @@
       #shopify-section-{{ section.id }} {
         --bs-gap: 18px;
         --bs-per-row: {{ section.settings.products_per_row_desktop | default: 4 }};
+        --bs-widen: 0px;
       }
     }
 
@@ -99,7 +103,7 @@
     #shopify-section-{{ section.id }} .bs__track::-webkit-scrollbar { display: none; }
 
     #shopify-section-{{ section.id }} .bs-card {
-      flex: 0 0 calc((100% - (var(--bs-gap) * (var(--bs-per-row) - 1))) / var(--bs-per-row));
+      flex: 0 0 calc(((100% - (var(--bs-gap) * (var(--bs-per-row) - 1))) / var(--bs-per-row)) + var(--bs-widen));
       scroll-snap-align: start;
       display: flex;
       flex-direction: column;
