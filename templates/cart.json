@@ -1,12 +1,3 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "sections": {
     "belt_tier_bar": {
@@ -15,22 +6,22 @@
         "step_1": {
           "type": "step",
           "settings": {
-            "price": "49,99€",
-            "image_url": "https://cdn.shopify.com/s/files/1/0677/2083/9299/files/single_set_1.jpg?v=1776238594"
+            "image_url": "https://cdn.shopify.com/s/files/1/0677/2083/9299/files/single_set_1.jpg?v=1776238594",
+            "price": "49,99€"
           }
         },
         "step_2": {
           "type": "step",
           "settings": {
-            "price": "34,99€",
-            "image_url": "https://cdn.shopify.com/s/files/1/0677/2083/9299/files/double_set.jpg?v=1776238592"
+            "image_url": "https://cdn.shopify.com/s/files/1/0677/2083/9299/files/double_set.jpg?v=1776238592",
+            "price": "34,99€"
           }
         },
         "step_3": {
           "type": "step",
           "settings": {
-            "price": "24,99€",
-            "image_url": "https://cdn.shopify.com/s/files/1/0677/2083/9299/files/triple_set_a555edc6-b5e9-4c42-84c9-b9ca4bb12b4d.jpg?v=1776238595"
+            "image_url": "https://cdn.shopify.com/s/files/1/0677/2083/9299/files/triple_set_a555edc6-b5e9-4c42-84c9-b9ca4bb12b4d.jpg?v=1776238595",
+            "price": "24,99€"
           }
         }
       },
@@ -45,8 +36,29 @@
         "link_text": "Premi qui",
         "link_url": "/pages/bundle?type=set-cintura-singola",
         "hide_when_empty": true,
+        "bg_color": "#f1f1f1",
+        "text_color": "#111111",
+        "accent_color": "#c8a24a",
+        "gold_1": "#bf953f",
+        "gold_2": "#fcf6ba",
+        "gold_3": "#b38728",
+        "idle_color": "#e0e0e0",
+        "highlight_color": "#e01b1b",
+        "animate": true,
+        "partial_fill": 72,
+        "chunks": 60,
+        "anim_duration": 1800,
         "circle_size_mobile": 56,
-        "circle_size_desktop": 88
+        "circle_size_desktop": 88,
+        "text_size_mobile": 15,
+        "text_size_desktop": 20,
+        "price_size_mobile": 15,
+        "price_size_desktop": 17,
+        "line_height": 3.5,
+        "ring_width": 3.5,
+        "max_width": 720,
+        "padding_mobile": 18,
+        "padding_desktop": 28
       }
     },
     "main": {
@@ -68,11 +80,11 @@
         "show_shipping_text": false,
         "show_accelerated_buttons": false,
         "show_shipping_estimator": false,
-        "show_help_link": false,
+        "show_help_link": true,
         "help_link_text": "Hai dubbi o domande?",
         "help_link_size": 14,
         "help_link": "",
-        "show_trust_banner": false,
+        "show_trust_banner": true,
         "trust_icon_1": "picto-return",
         "trust_text_1": "Resi Gratuiti",
         "trust_icon_2": "picto-shield",
@@ -99,132 +111,43 @@
     },
     "belt_suggestions": {
       "type": "cart-belt-suggestions",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "subheading": "Le più acquistate",
+        "button_text": "Aggiungi al Carrello",
+        "products_per_row_mobile": 2,
+        "products_per_row_desktop": 4,
+        "max_width": 1100,
+        "card_radius": 14,
+        "padding_mobile": 32,
+        "padding_desktop": 48,
+        "media_bg": "#f1f1f1",
+        "button_bg": "#111111",
+        "button_text_color": "#ffffff"
+      },
       "blocks": {
-        "combo_3": {
-          "type": "combination",
+        "collection_UmJdE7": {
+          "type": "collection",
           "settings": {
-            "buckle_slot": "luxury",
-            "strap_slot": "nera"
-          }
-        },
-        "combo_1": {
-          "type": "combination",
-          "settings": {
-            "buckle_slot": "classica",
-            "strap_slot": "nera"
-          }
-        },
-        "combo_2": {
-          "type": "combination",
-          "settings": {
-            "buckle_slot": "classica",
-            "strap_slot": "blu"
-          }
-        },
-        "combination_EKdktG": {
-          "type": "combination",
-          "settings": {
-            "buckle_slot": "gold",
-            "strap_slot": "neracoccodrillo"
-          }
-        },
-        "combo_4": {
-          "type": "combination",
-          "settings": {
-            "buckle_slot": "gold",
-            "strap_slot": "cammello"
-          }
-        },
-        "combination_4nQkqR": {
-          "type": "combination",
-          "settings": {
-            "buckle_slot": "silver",
-            "strap_slot": "blu"
-          }
-        },
-        "combination_LBEHdm": {
-          "type": "combination",
-          "settings": {
-            "buckle_slot": "classica",
-            "strap_slot": "marrone"
-          }
-        },
-        "combination_LfY9Xx": {
-          "type": "combination",
-          "settings": {
-            "buckle_slot": "luxury",
-            "strap_slot": "bianca"
-          }
-        },
-        "combination_yw4pgH": {
-          "type": "combination",
-          "settings": {
-            "buckle_slot": "silver",
-            "strap_slot": "marronecoccodrillo"
-          }
-        },
-        "combination_i8Uar4": {
-          "type": "combination",
-          "settings": {
-            "buckle_slot": "luxury",
-            "strap_slot": "grigia"
-          }
-        },
-        "combination_QkXPQG": {
-          "type": "combination",
-          "settings": {
-            "buckle_slot": "silver",
-            "strap_slot": "marrone"
-          }
-        },
-        "combination_mp98By": {
-          "type": "combination",
-          "settings": {
-            "buckle_slot": "gold",
-            "strap_slot": "beige"
+            "collection": "tutte-le-cinture-holess",
+            "products_count": 8,
+            "title": "Acquista altre cinture e risparmia",
+            "link_url": "",
+            "link_text": ""
           }
         }
       },
       "block_order": [
-        "combo_3",
-        "combo_1",
-        "combo_2",
-        "combination_EKdktG",
-        "combo_4",
-        "combination_4nQkqR",
-        "combination_LBEHdm",
-        "combination_LfY9Xx",
-        "combination_yw4pgH",
-        "combination_i8Uar4",
-        "combination_QkXPQG",
-        "combination_mp98By"
-      ],
-      "settings": {
-        "color_scheme": "",
-        "separate_section_with_border": false,
-        "title": "Acquista altre cinture e risparmia",
-        "subheading": "Le più acquistate",
-        "atc_button_text": "Aggiungi al Carrello",
-        "size_1_label": "130cm",
-        "size_2_label": "150cm",
-        "use_custom_section_spacing": false,
-        "mobile_section_spacing_top": 40,
-        "mobile_section_spacing_right": 20,
-        "mobile_section_spacing_bottom": 40,
-        "mobile_section_spacing_left": 20,
-        "desktop_section_spacing_top": 60,
-        "desktop_section_spacing_right": 0,
-        "desktop_section_spacing_bottom": 60,
-        "desktop_section_spacing_left": 0
-      }
+        "collection_UmJdE7"
+      ]
     },
     "featured_collections_Amdakg": {
       "type": "featured-collections",
       "blocks": {
-        "collection_yzYp37": {
+        "collection_UmJdE7": {
           "type": "collection",
           "settings": {
-            "collection": "scopri-tutti-i-bundle",
+            "collection": "tutte-le-cinture-holess",
             "products_count": 8,
             "title": "",
             "link_url": "",
@@ -233,12 +156,12 @@
         }
       },
       "block_order": [
-        "collection_yzYp37"
+        "collection_UmJdE7"
       ],
       "name": "t:sections.featured_collections.presets.featured_collections.name",
       "settings": {
         "color_scheme": "",
-        "separate_section_with_border": true,
+        "separate_section_with_border": false,
         "use_custom_section_spacing": false,
         "mobile_section_spacing_top": 0,
         "mobile_section_spacing_right": 0,
