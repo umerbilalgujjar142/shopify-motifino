@@ -667,14 +667,24 @@
    */
   (function () {
     /* Any section that must refresh with the cart tags itself with
-       data-cart-live-section — the tier bar above the cart does. */
-    var SECTIONS = '{{ section.id }}';
-    Array.prototype.forEach.call(document.querySelectorAll('[data-cart-live-section]'), function (el) {
-      var id = el.getAttribute('data-cart-live-section');
-      if (id && SECTIONS.split(',').indexOf(id) === -1) SECTIONS += ',' + id;
-    });
-    var SECTION_IDS = SECTIONS.split(',');
-    window.MOTIFINO_CART_SECTIONS = SECTIONS;
+       data-cart-live-section. Rescanned on every write, because sections
+       rendered below this one are not in the DOM yet when this script runs. */
+    function sectionIds() {
+      var ids = ['{{ section.id }}'];
+      Array.prototype.forEach.call(document.querySelectorAll('[data-cart-live-section]'), function (el) {
+        var id = el.getAttribute('data-cart-live-section');
+        if (id && ids.indexOf(id) === -1) ids.push(id);
+      });
+      window.MOTIFINO_CART_SECTIONS = ids.join(',');
+      return ids;
+    }
+
+    function sectionList() {
+      return sectionIds().join(',');
+    }
+
+    sectionIds();
+    document.addEventListener('DOMContentLoaded', sectionIds);
 
     /* This page repairs the card count itself, in place. Tells the observer in
        belt-combination.js to stand down so it doesn't read the cart again and
@@ -704,7 +714,7 @@
 
     function render(payload) {
       var B = window.MotifinoBelt;
-      if (!B || !B.renderSections(payload, SECTION_IDS)) {
+      if (!B || !B.renderSections(payload, sectionIds())) {
         window.location.reload();
         return;
       }
@@ -717,7 +727,7 @@
     function reconcileOnLoad(belts, cards) {
       if (belts === cards || !window.MotifinoBelt) return;
       document.body.classList.add('bb-cart-busy');
-      window.MotifinoBelt.syncPrivilegeCard(null, SECTIONS)
+      window.MotifinoBelt.syncPrivilegeCard(null, sectionList())
         .then(function (payload) {
           if (payload) { render(payload); return; }
           document.body.classList.remove('bb-cart-busy');
@@ -732,7 +742,7 @@
       return changeQuantity(lineKey, quantity)
         .then(function (cart) {
           var sync = window.MotifinoBelt
-            && window.MotifinoBelt.syncPrivilegeCard(cart, SECTIONS);
+            && window.MotifinoBelt.syncPrivilegeCard(cart, sectionList());
           if (!sync) return cart;
           return sync
             .then(function (after) { return after || cart; })
@@ -790,13 +800,13 @@
          published theme's section back. */
       var themeId = window.Shopify && window.Shopify.theme && window.Shopify.theme.id;
       var themeParam = themeId ? '&preview_theme_id=' + themeId : '';
-      return fetch('{{ routes.cart_url }}?sections=' + SECTIONS + themeParam + '&_=' + Date.now(), {
+      return fetch('{{ routes.cart_url }}?sections=' + sectionList() + themeParam + '&_=' + Date.now(), {
         headers: { 'Cache-Control': 'no-cache' }
       })
         .then(function (r) { return r.ok ? r.json() : Promise.reject(new Error('section_fetch_failed')); })
         .then(function (sections) {
           var payload = { sections: sections };
-          if (!window.MotifinoBelt || !window.MotifinoBelt.renderSections(payload, SECTION_IDS)) {
+          if (!window.MotifinoBelt || !window.MotifinoBelt.renderSections(payload, sectionIds())) {
             document.body.classList.remove('bb-cart-busy');
             return;
           }

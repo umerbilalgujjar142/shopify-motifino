@@ -1,8 +1,25 @@
+{%- liquid
+  assign belts_in_cart = 0
+  for item in cart.items
+    if item.product.type == 'Combinazione cintura'
+      assign belts_in_cart = belts_in_cart | plus: item.quantity
+    endif
+  endfor
+
+  # DiscountOS prices the belts; this mirrors its ladder so the card shows what
+  # the next belt will actually cost.
+  assign next_off = 0
+  if belts_in_cart == 1
+    assign next_off = section.settings.second_belt_off | default: 0
+  elsif belts_in_cart > 1
+    assign next_off = section.settings.third_belt_off | default: 0
+  endif
+-%}
 {%- if section.blocks.size > 0 -%}
   <style>
     #shopify-section-{{ section.id }} {
-      --bs-gap: 14px;
-      --bs-per-row: {{ section.settings.products_per_row_mobile | default: 2 }};
+      --bs-gap: 12px;
+      --bs-per-row: {{ section.settings.products_per_row_mobile | default: 1.7 }};
       --bs-radius: {{ section.settings.card_radius | default: 14 }}px;
       --bs-media-bg: {{ section.settings.media_bg | default: '#f1f1f1' }};
       --bs-btn-bg: {{ section.settings.button_bg | default: '#111111' }};
@@ -69,6 +86,16 @@
       padding-block: 2px;
     }
 
+    /* Full-bleed on phones: cards scroll under the screen edge instead of being
+       clipped by the section gutter, but the first and last still sit 16px in. */
+    @media screen and (max-width: 749px) {
+      #shopify-section-{{ section.id }} .bs__track {
+        margin-inline: -16px;
+        padding-inline: 16px;
+        scroll-padding-inline: 16px;
+      }
+    }
+
     #shopify-section-{{ section.id }} .bs__track::-webkit-scrollbar { display: none; }
 
     #shopify-section-{{ section.id }} .bs-card {
@@ -76,15 +103,14 @@
       scroll-snap-align: start;
       display: flex;
       flex-direction: column;
-      border: 1px solid rgba(0, 0, 0, 0.07);
       border-radius: var(--bs-radius);
       overflow: hidden;
-      background: #fff;
+      background: var(--bs-media-bg);
     }
 
     #shopify-section-{{ section.id }} .bs-card__media {
       position: relative;
-      aspect-ratio: 1 / 1;
+      aspect-ratio: 6 / 5;
       background: var(--bs-media-bg);
     }
 
@@ -109,7 +135,7 @@
       height: 36px;
       padding: 0;
       border: 2px solid #fff;
-      border-radius: 10px;
+      border-radius: 4px;
       overflow: hidden;
       background: #fff;
       cursor: pointer;
@@ -123,7 +149,7 @@
       box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.45), 0 4px 12px rgba(0, 0, 0, 0.25);
     }
 
-    #shopify-section-{{ section.id }} .bs-card__swap img { border-radius: 6px; }
+    #shopify-section-{{ section.id }} .bs-card__swap img { border-radius: 2px; }
 
     #shopify-section-{{ section.id }} .bs-card__swap img {
       display: block;
@@ -133,12 +159,9 @@
     }
 
     #shopify-section-{{ section.id }} .bs-card__pills {
-      position: absolute;
-      left: 10px;
-      bottom: 10px;
       display: flex;
       gap: 6px;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
     }
 
     #shopify-section-{{ section.id }} .bs-pill {
@@ -177,20 +200,33 @@
 
     #shopify-section-{{ section.id }} .bs-card__price {
       margin: 0;
+      display: flex;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 7px;
       font-size: 16px;
       font-weight: 700;
       font-variant-numeric: tabular-nums;
     }
 
+    #shopify-section-{{ section.id }} .bs-card__was {
+      font-size: 14px;
+      font-weight: 600;
+      color: {{ section.settings.compare_color | default: '#e02b2b' }};
+      text-decoration: line-through;
+    }
+
+    #shopify-section-{{ section.id }} .bs-card__was[hidden] { display: none; }
+
     #shopify-section-{{ section.id }} .bs-card__atc {
       appearance: none;
       border: 0;
       width: 100%;
-      padding: 11px 8px;
+      padding: 12px 10px;
       border-radius: 999px;
       background: var(--bs-btn-bg);
       color: var(--bs-btn-ink);
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 500;
       line-height: 1.3;
       white-space: nowrap;
@@ -208,25 +244,12 @@
     #shopify-section-{{ section.id }} .bs-card__atc:hover { opacity: 0.85; }
     #shopify-section-{{ section.id }} .bs-card__atc[disabled] { opacity: 0.55; cursor: default; }
 
-    /* At 320px the card is ~137px wide, so everything inside has to give a little. */
     @media screen and (max-width: 480px) {
-      #shopify-section-{{ section.id }} .bs-card__body { padding: 10px 8px 12px; gap: 8px; }
-
-      #shopify-section-{{ section.id }} .bs-card__atc {
-        padding: 10px 6px;
-        font-size: clamp(10px, 3.4vw, 12px);
-      }
-
+      #shopify-section-{{ section.id }} .bs-card__body { padding: 10px 10px 12px; gap: 9px; }
+      #shopify-section-{{ section.id }} .bs-card__atc { padding: 11px 8px; font-size: 12px; }
       #shopify-section-{{ section.id }} .bs-card__price { font-size: 15px; }
-
-      #shopify-section-{{ section.id }} .bs-card__pills {
-        left: 8px;
-        bottom: 8px;
-        gap: 5px;
-        flex-wrap: nowrap;
-      }
-
-      #shopify-section-{{ section.id }} .bs-pill { padding: 4px 8px; font-size: 11px; }
+      #shopify-section-{{ section.id }} .bs-card__was { font-size: 13px; }
+      #shopify-section-{{ section.id }} .bs-pill { padding: 4px 9px; font-size: 11px; }
 
       #shopify-section-{{ section.id }} .bs-card__swap {
         right: 8px;
@@ -238,7 +261,8 @@
 
     #shopify-section-{{ section.id }} .bs__arrow {
       position: absolute;
-      top: 38%;
+      top: 50%;
+      transform: translateY(-50%);
       z-index: 2;
       width: 34px;
       height: 34px;
@@ -254,7 +278,7 @@
 
     #shopify-section-{{ section.id }} .bs__arrow--prev { left: -6px; }
     #shopify-section-{{ section.id }} .bs__arrow--next { right: -6px; }
-    #shopify-section-{{ section.id }} .bs__arrow[disabled] { opacity: 0; pointer-events: none; }
+    #shopify-section-{{ section.id }} .bs__arrow[disabled] { opacity: 0.45; pointer-events: none; }
     #shopify-section-{{ section.id }} .bs__arrow svg { width: 15px; height: 15px; }
 
     #shopify-section-{{ section.id }} .bs__viewall {
@@ -263,7 +287,7 @@
     }
   </style>
 
-  <div class="bs color-scheme color-scheme--{{ section.settings.color_scheme.id }}">
+  <div class="bs color-scheme color-scheme--{{ section.settings.color_scheme.id }}" data-cart-live-section="{{ section.id }}">
     <div class="bs__inner">
       {%- if section.settings.subheading != blank -%}
         <p class="bs__eyebrow">{{ section.settings.subheading }}</p>
@@ -311,23 +335,35 @@
                     </button>
                   {%- endif -%}
 
+                </div>
+
+                <div class="bs-card__body">
                   {%- if product.variants.size > 1 -%}
                     <div class="bs-card__pills">
                       {%- for variant in product.variants -%}
+                        {%- assign v_now = variant.price | minus: next_off -%}
+                        {%- if v_now < 0 %}{% assign v_now = 0 %}{% endif -%}
                         <button
                           type="button"
                           class="bs-pill{% if variant.id == first_variant.id %} is-selected{% endif %}"
                           data-variant="{{ variant.id }}"
-                          data-price="{{ variant.price | money }}"
+                          data-price="{{ v_now | money }}"
+                          {% if next_off > 0 %}data-compare="{{ variant.price | money }}"{% endif %}
                           {% unless variant.available %}disabled{% endunless %}
                         >{{ variant.title }}</button>
                       {%- endfor -%}
                     </div>
                   {%- endif -%}
-                </div>
 
-                <div class="bs-card__body">
-                  <p class="bs-card__price" data-price>{{ first_variant.price | money }}</p>
+                  {%- assign now_price = first_variant.price | minus: next_off -%}
+                  {%- if now_price < 0 %}{% assign now_price = 0 %}{% endif -%}
+
+                  <p class="bs-card__price">
+                    <span data-price>{{ now_price | money }}</span>
+                    {%- if next_off > 0 -%}
+                      <s class="bs-card__was">{{ first_variant.price | money }}</s>
+                    {%- endif -%}
+                  </p>
                   <button
                     type="button"
                     class="bs-card__atc"
@@ -359,53 +395,102 @@
 
   <script>
     (function () {
-      var root = document.getElementById('shopify-section-{{ section.id }}');
-      if (!root) return;
+      var SECTION_ID = '{{ section.id }}';
+      var HOST = 'shopify-section-' + SECTION_ID;
 
-      var track = root.querySelector('[data-track]');
-      var prev = root.querySelector('[data-prev]');
-      var next = root.querySelector('[data-next]');
+      /* Bound to document, not to the section: a cart write replaces the
+         section's innerHTML and would take every element listener with it. */
+      window.__bsBound = window.__bsBound || {};
+      if (window.__bsBound[HOST]) return;
+      window.__bsBound[HOST] = true;
 
-      function step() {
-        var card = track && track.querySelector('.bs-card');
-        return card ? card.getBoundingClientRect().width + 14 : 240;
+      function inSection(el) {
+        return el && el.closest('#' + HOST);
       }
 
-      function syncArrows() {
+      function trackOf(el) {
+        var carousel = el.closest('.bs__carousel');
+        return carousel ? carousel.querySelector('[data-track]') : null;
+      }
+
+      function step(track) {
+        var card = track.querySelector('.bs-card');
+        if (!card) return 240;
+        var gap = parseFloat(getComputedStyle(track).columnGap) || 12;
+        return card.getBoundingClientRect().width + gap;
+      }
+
+      function syncArrows(track) {
         if (!track) return;
+        var carousel = track.closest('.bs__carousel');
+        if (!carousel) return;
+        var prev = carousel.querySelector('[data-prev]');
+        var next = carousel.querySelector('[data-next]');
         var max = track.scrollWidth - track.clientWidth - 2;
         if (prev) prev.disabled = track.scrollLeft <= 2;
         if (next) next.disabled = track.scrollLeft >= max;
       }
 
-      if (track) {
-        track.addEventListener('scroll', syncArrows, { passive: true });
-        window.addEventListener('resize', syncArrows);
-        syncArrows();
+      function syncAll() {
+        var host = document.getElementById(HOST);
+        if (!host) return;
+        Array.prototype.forEach.call(host.querySelectorAll('[data-track]'), syncArrows);
       }
-      if (prev) prev.addEventListener('click', function () { track.scrollBy({ left: -step(), behavior: 'smooth' }); });
-      if (next) next.addEventListener('click', function () { track.scrollBy({ left: step(), behavior: 'smooth' }); });
 
-      root.addEventListener('click', function (event) {
-        var pill = event.target.closest('.bs-pill');
+      /* scroll does not bubble, so catch it on the way down. */
+      document.addEventListener('scroll', function (event) {
+        var track = event.target;
+        if (track && track.nodeType === 1 && track.matches('[data-track]') && inSection(track)) syncArrows(track);
+      }, true);
+
+      window.addEventListener('resize', syncAll);
+      document.addEventListener('cart:change', syncAll);
+      document.addEventListener('cart:refresh', syncAll);
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', syncAll);
+      } else {
+        syncAll();
+      }
+
+      document.addEventListener('click', function (event) {
+        var target = event.target;
+        if (!target || target.nodeType !== 1 || !inSection(target)) return;
+
+        var arrow = target.closest('[data-prev], [data-next]');
+        if (arrow) {
+          var track = trackOf(arrow);
+          if (track) {
+            var dir = arrow.hasAttribute('data-prev') ? -1 : 1;
+            track.scrollBy({ left: dir * step(track), behavior: 'smooth' });
+          }
+          return;
+        }
+
+        var pill = target.closest('.bs-pill');
         if (pill) {
           var card = pill.closest('.bs-card');
           Array.prototype.forEach.call(card.querySelectorAll('.bs-pill'), function (el) { el.classList.remove('is-selected'); });
           pill.classList.add('is-selected');
           var price = card.querySelector('[data-price]');
           if (price && pill.getAttribute('data-price')) price.textContent = pill.getAttribute('data-price');
+          var was = card.querySelector('.bs-card__was');
+          if (was) {
+            var compare = pill.getAttribute('data-compare');
+            was.textContent = compare || '';
+            was.hidden = !compare;
+          }
           var atc = card.querySelector('[data-atc]');
           if (atc) atc.setAttribute('data-variant', pill.getAttribute('data-variant'));
           return;
         }
 
-        var swap = event.target.closest('[data-swap]');
+        var swap = target.closest('[data-swap]');
         if (swap) {
           swapImage(swap);
           return;
         }
 
-        var button = event.target.closest('[data-atc]');
+        var button = target.closest('[data-atc]');
         if (button) addBelt(button);
       });
 
@@ -426,13 +511,20 @@
         thumb.setAttribute('src', thumbNext);
       }
 
+      /* This section prices itself off the cart, so it has to re-render too. */
+      function sectionList() {
+        var ids = (window.MOTIFINO_CART_SECTIONS || '').split(',').filter(Boolean);
+        if (ids.indexOf(SECTION_ID) === -1) ids.push(SECTION_ID);
+        return ids;
+      }
+
       /* One combination product plus its free Privilege Card, same as the builder. */
       function addBelt(button) {
         var variantId = Number(button.getAttribute('data-variant'));
         if (!variantId || button.disabled) return;
 
         var B = window.MotifinoBelt;
-        var sections = window.MOTIFINO_CART_SECTIONS || '';
+        var ids = sectionList();
         var label = button.getAttribute('data-label') || button.textContent;
 
         button.disabled = true;
@@ -447,13 +539,11 @@
           .then(function (id) {
             var items = [{ id: variantId, quantity: 1 }];
             if (id) items.push({ id: Number(id), quantity: 1 });
-            var body = { items: items };
-            if (sections) body.sections = sections;
 
             return fetch('{{ routes.cart_add_url }}.js', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-              body: JSON.stringify(body),
+              body: JSON.stringify({ items: items, sections: ids.join(',') }),
             });
           })
           .then(function (response) {
@@ -462,13 +552,12 @@
           })
           .then(function (payload) {
             var rendered = false;
-            if (B && B.renderSections && sections) {
-              rendered = B.renderSections(payload, sections.split(','));
-            }
+            if (B && B.renderSections) rendered = B.renderSections(payload, ids);
             if (!rendered) window.location.reload();
           })
           .catch(function () { window.location.reload(); })
           .then(function () {
+            if (!button.isConnected) return;
             button.disabled = false;
             button.textContent = label;
           });
@@ -512,11 +601,12 @@
     {
       "type": "range",
       "id": "products_per_row_mobile",
-      "label": "Cards per row (mobile)",
+      "label": "Cards in view (mobile)",
+      "info": "1.7 shows one full card and part of the next.",
       "min": 1,
       "max": 3,
-      "step": 1,
-      "default": 2
+      "step": 0.1,
+      "default": 1.7
     },
     {
       "type": "range",
@@ -569,6 +659,30 @@
     },
     {
       "type": "header",
+      "content": "Bundle pricing"
+    },
+    {
+      "type": "range",
+      "id": "second_belt_off",
+      "label": "2nd belt discount",
+      "info": "Must match the DiscountOS rule. In cents: 1500 = €15,00 off. Set to 0 to show plain prices.",
+      "min": 0,
+      "max": 5000,
+      "step": 50,
+      "default": 1500
+    },
+    {
+      "type": "range",
+      "id": "third_belt_off",
+      "label": "3rd belt and later, discount",
+      "info": "In cents: 2500 = €25,00 off.",
+      "min": 0,
+      "max": 5000,
+      "step": 50,
+      "default": 2500
+    },
+    {
+      "type": "header",
       "content": "Colours"
     },
     {
@@ -588,6 +702,12 @@
       "id": "button_text_color",
       "label": "Button text",
       "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "compare_color",
+      "label": "Crossed-out price",
+      "default": "#e02b2b"
     }
   ],
   "blocks": [

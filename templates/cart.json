@@ -115,7 +115,7 @@
         "color_scheme": "scheme-1",
         "subheading": "Le più acquistate",
         "button_text": "Aggiungi al Carrello",
-        "products_per_row_mobile": 2,
+        "products_per_row_mobile": 1.7,
         "products_per_row_desktop": 4,
         "max_width": 1100,
         "card_radius": 14,
@@ -123,7 +123,10 @@
         "padding_desktop": 48,
         "media_bg": "#f1f1f1",
         "button_bg": "#111111",
-        "button_text_color": "#ffffff"
+        "button_text_color": "#ffffff",
+        "compare_color": "#e02b2b",
+        "second_belt_off": 1500,
+        "third_belt_off": 2500
       },
       "blocks": {
         "collection_UmJdE7": {
