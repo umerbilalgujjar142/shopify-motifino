@@ -8,6 +8,18 @@
   <script>window.MOTIFINO_PRIVILEGE_CARD_VARIANT_ID = {{ bb_card_variant.id }};</script>
 {%- endif -%}
 
+{%- comment -%}
+  On a belt product page the free card can ride along in the same add, so the
+  cart is already correct on arrival and needs no read-back.
+{%- endcomment -%}
+{%- if bb_product and bb_product.type == 'Combinazione cintura' -%}
+  <script>
+    window.MOTIFINO_BELT_VARIANTS = [
+      {%- for v in bb_product.variants -%}{{ v.id }}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}
+    ];
+  </script>
+{%- endif -%}
+
 {{ 'belt-combination.js' | asset_url | script_tag }}
 
 <script>
@@ -80,18 +92,53 @@
       });
       buttons.forEach(function (b) { b.setAttribute('aria-busy', 'true'); });
 
-      fetch('{{ routes.cart_add_url }}.js', {
-        method: 'POST',
-        body: new FormData(form),
-        headers: { 'X-Requested-With': 'XMLHttpRequest' }
-      })
+      var variantId = parseInt(idField.value, 10);
+      var belts = (window.MOTIFINO_BELT_VARIANTS || []).indexOf(variantId) !== -1;
+      var cardId = Number(window.MOTIFINO_PRIVILEGE_CARD_VARIANT_ID) || 0;
+
+      /* Marks the write as ours: belt-combination.js's fetch observer would
+         otherwise read the cart back and correct a card that is already right. */
+      var headers = { 'X-Requested-With': 'XMLHttpRequest', 'X-Motifino-Cart-Sync': '1' };
+      var request;
+
+      if (belts && cardId) {
+        /* Belt and its free card in one write — no cart read, no second post. */
+        var qty = parseInt((form.querySelector('[name="quantity"]') || {}).value, 10) || 1;
+        var item = { id: variantId, quantity: qty };
+        var props = {};
+        Array.prototype.forEach.call(form.querySelectorAll('[name^="properties["]'), function (el) {
+          if (el.type === 'checkbox' && !el.checked) return;
+          if (!el.value) return;
+          props[el.name.slice(11, -1)] = el.value;
+        });
+        if (Object.keys(props).length) item.properties = props;
+
+        headers['Content-Type'] = 'application/json';
+        request = fetch('{{ routes.cart_add_url }}.js', {
+          method: 'POST',
+          headers: headers,
+          body: JSON.stringify({ items: [item, { id: cardId, quantity: qty }] }),
+        });
+      } else {
+        request = fetch('{{ routes.cart_add_url }}.js', {
+          method: 'POST',
+          body: new FormData(form),
+          headers: headers,
+        });
+      }
+
+      request
         .then(function (r) {
           return r.json().then(function (body) {
             if (!r.ok) throw body;
             return body;
           });
         })
-        .then(function () { return window.MotifinoBelt.syncPrivilegeCard(); })
+        .then(function () {
+          /* Anything but a belt still needs the count reconciled. */
+          if (belts && cardId) return null;
+          return window.MotifinoBelt.syncPrivilegeCard();
+        })
         .then(function () { window.location.href = '{{ routes.cart_url }}'; })
         .catch(function (err) {
           buttons.forEach(function (b) { b.removeAttribute('aria-busy'); });

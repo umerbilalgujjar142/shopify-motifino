@@ -160,7 +160,14 @@
       object-fit: cover;
     }
 
+    /* Straddles the bottom edge of the image, half over the photo and half
+       over the body, the way the original card sits. */
     #shopify-section-{{ section.id }} .bs-card__pills {
+      position: absolute;
+      left: 12px;
+      bottom: 0;
+      transform: translateY(50%);
+      z-index: 1;
       display: flex;
       gap: 6px;
       flex-wrap: nowrap;
@@ -196,7 +203,7 @@
       display: flex;
       flex-direction: column;
       gap: 10px;
-      padding: 12px 12px 14px;
+      padding: 26px 12px 14px;
       margin-top: auto;
     }
 
@@ -258,7 +265,8 @@
     #shopify-section-{{ section.id }} .bs-card__atc[disabled] { opacity: 0.55; cursor: default; }
 
     @media screen and (max-width: 480px) {
-      #shopify-section-{{ section.id }} .bs-card__body { padding: 10px 10px 12px; gap: 9px; }
+      #shopify-section-{{ section.id }} .bs-card__body { padding: 23px 10px 12px; gap: 9px; }
+      #shopify-section-{{ section.id }} .bs-card__pills { left: 10px; }
       #shopify-section-{{ section.id }} .bs-card__atc { padding: 11px 8px; font-size: 12px; }
       #shopify-section-{{ section.id }} .bs-card__price { font-size: 15px; }
       #shopify-section-{{ section.id }} .bs-card__was { font-size: 13px; }
@@ -348,9 +356,6 @@
                     </button>
                   {%- endif -%}
 
-                </div>
-
-                <div class="bs-card__body">
                   {%- if product.variants.size > 1 -%}
                     <div class="bs-card__pills">
                       {%- for variant in product.variants -%}
@@ -367,7 +372,9 @@
                       {%- endfor -%}
                     </div>
                   {%- endif -%}
+                </div>
 
+                <div class="bs-card__body">
                   {%- assign now_price = first_variant.price | minus: next_off -%}
                   {%- if now_price < 0 %}{% assign now_price = 0 %}{% endif -%}
 
@@ -397,10 +404,10 @@
       </div>
 
       {%- assign first_block = section.blocks.first -%}
-      {%- if first_block.settings.link_text != blank -%}
+      {%- if section.settings.link_text != blank -%}
         <div class="bs__viewall">
-          {%- assign view_all_url = first_block.settings.link_url | default: first_block.settings.collection.url | default: '#' -%}
-          {%- render 'button', href: view_all_url, content: first_block.settings.link_text -%}
+          {%- assign view_all_url = section.settings.link_url | default: first_block.settings.collection.url | default: '#' -%}
+          {%- render 'button', href: view_all_url, content: section.settings.link_text, style: section.settings.link_style -%}
         </div>
       {%- endif -%}
     </div>
@@ -680,6 +687,43 @@
     },
     {
       "type": "header",
+      "content": "View all button"
+    },
+    {
+      "type": "text",
+      "id": "link_text",
+      "label": "Button text",
+      "info": "Leave empty to hide the button.",
+      "default": "View all"
+    },
+    {
+      "type": "url",
+      "id": "link_url",
+      "label": "Link",
+      "info": "Defaults to the collection above when empty."
+    },
+    {
+      "type": "select",
+      "id": "link_style",
+      "label": "t:global.text.button_style",
+      "options": [
+        {
+          "value": "outline",
+          "label": "t:global.text.link_style_options.outline"
+        },
+        {
+          "value": "solid",
+          "label": "t:global.text.link_style_options.solid"
+        },
+        {
+          "value": "link",
+          "label": "t:global.text.link_style_options.link"
+        }
+      ],
+      "default": "solid"
+    },
+    {
+      "type": "header",
       "content": "Bundle pricing"
     },
     {
@@ -755,17 +799,6 @@
           "id": "title",
           "label": "Heading",
           "default": "Acquista altre cinture e risparmia"
-        },
-        {
-          "type": "url",
-          "id": "link_url",
-          "label": "Link"
-        },
-        {
-          "type": "text",
-          "id": "link_text",
-          "label": "Link text",
-          "default": "View all"
         }
       ]
     }

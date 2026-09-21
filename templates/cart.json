@@ -111,6 +111,19 @@
     },
     "belt_suggestions": {
       "type": "cart-belt-suggestions",
+      "blocks": {
+        "collection_UmJdE7": {
+          "type": "collection",
+          "settings": {
+            "collection": "tutte-le-cinture-holess",
+            "products_count": 8,
+            "title": "Acquista altre cinture e risparmia"
+          }
+        }
+      },
+      "block_order": [
+        "collection_UmJdE7"
+      ],
       "settings": {
         "color_scheme": "scheme-1",
         "subheading": "Le più acquistate",
@@ -121,67 +134,15 @@
         "card_radius": 14,
         "padding_mobile": 32,
         "padding_desktop": 48,
+        "link_text": "View all",
+        "link_url": "",
+        "link_style": "solid",
+        "second_belt_off": 1500,
+        "third_belt_off": 2500,
         "media_bg": "#f1f1f1",
         "button_bg": "#111111",
         "button_text_color": "#ffffff",
-        "compare_color": "#e02b2b",
-        "second_belt_off": 1500,
-        "third_belt_off": 2500
-      },
-      "blocks": {
-        "collection_UmJdE7": {
-          "type": "collection",
-          "settings": {
-            "collection": "tutte-le-cinture-holess",
-            "products_count": 8,
-            "title": "Acquista altre cinture e risparmia",
-            "link_url": "",
-            "link_text": "View all"
-          }
-        }
-      },
-      "block_order": [
-        "collection_UmJdE7"
-      ]
-    },
-    "featured_collections_Amdakg": {
-      "type": "featured-collections",
-      "blocks": {
-        "collection_UmJdE7": {
-          "type": "collection",
-          "settings": {
-            "collection": "tutte-le-cinture-holess",
-            "products_count": 8,
-            "title": "",
-            "link_url": "",
-            "link_text": "View all"
-          }
-        }
-      },
-      "block_order": [
-        "collection_UmJdE7"
-      ],
-      "name": "t:sections.featured_collections.presets.featured_collections.name",
-      "settings": {
-        "color_scheme": "",
-        "separate_section_with_border": false,
-        "use_custom_section_spacing": false,
-        "mobile_section_spacing_top": 0,
-        "mobile_section_spacing_right": 0,
-        "mobile_section_spacing_bottom": 0,
-        "mobile_section_spacing_left": 0,
-        "desktop_section_spacing_top": 0,
-        "desktop_section_spacing_right": 0,
-        "desktop_section_spacing_bottom": 0,
-        "desktop_section_spacing_left": 0,
-        "hide_product_information": false,
-        "stack_products": false,
-        "products_per_row_mobile": "2",
-        "products_per_row_desktop": 4,
-        "horizontal_spacing_factor": 1,
-        "vertical_spacing_factor": 1,
-        "subheading": "Featured collection",
-        "hide_collection_title": false
+        "compare_color": "#e02b2b"
       }
     },
     "faq_y9kK7f": {
@@ -946,7 +907,6 @@
     "belt_tier_bar",
     "main",
     "belt_suggestions",
-    "featured_collections_Amdakg",
     "faq_y9kK7f",
     "text_with_icons_4Jdw7t",
     "media_grid_gzfeUE"

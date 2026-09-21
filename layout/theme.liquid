@@ -161,7 +161,7 @@
     {%- if request.page_type != 'password' -%}
       {%- sections 'header-group' -%}
       {%- sections 'overlay-group' -%}
-      {%- render 'belt-card-sync' -%}
+      {%- render 'belt-card-sync', bb_product: product -%}
     {%- endif -%}
 
     <main id="main" class="anchor">
