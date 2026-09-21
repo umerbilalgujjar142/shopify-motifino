@@ -484,7 +484,7 @@
           var card = pill.closest('.bs-card');
           Array.prototype.forEach.call(card.querySelectorAll('.bs-pill'), function (el) { el.classList.remove('is-selected'); });
           pill.classList.add('is-selected');
-          var price = card.querySelector('[data-price]');
+          var price = card.querySelector('.bs-card__price [data-price]');
           if (price && pill.getAttribute('data-price')) price.textContent = pill.getAttribute('data-price');
           var was = card.querySelector('.bs-card__was');
           if (was) {
@@ -764,7 +764,8 @@
         {
           "type": "text",
           "id": "link_text",
-          "label": "Link text"
+          "label": "Link text",
+          "default": "View all"
         }
       ]
     }

@@ -1,4 +1,10 @@
-{%- if section.blocks.size > 0 -%}
+{%- liquid
+  assign show_bar = true
+  if section.settings.show_on_cart == false and request.page_type == 'cart' or section.settings.show_on_cart == false and template.name == 'cart'
+    assign show_bar = false
+  endif
+-%}
+{%- if section.blocks.size > 0 and show_bar -%}
   <style>
     :root {
       --announcement-bar-is-sticky: {% if section.settings.enable_sticky %}1{% else %}0{% endif %};
@@ -109,6 +115,12 @@
       "type": "checkbox",
       "id": "enable_sticky",
       "label": "t:sections.announcement_bar.enable_sticky_bar"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_on_cart",
+      "label": "Show on cart page",
+      "default": true
     },
     {
       "type": "checkbox",
