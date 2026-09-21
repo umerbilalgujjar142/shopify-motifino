@@ -59,6 +59,19 @@
   .line-item__quantity { margin-block-start: 0.2rem; }
   body.bb-cart-busy .line-item__quantity { pointer-events: none; opacity: 0.45; }
 
+  /* The line being changed shows the spinner instead of being dimmed. */
+  body.bb-cart-busy .line-item__quantity.bb-qty-busy { opacity: 1; }
+  .line-item__quantity.bb-qty-busy { position: relative; }
+  .line-item__quantity.bb-qty-busy > *:not(.bb-qty-spinner) { visibility: hidden; }
+  .bb-qty-spinner {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: currentColor;
+  }
+  .bb-qty-spinner svg { animation: bb-chk-spin 0.7s linear infinite; }
+
   /* One layout on every screen: price row under the title, stepper under it,
      and no separate total column. */
   #shopify-section-{{ section.id }} .order-summary__header,
@@ -759,6 +772,23 @@
         });
     }
 
+    var QTY_SPINNER = '<span class="bb-qty-spinner"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></span>';
+
+    function markQtyBusy(el) {
+      var wrap = el && el.closest('.line-item__quantity');
+      if (!wrap || wrap.classList.contains('bb-qty-busy')) return null;
+      wrap.classList.add('bb-qty-busy');
+      wrap.insertAdjacentHTML('beforeend', QTY_SPINNER);
+      return wrap;
+    }
+
+    function clearQtyBusy(wrap) {
+      if (!wrap) return;
+      wrap.classList.remove('bb-qty-busy');
+      var spinner = wrap.querySelector('.bb-qty-spinner');
+      if (spinner) spinner.remove();
+    }
+
     /* Theme stepper links (- and + are /cart/change?id=...&quantity=... anchors) (/cart/change?id=...&quantity=0) */
     document.addEventListener('click', function (e) {
       var link = e.target.closest('a[href*="/cart/change"]');
@@ -771,8 +801,12 @@
       e.preventDefault();
       e.stopImmediatePropagation();
       document.body.classList.add('bb-cart-busy');
+      var busy = markQtyBusy(link);
       applyChange(id, qty)
-        .catch(function () { document.body.classList.remove('bb-cart-busy'); });
+        .catch(function () {
+          document.body.classList.remove('bb-cart-busy');
+          clearQtyBusy(busy);
+        });
     }, { capture: true });
 
     /* Theme quantity inputs */
@@ -785,8 +819,12 @@
       e.preventDefault();
       e.stopImmediatePropagation();
       document.body.classList.add('bb-cart-busy');
+      var busyInput = markQtyBusy(input);
       applyChange(input.dataset.lineKey, qty)
-        .catch(function () { document.body.classList.remove('bb-cart-busy'); });
+        .catch(function () {
+          document.body.classList.remove('bb-cart-busy');
+          clearQtyBusy(busyInput);
+        });
     }, { capture: true });
 
     /* A cached copy of /cart can be shown long after it was rendered — old markup
