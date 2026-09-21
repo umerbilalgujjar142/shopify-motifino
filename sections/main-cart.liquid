@@ -59,10 +59,10 @@
   .line-item__quantity { margin-block-start: 0.2rem; }
   body.bb-cart-busy .line-item__quantity { pointer-events: none; opacity: 0.45; }
 
-  /* The line being changed shows the spinner instead of being dimmed. */
-  body.bb-cart-busy .line-item__quantity.bb-qty-busy { opacity: 1; }
-  .line-item__quantity.bb-qty-busy { position: relative; }
-  .line-item__quantity.bb-qty-busy > *:not(.bb-qty-spinner) { visibility: hidden; }
+  /* The control that was clicked spins in place; its line stays undimmed. */
+  body.bb-cart-busy .line-item__quantity.bb-qty-active { opacity: 1; }
+  .bb-qty-spin { position: relative; }
+  .bb-qty-spin > *:not(.bb-qty-spinner) { visibility: hidden; }
   .bb-qty-spinner {
     position: absolute;
     inset: 0;
@@ -768,25 +768,31 @@
           /* The card was already in step, so nothing rendered the section — ask
              for it on its own rather than reloading the page. */
           if (payload && payload.sections) { render(payload); return; }
-          return refreshSection();
+          return refreshSection({ reloadOnFail: true });
         });
     }
 
-    var QTY_SPINNER = '<span class="bb-qty-spinner"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></span>';
+    var QTY_SPINNER = '<span class="bb-qty-spinner"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></span>';
 
+    /* Spins inside the control that was actually clicked — the minus, the plus,
+       or the number box — so the feedback lands where the finger was. */
     function markQtyBusy(el) {
-      var wrap = el && el.closest('.line-item__quantity');
-      if (!wrap || wrap.classList.contains('bb-qty-busy')) return null;
-      wrap.classList.add('bb-qty-busy');
-      wrap.insertAdjacentHTML('beforeend', QTY_SPINNER);
-      return wrap;
+      var host = el && (el.closest('.quantity-selector__button') || el.closest('.quantity-selector__input-wrapper'));
+      if (!host || host.classList.contains('bb-qty-spin')) return null;
+      host.classList.add('bb-qty-spin');
+      host.insertAdjacentHTML('beforeend', QTY_SPINNER);
+      var line = host.closest('.line-item__quantity');
+      if (line) line.classList.add('bb-qty-active');
+      return host;
     }
 
-    function clearQtyBusy(wrap) {
-      if (!wrap) return;
-      wrap.classList.remove('bb-qty-busy');
-      var spinner = wrap.querySelector('.bb-qty-spinner');
+    function clearQtyBusy(host) {
+      if (!host) return;
+      host.classList.remove('bb-qty-spin');
+      var spinner = host.querySelector('.bb-qty-spinner');
       if (spinner) spinner.remove();
+      var line = host.closest('.line-item__quantity');
+      if (line) line.classList.remove('bb-qty-active');
     }
 
     /* Theme stepper links (- and + are /cart/change?id=...&quantity=... anchors) (/cart/change?id=...&quantity=0) */
@@ -832,26 +838,37 @@
        instead, so the page repairs itself. */
     var RENDERED_AT = {{ 'now' | date: '%s' }};
 
-    function refreshSection() {
+    /* `opts.ids` overrides the section list, `opts.reloadOnFail` is set when the
+       visitor just changed something: the page must never be left showing the
+       old quantity, so a second failure reloads rather than doing nothing. */
+    function refreshSection(opts) {
+      opts = opts || {};
+      var ids = opts.ids || sectionIds();
       document.body.classList.add('bb-cart-busy');
       /* Pinned to the theme that rendered this page, so a preview never gets the
          published theme's section back. */
       var themeId = window.Shopify && window.Shopify.theme && window.Shopify.theme.id;
       var themeParam = themeId ? '&preview_theme_id=' + themeId : '';
-      return fetch('{{ routes.cart_url }}?sections=' + sectionList() + themeParam + '&_=' + Date.now(), {
+      return fetch('{{ routes.cart_url }}?sections=' + ids.join(',') + themeParam + '&_=' + Date.now(), {
         headers: { 'Cache-Control': 'no-cache' }
       })
         .then(function (r) { return r.ok ? r.json() : Promise.reject(new Error('section_fetch_failed')); })
         .then(function (sections) {
           var payload = { sections: sections };
-          if (!window.MotifinoBelt || !window.MotifinoBelt.renderSections(payload, sectionIds())) {
-            document.body.classList.remove('bb-cart-busy');
-            return;
+          if (!window.MotifinoBelt || !window.MotifinoBelt.renderSections(payload, ids)) {
+            return Promise.reject(new Error('section_render_failed'));
           }
           RENDERED_AT = Math.round(Date.now() / 1000);
           document.body.classList.remove('bb-cart-busy');
         })
-        .catch(function () { document.body.classList.remove('bb-cart-busy'); });
+        .catch(function () {
+          /* One section that will not render must not take the cart with it. */
+          if (ids.length > 1) {
+            return refreshSection({ ids: ['{{ section.id }}'], reloadOnFail: opts.reloadOnFail });
+          }
+          if (opts.reloadOnFail) { window.location.reload(); return; }
+          document.body.classList.remove('bb-cart-busy');
+        });
     }
 
     function refreshIfStale() {

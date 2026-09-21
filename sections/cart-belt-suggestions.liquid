@@ -557,7 +557,13 @@
 
             return fetch('{{ routes.cart_add_url }}.js', {
               method: 'POST',
-              headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+              /* Marks the write as ours, so belt-combination.js does not treat it
+                 as a foreign one and fire a second card sync on top of it. */
+              headers: {
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
+                'X-Motifino-Cart-Sync': '1',
+              },
               body: JSON.stringify({ items: items, sections: ids.join(',') }),
             });
           })
