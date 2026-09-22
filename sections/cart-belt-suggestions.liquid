@@ -104,22 +104,40 @@
 
     #shopify-section-{{ section.id }} .bs-card__media {
       position: relative;
-      aspect-ratio: 6 / 5;
+      {%- if section.settings.media_ratio == 'custom' %}
+      height: {{ section.settings.media_height | default: 300 }}px;
+      {%- else %}
+      aspect-ratio: {{ section.settings.media_ratio | default: '6 / 5' }};
+      {%- endif %}
       background: var(--bs-media-bg);
     }
 
     #shopify-section-{{ section.id }} .bs-card__link {
+      position: relative;
       display: block;
       width: 100%;
       height: 100%;
     }
 
+    /* Both shots stay in the DOM and only trade opacity, so switching costs no
+       download and no decode. */
     #shopify-section-{{ section.id }} .bs-card__link img {
+      position: absolute;
+      inset: 0;
       display: block;
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
+
+    #shopify-section-{{ section.id }} .bs-card__shot--alt,
+    #shopify-section-{{ section.id }} .bs-card__thumb--alt { opacity: 0; }
+
+    #shopify-section-{{ section.id }} .bs-card.is-flipped .bs-card__shot,
+    #shopify-section-{{ section.id }} .bs-card.is-flipped .bs-card__thumb { opacity: 0; }
+
+    #shopify-section-{{ section.id }} .bs-card.is-flipped .bs-card__shot--alt,
+    #shopify-section-{{ section.id }} .bs-card.is-flipped .bs-card__thumb--alt { opacity: 1; }
 
     #shopify-section-{{ section.id }} .bs-card__swap {
       position: absolute;
@@ -145,9 +163,18 @@
       box-shadow: 0 2px 4px rgba(17, 17, 17, 0.08), 0 10px 22px rgba(17, 17, 17, 0.12);
     }
 
-    #shopify-section-{{ section.id }} .bs-card__swap img { border-radius: 3px; }
+    #shopify-section-{{ section.id }} .bs-card__thumbs {
+      position: relative;
+      display: block;
+      width: 100%;
+      height: 100%;
+      border-radius: 3px;
+      overflow: hidden;
+    }
 
     #shopify-section-{{ section.id }} .bs-card__swap img {
+      position: absolute;
+      inset: 0;
       display: block;
       width: 100%;
       height: 100%;
@@ -359,11 +386,21 @@
                   <a class="bs-card__link" href="{{ product.url }}">
                     {%- if img_main -%}
                       <img
+                        class="bs-card__shot"
                         src="{{ img_main | image_url: width: 700 }}"
-                        {% if img_alt %}data-alt="{{ img_alt | image_url: width: 700 }}"{% endif %}
                         alt="{{ img_main.alt | escape }}"
                         width="{{ img_main.width }}"
                         height="{{ img_main.height }}"
+                        loading="lazy"
+                      >
+                    {%- endif -%}
+                    {%- if img_alt -%}
+                      <img
+                        class="bs-card__shot bs-card__shot--alt"
+                        src="{{ img_alt | image_url: width: 700 }}"
+                        alt=""
+                        width="{{ img_alt.width }}"
+                        height="{{ img_alt.height }}"
                         loading="lazy"
                       >
                     {%- endif -%}
@@ -371,12 +408,10 @@
 
                   {%- if img_main and img_alt -%}
                     <button type="button" class="bs-card__swap" data-swap aria-label="{{ 'general.accessibility.next' | t }}">
-                      <img
-                        src="{{ img_alt | image_url: width: 280 }}"
-                        data-alt="{{ img_main | image_url: width: 280 }}"
-                        alt=""
-                        loading="lazy"
-                      >
+                      <span class="bs-card__thumbs">
+                        <img class="bs-card__thumb" src="{{ img_alt | image_url: width: 280 }}" alt="" loading="lazy">
+                        <img class="bs-card__thumb bs-card__thumb--alt" src="{{ img_main | image_url: width: 280 }}" alt="" loading="lazy">
+                      </span>
                     </button>
                   {%- endif -%}
 
@@ -480,34 +515,6 @@
         Array.prototype.forEach.call(host.querySelectorAll('[data-track]'), syncArrows);
       }
 
-      /* The second shot only exists as a data attribute, so the first swap had
-         to download it. Fetch it once the card comes into view. */
-      function warmAlt(card) {
-        if (card.hasAttribute('data-warm')) return;
-        card.setAttribute('data-warm', '');
-        var main = card.querySelector('.bs-card__link img');
-        var url = main && main.getAttribute('data-alt');
-        if (url) new Image().src = url;
-      }
-
-      function warmAll() {
-        var host = document.getElementById(HOST);
-        if (!host) return;
-        var cards = host.querySelectorAll('.bs-card');
-        if (!('IntersectionObserver' in window)) {
-          Array.prototype.forEach.call(cards, warmAlt);
-          return;
-        }
-        var observer = new IntersectionObserver(function (entries) {
-          entries.forEach(function (entry) {
-            if (!entry.isIntersecting) return;
-            warmAlt(entry.target);
-            observer.unobserve(entry.target);
-          });
-        }, { rootMargin: '300px' });
-        Array.prototype.forEach.call(cards, function (card) { observer.observe(card); });
-      }
-
       /* scroll does not bubble, so catch it on the way down. */
       document.addEventListener('scroll', function (event) {
         var track = event.target;
@@ -517,13 +524,10 @@
       window.addEventListener('resize', syncAll);
       document.addEventListener('cart:change', syncAll);
       document.addEventListener('cart:refresh', syncAll);
-      document.addEventListener('cart:change', warmAll);
-      document.addEventListener('cart:refresh', warmAll);
       if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', function () { syncAll(); warmAll(); });
+        document.addEventListener('DOMContentLoaded', syncAll);
       } else {
         syncAll();
-        warmAll();
       }
 
       document.addEventListener('click', function (event) {
@@ -571,18 +575,7 @@
       /* The thumbnail and the main shot trade places, so one click gets you back. */
       function swapImage(button) {
         var card = button.closest('.bs-card');
-        var main = card.querySelector('.bs-card__link img');
-        var thumb = button.querySelector('img');
-        if (!main || !thumb) return;
-
-        var mainNext = main.getAttribute('data-alt');
-        var thumbNext = thumb.getAttribute('data-alt');
-        if (!mainNext || !thumbNext) return;
-
-        main.setAttribute('data-alt', main.getAttribute('src'));
-        main.setAttribute('src', mainNext);
-        thumb.setAttribute('data-alt', thumb.getAttribute('src'));
-        thumb.setAttribute('src', thumbNext);
+        if (card) card.classList.toggle('is-flipped');
       }
 
       /* This section prices itself off the cart, so it has to re-render too. */
@@ -708,6 +701,33 @@
       "step": 20,
       "unit": "px",
       "default": 1100
+    },
+    {
+      "type": "select",
+      "id": "media_ratio",
+      "label": "Card aspect ratio",
+      "options": [
+        { "value": "6 / 5", "label": "Auto (theme default height)" },
+        { "value": "16 / 9", "label": "16:9" },
+        { "value": "9 / 16", "label": "9:16" },
+        { "value": "1 / 1", "label": "1:1" },
+        { "value": "3 / 4", "label": "3:4" },
+        { "value": "4 / 3", "label": "4:3" },
+        { "value": "4 / 5", "label": "4:5" },
+        { "value": "custom", "label": "Custom height" }
+      ],
+      "default": "6 / 5"
+    },
+    {
+      "type": "range",
+      "id": "media_height",
+      "label": "Custom card height",
+      "visible_if": "{{ section.settings.media_ratio == 'custom' }}",
+      "min": 160,
+      "max": 600,
+      "step": 10,
+      "unit": "px",
+      "default": 300
     },
     {
       "type": "range",

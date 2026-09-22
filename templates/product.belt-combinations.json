@@ -71,6 +71,13 @@
             "text": "<p><a href=\"#shopify-section-template--28657540333894__tabs_FUAGrg\" title=\"#shopify-section-template--28657540333894__tabs_FUAGrg\">Vedi taglie e dettagli...</a></p>"
           }
         },
+        "spacer_7Hd7J3": {
+          "type": "spacer",
+          "settings": {
+            "height_desktop": 24,
+            "height_mobile": 8
+          }
+        },
         "buy_buttons_EwCtRc": {
           "type": "buy_buttons",
           "settings": {
@@ -80,6 +87,13 @@
             "atc_button_text_color": "",
             "payment_button_background": "",
             "payment_button_text_color": ""
+          }
+        },
+        "spacer_hkLpwi": {
+          "type": "spacer",
+          "settings": {
+            "height_desktop": 24,
+            "height_mobile": 8
           }
         },
         "image_G7Kg4K": {
@@ -104,7 +118,9 @@
         "variant_picker_bMRfED",
         "liquid_KHEgai",
         "text_eKCKCi",
+        "spacer_7Hd7J3",
         "buy_buttons_EwCtRc",
+        "spacer_hkLpwi",
         "image_G7Kg4K"
       ],
       "settings": {
@@ -128,7 +144,7 @@
         "mobile_image_aspect_ratio": "4:3",
         "desktop_media_layout": "grid",
         "desktop_media_grid_gap": 0,
-        "mobile_controls": "dots",
+        "mobile_controls": "next_preview",
         "enable_media_autoplay": false,
         "enable_video_looping": true,
         "enable_image_zoom": false,

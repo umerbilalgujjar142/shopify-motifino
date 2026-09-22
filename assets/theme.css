@@ -8570,3 +8570,21 @@ ul {
 @keyframes theme-button-spin {
   to { transform: rotate(360deg); }
 }
+
+/* Buy buttons carry their own gap above and below, which fights the Spacer
+   block; zero both so spacing is set from the editor. The block list's own
+   rules are specific, hence the matching weight here. */
+.product-info__block-list > .product-info__block-item[data-block-type="buy-buttons"]:not(:empty) {
+  margin-block: 0;
+}
+
+.product-info__block-list > .product-info__block-item:not(:empty):has(+ .product-info__block-item[data-block-type="buy-buttons"]) {
+  margin-block-end: 0;
+}
+
+/* Same when a Spacer sits between, so its height is the only gap left. */
+.product-info__block-list > .product-info__block-item:not(:empty):has(+ .product-info__block-item[data-block-type="spacer"] + .product-info__block-item[data-block-type="buy-buttons"]),
+.product-info__block-list > .product-info__block-item[data-block-type="spacer"]:not(:empty):has(+ .product-info__block-item[data-block-type="buy-buttons"]),
+.product-info__block-list > .product-info__block-item[data-block-type="buy-buttons"] + .product-info__block-item[data-block-type="spacer"]:not(:empty) {
+  margin-block: 0;
+}

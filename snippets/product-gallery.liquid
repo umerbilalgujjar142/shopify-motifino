@@ -56,6 +56,47 @@
   }
 </style>
 
+{%- if mobile_controls == 'next_preview' -%}
+  <style>
+    #shopify-section-{{ section.id }} .product-gallery__image-list { position: relative; }
+
+    #shopify-section-{{ section.id }} .product-gallery__peek {
+      position: absolute;
+      right: 12px;
+      bottom: 12px;
+      z-index: 2;
+      line-height: 0;
+    }
+
+    #shopify-section-{{ section.id }} .product-gallery__peek[hidden] { display: none !important; }
+
+    #shopify-section-{{ section.id }} .product-gallery__peek button {
+      appearance: none;
+      display: block;
+      padding: 0;
+      width: 70px;
+      height: 70px;
+      border: 2px solid #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
+      cursor: pointer;
+    }
+
+    #shopify-section-{{ section.id }} .product-gallery__peek img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    @media screen and (min-width: 1000px) {
+      #shopify-section-{{ section.id }} .product-gallery__peek { display: none; }
+    }
+  </style>
+{%- endif -%}
+
 <style>
   {%- if mobile_controls == 'free_scroll' -%}
     @media screen and (max-width: 999px) {
@@ -290,6 +331,15 @@
         </span>
       </button>
     {%- endif -%}
+
+    {%- if mobile_controls == 'next_preview' -%}
+      <product-gallery-peek class="product-gallery__peek" aria-controls="{{ product_gallery_carousel_id }}" hidden>
+        <button type="button">
+          <span class="sr-only">{{ 'general.accessibility.next' | t }}</span>
+          <img alt="" decoding="async">
+        </button>
+      </product-gallery-peek>
+    {%- endif -%}
   </div>
 
   {%- comment -%}
@@ -389,3 +439,55 @@
     {%- endif -%}
   {%- endif -%}
 </product-gallery>
+
+{%- if mobile_controls == 'next_preview' -%}
+  <script>
+    if (!customElements.get('product-gallery-peek')) {
+      customElements.define('product-gallery-peek', class extends HTMLElement {
+        connectedCallback() {
+          this.carousel = document.getElementById(this.getAttribute('aria-controls'));
+          if (!this.carousel) return;
+
+          this.image = this.querySelector('img');
+          this.addEventListener('click', () => {
+            var cells = this.carousel.cells;
+            if (cells.length < 2) return;
+            /* The theme's next() stops on the last slide; this one comes back round. */
+            this.carousel.select((this.carousel.selectedIndex + 1) % cells.length);
+          });
+
+          var render = this.render.bind(this);
+          this.carousel.addEventListener('carousel:change', render);
+          this.carousel.addEventListener('carousel:settle', render);
+          document.addEventListener('variant:update', render);
+
+          /* theme.js is deferred, so the carousel has no cells yet on first paint. */
+          customElements.whenDefined('scroll-carousel').then(function () {
+            requestAnimationFrame(render);
+          });
+          render();
+        }
+
+        render() {
+          var cells = this.carousel.cells || [];
+          if (cells.length < 2) {
+            this.hidden = true;
+            return;
+          }
+
+          var current = this.carousel.selectedIndex || 0;
+          var next = cells[(current + 1) % cells.length];
+          var img = next && next.querySelector('img');
+          var src = img && (img.currentSrc || img.src);
+          if (!src) {
+            this.hidden = true;
+            return;
+          }
+
+          this.image.src = src;
+          this.hidden = false;
+        }
+      });
+    }
+  </script>
+{%- endif -%}
