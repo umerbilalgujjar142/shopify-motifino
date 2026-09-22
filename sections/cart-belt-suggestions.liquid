@@ -1,19 +1,12 @@
 {%- liquid
-  assign belts_in_cart = 0
-  for item in cart.items
-    if item.product.type == 'Combinazione cintura'
-      assign belts_in_cart = belts_in_cart | plus: item.quantity
+  # The heading and the View all link come from the first collection block;
+  # the other blocks are pricing rules.
+  for b in section.blocks
+    if b.type == 'collection'
+      assign first_coll = b
+      break
     endif
   endfor
-
-  # DiscountOS prices the belts; this mirrors its ladder so the card shows what
-  # the next belt will actually cost.
-  assign next_off = 0
-  if belts_in_cart == 1
-    assign next_off = section.settings.second_belt_off | default: 0
-  elsif belts_in_cart > 1
-    assign next_off = section.settings.third_belt_off | default: 0
-  endif
 -%}
 {%- if section.blocks.size > 0 -%}
   <style>
@@ -57,8 +50,6 @@
       margin: 0;
       text-align: center;
       font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 0.01em;
     }
 
     #shopify-section-{{ section.id }} .bs__heading {
@@ -66,7 +57,6 @@
       text-align: center;
       font-size: 24px;
       line-height: 1.2;
-      font-weight: 700;
       text-wrap: balance;
     }
 
@@ -164,13 +154,11 @@
       object-fit: cover;
     }
 
-    /* Straddles the bottom edge of the image, half over the photo and half
-       over the body, the way the original card sits. */
+    /* Sits on the photo itself, just clear of its bottom edge. */
     #shopify-section-{{ section.id }} .bs-card__pills {
       position: absolute;
       left: 12px;
-      bottom: 0;
-      transform: translateY(50%);
+      bottom: 10px;
       z-index: 1;
       display: flex;
       gap: 6px;
@@ -207,7 +195,7 @@
       display: flex;
       flex-direction: column;
       gap: 10px;
-      padding: 26px 12px 14px;
+      padding: 7px 12px 14px;
       margin-top: auto;
     }
 
@@ -269,7 +257,7 @@
     #shopify-section-{{ section.id }} .bs-card__atc[disabled] { opacity: 0.55; cursor: default; }
 
     @media screen and (max-width: 480px) {
-      #shopify-section-{{ section.id }} .bs-card__body { padding: 23px 10px 12px; gap: 9px; }
+      #shopify-section-{{ section.id }} .bs-card__body { padding: 5px 10px 12px; gap: 9px; }
       #shopify-section-{{ section.id }} .bs-card__pills { left: 10px; }
       #shopify-section-{{ section.id }} .bs-card__atc { padding: 11px 8px; font-size: 12px; }
       #shopify-section-{{ section.id }} .bs-card__price { font-size: 15px; }
@@ -315,12 +303,12 @@
   <div class="bs color-scheme color-scheme--{{ section.settings.color_scheme.id }}" data-cart-live-section="{{ section.id }}">
     <div class="bs__inner">
       {%- if section.settings.subheading != blank -%}
-        <p class="bs__eyebrow">{{ section.settings.subheading }}</p>
+        <p class="bs__eyebrow h6">{{ section.settings.subheading }}</p>
       {%- endif -%}
 
-      {%- assign heading = section.blocks.first.settings.title | default: section.blocks.first.settings.collection.title -%}
+      {%- assign heading = first_coll.settings.title | default: first_coll.settings.collection.title -%}
       {%- if heading != blank -%}
-        <h2 class="bs__heading">{{ heading }}</h2>
+        <h2 class="bs__heading h2">{{ heading }}</h2>
       {%- endif -%}
 
       <div class="bs__carousel">
@@ -330,8 +318,40 @@
 
         <div class="bs__track" data-track>
           {%- for block in section.blocks -%}
+            {%- if block.type != 'collection' -%}
+              {%- continue -%}
+            {%- endif -%}
             {%- for product in block.settings.collection.products limit: block.settings.products_count -%}
               {%- assign first_variant = product.selected_or_first_available_variant -%}
+              {%- liquid
+                # Picks the pricing rule for the next unit of this product type:
+                # the highest rule position the cart has already reached.
+                assign next_off = 0
+                assign best_pos = 0
+                assign type_in_cart = 0
+                assign card_type = product.type | strip | downcase
+                for item in cart.items
+                  assign item_type = item.product.type | strip | downcase
+                  if item_type == card_type
+                    assign type_in_cart = type_in_cart | plus: item.quantity
+                  endif
+                endfor
+                assign next_pos = type_in_cart | plus: 1
+                for rule in section.blocks
+                  if rule.type != 'pricing_rule'
+                    continue
+                  endif
+                  assign rule_type = rule.settings.rule_product_type | strip | downcase
+                  if rule_type != card_type
+                    continue
+                  endif
+                  assign rule_pos = rule.settings.rule_position | plus: 0
+                  if rule_pos <= next_pos and rule_pos >= best_pos
+                    assign best_pos = rule_pos
+                    assign next_off = rule.settings.rule_discount | replace: ',', '.' | times: 100 | round
+                  endif
+                endfor
+              -%}
               <div class="bs-card" {{ block.shopify_attributes }}>
                 {%- assign img_main = product.images[0] | default: product.featured_image -%}
                 {%- assign img_alt = product.images[1] -%}
@@ -407,10 +427,9 @@
         </button>
       </div>
 
-      {%- assign first_block = section.blocks.first -%}
       {%- if section.settings.link_text != blank -%}
         <div class="bs__viewall">
-          {%- assign view_all_url = section.settings.link_url | default: first_block.settings.collection.url | default: '#' -%}
+          {%- assign view_all_url = section.settings.link_url | default: first_coll.settings.collection.url | default: '#' -%}
           {%- render 'button', href: view_all_url, content: section.settings.link_text, style: section.settings.link_style -%}
         </div>
       {%- endif -%}
@@ -461,6 +480,34 @@
         Array.prototype.forEach.call(host.querySelectorAll('[data-track]'), syncArrows);
       }
 
+      /* The second shot only exists as a data attribute, so the first swap had
+         to download it. Fetch it once the card comes into view. */
+      function warmAlt(card) {
+        if (card.hasAttribute('data-warm')) return;
+        card.setAttribute('data-warm', '');
+        var main = card.querySelector('.bs-card__link img');
+        var url = main && main.getAttribute('data-alt');
+        if (url) new Image().src = url;
+      }
+
+      function warmAll() {
+        var host = document.getElementById(HOST);
+        if (!host) return;
+        var cards = host.querySelectorAll('.bs-card');
+        if (!('IntersectionObserver' in window)) {
+          Array.prototype.forEach.call(cards, warmAlt);
+          return;
+        }
+        var observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            warmAlt(entry.target);
+            observer.unobserve(entry.target);
+          });
+        }, { rootMargin: '300px' });
+        Array.prototype.forEach.call(cards, function (card) { observer.observe(card); });
+      }
+
       /* scroll does not bubble, so catch it on the way down. */
       document.addEventListener('scroll', function (event) {
         var track = event.target;
@@ -470,10 +517,13 @@
       window.addEventListener('resize', syncAll);
       document.addEventListener('cart:change', syncAll);
       document.addEventListener('cart:refresh', syncAll);
+      document.addEventListener('cart:change', warmAll);
+      document.addEventListener('cart:refresh', warmAll);
       if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', syncAll);
+        document.addEventListener('DOMContentLoaded', function () { syncAll(); warmAll(); });
       } else {
         syncAll();
+        warmAll();
       }
 
       document.addEventListener('click', function (event) {
@@ -606,7 +656,7 @@
   "enabled_on": {
     "templates": ["cart"]
   },
-  "max_blocks": 3,
+  "max_blocks": 12,
   "settings": [
     {
       "type": "color_scheme",
@@ -728,30 +778,6 @@
     },
     {
       "type": "header",
-      "content": "Bundle pricing"
-    },
-    {
-      "type": "range",
-      "id": "second_belt_off",
-      "label": "2nd belt discount",
-      "info": "Must match the DiscountOS rule. In cents: 1500 = €15,00 off. Set to 0 to show plain prices.",
-      "min": 0,
-      "max": 5000,
-      "step": 50,
-      "default": 1500
-    },
-    {
-      "type": "range",
-      "id": "third_belt_off",
-      "label": "3rd belt and later, discount",
-      "info": "In cents: 2500 = €25,00 off.",
-      "min": 0,
-      "max": 5000,
-      "step": 50,
-      "default": 2500
-    },
-    {
-      "type": "header",
       "content": "Colours"
     },
     {
@@ -803,6 +829,56 @@
           "id": "title",
           "label": "Heading",
           "default": "Acquista altre cinture e risparmia"
+        }
+      ]
+    },
+    {
+      "type": "pricing_rule",
+      "name": "Pricing rule",
+      "settings": [
+        {
+          "type": "text",
+          "id": "rule_product_type",
+          "label": "Product type",
+          "default": "Combinazione cintura"
+        },
+        {
+          "type": "number",
+          "id": "rule_position",
+          "label": "Applies to item number",
+          "default": 2
+        },
+        {
+          "type": "text",
+          "id": "rule_discount",
+          "label": "Discount in €",
+          "default": "15"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Belt Suggestions",
+      "blocks": [
+        {
+          "type": "collection"
+        },
+        {
+          "type": "pricing_rule",
+          "settings": {
+            "rule_product_type": "Combinazione cintura",
+            "rule_position": 2,
+            "rule_discount": "15"
+          }
+        },
+        {
+          "type": "pricing_rule",
+          "settings": {
+            "rule_product_type": "Combinazione cintura",
+            "rule_position": 3,
+            "rule_discount": "25"
+          }
         }
       ]
     }

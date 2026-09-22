@@ -1,12 +1,3 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "sections": {
     "main": {
@@ -27,17 +18,29 @@
             "emptyRatingWidget": false
           }
         },
-        "spacer_3UXfMf": {
-          "type": "spacer",
+        "title_Ffh7wf": {
+          "type": "title",
           "settings": {
-            "height_desktop": 0,
-            "height_mobile": 4
+            "heading_tag": "h3"
           }
         },
-        "text_RdWU83": {
+        "text_tDEWkJ": {
           "type": "text",
           "settings": {
-            "text": "<h3>{{ product.metafields.custom.titolo_pagina_prodotto_set.value }}</h3>"
+            "text": "<p>Scopri l'estrema comodità delle cinture HoLess <strong>senza buchi</strong>, regolabili con il bottone.</p>"
+          }
+        },
+        "text_33w7BH": {
+          "type": "text",
+          "settings": {
+            "text": "<p>➤ Di addio alle cinture rovinate<br/>➤ Liberati dai fastidi allentandola<br/>➤ Falla su misura con una forbice</p>"
+          }
+        },
+        "spacer_7z8P6t": {
+          "type": "spacer",
+          "settings": {
+            "height_desktop": 24,
+            "height_mobile": 8
           }
         },
         "price": {
@@ -46,57 +49,26 @@
             "show_taxes_notice": false
           }
         },
+        "variant_picker_bMRfED": {
+          "type": "variant_picker",
+          "settings": {
+            "hide_sold_out_variants": true,
+            "selector_style": "block",
+            "swatch_selector_style": "block_swatch",
+            "variant_image_options": "",
+            "size_chart_page": ""
+          }
+        },
         "liquid_KHEgai": {
           "type": "liquid",
           "settings": {
             "liquid": "<div class=\"delivery-widget__manual\" style=\"margin-bottom: -6px;\"></div>"
           }
         },
-        "text_tDEWkJ": {
-          "type": "text",
-          "settings": {
-            "text": "<p>Comodità, durata e regolazione estrema. Crea<strong> le tue cinture MOTIFINO </strong>e di addio ai buchi rovinati</p>"
-          }
-        },
         "text_eKCKCi": {
           "type": "text",
           "settings": {
             "text": "<p><a href=\"#shopify-section-template--28657540333894__tabs_FUAGrg\" title=\"#shopify-section-template--28657540333894__tabs_FUAGrg\">Vedi taglie e dettagli...</a></p>"
-          }
-        },
-        "spacer_zVPWj7": {
-          "type": "spacer",
-          "settings": {
-            "height_desktop": 24,
-            "height_mobile": 16
-          }
-        },
-        "button_UPULxq": {
-          "type": "button",
-          "settings": {
-            "link": "",
-            "text": "{{ product.metafields.custom.call_to_action_scelta_cinture_e_fibbie.value }}",
-            "stretch": true,
-            "background": "",
-            "text_color": ""
-          }
-        },
-        "spacer_Xq3dqK": {
-          "type": "spacer",
-          "settings": {
-            "height_desktop": 20,
-            "height_mobile": 12
-          }
-        },
-        "image_G7Kg4K": {
-          "type": "image",
-          "settings": {
-            "image": "shopify://shop_images/Trust_pilot_eccellente.webp",
-            "link": "#shopify-section-template--28657540333894__multi_column_yGDHbx",
-            "alignment": "center",
-            "width_mode": "custom",
-            "max_width": 300,
-            "mobile_max_width": 200
           }
         },
         "buy_buttons_EwCtRc": {
@@ -110,79 +82,33 @@
             "payment_button_text_color": ""
           }
         },
-        "feature_with_icon_TP8rxC": {
-          "type": "feature_with_icon",
-          "disabled": true,
+        "image_G7Kg4K": {
+          "type": "image",
           "settings": {
-            "text": "Garanzia 2 anni",
-            "link": "",
-            "icon": "picto-shield",
-            "icon_width": 16,
-            "background": "rgba(0,0,0,0)",
-            "text_color": "#6b6b6b",
-            "border_color": ""
-          }
-        },
-        "feature_with_icon_PG7eny": {
-          "type": "feature_with_icon",
-          "disabled": true,
-          "settings": {
-            "text": "Ricevilo in 24/72h",
-            "link": "",
-            "icon": "picto-delivery-truck",
-            "icon_width": 16,
-            "background": "rgba(0,0,0,0)",
-            "text_color": "#6b6b6b",
-            "border_color": ""
-          }
-        },
-        "feature_with_icon_6E3KEw": {
-          "type": "feature_with_icon",
-          "disabled": true,
-          "settings": {
-            "text": "Resi gratis in 30g",
-            "link": "",
-            "icon": "picto-return",
-            "icon_width": 16,
-            "background": "rgba(0,0,0,0)",
-            "text_color": "#6b6b6b",
-            "border_color": ""
-          }
-        },
-        "feature_with_icon_eU3YHk": {
-          "type": "feature_with_icon",
-          "disabled": true,
-          "settings": {
-            "text": "Contrassegno",
-            "link": "",
-            "icon": "picto-box",
-            "icon_width": 16,
-            "background": "rgba(0,0,0,0)",
-            "text_color": "#6b6b6b",
-            "border_color": ""
+            "image": "shopify://shop_images/Trust_pilot_eccellente.webp",
+            "link": "#shopify-section-template--28657540333894__multi_column_yGDHbx",
+            "alignment": "center",
+            "width_mode": "custom",
+            "max_width": 300,
+            "mobile_max_width": 200
           }
         }
       },
       "block_order": [
         "loox_reviews_loox_rating_3QBn8V",
-        "spacer_3UXfMf",
-        "text_RdWU83",
-        "price",
-        "liquid_KHEgai",
+        "title_Ffh7wf",
         "text_tDEWkJ",
+        "text_33w7BH",
+        "spacer_7z8P6t",
+        "price",
+        "variant_picker_bMRfED",
+        "liquid_KHEgai",
         "text_eKCKCi",
-        "spacer_zVPWj7",
-        "button_UPULxq",
-        "spacer_Xq3dqK",
-        "image_G7Kg4K",
         "buy_buttons_EwCtRc",
-        "feature_with_icon_TP8rxC",
-        "feature_with_icon_PG7eny",
-        "feature_with_icon_6E3KEw",
-        "feature_with_icon_eU3YHk"
+        "image_G7Kg4K"
       ],
       "settings": {
-        "color_scheme": "scheme-2",
+        "color_scheme": "scheme-1",
         "use_custom_section_spacing": false,
         "mobile_section_spacing_top": 0,
         "mobile_section_spacing_right": 20,
@@ -199,7 +125,7 @@
         "mobile_product_gap": 0,
         "show_sticky_add_to_cart": true,
         "center_basic_info": false,
-        "mobile_image_aspect_ratio": "5:4",
+        "mobile_image_aspect_ratio": "4:3",
         "desktop_media_layout": "grid",
         "desktop_media_grid_gap": 0,
         "mobile_controls": "dots",

@@ -38,17 +38,17 @@
         "hide_when_empty": true,
         "bg_color": "#f1f1f1",
         "text_color": "#111111",
-        "accent_color": "#c8a24a",
-        "gold_1": "#bf953f",
-        "gold_2": "#fcf6ba",
+        "accent_color": "#C8A24A",
+        "gold_1": "#BF953F",
+        "gold_2": "#FCF6BA",
         "gold_3": "#b38728",
         "idle_color": "#e0e0e0",
         "highlight_color": "#e01b1b",
         "animate": true,
-        "partial_fill": 72,
-        "chunks": 60,
-        "anim_duration": 1800,
-        "circle_size_mobile": 56,
+        "partial_fill": 66,
+        "chunks": 80,
+        "anim_duration": 900,
+        "circle_size_mobile": 62,
         "circle_size_desktop": 88,
         "text_size_mobile": 15,
         "text_size_desktop": 20,
@@ -57,7 +57,7 @@
         "line_height": 3.5,
         "ring_width": 3.5,
         "max_width": 720,
-        "padding_mobile": 18,
+        "padding_mobile": 12,
         "padding_desktop": 28
       }
     },
@@ -66,7 +66,7 @@
       "settings": {
         "color_scheme": "",
         "use_custom_section_spacing": false,
-        "mobile_section_spacing_top": 40,
+        "mobile_section_spacing_top": 0,
         "mobile_section_spacing_right": 20,
         "mobile_section_spacing_bottom": 10,
         "mobile_section_spacing_left": 20,
@@ -116,29 +116,45 @@
           "type": "collection",
           "settings": {
             "collection": "tutte-le-cinture-holess",
-            "products_count": 8,
+            "products_count": 20,
             "title": "Acquista altre cinture e risparmia"
+          }
+        },
+        "rule_belt_2": {
+          "type": "pricing_rule",
+          "settings": {
+            "rule_product_type": "Combinazione cintura",
+            "rule_position": 2,
+            "rule_discount": "15"
+          }
+        },
+        "rule_belt_3": {
+          "type": "pricing_rule",
+          "settings": {
+            "rule_product_type": "Combinazione cintura",
+            "rule_position": 3,
+            "rule_discount": "25"
           }
         }
       },
       "block_order": [
-        "collection_UmJdE7"
+        "collection_UmJdE7",
+        "rule_belt_2",
+        "rule_belt_3"
       ],
       "settings": {
         "color_scheme": "scheme-1",
         "subheading": "Le più acquistate",
         "button_text": "Aggiungi al Carrello",
-        "products_per_row_mobile": 1.7,
-        "products_per_row_desktop": 4,
-        "max_width": 1100,
-        "card_radius": 14,
-        "padding_mobile": 32,
+        "products_per_row_mobile": 1.6,
+        "products_per_row_desktop": 5,
+        "max_width": 1320,
+        "card_radius": 8,
+        "padding_mobile": 18,
         "padding_desktop": 48,
-        "link_text": "View all",
+        "link_text": "Vedi tutte le combinazioni",
         "link_url": "",
-        "link_style": "solid",
-        "second_belt_off": 1500,
-        "third_belt_off": 2500,
+        "link_style": "link",
         "media_bg": "#f1f1f1",
         "button_bg": "#111111",
         "button_text_color": "#ffffff",
@@ -224,75 +240,6 @@
         "subheading": "",
         "title": "Dubbi o domande?",
         "content": ""
-      }
-    },
-    "text_with_icons_4Jdw7t": {
-      "type": "text-with-icons",
-      "blocks": {
-        "item_pkEzzL": {
-          "type": "item",
-          "settings": {
-            "icon": "picto-delivery-truck",
-            "icon_width": 40,
-            "mobile_icon_width": 32,
-            "title": "",
-            "content": "<p>Spedizioni gratis in 24/72h</p>"
-          }
-        },
-        "item_X3HRiB": {
-          "type": "item",
-          "settings": {
-            "icon": "picto-credit-card",
-            "icon_width": 40,
-            "mobile_icon_width": 32,
-            "title": "",
-            "content": "<p>PayPal, Klarna, contrassegno</p>"
-          }
-        },
-        "item_aEweVE": {
-          "type": "item",
-          "settings": {
-            "icon": "picto-return",
-            "icon_width": 40,
-            "mobile_icon_width": 32,
-            "title": "",
-            "content": "<p>Resi gratis, 2 anni di garanzia</p>"
-          }
-        },
-        "item_N83wym": {
-          "type": "item",
-          "settings": {
-            "icon": "picto-customer-support",
-            "icon_width": 40,
-            "mobile_icon_width": 32,
-            "title": "",
-            "content": "<p>Assistenza 24/7 Whatsapp</p>"
-          }
-        }
-      },
-      "block_order": [
-        "item_pkEzzL",
-        "item_X3HRiB",
-        "item_aEweVE",
-        "item_N83wym"
-      ],
-      "custom_css": [],
-      "settings": {
-        "color_scheme": "",
-        "use_custom_section_spacing": true,
-        "mobile_section_spacing_top": 26,
-        "mobile_section_spacing_right": 20,
-        "mobile_section_spacing_bottom": 70,
-        "mobile_section_spacing_left": 20,
-        "desktop_section_spacing_top": 30,
-        "desktop_section_spacing_right": 20,
-        "desktop_section_spacing_bottom": 60,
-        "desktop_section_spacing_left": 20,
-        "separate_section_with_border": false,
-        "stack_on_mobile": true,
-        "icon_color": "#b98141",
-        "text_color": "",
-        "text_alignment": "center"
       }
     },
     "media_grid_gzfeUE": {
@@ -908,7 +855,6 @@
     "main",
     "belt_suggestions",
     "faq_y9kK7f",
-    "text_with_icons_4Jdw7t",
     "media_grid_gzfeUE"
   ]
 }
