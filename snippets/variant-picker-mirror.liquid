@@ -1,0 +1,49 @@
+{%- comment -%}
+  Two variant pickers on one product form share a radio group, so only one of
+  them can carry :checked. This mirrors the selected look onto the other.
+{%- endcomment -%}
+
+<script>
+  (function () {
+    function key(input) {
+      return (input.getAttribute('form') || '') + '|' + input.getAttribute('data-option-position');
+    }
+
+    function sync() {
+      var inputs = document.querySelectorAll('input[data-option-position]');
+      if (!inputs.length) return;
+
+      var selected = {};
+      Array.prototype.forEach.call(inputs, function (input) {
+        if (input.checked) selected[key(input)] = input.value;
+      });
+
+      Array.prototype.forEach.call(inputs, function (input) {
+        var swatch = input.nextElementSibling;
+        if (!swatch || !swatch.classList || !swatch.classList.contains('block-swatch')) return;
+        if (selected[key(input)] === input.value) {
+          swatch.classList.add('is-selected');
+        } else {
+          swatch.classList.remove('is-selected');
+        }
+      });
+    }
+
+    document.addEventListener('change', function (event) {
+      var el = event.target;
+      if (el && el.matches && el.matches('input[data-option-position]')) sync();
+    }, true);
+
+    document.addEventListener('variant:change', function () { setTimeout(sync, 0); });
+    document.addEventListener('product:rerender', function () {
+      requestAnimationFrame(sync);
+      setTimeout(sync, 200);
+    }, true);
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', sync);
+    } else {
+      sync();
+    }
+  })();
+</script>

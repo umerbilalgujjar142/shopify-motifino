@@ -1,0 +1,40 @@
+{%- comment -%}
+  The estimated delivery widget is injected by an app into an empty Liquid block.
+  A variant click re-renders the product info from the server, which brings back
+  the empty block, and the app does not run again. This keeps the rendered
+  content across those re-renders.
+{%- endcomment -%}
+
+<script>
+  (function () {
+    var SELECTOR = '.delivery-widget__manual';
+    var cache = '';
+
+    function node() {
+      return document.querySelector(SELECTOR);
+    }
+
+    function snapshot() {
+      var el = node();
+      if (el && el.innerHTML.trim()) cache = el.innerHTML;
+    }
+
+    function restore() {
+      var el = node();
+      if (!el || !cache || el.innerHTML.trim()) return;
+      el.innerHTML = cache;
+    }
+
+    /* Capture runs before the theme swaps the markup, so the widget is still filled. */
+    document.addEventListener('product:rerender', function () {
+      snapshot();
+      requestAnimationFrame(restore);
+      setTimeout(restore, 250);
+      setTimeout(restore, 800);
+    }, true);
+
+    document.addEventListener('variant:change', function () {
+      setTimeout(restore, 0);
+    });
+  })();
+</script>

@@ -1,21 +1,21 @@
 {
   "_info": "Inserisci gli URL CDN di Shopify (Admin → Content → Files). Lascia \"\" per usare il placeholder SVG automatico. NON sovrascrivere questo file con aggiornamenti del tema.",
   "_colori_cintura": {
-    "strap-nero": "Black",
-    "strap-marrone": "Brown",
+    "strap-nero": "Nero",
+    "strap-marrone": "Testa di Moro",
     "strap-cognac": "Cognac",
-    "strap-cuoio": "White",
-    "strap-beige": "Sand",
-    "strap-rosso": "Brown Crocodile",
-    "strap-verde": "Black Crocodile",
-    "strap-blu": "Blue",
-    "strap-grigio": "Gray"
+    "strap-cuoio": "Bianco",
+    "strap-beige": "Sabbia",
+    "strap-rosso": "Marrone Croc",
+    "strap-verde": "Nero Croc",
+    "strap-blu": "Blue Navy",
+    "strap-grigio": "Grigio"
   },
   "_fibbie": {
-    "buckle-1": "Classic Matt",
-    "buckle-2": "Elegant Chrome Silver",
-    "buckle-3": "Elegant Chrome Gold",
-    "buckle-4": "Mirror Chrome"
+    "buckle-1": "Classic",
+    "buckle-2": "Zeno Silver",
+    "buckle-3": "Zeno Gold",
+    "buckle-4": "Krono"
   },
   "nfc_card": "https://cdn.shopify.com/s/files/1/0829/7909/4854/files/Privilege_Card_Black_Product.jpg?v=1782396451",
   "success_logo": "https://cdn.shopify.com/s/files/1/0829/7909/4854/files/motifino_icon_ecfdae95-89f0-40ec-bae0-a8d9db2e4199.png?v=1777637170",

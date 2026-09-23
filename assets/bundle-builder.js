@@ -316,22 +316,22 @@
   }
 
   const BUCKLES = {
-    'buckle-1': { name: 'Classic Matt', image: '' },
-    'buckle-2': { name: 'Elegant Chrome Silver', image: '' },
-    'buckle-3': { name: 'Elegant Chrome Gold', image: '' },
-    'buckle-4': { name: 'Mirror Chrome', image: '' },
+    'buckle-1': { name: 'Classic', image: '' },
+    'buckle-2': { name: 'Zeno Silver', image: '' },
+    'buckle-3': { name: 'Zeno Gold', image: '' },
+    'buckle-4': { name: 'Krono', image: '' },
   };
 
   const STRAPS = {
-    'strap-nero': { name: 'Black', hex: '#1a1a1a' },
-    'strap-marrone': { name: 'Brown', hex: '#6b3a2a' },
+    'strap-nero': { name: 'Nero', hex: '#1a1a1a' },
+    'strap-marrone': { name: 'Testa di Moro', hex: '#6b3a2a' },
     'strap-cognac': { name: 'Cognac', hex: '#c07840' },
-    'strap-cuoio': { name: 'White', hex: '#f0ede8' },
-    'strap-beige': { name: 'Sand', hex: '#d4bc94' },
-    'strap-rosso': { name: 'Brown Crocodile', hex: '#8b1a1a' },
-    'strap-verde': { name: 'Black Crocodile', hex: '#2d5a1b' },
-    'strap-blu': { name: 'Blue', hex: '#1a3a6b' },
-    'strap-grigio': { name: 'Gray', hex: '#888' },
+    'strap-cuoio': { name: 'Bianco', hex: '#f0ede8' },
+    'strap-beige': { name: 'Sabbia', hex: '#d4bc94' },
+    'strap-rosso': { name: 'Marrone Croc', hex: '#8b1a1a' },
+    'strap-verde': { name: 'Nero Croc', hex: '#2d5a1b' },
+    'strap-blu': { name: 'Blue Navy', hex: '#1a3a6b' },
+    'strap-grigio': { name: 'Grigio', hex: '#888' },
   };
 
   /* ── Carousel order config (from Shopify Theme Editor) ──── */

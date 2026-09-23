@@ -198,14 +198,20 @@
 
     return current.then(function (c) {
       var belts = countBelts(c);
-      var cardLine = (c.items || []).filter(isPrivilegeCardItem)[0];
-      var currentQty = cardLine ? cardLine.quantity : 0;
+      /* Shopify splits one variant across several lines when the units carry
+         different discount allocations, so the card can hold more than one. */
+      var cardLines = (c.items || []).filter(isPrivilegeCardItem);
+      var currentQty = cardLines.reduce(function (sum, item) { return sum + item.quantity; }, 0);
 
       if (currentQty === belts) return null;
 
-      /* Existing line → adjust (or remove) it by key. */
-      if (cardLine) {
-        return postCart(url('/cart/change.js'), { id: cardLine.key, quantity: belts }, sections);
+      /* Existing lines → collapse them into the first and zero the rest, in one write. */
+      if (cardLines.length) {
+        var updates = {};
+        cardLines.forEach(function (line, index) {
+          updates[line.key] = index === 0 ? belts : 0;
+        });
+        return postCart(url('/cart/update.js'), { updates: updates }, sections);
       }
 
       if (belts === 0) return null;

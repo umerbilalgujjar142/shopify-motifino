@@ -154,6 +154,16 @@
 
           {%- when 'price' -%}
             {%- if product.selected_or_first_available_variant != nil -%}
+              {%- if block.settings.price_font_size > 0 or block.settings.price_color != blank -%}
+                <style>
+                  [data-block-id="{{ block.id }}"] .price-list,
+                  [data-block-id="{{ block.id }}"] .price-list * {
+                    {%- if block.settings.price_font_size > 0 %}font-size: {{ block.settings.price_font_size }}px;{% endif -%}
+                    {%- if block.settings.price_color != blank %}color: {{ block.settings.price_color }};{% endif -%}
+                  }
+                </style>
+              {%- endif -%}
+
               <div class="v-stack">
                 {%- render 'price-list', product: product, variant: product.selected_or_first_available_variant, context: 'product' -%}
 
@@ -219,6 +229,82 @@
               {%- endif -%}
             {%- endif -%}
 
+          {%- when 'price_with_variants' -%}
+            {%- if product != blank and product.selected_or_first_available_variant != nil -%}
+              <style>
+                {%- liquid
+                  assign pv_arrangement = block.settings.pv_arrangement | default: 'price_first'
+                  case pv_arrangement
+                    when 'picker_first'
+                      assign pv_direction = 'row-reverse'
+                    when 'price_top'
+                      assign pv_direction = 'column'
+                    when 'picker_top'
+                      assign pv_direction = 'column-reverse'
+                    else
+                      assign pv_direction = 'row'
+                  endcase
+
+                  case block.settings.pv_align
+                    when 'top'
+                      assign pv_items = 'flex-start'
+                    when 'bottom'
+                      assign pv_items = 'flex-end'
+                    else
+                      assign pv_items = 'center'
+                  endcase
+                -%}
+
+                [data-block-id="{{ block.id }}"] .pv-row {
+                  display: flex;
+                  gap: {{ block.settings.row_gap | default: 12 }}px;
+                  flex-direction: {{ pv_direction }};
+                  align-items: {{ pv_items }};
+                  {%- if pv_direction == 'row' or pv_direction == 'row-reverse' %}
+                  justify-content: space-between;
+                  flex-wrap: wrap;
+                  {%- endif %}
+                }
+
+                [data-block-id="{{ block.id }}"] .pv-row > * { min-width: 0; }
+
+                /* The price carries the heading bottom margin, which throws the
+                   vertical alignment off by its own height. */
+                [data-block-id="{{ block.id }}"] .pv-row .price-list,
+                [data-block-id="{{ block.id }}"] .pv-row .price-list * { margin-block: 0; }
+                [data-block-id="{{ block.id }}"] .pv-row .variant-picker,
+                [data-block-id="{{ block.id }}"] .pv-row .variant-picker__option { gap: 0; }
+
+                {%- if block.settings.price_font_size > 0 or block.settings.price_color != blank %}
+                  [data-block-id="{{ block.id }}"] .price-list,
+                  [data-block-id="{{ block.id }}"] .price-list * {
+                    {%- if block.settings.price_font_size > 0 %}font-size: {{ block.settings.price_font_size }}px;{% endif -%}
+                    {%- if block.settings.price_color != blank %}color: {{ block.settings.price_color }};{% endif -%}
+                  }
+                {%- endif %}
+              </style>
+
+              <div class="pv-row">
+                <div>
+                  {%- render 'price-list', product: product, variant: product.selected_or_first_available_variant, context: 'product' -%}
+                </div>
+
+                <div>
+                  {%- render 'variant-picker',
+                      product: product,
+                      form_id: product_form_id,
+                      context: context,
+                      hide_sold_out_variants: block.settings.hide_sold_out_variants,
+                      selector_style: 'block',
+                      swatch_selector_style: 'block_swatch',
+                      show_option_label: block.settings.show_option_label,
+                      option_label_text: block.settings.option_label_text,
+                      pill_padding_block: block.settings.pill_padding_block,
+                      pill_padding_inline: block.settings.pill_padding_inline -%}
+                </div>
+              </div>
+            {%- endif -%}
+
           {%- when 'variant_picker' -%}
             {%- if product != blank -%}
               {%- render 'variant-picker',
@@ -229,7 +315,11 @@
                   selector_style: block.settings.selector_style,
                   swatch_selector_style: block.settings.swatch_selector_style,
                   variant_image_options: block.settings.variant_image_options,
-                  size_chart_page: block.settings.size_chart_page -%}
+                  size_chart_page: block.settings.size_chart_page,
+                  show_option_label: block.settings.show_option_label,
+                  option_label_text: block.settings.option_label_text,
+                  pill_padding_block: block.settings.pill_padding_block,
+                  pill_padding_inline: block.settings.pill_padding_inline -%}
             {%- endif -%}
 
           {%- when 'product_variations' -%}
@@ -551,7 +641,7 @@
                   assign button_href = '/pages/bundle?type=' | append: product.handle
                 endif
               -%}
-              {%- render 'button', href: button_href, content: block.settings.text, stretch: block.settings.stretch, background: block.settings.background, text_color: block.settings.text_color -%}
+              {%- render 'button', href: button_href, content: block.settings.text, style: block.settings.button_style, stretch: block.settings.stretch, background: block.settings.background, text_color: block.settings.text_color -%}
             {%- endif -%}
 
           {%- when 'share_buttons' -%}
@@ -584,7 +674,7 @@
       {%- endif -%}
 
       <div
-        class="product-info__block-item"
+        class="product-info__block-item{% if block.settings.hide_on_desktop %} md:hidden{% endif %}{% if block.settings.hide_on_mobile %} md-max:hidden{% endif %}"
         data-block-id="{{ block.id }}"
         data-block-type="{{ block.type | replace: '_', '-' }}"
         {% unless block.type == '@app' or block.type == 'accordion' %}

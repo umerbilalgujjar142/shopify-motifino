@@ -17,6 +17,10 @@
   * swatch_selector_style: the selector style to use for the dedicated swatch selectors
   * variant_image_options: a list of option names for which to use the variant image selector mode
   * size_chart_page: the page to use for the size chart
+  * show_option_label: if false, the option name above the selectors is hidden
+  * option_label_text: replaces the option name above the selectors
+  * pill_padding_block: top and bottom padding of the block selectors, in px
+  * pill_padding_inline: left and right padding of the block selectors, in px
 {%- endcomment -%}
 
 {%- liquid
@@ -30,8 +34,19 @@
 -%}
 
 {%- unless product.has_only_default_variant -%}
+  {%- if pill_padding_block != blank or pill_padding_inline != blank -%}
+    {%- assign pill_scope = 'vp-pad-' | append: section.id | append: '-' | append: form_id -%}
+    <style>
+      /* .block-swatch sets --swatch-padding on itself, so the override has to
+         land on the pill rather than on an ancestor. */
+      .{{ pill_scope }} .block-swatch {
+        --swatch-padding: {{ pill_padding_block | default: 12 }}px {{ pill_padding_inline | default: 14 }}px;
+      }
+    </style>
+  {%- endif -%}
+
   <variant-picker
-    class="variant-picker v-stack gap-4"
+    class="variant-picker v-stack gap-4 {{ pill_scope }}"
     section-id="{{ section.id }}"
     form-id="{{ form_id }}"
     context="{{ context }}"
@@ -71,17 +86,29 @@
         endif
       %}
 
+      {%- liquid
+        assign show_size_chart = false
+        if size_chart_page != blank and size_label_list contains option_downcase
+          assign show_size_chart = true
+        endif
+        assign option_label = option_label_text | default: option.name
+      -%}
+
       <fieldset class="variant-picker__option v-stack gap-2">
+        {%- if show_option_label == false and show_size_chart == false -%}
+          {%- comment -%} The legend stays for screen readers even when hidden. {%- endcomment -%}
+          <legend class="sr-only">{{ option.name }}</legend>
+        {%- else -%}
         <div class="variant-picker__option-info h-stack justify-between gap-2">
-          <div class="h-stack gap-1">
-            <legend>{{ option.name }}:</legend>
+          <div class="h-stack gap-1 {% if show_option_label == false %}sr-only{% endif %}">
+            <legend>{{ option_label }}:</legend>
 
             {%- if resolved_option_selector_style == 'swatch' or resolved_option_selector_style == 'swatch_underline' or resolved_option_selector_style == 'variant_image' -%}
               <span>{{ option.selected_value }}</span>
             {%- endif -%}
           </div>
 
-          {%- if size_chart_page != blank and size_label_list contains option_downcase -%}
+          {%- if show_size_chart -%}
             {%- capture id -%}size-chart-{{ option.position }}-{{ form_id }}{%- endcapture -%}
 
             <button type="button" class="link" aria-controls="{{ id | escape }}" aria-expanded="false">
@@ -97,6 +124,7 @@
             </x-modal>
           {%- endif -%}
         </div>
+        {%- endif -%}
 
         {%- assign name = 'option' | append: option.position -%}
 

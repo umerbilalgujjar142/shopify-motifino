@@ -280,6 +280,16 @@
       animation: bs-spin 0.7s linear infinite;
     }
 
+    #shopify-section-{{ section.id }} .bs-spinner {
+      width: 15px;
+      height: 15px;
+      flex-shrink: 0;
+      border: 2px solid currentColor;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: bs-spin 0.7s linear infinite;
+    }
+
     #shopify-section-{{ section.id }} .bs-card__atc:hover { opacity: 0.85; }
     #shopify-section-{{ section.id }} .bs-card__atc[disabled] { opacity: 0.55; cursor: default; }
 
@@ -586,7 +596,7 @@
       }
 
       /* One combination product plus its free Privilege Card, same as the builder. */
-      var SPINNER = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>';
+      var SPINNER = '<span class="bs-spinner" aria-hidden="true"></span>';
 
       function addBelt(button) {
         var variantId = Number(button.getAttribute('data-variant'));
@@ -603,6 +613,9 @@
         if (B && B.privilegeCardVariantId) {
           cardId = B.privilegeCardVariantId().catch(function () { return null; });
         }
+
+        /* Keeps the spinner on screen long enough to be seen on a fast cart. */
+        var minSpin = new Promise(function (done) { setTimeout(done, 450); });
 
         cardId
           .then(function (id) {
@@ -626,9 +639,20 @@
             return response.json();
           })
           .then(function (payload) {
+            return minSpin.then(function () { return payload; });
+          })
+          .then(function (payload) {
             var rendered = false;
             if (B && B.renderSections) rendered = B.renderSections(payload, ids);
-            if (!rendered) window.location.reload();
+            if (!rendered) {
+              window.location.reload();
+              return;
+            }
+
+            /* Takes the shopper back up to the cart so the new line is visible. */
+            requestAnimationFrame(function () {
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
           })
           .catch(function () { window.location.reload(); })
           .then(function () {

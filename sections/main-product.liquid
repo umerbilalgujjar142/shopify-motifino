@@ -662,6 +662,38 @@
       "limit": 1,
       "settings": [
         {
+          "type": "header",
+          "content": "General"
+        },
+        {
+          "type": "checkbox",
+          "id": "hide_on_desktop",
+          "label": "Hide on desktop",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "hide_on_mobile",
+          "label": "Hide on mobile",
+          "default": false
+        },
+        {
+          "type": "range",
+          "id": "price_font_size",
+          "label": "Font size",
+          "info": "0 keeps the theme size.",
+          "min": 0,
+          "max": 60,
+          "step": 1,
+          "unit": "px",
+          "default": 0
+        },
+        {
+          "type": "color",
+          "id": "price_color",
+          "label": "Font color"
+        },
+        {
           "type": "checkbox",
           "id": "show_taxes_notice",
           "label": "t:sections.main_product.blocks.price.show_taxes_notice",
@@ -763,10 +795,174 @@
       ]
     },
     {
+      "type": "price_with_variants",
+      "name": "Price & variant picker",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "header",
+          "content": "General"
+        },
+        {
+          "type": "checkbox",
+          "id": "hide_on_desktop",
+          "label": "Hide on desktop",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "hide_on_mobile",
+          "label": "Hide on mobile",
+          "default": false
+        },
+        {
+          "type": "select",
+          "id": "pv_arrangement",
+          "label": "Arrangement",
+          "options": [
+            { "value": "price_first", "label": "Price left, selector right" },
+            { "value": "picker_first", "label": "Selector left, price right" }
+          ],
+          "default": "price_first"
+        },
+        {
+          "type": "select",
+          "id": "pv_align",
+          "label": "Alignment",
+          "options": [
+            { "value": "top", "label": "Top" },
+            { "value": "center", "label": "Middle" },
+            { "value": "bottom", "label": "Bottom" }
+          ],
+          "default": "center"
+        },
+        {
+          "type": "range",
+          "id": "row_gap",
+          "label": "Gap between price and selector",
+          "min": 0,
+          "max": 60,
+          "step": 2,
+          "unit": "px",
+          "default": 12
+        },
+        {
+          "type": "header",
+          "content": "Price"
+        },
+        {
+          "type": "range",
+          "id": "price_font_size",
+          "label": "Font size",
+          "info": "0 keeps the theme size.",
+          "min": 0,
+          "max": 60,
+          "step": 1,
+          "unit": "px",
+          "default": 0
+        },
+        {
+          "type": "color",
+          "id": "price_color",
+          "label": "Font color"
+        },
+        {
+          "type": "header",
+          "content": "Variant selector"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_option_label",
+          "label": "Show option name",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "option_label_text",
+          "label": "Option name text",
+          "visible_if": "{{ block.settings.show_option_label }}"
+        },
+        {
+          "type": "checkbox",
+          "id": "hide_sold_out_variants",
+          "label": "Hide sold out variants",
+          "default": false
+        },
+        {
+          "type": "range",
+          "id": "pill_padding_block",
+          "label": "Selector padding top and bottom",
+          "min": 0,
+          "max": 30,
+          "step": 1,
+          "unit": "px",
+          "default": 12
+        },
+        {
+          "type": "range",
+          "id": "pill_padding_inline",
+          "label": "Selector padding left and right",
+          "min": 0,
+          "max": 50,
+          "step": 1,
+          "unit": "px",
+          "default": 14
+        }
+      ]
+    },
+    {
       "type": "variant_picker",
       "name": "t:sections.main_product.blocks.variant_picker.name",
       "limit": 1,
       "settings": [
+        {
+          "type": "header",
+          "content": "General"
+        },
+        {
+          "type": "checkbox",
+          "id": "hide_on_desktop",
+          "label": "Hide on desktop",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "hide_on_mobile",
+          "label": "Hide on mobile",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "show_option_label",
+          "label": "Show option name",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "option_label_text",
+          "label": "Option name text",
+          "visible_if": "{{ block.settings.show_option_label }}"
+        },
+        {
+          "type": "range",
+          "id": "pill_padding_block",
+          "label": "Selector padding top and bottom",
+          "min": 0,
+          "max": 30,
+          "step": 1,
+          "unit": "px",
+          "default": 12
+        },
+        {
+          "type": "range",
+          "id": "pill_padding_inline",
+          "label": "Selector padding left and right",
+          "min": 0,
+          "max": 50,
+          "step": 1,
+          "unit": "px",
+          "default": 14
+        },
         {
           "type": "checkbox",
           "id": "hide_sold_out_variants",
@@ -2067,6 +2263,26 @@
           "id": "text",
           "label": "t:sections.main_product.blocks.button.text",
           "default": "Button"
+        },
+        {
+          "type": "select",
+          "id": "button_style",
+          "label": "t:global.text.button_style",
+          "options": [
+            {
+              "value": "outline",
+              "label": "t:global.text.link_style_options.outline"
+            },
+            {
+              "value": "solid",
+              "label": "t:global.text.link_style_options.solid"
+            },
+            {
+              "value": "link",
+              "label": "t:global.text.link_style_options.link"
+            }
+          ],
+          "default": "solid"
         },
         {
           "type": "checkbox",

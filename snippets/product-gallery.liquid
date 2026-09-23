@@ -30,6 +30,12 @@
 <style>
   /* Apply ONLY on mobile */
   @media screen and (max-width: 999px) {
+    /* The carousel keeps a column gap between slides, which shows as a white
+       band while swiping. */
+    #shopify-section-{{ section.id }} {
+      --product-gallery-carousel-gap: 1.5rem 0;
+    }
+
     #shopify-section-{{ section.id }} .product-gallery__mobile-media-wrapper {
       position: relative;
       width: 100%;

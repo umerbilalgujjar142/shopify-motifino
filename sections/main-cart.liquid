@@ -752,8 +752,36 @@
         });
     }
 
+    /* Line keys are regenerated whenever discount allocations shift, so the key
+       rendered into a stepper link can already be gone. Fall back to the line
+       number for the same variant rather than failing silently. */
+    function changeWithRetry(lineKey, quantity) {
+      return changeQuantity(lineKey, quantity).catch(function (err) {
+        var variantId = String(lineKey).split(':')[0];
+
+        return fetch('{{ routes.cart_url }}.js', { headers: { Accept: 'application/json' } })
+          .then(function (r) { return r.json(); })
+          .then(function (cart) {
+            var line = 0;
+            (cart.items || []).forEach(function (item, index) {
+              if (!line && String(item.variant_id) === variantId) line = index + 1;
+            });
+            if (!line) throw err;
+
+            return fetch('{{ routes.cart_change_url }}.js', {
+              method: 'POST',
+              headers: CART_HEADERS,
+              body: JSON.stringify({ line: line, quantity: quantity })
+            }).then(function (r) {
+              if (!r.ok) throw err;
+              return r.json();
+            });
+          });
+      });
+    }
+
     function applyChange(lineKey, quantity) {
-      return changeQuantity(lineKey, quantity)
+      return changeWithRetry(lineKey, quantity)
         .then(function (cart) {
           var sync = window.MotifinoBelt
             && window.MotifinoBelt.syncPrivilegeCard(cart, sectionList());
@@ -811,8 +839,9 @@
       var busy = markQtyBusy(link);
       applyChange(id, qty)
         .catch(function () {
-          document.body.classList.remove('bb-cart-busy');
           clearQtyBusy(busy);
+          /* Never leave the shopper looking at the old quantity with no reason. */
+          refreshSection({ reloadOnFail: true });
         });
     }, { capture: true });
 
@@ -829,8 +858,8 @@
       var busyInput = markQtyBusy(input);
       applyChange(input.dataset.lineKey, qty)
         .catch(function () {
-          document.body.classList.remove('bb-cart-busy');
           clearQtyBusy(busyInput);
+          refreshSection({ reloadOnFail: true });
         });
     }, { capture: true });
 
