@@ -48,6 +48,14 @@
       -webkit-line-clamp: unset;
       overflow: visible;
     }
+
+    {%- comment -%} Hover only on real pointers, so a tap doesn't leave a card stuck open {%- endcomment -%}
+    @media (hover: hover) and (pointer: fine) {
+      #shopify-section-{{ section.id }} .mc-expandable:hover {
+        -webkit-line-clamp: unset;
+        overflow: visible;
+      }
+    }
     {%- endif %}
 
     #shopify-section-{{ section.id }} .multi-column__media img {
@@ -514,7 +522,6 @@
       "type": "checkbox",
       "id": "expand_text_on_click",
       "label": "Expand text on click",
-      "info": "Tapping a card shows the full text; tapping again or scrolling collapses it.",
       "default": false
     },
     {
