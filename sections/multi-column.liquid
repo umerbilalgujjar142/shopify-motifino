@@ -39,6 +39,17 @@
       -webkit-line-clamp: var(--max-lines, 2);
     }
 
+    {%- if section.settings.expand_text_on_click %}
+    #shopify-section-{{ section.id }} .mc-expandable {
+      cursor: pointer;
+    }
+
+    #shopify-section-{{ section.id }} .custom-line-clamp.is-expanded {
+      -webkit-line-clamp: unset;
+      overflow: visible;
+    }
+    {%- endif %}
+
     #shopify-section-{{ section.id }} .multi-column__media img {
       max-width: {{ section.settings.image_max_width }}px;
       width: 100%;
@@ -165,7 +176,11 @@
                   {%- endif -%}
 
                   {%- if block.settings.content != blank -%}
-                    <div class="rte custom-line-clamp" style="--max-lines: {{ section.settings.text_max_lines }};">
+                    <div
+                      class="rte custom-line-clamp{% if section.settings.expand_text_on_click %} mc-expandable{% endif %}"
+                      style="--max-lines: {{ section.settings.text_max_lines }};"
+                      {% if section.settings.expand_text_on_click %}role="button" tabindex="0"{% endif %}
+                    >
                       {{- block.settings.content -}}
                     </div>
                   {%- endif -%}
@@ -181,6 +196,44 @@
       </div>
     </div>
   </div>
+
+  {%- if section.settings.expand_text_on_click -%}
+    <script>
+      (function () {
+        var root = document.getElementById('shopify-section-{{ section.id }}');
+        if (!root) return;
+
+        var open = null;
+
+        function collapse() {
+          if (!open) return;
+          open.classList.remove('is-expanded');
+          open = null;
+        }
+
+        root.addEventListener('click', function (e) {
+          var text = e.target.closest('.mc-expandable');
+          if (!text || e.target.closest('a')) return;
+          var wasOpen = text === open;
+          collapse();
+          if (wasOpen) return;
+          text.classList.add('is-expanded');
+          open = text;
+        });
+
+        root.addEventListener('keydown', function (e) {
+          if (e.key !== 'Enter' && e.key !== ' ') return;
+          var text = e.target.closest('.mc-expandable');
+          if (!text) return;
+          e.preventDefault();
+          text.click();
+        });
+
+        /* Scrolling the page or swiping the cards puts the open one back. */
+        window.addEventListener('scroll', collapse, { passive: true, capture: true });
+      })();
+    </script>
+  {%- endif -%}
 {%- endif -%}
 
 {% schema %}
@@ -456,6 +509,13 @@
       "step": 1,
       "label": "t:sections.multi_column.text_max_lines",
       "default": 4
+    },
+    {
+      "type": "checkbox",
+      "id": "expand_text_on_click",
+      "label": "Expand text on click",
+      "info": "Tapping a card shows the full text; tapping again or scrolling collapses it.",
+      "default": false
     },
     {
       "type": "select",

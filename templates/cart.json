@@ -149,7 +149,7 @@
         "products_per_row_mobile": 1.6,
         "products_per_row_desktop": 5,
         "max_width": 1320,
-        "media_ratio": "1 / 1",
+        "media_ratio": "4 / 5",
         "media_height": 160,
         "card_radius": 8,
         "padding_mobile": 18,

@@ -281,7 +281,11 @@
                     Skip the stale row — the corrected one is drawn after the loop.
                   {%- endcomment -%}
                   {%- if _is_card and _cart_belt_count != _cart_card_count -%}{%- continue -%}{%- endif -%}
-                  <tr>
+                  {%- comment -%}
+                    Rows are drawn out of cart order, so the line number has to come
+                    from the loop rather than from the row's position.
+                  {%- endcomment -%}
+                  <tr data-cart-line="{{ forloop.index }}">
                     <td>
                       {%- render 'line-item', line_item: line_item, show_quantity_selector: true -%}
                     </td>
@@ -715,15 +719,19 @@
 
     /* No sections here: the card sync writes straight after and renders them
        once, instead of the server building the cart twice. */
-    function changeQuantity(lineKey, quantity) {
+    function postChange(body) {
       return fetch('{{ routes.cart_change_url }}.js', {
         method: 'POST',
         headers: CART_HEADERS,
-        body: JSON.stringify({ id: lineKey, quantity: quantity })
+        body: JSON.stringify(body)
       }).then(function (r) {
         if (!r.ok) throw new Error('cart_change_failed');
         return r.json();
       });
+    }
+
+    function changeQuantity(lineKey, quantity) {
+      return postChange({ id: lineKey, quantity: quantity });
     }
 
     function render(payload) {
@@ -752,11 +760,18 @@
         });
     }
 
-    /* Line keys are regenerated whenever discount allocations shift, so the key
-       rendered into a stepper link can already be gone. Fall back to the line
-       number for the same variant rather than failing silently. */
-    function changeWithRetry(lineKey, quantity) {
-      return changeQuantity(lineKey, quantity).catch(function (err) {
+    /* A line key carries the discount allocation, so the key rendered into a
+       stepper link is already gone once the belt discounts move; the line number
+       survives that, hence addressing by number first and keeping the key as the
+       fallback for a cart whose rows have shifted. */
+    function changeWithRetry(lineKey, quantity, lineNumber) {
+      var first = lineNumber
+        ? postChange({ line: lineNumber, quantity: quantity })
+        : changeQuantity(lineKey, quantity);
+
+      return first.catch(function () {
+        return lineNumber ? changeQuantity(lineKey, quantity) : Promise.reject(new Error('cart_change_failed'));
+      }).catch(function (err) {
         var variantId = String(lineKey).split(':')[0];
 
         return fetch('{{ routes.cart_url }}.js', { headers: { Accept: 'application/json' } })
@@ -780,8 +795,8 @@
       });
     }
 
-    function applyChange(lineKey, quantity) {
-      return changeWithRetry(lineKey, quantity)
+    function applyChange(lineKey, quantity, lineNumber) {
+      return changeWithRetry(lineKey, quantity, lineNumber)
         .then(function (cart) {
           var sync = window.MotifinoBelt
             && window.MotifinoBelt.syncPrivilegeCard(cart, sectionList());
@@ -824,6 +839,25 @@
       if (line) line.classList.remove('bb-qty-active');
     }
 
+    /* The number changes on click and the two cart writes settle behind it, so the
+       stepper feels instant; the re-rendered section is what finally confirms it,
+       and a failed write refreshes the row back to the server's value. */
+    function setPendingQty(el, qty) {
+      var row = el.closest('.line-item__quantity');
+      var field = row && row.querySelector('.quantity-selector__input');
+      if (!field) return false;
+      if (field.tagName === 'INPUT') field.value = qty;
+      else field.textContent = qty;
+      row.classList.add('bb-qty-active');
+      return true;
+    }
+
+    function lineNumber(el) {
+      var row = el.closest('[data-cart-line]');
+      var n = row && parseInt(row.getAttribute('data-cart-line'), 10);
+      return n > 0 ? n : 0;
+    }
+
     /* Theme stepper links (- and + are /cart/change?id=...&quantity=... anchors) (/cart/change?id=...&quantity=0) */
     document.addEventListener('click', function (e) {
       var link = e.target.closest('a[href*="/cart/change"]');
@@ -836,8 +870,9 @@
       e.preventDefault();
       e.stopImmediatePropagation();
       document.body.classList.add('bb-cart-busy');
+      setPendingQty(link, qty);
       var busy = markQtyBusy(link);
-      applyChange(id, qty)
+      applyChange(id, qty, lineNumber(link))
         .catch(function () {
           clearQtyBusy(busy);
           /* Never leave the shopper looking at the old quantity with no reason. */
@@ -856,7 +891,7 @@
       e.stopImmediatePropagation();
       document.body.classList.add('bb-cart-busy');
       var busyInput = markQtyBusy(input);
-      applyChange(input.dataset.lineKey, qty)
+      applyChange(input.dataset.lineKey, qty, lineNumber(input))
         .catch(function () {
           clearQtyBusy(busyInput);
           refreshSection({ reloadOnFail: true });

@@ -253,6 +253,26 @@
                     else
                       assign pv_items = 'center'
                   endcase
+
+                  assign pv_justify = block.settings.pv_justify | default: 'space_between'
+                  case pv_justify
+                    when 'left'
+                      assign pv_content = 'flex-start'
+                    when 'center'
+                      assign pv_content = 'center'
+                    when 'right'
+                      assign pv_content = 'flex-end'
+                    else
+                      assign pv_content = 'space-between'
+                  endcase
+                  # row-reverse flips the main axis, so left and right swap to stay literal
+                  if pv_direction == 'row-reverse'
+                    if pv_content == 'flex-start'
+                      assign pv_content = 'flex-end'
+                    elsif pv_content == 'flex-end'
+                      assign pv_content = 'flex-start'
+                    endif
+                  endif
                 -%}
 
                 [data-block-id="{{ block.id }}"] .pv-row {
@@ -261,7 +281,7 @@
                   flex-direction: {{ pv_direction }};
                   align-items: {{ pv_items }};
                   {%- if pv_direction == 'row' or pv_direction == 'row-reverse' %}
-                  justify-content: space-between;
+                  justify-content: {{ pv_content }};
                   flex-wrap: wrap;
                   {%- endif %}
                 }
