@@ -214,6 +214,78 @@
         "max_image_zoom_level": 3
       }
     },
+    "shoppable_videos_Uem7eP": {
+      "type": "shoppable-videos",
+      "blocks": {
+        "video_BPDkqE": {
+          "type": "video",
+          "settings": {
+            "video": "shopify://files/videos/Video sales page utilizzo cintura_d571c559-6849-477c-99c5-41b392a77452.mp4",
+            "product": "",
+            "heading": "",
+            "text": ""
+          }
+        },
+        "video_rMKgTd": {
+          "type": "video",
+          "settings": {
+            "video": "shopify://files/videos/798441720260622072215.mp4",
+            "product": "",
+            "heading": "",
+            "text": ""
+          }
+        },
+        "video_KcM4aj": {
+          "type": "video",
+          "settings": {
+            "video": "shopify://files/videos/839970420260622073644.mp4",
+            "product": "",
+            "heading": "",
+            "text": ""
+          }
+        },
+        "video_a8Fti8": {
+          "type": "video",
+          "settings": {
+            "video": "shopify://files/videos/Nuovo video tutorial.mp4",
+            "product": "",
+            "heading": "",
+            "text": ""
+          }
+        }
+      },
+      "block_order": [
+        "video_BPDkqE",
+        "video_rMKgTd",
+        "video_KcM4aj",
+        "video_a8Fti8"
+      ],
+      "name": "Shoppable videos",
+      "settings": {
+        "color_scheme": "",
+        "subheading": "",
+        "heading": "",
+        "heading_size": "h2",
+        "text_alignment": "center",
+        "cards_desktop": 4,
+        "mobile_width": 44,
+        "card_height": 240,
+        "card_gap": 12,
+        "card_radius": 12,
+        "autoplay_preview": true,
+        "preview_seconds": 5,
+        "show_share": true,
+        "button_label": "Aggiungi al carrello",
+        "copied_label": "Link copiato",
+        "more_label": "Mostra altro",
+        "less_label": "Mostra meno",
+        "added_label": "Aggiunto ✓",
+        "button_background": "#111111",
+        "button_text_color": "#ffffff",
+        "padding_top": 40,
+        "padding_bottom": 40
+      }
+    },
     "17761166034ed9bfed": {
       "type": "apps",
       "blocks": {
@@ -501,6 +573,7 @@
             "text": "<p>La cintura viene fornita in una gift box in trama pelle, <strong>protetta</strong> durante la spedizione da una scatola rigida</p>",
             "show_product_title": true,
             "show_product_price": true,
+            "show_savings_badge": false,
             "price_text": "",
             "price_size": "h6",
             "button_1_text": "",
@@ -534,6 +607,7 @@
             "text": "<p>Scegli la cintura da 130cm o 150cm e falla <strong>su misura in 2 minuti</strong> a casa, con una semplice forbice.</p>",
             "show_product_title": true,
             "show_product_price": true,
+            "show_savings_badge": false,
             "price_text": "",
             "price_size": "h6",
             "button_1_text": "",
@@ -567,6 +641,7 @@
             "text": "<p>Ricevi ogni cintura con una garanzia di 2 anni <strong>sull'usura</strong> e l'accesso al tuo personale biglietto da visita digitale.</p>",
             "show_product_title": true,
             "show_product_price": true,
+            "show_savings_badge": false,
             "price_text": "",
             "price_size": "h6",
             "button_1_text": "",
@@ -600,6 +675,7 @@
             "text": "<p>Ogni fibbia può essere connessa a diverse cinture. 3 fibbie + 3 cinture creano <strong>9 combinazioni</strong> diverse</p>",
             "show_product_title": true,
             "show_product_price": true,
+            "show_savings_badge": false,
             "price_text": "",
             "price_size": "h6",
             "button_1_text": "",
@@ -637,6 +713,9 @@
         "navigation_style": "side_arrows_minimal",
         "navigation_background": "#141311",
         "navigation_text": "#b98141",
+        "saving_font_size": 13,
+        "saving_background": "#c0392b",
+        "saving_text_color": "#ffffff",
         "separate_section_with_border": false,
         "padding_top": 32,
         "padding_bottom": 52,
@@ -740,6 +819,7 @@
             "text": "<p>Addio biglietti da visita cartacei. Ora potrai presentarti ai clienti, colleghi e fornitori con un'ottima presentazione</p>",
             "show_product_title": true,
             "show_product_price": true,
+            "show_savings_badge": false,
             "price_text": "",
             "price_size": "h6",
             "button_1_text": "",
@@ -773,6 +853,7 @@
             "text": "<p>Ora basterà appoggiare la card al telefono dell'altra persona per condividere qualsiasi tua informazione</p>",
             "show_product_title": true,
             "show_product_price": true,
+            "show_savings_badge": false,
             "price_text": "",
             "price_size": "h6",
             "button_1_text": "",
@@ -806,6 +887,7 @@
             "text": "<p>Pulsante che riporta alla tua chat Whatsapp, foto e video, cataloghi, menù, links e tutti i tuoi dati. Tutto a portata di mano in un istante </p>",
             "show_product_title": true,
             "show_product_price": true,
+            "show_savings_badge": false,
             "price_text": "",
             "price_size": "h6",
             "button_1_text": "",
@@ -839,6 +921,7 @@
             "text": "<p>Zero costi e solo per voi. Gestisci ordini e garanzie, ottieni punti, sconti a vita e tanto altro sull'app a voi dedicata.</p>",
             "show_product_title": true,
             "show_product_price": true,
+            "show_savings_badge": false,
             "price_text": "",
             "price_size": "h6",
             "button_1_text": "",
@@ -876,6 +959,9 @@
         "navigation_style": "side_arrows_minimal",
         "navigation_background": "#6b4f2a",
         "navigation_text": "#ffffff",
+        "saving_font_size": 13,
+        "saving_background": "#c0392b",
+        "saving_text_color": "#ffffff",
         "separate_section_with_border": true,
         "padding_top": 36,
         "padding_bottom": 12,
@@ -1153,6 +1239,7 @@
   },
   "order": [
     "main",
+    "shoppable_videos_Uem7eP",
     "17761166034ed9bfed",
     "tabs_FUAGrg",
     "rich_text_DQxxhY",

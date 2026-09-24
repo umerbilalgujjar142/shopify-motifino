@@ -1,0 +1,1216 @@
+{%- if section.blocks.size > 0 -%}
+  <style>
+    #shopify-section-{{ section.id }} .shoppable {
+      padding-block: {{ section.settings.padding_top | default: 40 }}px {{ section.settings.padding_bottom | default: 40 }}px;
+    }
+
+    #shopify-section-{{ section.id }} .shoppable__head {
+      text-align: {{ section.settings.text_alignment | default: 'center' }};
+      margin-block-end: 18px;
+      padding-inline: {{ section.settings.side_padding | default: 20 }}px;
+    }
+
+    #shopify-section-{{ section.id }} .shoppable__row {
+      display: flex;
+      gap: {{ section.settings.card_gap | default: 12 }}px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      padding-inline: {{ section.settings.side_padding | default: 20 }}px;
+      padding-block-end: 4px;
+    }
+
+    #shopify-section-{{ section.id }} .shoppable__row::-webkit-scrollbar { display: none; }
+
+    #shopify-section-{{ section.id }} .shoppable__card {
+      position: relative;
+      flex: 0 0 auto;
+      width: {{ section.settings.mobile_width | default: 62 }}%;
+      {%- if section.settings.card_height > 0 %}
+      height: {{ section.settings.card_height }}px;
+      {%- else %}
+      aspect-ratio: 9 / 16;
+      {%- endif %}
+      padding: 0;
+      border: none;
+      border-radius: {{ section.settings.card_radius | default: 12 }}px;
+      overflow: hidden;
+      background: #eee;
+      scroll-snap-align: start;
+      cursor: pointer;
+    }
+
+    @media screen and (min-width: 1000px) {
+      #shopify-section-{{ section.id }} .shoppable__row,
+      #shopify-section-{{ section.id }} .shoppable__head {
+        padding-inline: {{ section.settings.side_padding_desktop | default: 100 }}px;
+      }
+
+      #shopify-section-{{ section.id }} .shoppable__card {
+        {%- if section.settings.card_width_desktop > 0 %}
+        width: {{ section.settings.card_width_desktop }}px;
+        {%- else %}
+        width: calc((100% - {{ section.settings.card_gap | default: 12 }}px * ({{ section.settings.cards_desktop | default: 4 }} - 1)) / {{ section.settings.cards_desktop | default: 4 }});
+        {%- endif %}
+        {%- if section.settings.card_height_desktop > 0 %}
+        height: {{ section.settings.card_height_desktop }}px;
+        aspect-ratio: auto;
+        {%- endif %}
+      }
+    }
+
+    #shopify-section-{{ section.id }} .shoppable__card img,
+    #shopify-section-{{ section.id }} .shoppable__card video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    #shopify-section-{{ section.id }} .shoppable__caption {
+      position: absolute;
+      inset-inline: 10px;
+      inset-block-end: 10px;
+      z-index: 1;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      text-align: start;
+      text-shadow: 0 1px 6px rgba(0, 0, 0, 0.6);
+    }
+
+    .shoppable-player {
+      position: fixed;
+      inset: 0;
+      z-index: 2147483000;
+      display: grid;
+      place-items: center;
+      background: rgba(0, 0, 0, 0.92);
+    }
+
+    .shoppable-player[hidden] { display: none; }
+
+    .shoppable-player__blur {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      filter: blur(40px) brightness(0.5);
+      transform: scale(1.2);
+    }
+
+    .shoppable-player__stage {
+      position: relative;
+      width: min(430px, 100vw);
+      height: 100svh;
+      overflow: hidden;
+    }
+
+    @keyframes shoppable-in-up {
+      from { transform: translateY(100%); }
+      to { transform: none; }
+    }
+
+    @keyframes shoppable-in-down {
+      from { transform: translateY(-100%); }
+      to { transform: none; }
+    }
+
+    @keyframes shoppable-in-left {
+      from { transform: translateX(100%); }
+      to { transform: none; }
+    }
+
+    @keyframes shoppable-in-right {
+      from { transform: translateX(-100%); }
+      to { transform: none; }
+    }
+
+    .shoppable-player__video.is-up { animation: shoppable-in-up 0.3s ease; }
+    .shoppable-player__video.is-down { animation: shoppable-in-down 0.3s ease; }
+    .shoppable-player__video.is-left { animation: shoppable-in-left 0.3s ease; }
+    .shoppable-player__video.is-right { animation: shoppable-in-right 0.3s ease; }
+
+    .shoppable-player__side {
+      position: absolute;
+      inset-block-start: 50%;
+      z-index: 4;
+      display: none;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      transform: translateY(-50%);
+      border: none;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.92);
+      color: #111;
+      cursor: pointer;
+    }
+
+    .shoppable-player__side--prev { inset-inline-start: max(16px, calc(50vw - 300px)); }
+    .shoppable-player__side--next { inset-inline-end: max(16px, calc(50vw - 300px)); }
+
+    @media screen and (min-width: 1000px) {
+      .shoppable-player__side { display: grid; }
+    }
+
+    .shoppable-player__video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      background: #000;
+    }
+
+    .shoppable-player__bars {
+      position: absolute;
+      inset-block-start: 10px;
+      inset-inline: 10px;
+      z-index: 2;
+      display: flex;
+      gap: 4px;
+    }
+
+    .shoppable-player__bar {
+      flex: 1;
+      height: 3px;
+      border-radius: 2px;
+      background: rgba(255, 255, 255, 0.35);
+      overflow: hidden;
+    }
+
+    .shoppable-player__bar span {
+      display: block;
+      width: 0;
+      height: 100%;
+      background: #fff;
+    }
+
+    .shoppable-player__icon,
+    .shoppable-player__atc,
+    .shoppable__card {
+      transition: transform 0.12s ease;
+    }
+
+    .shoppable-player__icon:active,
+    .shoppable-player__atc:active,
+    .shoppable__card:active { transform: scale(0.93); }
+
+    .shoppable-player__toast {
+      position: absolute;
+      inset-block-end: calc(80px + var(--shoppable-product-h, 0px));
+      inset-inline: 0;
+      z-index: 4;
+      margin-inline: auto;
+      width: fit-content;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      font-size: 12px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      pointer-events: none;
+    }
+
+    .shoppable-player__toast.is-visible { opacity: 1; }
+
+    .shoppable-player__icon {
+      position: absolute;
+      z-index: 3;
+      display: grid;
+      place-items: center;
+      width: 36px;
+      height: 36px;
+      border: none;
+      border-radius: 10px;
+      background: rgba(0, 0, 0, 0.45);
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .shoppable-player__close { inset-block-start: 24px; inset-inline-end: 12px; }
+    .shoppable-player__sound { inset-block-start: 24px; inset-inline-end: 56px; }
+
+    .shoppable-player__cart {
+      border-radius: 50%;
+      background: #fff;
+      color: #111;
+    }
+
+    .shoppable-player__cart > span {
+      position: absolute;
+      inset-block-start: -3px;
+      inset-inline-end: -3px;
+      min-width: 17px;
+      height: 17px;
+      padding-inline: 4px;
+      border-radius: 999px;
+      background: #c0392b;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      line-height: 17px;
+      text-align: center;
+    }
+
+    .shoppable-player__actions {
+      position: absolute;
+      inset-inline-end: 12px;
+      inset-block-end: calc(16px + var(--shoppable-product-h, 0px));
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .shoppable-player__actions > * {
+      position: relative;
+      width: 40px;
+      display: grid;
+      justify-items: center;
+    }
+
+    .shoppable-player__actions .shoppable-player__icon {
+      position: relative;
+      height: auto;
+      background: transparent;
+      border-radius: 0;
+      gap: 2px;
+      font-size: 11px;
+      font-weight: 600;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+    }
+
+    .shoppable-player__like.is-liked { color: #e0245e; }
+    .shoppable-player__like svg { fill: none; }
+    .shoppable-player__like.is-liked svg { fill: currentColor; }
+
+    .shoppable-player__like span { line-height: 1; }
+
+    .shoppable-player__actions .shoppable-player__cart {
+      width: 38px;
+      height: 38px;
+      place-items: center;
+      border-radius: 50%;
+      background: #fff;
+      color: #111;
+      justify-self: center;
+    }
+
+    @keyframes shoppable-fade-out {
+      from { opacity: 1; }
+      to { opacity: 0; }
+    }
+
+    @keyframes shoppable-shrink-out {
+      from { transform: scale(1); opacity: 1; }
+      to { transform: scale(0.35) translateY(12%); opacity: 0; }
+    }
+
+    .shoppable-player.is-closing { animation: shoppable-fade-out 0.9s ease forwards; }
+    .shoppable-player.is-closing .shoppable-player__stage { animation: shoppable-shrink-out 0.9s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+    .shoppable-player.is-closing .shoppable-player__actions,
+    .shoppable-player.is-closing .shoppable-player__copy,
+    .shoppable-player.is-closing .shoppable-player__icon { opacity: 0; transition: opacity 0.15s ease; }
+
+    .shoppable-player__copy {
+      position: absolute;
+      inset-inline-start: 14px;
+      inset-inline-end: 70px;
+      inset-block-end: calc(16px + var(--shoppable-product-h, 0px));
+      z-index: 3;
+      color: #fff;
+      text-shadow: 0 1px 6px rgba(0, 0, 0, 0.7);
+    }
+
+    .shoppable-player__copy[hidden] { display: none; }
+
+    .shoppable-player__copy-title {
+      font-size: 15px;
+      font-weight: 700;
+      margin-block-end: 2px;
+    }
+
+    .shoppable-player__copy-text {
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .shoppable-player__copy-text.is-clamped {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      overflow: hidden;
+    }
+
+    .shoppable-player__more {
+      margin-block-start: 2px;
+      padding: 0;
+      border: none;
+      background: none;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    .shoppable-player__product {
+      position: absolute;
+      inset-block-end: 0;
+      inset-inline: 0;
+      z-index: 3;
+      z-index: 3;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.96);
+    }
+
+    .shoppable-player__product[hidden] { display: none; }
+
+    .shoppable-player__thumb {
+      width: 52px;
+      height: 52px;
+      flex-shrink: 0;
+      border-radius: 8px;
+      object-fit: cover;
+      background: #f2f2f2;
+    }
+
+    .shoppable-player__info { flex: 1; min-width: 0; }
+
+    .shoppable-player__title {
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .shoppable-player__price { font-size: 13px; }
+
+    .shoppable-player__variants {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+      margin-block-start: 4px;
+    }
+
+    .shoppable-player__variant {
+      padding: 3px 9px;
+      border: 1px solid rgba(0, 0, 0, 0.15);
+      border-radius: 999px;
+      background: #fff;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .shoppable-player__variant.is-selected {
+      background: #111;
+      border-color: #111;
+      color: #fff;
+    }
+
+    .shoppable-player__atc {
+      flex-shrink: 0;
+      padding: 11px 16px;
+      border: none;
+      border-radius: 8px;
+      background: {{ section.settings.button_background | default: '#111111' }};
+      color: {{ section.settings.button_text_color | default: '#ffffff' }};
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .shoppable-player__atc[disabled] { opacity: 0.6; cursor: default; }
+  </style>
+
+  <div class="shoppable color-scheme color-scheme--{{ section.settings.color_scheme.id }}">
+    {%- if section.settings.heading != blank or section.settings.subheading != blank -%}
+      <div class="shoppable__head">
+        {%- if section.settings.subheading != blank -%}
+          <p class="h6">{{ section.settings.subheading }}</p>
+        {%- endif -%}
+        {%- if section.settings.heading != blank -%}
+          <p class="{{ section.settings.heading_size | default: 'h2' }}">{{ section.settings.heading }}</p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="shoppable__row" data-shoppable-row>
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign v = block.settings.video
+          assign poster = block.settings.poster | default: v.preview_image
+        -%}
+        <button type="button" class="shoppable__card" data-shoppable-open="{{ forloop.index0 }}" {{ block.shopify_attributes }}>
+          {%- if poster != blank -%}
+            <img src="{{ poster | image_url: width: 540 }}" alt="{{ block.settings.heading | escape }}" loading="lazy" width="540" height="960">
+          {%- endif -%}
+          {%- if section.settings.autoplay_preview and v != blank -%}
+            <video muted loop playsinline preload="none" data-shoppable-preview>
+              {%- for source in v.sources -%}
+                {%- if source.format == 'mp4' -%}<source src="{{ source.url }}" type="{{ source.mime_type }}">{%- endif -%}
+              {%- endfor -%}
+            </video>
+          {%- endif -%}
+          {%- if block.settings.heading != blank and block.settings.show_heading_on_card -%}
+            <span class="shoppable__caption">{{ block.settings.heading }}</span>
+          {%- endif -%}
+        </button>
+      {%- endfor -%}
+    </div>
+  </div>
+
+  {%- capture shoppable_items -%}
+    [
+    {%- for block in section.blocks -%}
+      {%- liquid
+        assign v = block.settings.video
+        assign poster = block.settings.poster | default: v.preview_image
+        assign p = block.settings.product
+      -%}
+      {
+        "poster": {{ poster | image_url: width: 720 | json }},
+        "id": {{ block.id | json }},
+        "likes": {{ block.settings.likes_start | default: 0 }},
+        "heading": {{ block.settings.heading | json }},
+        "text": {{ block.settings.text | json }},
+        "sources": [
+          {%- for source in v.sources -%}
+            {%- if source.format == 'mp4' -%}
+              { "url": {{ source.url | json }}, "type": {{ source.mime_type | json }} }{%- unless forloop.last -%},{%- endunless -%}
+            {%- endif -%}
+          {%- endfor -%}
+        ]
+        {%- if p != blank -%}
+        , "product": {
+          "title": {{ p.title | json }},
+          "url": {{ p.url | json }},
+          "image": {{ p.featured_image | image_url: width: 160 | json }},
+          "variants": [
+            {%- for variant in p.variants -%}
+              {
+                "id": {{ variant.id }},
+                "title": {{ variant.title | json }},
+                "price": {{ variant.price | money | json }},
+                "available": {{ variant.available }}
+              }{%- unless forloop.last -%},{%- endunless -%}
+            {%- endfor -%}
+          ]
+        }
+        {%- endif -%}
+      }{%- unless forloop.last -%},{%- endunless -%}
+    {%- endfor -%}
+    ]
+  {%- endcapture -%}
+
+  <script type="application/json" data-shoppable-data="{{ section.id }}">{{ shoppable_items }}</script>
+
+  <div class="shoppable-player" data-shoppable-player="{{ section.id }}" hidden>
+    <div class="shoppable-player__blur" data-blur></div>
+
+    <button type="button" class="shoppable-player__side shoppable-player__side--prev" data-side-prev aria-label="{{ 'general.accessibility.previous' | t }}">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <button type="button" class="shoppable-player__side shoppable-player__side--next" data-side-next aria-label="{{ 'general.accessibility.next' | t }}">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+    </button>
+    <div class="shoppable-player__stage">
+      <video class="shoppable-player__video" playsinline data-video></video>
+
+      <div class="shoppable-player__bars" data-bars></div>
+
+      <button type="button" class="shoppable-player__icon shoppable-player__close" data-close aria-label="{{ 'general.accessibility.close' | t }}">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+      <button type="button" class="shoppable-player__icon shoppable-player__sound" data-sound aria-label="Audio">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-sound-icon><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M23 9l-6 6M17 9l6 6"/></svg>
+      </button>
+
+      <div class="shoppable-player__actions">
+        {%- if section.settings.show_likes -%}
+          <button type="button" class="shoppable-player__icon shoppable-player__like" data-like aria-pressed="false" aria-label="{{ 'general.accessibility.like' | t | default: 'Like' }}">
+            <svg width="24" height="24" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1L12 21l7.7-7.6 1.1-1a5.5 5.5 0 0 0 0-7.8Z"/></svg>
+            <span data-like-count></span>
+          </button>
+        {%- endif -%}
+
+        {%- if section.settings.show_share -%}
+          <button type="button" class="shoppable-player__icon shoppable-player__share" data-share aria-label="{{ 'general.social.share' | t }}">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4 20-7Z"/></svg>
+          </button>
+        {%- endif -%}
+
+        <a class="shoppable-player__icon shoppable-player__cart" href="{{ routes.cart_url }}" aria-label="{{ 'general.cart.title' | t }}">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4H6ZM3 6h18M16 10a4 4 0 0 1-8 0"/></svg>
+          <span data-cart-count{% if cart.item_count == 0 %} hidden{% endif %}>{{ cart.item_count }}</span>
+        </a>
+      </div>
+
+
+      <div class="shoppable-player__toast" data-toast></div>
+
+      <div class="shoppable-player__copy" data-copy hidden>
+        <div class="shoppable-player__copy-title" data-copy-title></div>
+        <div class="shoppable-player__copy-text" data-copy-text></div>
+        <button type="button" class="shoppable-player__more" data-more hidden>{{ section.settings.more_label | default: 'Mostra altro' }}</button>
+      </div>
+
+      <div class="shoppable-player__product" data-product hidden>
+        <img class="shoppable-player__thumb" data-thumb alt="">
+        <div class="shoppable-player__info">
+          <div class="shoppable-player__title" data-title></div>
+          <div class="shoppable-player__price" data-price></div>
+          <div class="shoppable-player__variants" data-variants></div>
+        </div>
+        <button type="button" class="shoppable-player__atc" data-atc>{{ section.settings.button_label | default: 'Aggiungi al carrello' }}</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var root = document.getElementById('shopify-section-{{ section.id }}');
+      var player = document.querySelector('[data-shoppable-player="{{ section.id }}"]');
+      var dataNode = document.querySelector('[data-shoppable-data="{{ section.id }}"]');
+      if (!root || !player || !dataNode) return;
+
+      var items = [];
+      try { items = JSON.parse(dataNode.textContent); } catch (e) { return; }
+      if (!items.length) return;
+
+      var video = player.querySelector('[data-video]');
+      var blur = player.querySelector('[data-blur]');
+      var bars = player.querySelector('[data-bars]');
+      var productBox = player.querySelector('[data-product]');
+      var thumb = player.querySelector('[data-thumb]');
+      var titleEl = player.querySelector('[data-title]');
+      var priceEl = player.querySelector('[data-price]');
+      var variantsEl = player.querySelector('[data-variants]');
+      var atc = player.querySelector('[data-atc]');
+      var copy = player.querySelector('[data-copy]');
+      var copyTitle = player.querySelector('[data-copy-title]');
+      var copyText = player.querySelector('[data-copy-text]');
+      var moreBtn = player.querySelector('[data-more]');
+      var stage = player.querySelector('.shoppable-player__stage');
+      var likeBtn = player.querySelector('[data-like]');
+      var likeCount = player.querySelector('[data-like-count]');
+      var soundIcon = player.querySelector('[data-sound-icon]');
+
+      var current = 0;
+      var muted = true;
+      var selectedVariant = null;
+      var atcLabel = atc.textContent;
+      var moreLabel = moreBtn.textContent;
+      var toast = player.querySelector('[data-toast]');
+      var toastTimer = null;
+
+      function flash(message) {
+        toast.textContent = message;
+        toast.classList.add('is-visible');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(function () { toast.classList.remove('is-visible'); }, 1600);
+      }
+
+      /* Previews stay paused until they are on screen, so a long row costs nothing. */
+      var previews = root.querySelectorAll('[data-shoppable-preview]');
+      if (previews.length && 'IntersectionObserver' in window) {
+        var observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            var el = entry.target;
+            if (!entry.isIntersecting) { el.pause(); return; }
+
+            /* Muting in JS too: an attribute alone is not always enough for
+               autoplay, and a rejected play() has to be retried once data lands. */
+            el.muted = true;
+            el.playsInline = true;
+            if (el.preload !== 'auto') el.preload = 'auto';
+
+            var attempt = function () { return el.play(); };
+            attempt().catch(function () {
+              el.addEventListener('loadeddata', function once() {
+                el.removeEventListener('loadeddata', once);
+                attempt().catch(function () {});
+              });
+              el.load();
+            });
+          });
+        }, { rootMargin: '100px' });
+        Array.prototype.forEach.call(previews, function (el) { observer.observe(el); });
+      }
+
+      var previewSeconds = {{ section.settings.preview_seconds | default: 3 }};
+      if (previewSeconds > 0) {
+        /* The row shows the opening seconds on a loop; the full video plays once opened. */
+        Array.prototype.forEach.call(previews, function (el) {
+          el.addEventListener('timeupdate', function () {
+            if (el.currentTime >= previewSeconds) el.currentTime = 0;
+          });
+        });
+      }
+
+      /* One bar, for the video on screen — the row itself is the way through the set. */
+      function buildBars() {
+        bars.innerHTML = '<span class="shoppable-player__bar"><span></span></span>';
+      }
+
+      function paintBars(progress) {
+        bars.firstChild.firstChild.style.width = (progress * 100) + '%';
+      }
+
+      /* Likes live in this browser for now; swap these two for an API call when
+         the backend endpoint exists and nothing else has to change. */
+      var LIKE_KEY = 'motifino-video-likes';
+
+      function likedMap() {
+        try { return JSON.parse(localStorage.getItem(LIKE_KEY)) || {}; } catch (e) { return {}; }
+      }
+
+      function setLiked(id, liked) {
+        var map = likedMap();
+        if (liked) map[id] = 1; else delete map[id];
+        try { localStorage.setItem(LIKE_KEY, JSON.stringify(map)); } catch (e) {}
+      }
+
+      function renderLike(item) {
+        if (!likeBtn) return;
+        var liked = likedMap()[item.id] === 1;
+        var total = (item.likes || 0) + (liked ? 1 : 0);
+        likeBtn.classList.toggle('is-liked', liked);
+        likeBtn.setAttribute('aria-pressed', liked ? 'true' : 'false');
+        likeCount.textContent = total > 0 ? total : '';
+      }
+
+      function renderCopy(item) {
+        var heading = item.heading || '';
+        var text = item.text || '';
+        copy.hidden = !heading && !text;
+        copyTitle.textContent = heading;
+        copyTitle.hidden = !heading;
+        copyText.textContent = text;
+        copyText.classList.add('is-clamped');
+        moreBtn.textContent = moreLabel;
+        /* Only offer the toggle when the clamp is actually hiding something. */
+        moreBtn.hidden = copyText.scrollHeight <= copyText.clientHeight + 1;
+      }
+
+      function measureProduct() {
+        stage.style.setProperty('--shoppable-product-h', productBox.hidden ? '0px' : productBox.offsetHeight + 'px');
+      }
+
+      function renderProduct(item) {
+        var product = item.product;
+        if (!product || !product.variants.length) { productBox.hidden = true; measureProduct(); return; }
+
+        productBox.hidden = false;
+        thumb.src = product.image || '';
+        titleEl.textContent = product.title;
+
+        var available = product.variants.filter(function (v) { return v.available; });
+        selectedVariant = available[0] || product.variants[0];
+        priceEl.textContent = selectedVariant.price;
+
+        variantsEl.innerHTML = '';
+        if (product.variants.length > 1) {
+          product.variants.forEach(function (variant) {
+            var pill = document.createElement('button');
+            pill.type = 'button';
+            pill.className = 'shoppable-player__variant' + (variant.id === selectedVariant.id ? ' is-selected' : '');
+            pill.textContent = variant.title;
+            pill.disabled = !variant.available;
+            pill.addEventListener('click', function () {
+              selectedVariant = variant;
+              priceEl.textContent = variant.price;
+              Array.prototype.forEach.call(variantsEl.children, function (el) { el.classList.remove('is-selected'); });
+              pill.classList.add('is-selected');
+            });
+            variantsEl.appendChild(pill);
+          });
+        }
+
+        atc.disabled = false;
+        atc.textContent = atcLabel;
+        measureProduct();
+      }
+
+      function show(index, direction) {
+        /* Sliding on past the last one leaves the player, the way a story ends. */
+        if (index >= items.length) { close(); return; }
+        current = (index + items.length) % items.length;
+        var item = items[current];
+
+        video.innerHTML = '';
+        item.sources.forEach(function (source) {
+          var el = document.createElement('source');
+          el.src = source.url;
+          el.type = source.type;
+          video.appendChild(el);
+        });
+        video.muted = muted;
+        video.load();
+        video.play().catch(function () {});
+
+        video.classList.remove('is-up', 'is-down', 'is-left', 'is-right');
+        if (direction) {
+          void video.offsetWidth;
+          video.classList.add(direction);
+        }
+
+        blur.style.backgroundImage = item.poster ? 'url(' + item.poster + ')' : 'none';
+        paintBars(0);
+        renderProduct(item);
+        renderCopy(item);
+        renderLike(item);
+      }
+
+      function open(index) {
+        /* Corner widgets pin themselves late in the body, so the player joins them. */
+        if (player.parentElement !== document.body) document.body.appendChild(player);
+        player.hidden = false;
+        document.body.style.overflow = 'hidden';
+        buildBars();
+        show(index);
+      }
+
+      /* Shrinks away instead of blinking out, which is how the last video ends. */
+      function close() {
+        if (player.classList.contains('is-closing')) return;
+        player.classList.add('is-closing');
+        video.pause();
+        setTimeout(function () {
+          player.classList.remove('is-closing');
+          player.hidden = true;
+          document.body.style.overflow = '';
+          video.innerHTML = '';
+        }, 910);
+      }
+
+      moreBtn.addEventListener('click', function () {
+        var clamped = copyText.classList.toggle('is-clamped');
+        moreBtn.textContent = clamped ? moreLabel : {{ section.settings.less_label | default: 'Mostra meno' | json }};
+      });
+
+      root.addEventListener('click', function (event) {
+        var card = event.target.closest('[data-shoppable-open]');
+        if (!card) return;
+        open(parseInt(card.getAttribute('data-shoppable-open'), 10) || 0);
+      });
+
+      player.querySelector('[data-close]').addEventListener('click', close);
+
+      player.querySelector('[data-sound]').addEventListener('click', function () {
+        muted = !muted;
+        video.muted = muted;
+        soundIcon.innerHTML = muted
+          ? '<path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M23 9l-6 6M17 9l6 6"/>'
+          : '<path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/>';
+      });
+
+      if (likeBtn) {
+        likeBtn.addEventListener('click', function () {
+          var item = items[current];
+          setLiked(item.id, !(likedMap()[item.id] === 1));
+          renderLike(item);
+        });
+      }
+
+      var share = player.querySelector('[data-share]');
+      if (share) {
+        share.addEventListener('click', function () {
+          var item = items[current];
+          var url = (item.product && item.product.url) ? window.location.origin + item.product.url : window.location.href;
+          if (navigator.share) { navigator.share({ url: url }).catch(function () {}); return; }
+          if (navigator.clipboard) {
+            navigator.clipboard.writeText(url).then(function () {
+              flash({{ section.settings.copied_label | default: 'Link copiato' | json }});
+            });
+          }
+        });
+      }
+
+      video.addEventListener('timeupdate', function () {
+        if (video.duration) paintBars(video.currentTime / video.duration);
+      });
+
+      video.addEventListener('ended', function () { show(current + 1, 'is-up'); });
+
+      player.querySelector('[data-side-prev]').addEventListener('click', function () { show(current - 1, 'is-right'); });
+      player.querySelector('[data-side-next]').addEventListener('click', function () { show(current + 1, 'is-left'); });
+
+      video.addEventListener('click', function () {
+        if (video.paused) video.play().catch(function () {}); else video.pause();
+      });
+
+      atc.addEventListener('click', function () {
+        if (!selectedVariant) return;
+        atc.disabled = true;
+        atc.textContent = '…';
+
+        fetch('{{ routes.cart_add_url }}.js', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({ items: [{ id: selectedVariant.id, quantity: 1 }] })
+        })
+          .then(function (response) {
+            if (!response.ok) throw new Error('add_failed');
+            return response.json();
+          })
+          .then(function () {
+            /* The belt sync and the cart count both hang off this event. */
+            document.dispatchEvent(new CustomEvent('cart:refresh', { bubbles: true }));
+            refreshCartCount();
+            atc.textContent = {{ section.settings.added_label | default: 'Aggiunto ✓' | json }};
+            flash({{ section.settings.added_label | default: 'Aggiunto ✓' | json }});
+            setTimeout(function () { atc.disabled = false; atc.textContent = atcLabel; }, 2500);
+          })
+          .catch(function () {
+            atc.disabled = false;
+            atc.textContent = atcLabel;
+          });
+      });
+
+      function refreshCartCount() {
+        var badge = player.querySelector('[data-cart-count]');
+        if (!badge) return;
+        fetch('{{ routes.cart_url }}.js', { headers: { Accept: 'application/json' } })
+          .then(function (response) { return response.json(); })
+          .then(function (cart) {
+            badge.textContent = cart.item_count;
+            badge.hidden = cart.item_count === 0;
+          })
+          .catch(function () {});
+      }
+
+      document.addEventListener('keydown', function (event) {
+        if (player.hidden) return;
+        if (event.key === 'Escape') close();
+        if (event.key === 'ArrowDown') show(current + 1, 'is-up');
+        if (event.key === 'ArrowUp') show(current - 1, 'is-down');
+        if (event.key === 'ArrowRight') show(current + 1, 'is-left');
+        if (event.key === 'ArrowLeft') show(current - 1, 'is-right');
+      });
+
+      /* Swipe up for the next one, the way a feed behaves. */
+      var touchY = 0;
+      player.addEventListener('touchstart', function (event) { touchY = event.changedTouches[0].clientY; }, { passive: true });
+      player.addEventListener('touchend', function (event) {
+        var delta = event.changedTouches[0].clientY - touchY;
+        if (Math.abs(delta) < 60) return;
+        show(delta < 0 ? current + 1 : current - 1, delta < 0 ? 'is-up' : 'is-down');
+      }, { passive: true });
+
+      var wheelLock = 0;
+      player.addEventListener('wheel', function (event) {
+        if (Math.abs(event.deltaY) < 20) return;
+        var now = Date.now();
+        if (now - wheelLock < 600) return;
+        wheelLock = now;
+        show(event.deltaY > 0 ? current + 1 : current - 1, event.deltaY > 0 ? 'is-up' : 'is-down');
+      }, { passive: true });
+    })();
+  </script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Shoppable videos",
+  "tag": "section",
+  "class": "shopify-section--shoppable-videos",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:global.colors.scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "subheading",
+      "label": "Subheading"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Heading size",
+      "options": [
+        { "value": "h2", "label": "Large" },
+        { "value": "h3", "label": "Medium" },
+        { "value": "h4", "label": "Small" }
+      ],
+      "default": "h2"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "cards_desktop",
+      "label": "Videos per row (desktop)",
+      "min": 2,
+      "max": 7,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "mobile_width",
+      "label": "Video width (mobile)",
+      "min": 40,
+      "max": 100,
+      "step": 2,
+      "unit": "%",
+      "default": 62
+    },
+    {
+      "type": "range",
+      "id": "card_height",
+      "label": "Card height (mobile)",
+      "min": 0,
+      "max": 700,
+      "step": 10,
+      "unit": "px",
+      "default": 0,
+      "info": "0 keeps the 9:16 shape."
+    },
+    {
+      "type": "range",
+      "id": "card_width_desktop",
+      "label": "Video width (desktop)",
+      "min": 0,
+      "max": 600,
+      "step": 10,
+      "unit": "px",
+      "default": 0,
+      "info": "0 divides the row by the number above."
+    },
+    {
+      "type": "range",
+      "id": "card_height_desktop",
+      "label": "Card height (desktop)",
+      "min": 0,
+      "max": 900,
+      "step": 10,
+      "unit": "px",
+      "default": 0,
+      "info": "0 uses the mobile height."
+    },
+    {
+      "type": "range",
+      "id": "side_padding",
+      "label": "Side padding (mobile)",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "side_padding_desktop",
+      "label": "Side padding (desktop)",
+      "min": 0,
+      "max": 240,
+      "step": 5,
+      "unit": "px",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "card_gap",
+      "label": "Gap between videos",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "label": "Corner radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay_preview",
+      "label": "Autoplay muted previews",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "preview_seconds",
+      "label": "Preview length",
+      "min": 0,
+      "max": 15,
+      "step": 1,
+      "unit": "s",
+      "default": 3,
+      "info": "0 plays the whole video in the row."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_likes",
+      "label": "Show like button",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_share",
+      "label": "Show share button",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Buy button"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Aggiungi al carrello"
+    },
+    {
+      "type": "text",
+      "id": "copied_label",
+      "label": "Link copied message",
+      "default": "Link copiato"
+    },
+    {
+      "type": "text",
+      "id": "more_label",
+      "label": "Show more label",
+      "default": "Mostra altro"
+    },
+    {
+      "type": "text",
+      "id": "less_label",
+      "label": "Show less label",
+      "default": "Mostra meno"
+    },
+    {
+      "type": "text",
+      "id": "added_label",
+      "label": "Label after adding",
+      "default": "Aggiunto ✓"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Button background",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    }
+  ],
+  "blocks": [
+    {
+      "type": "video",
+      "name": "Video",
+      "limit": 30,
+      "settings": [
+        {
+          "type": "video",
+          "id": "video",
+          "label": "Video"
+        },
+        {
+          "type": "image_picker",
+          "id": "poster",
+          "label": "Cover image",
+          "info": "Optional. The video's own first frame is used when empty."
+        },
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_heading_on_card",
+          "label": "Show heading on the card",
+          "default": true,
+          "info": "The player always shows it."
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Description"
+        },
+        {
+          "type": "number",
+          "id": "likes_start",
+          "label": "Starting likes",
+          "default": 0
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Shoppable videos",
+      "blocks": [{ "type": "video" }, { "type": "video" }, { "type": "video" }]
+    }
+  ]
+}
+{% endschema %}
