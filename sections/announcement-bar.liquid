@@ -25,6 +25,15 @@
         top: calc(var(--header-is-sticky, 0) * var(--header-height, 0px));
         z-index: 4; /* We have to lower the z-index in case the announcement bar is displayed after the header */
       }
+    {%- else -%}
+      {%- comment -%}
+        A section that slides under the header (product pages with a transparent
+        header) would otherwise paint over the bar.
+      {%- endcomment -%}
+      #shopify-section-{{ section.id }} {
+        position: relative;
+        z-index: 5;
+      }
     {%- endif -%}
 
     #shopify-section-{{ section.id }} {

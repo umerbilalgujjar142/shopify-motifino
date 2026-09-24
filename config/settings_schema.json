@@ -862,5 +862,86 @@
         "info": "t:theme_settings.favicon.image_info"
       }
     ]
+  },
+  {
+    "name": "Back to top button",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "back_to_top_home",
+        "label": "Show on home page",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "back_to_top_cart",
+        "label": "Show on cart page",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "back_to_top_collection",
+        "label": "Show on collection pages",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "back_to_top_paths",
+        "label": "Also show on these pages",
+        "info": "Paths separated by commas, for example /pages/bundle, /blogs/news"
+      },
+      {
+        "type": "range",
+        "id": "back_to_top_scroll",
+        "label": "Appears after scrolling",
+        "min": 5,
+        "max": 90,
+        "step": 5,
+        "unit": "%",
+        "default": 30
+      },
+      {
+        "type": "range",
+        "id": "back_to_top_size",
+        "label": "Button size",
+        "min": 32,
+        "max": 72,
+        "step": 2,
+        "unit": "px",
+        "default": 48
+      },
+      {
+        "type": "range",
+        "id": "back_to_top_offset_block",
+        "label": "Distance from bottom",
+        "min": 0,
+        "max": 200,
+        "step": 4,
+        "unit": "px",
+        "default": 96
+      },
+      {
+        "type": "range",
+        "id": "back_to_top_offset_inline",
+        "label": "Distance from right",
+        "min": 0,
+        "max": 120,
+        "step": 2,
+        "unit": "px",
+        "default": 20
+      },
+      {
+        "type": "color",
+        "id": "back_to_top_background",
+        "label": "Background",
+        "default": "#111111"
+      },
+      {
+        "type": "color",
+        "id": "back_to_top_icon_color",
+        "label": "Arrow colour",
+        "default": "#ffffff"
+      }
+    ]
   }
 ]

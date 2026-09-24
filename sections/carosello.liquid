@@ -63,6 +63,29 @@
   -%}
 
   <style>
+    /* Sits on the photo itself, top right, so it reads as a sticker on the set. */
+    #shopify-section-{{ section.id }} .carosello__saving {
+      position: absolute;
+      inset-block-start: 12px;
+      inset-inline-end: 12px;
+      z-index: 2;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: {{ section.settings.saving_background | default: '#c0392b' }};
+      color: {{ section.settings.saving_text_color | default: '#ffffff' }};
+      font-size: {{ section.settings.saving_font_size | default: 13 }}px;
+      font-weight: 600;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+
+    @media screen and (max-width: 699px) {
+      #shopify-section-{{ section.id }} .carosello__saving {
+        inset-block-start: 4px;
+        inset-inline-end: 8px;
+      }
+    }
+
     #shopify-section-{{ section.id }} {
       --carosello-gap: {{ slide_gap }}px;
       --carosello-mw-pct: {{ mobile_width_pct }}%;
@@ -599,6 +622,21 @@
               {%- endif -%}
             {%- endcapture -%}
 
+            {%- liquid
+              assign slide_saving = 0
+              if block.settings.show_savings_badge and slide_product != blank
+                assign slide_compare = slide_product.compare_at_price | default: 0
+                if slide_compare > slide_product.price
+                  assign slide_saving = slide_compare | minus: slide_product.price
+                endif
+              endif
+            -%}
+            {%- capture carosello_savings_badge -%}
+              {%- if slide_saving > 0 -%}
+                <span class="carosello__saving">(-{{ slide_saving | money }})</span>
+              {%- endif -%}
+            {%- endcapture -%}
+
             <div
               class="carosello__slide shrink-0 snap-start{% if forloop.first %} is-initial{% endif %} carosello-slide {% if text_over %}carosello-slide--over{% else %}carosello-slide--under carosello--text-outside{% endif %}{% if text_over == false and block.settings.media_position == 'below' %} carosello-slide--reverse{% endif %}{% if block.settings.hide_on_desktop %} carosello__slide--hide-desktop{% endif %}{% if block.settings.hide_on_mobile %} carosello__slide--hide-mobile{% endif %} color-scheme color-scheme--{{ block.settings.color_scheme.id }} color-scheme--bg-{{ slide_scheme_hash }} group"
               {{ block.shopify_attributes }}
@@ -610,6 +648,7 @@
                       style="--carosello-focal: {{ carosello_focal }}; --content-over-media-overlay: {{ block.settings.overlay_color.rgb }} / {{ block.settings.overlay_opacity | divided_by: 100.0 }};{% if block.settings.gradient_overlay != blank %} --content-over-media-gradient-overlay: {{ block.settings.gradient_overlay }};{% endif %}"
                     >
                       {{- carosello_slide_media_inner -}}
+                      {{- carosello_savings_badge -}}
 
                       {{- slide_text_box -}}
                     </div>
@@ -618,6 +657,7 @@
                   <div class="carosello-slide__media">
                     <div class="{{ carosello_media_class }}" style="--carosello-focal: {{ carosello_focal }};">
                       {{- carosello_slide_media_inner -}}
+                      {{- carosello_savings_badge -}}
                     </div>
                   </div>
 
@@ -937,6 +977,32 @@
       "default": "#FFFFFF",
       "info": "Icons and dots (all layouts). Minimal arrows use this color only.",
       "visible_if": "{{ section.settings.show_navigation }}"
+    },
+    {
+      "type": "header",
+      "content": "Saving badge"
+    },
+    {
+      "type": "range",
+      "id": "saving_font_size",
+      "label": "Font size",
+      "min": 9,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "color",
+      "id": "saving_background",
+      "label": "Background",
+      "default": "#c0392b"
+    },
+    {
+      "type": "color",
+      "id": "saving_text_color",
+      "label": "Text",
+      "default": "#ffffff"
     },
     {
       "type": "header",
@@ -1272,6 +1338,12 @@
           "label": "Show product price",
           "default": true,
           "info": "When the price line is empty, the product price is shown. Turn off to hide it while still using the product."
+        },
+        {
+          "type": "checkbox",
+          "id": "show_savings_badge",
+          "label": "Show saving badge",
+          "default": false
         },
         {
           "type": "inline_richtext",

@@ -1,0 +1,86 @@
+{%- liquid
+  assign show_button = false
+
+  if settings.back_to_top_home and request.page_type == 'index'
+    assign show_button = true
+  endif
+  if settings.back_to_top_cart and request.page_type == 'cart'
+    assign show_button = true
+  endif
+  if settings.back_to_top_collection and request.page_type == 'collection'
+    assign show_button = true
+  endif
+
+  # Extra pages are listed as paths, so a new page only needs its URL adding.
+  assign extra_paths = settings.back_to_top_paths | split: ','
+  for path in extra_paths
+    assign clean_path = path | strip
+    if clean_path != blank and request.path contains clean_path
+      assign show_button = true
+    endif
+  endfor
+-%}
+
+{%- if show_button -%}
+  <style>
+    .back-to-top {
+      position: fixed;
+      inset-block-end: {{ settings.back_to_top_offset_block | default: 96 }}px;
+      inset-inline-end: {{ settings.back_to_top_offset_inline | default: 20 }}px;
+      z-index: 20;
+      display: grid;
+      place-items: center;
+      width: {{ settings.back_to_top_size | default: 48 }}px;
+      height: {{ settings.back_to_top_size | default: 48 }}px;
+      border: none;
+      border-radius: 50%;
+      background: {{ settings.back_to_top_background | default: '#111111' }};
+      color: {{ settings.back_to_top_icon_color | default: '#ffffff' }};
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(8px);
+      transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+    }
+
+    .back-to-top.is-visible {
+      opacity: 1;
+      visibility: visible;
+      transform: none;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .back-to-top { transition: none; }
+    }
+  </style>
+
+  <button type="button" class="back-to-top" aria-label="{{ 'general.accessibility.back_to_top' | t | default: 'Back to top' }}">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M12 19V5M5 12l7-7 7 7"/>
+    </svg>
+  </button>
+
+  <script>
+    (function () {
+      var button = document.querySelector('.back-to-top');
+      if (!button) return;
+
+      var threshold = {{ settings.back_to_top_scroll | default: 30 }};
+
+      function update() {
+        var scrollable = document.documentElement.scrollHeight - window.innerHeight;
+        var progress = scrollable > 0 ? (window.scrollY / scrollable) * 100 : 0;
+        button.classList.toggle('is-visible', progress >= threshold);
+      }
+
+      button.addEventListener('click', function () {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+
+      window.addEventListener('scroll', update, { passive: true });
+      window.addEventListener('resize', update, { passive: true });
+      update();
+    })();
+  </script>
+{%- endif -%}
