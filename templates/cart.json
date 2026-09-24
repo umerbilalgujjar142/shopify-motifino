@@ -7,21 +7,21 @@
           "type": "step",
           "settings": {
             "image_url": "https://cdn.shopify.com/s/files/1/0829/7909/4854/files/Foto_set_singolo_con_lati_grigi_7b7b67c2-c112-4007-a730-0202d47dfe5a.webp?v=1775591318",
-            "price": "49,99€"
+            "price": "39,99€"
           }
         },
         "step_2": {
           "type": "step",
           "settings": {
             "image_url": "https://cdn.shopify.com/s/files/1/0829/7909/4854/files/Foto_set_doppio.webp?v=1775600454",
-            "price": "34,99€"
+            "price": "29,99€"
           }
         },
         "step_3": {
           "type": "step",
           "settings": {
             "image_url": "https://cdn.shopify.com/s/files/1/0829/7909/4854/files/Foto_Set_triplo.webp?v=1775609271",
-            "price": "24,99€"
+            "price": "19,99€"
           }
         }
       },
@@ -82,8 +82,8 @@
         "show_shipping_estimator": false,
         "show_help_link": true,
         "help_link_text": "Hai dubbi o domande?",
-        "help_link_size": 14,
-        "help_link": "",
+        "help_link_size": 18,
+        "help_link": "#shopify-section-template--28995052405062__faq_y9kK7f",
         "show_trust_banner": true,
         "trust_icon_1": "picto-return",
         "trust_text_1": "Resi Gratuiti",
@@ -101,7 +101,7 @@
         "delivery_work_sat": false,
         "delivery_work_sun": false,
         "delivery_ready_min": 0,
-        "delivery_ready_max": 1,
+        "delivery_ready_max": 0,
         "delivery_days_min": 1,
         "delivery_days_max": 2,
         "delivery_cutoff_hour": 14,
@@ -125,7 +125,7 @@
           "settings": {
             "rule_product_type": "Combinazione cintura",
             "rule_position": 2,
-            "rule_discount": "15"
+            "rule_discount": "10"
           }
         },
         "rule_belt_3": {
@@ -133,7 +133,7 @@
           "settings": {
             "rule_product_type": "Combinazione cintura",
             "rule_position": 3,
-            "rule_discount": "25"
+            "rule_discount": "20"
           }
         }
       },

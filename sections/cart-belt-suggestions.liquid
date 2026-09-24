@@ -194,14 +194,23 @@
 
     #shopify-section-{{ section.id }} .bs-pill {
       appearance: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       border: 1px solid rgba(0, 0, 0, 0.12);
       background: #fff;
       color: #111;
       border-radius: 999px;
-      padding: 4px 11px;
-      font-size: 12px;
+      padding: {{ section.settings.pill_padding_block | default: 4 }}px {{ section.settings.pill_padding_inline | default: 11 }}px;
+      font-size: {{ section.settings.pill_font_size | default: 12 }}px;
       font-weight: 600;
       line-height: 1.4;
+      {%- if section.settings.pill_height > 0 %}
+      min-height: {{ section.settings.pill_height }}px;
+      {%- endif %}
+      {%- if section.settings.pill_width > 0 %}
+      min-width: {{ section.settings.pill_width }}px;
+      {%- endif %}
       cursor: pointer;
       transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease;
     }
@@ -299,7 +308,6 @@
       #shopify-section-{{ section.id }} .bs-card__atc { padding: 11px 8px; font-size: 12px; }
       #shopify-section-{{ section.id }} .bs-card__price { font-size: 15px; }
       #shopify-section-{{ section.id }} .bs-card__was { font-size: 13px; }
-      #shopify-section-{{ section.id }} .bs-pill { padding: 4px 9px; font-size: 11px; }
 
       #shopify-section-{{ section.id }} .bs-card__swap {
         left: 8px;
@@ -762,6 +770,60 @@
       "step": 2,
       "unit": "px",
       "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Size pills"
+    },
+    {
+      "type": "range",
+      "id": "pill_font_size",
+      "label": "Font size",
+      "min": 8,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "pill_padding_block",
+      "label": "Padding top and bottom",
+      "min": 0,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "pill_padding_inline",
+      "label": "Padding left and right",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 11
+    },
+    {
+      "type": "range",
+      "id": "pill_height",
+      "label": "Height",
+      "min": 0,
+      "max": 70,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "pill_width",
+      "label": "Width",
+      "min": 0,
+      "max": 160,
+      "step": 2,
+      "unit": "px",
+      "default": 0
     },
     {
       "type": "range",

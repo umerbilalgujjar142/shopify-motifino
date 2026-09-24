@@ -657,7 +657,9 @@
             {%- if block.settings.text != blank -%}
               {%- liquid
                 assign button_href = block.settings.link
-                if product.template_suffix contains 'bundle-page'
+                # A bundle product falls back to its own builder while the button
+                # carries no link of its own.
+                if button_href == blank and product.template_suffix contains 'bundle-page'
                   assign button_href = '/pages/bundle?type=' | append: product.handle
                 endif
               -%}

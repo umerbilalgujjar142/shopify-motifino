@@ -2058,7 +2058,7 @@ model-media model-viewer, model-media .shopify-model-viewer-ui {
 }
 
 .bb-qty-locked .quantity-selector__input {
-  color: #777;
+  color: rgb(var(--text-color));
 }
 
 /* ── Strikethrough original price ───────────────── */
