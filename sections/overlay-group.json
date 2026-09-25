@@ -50,11 +50,96 @@
         "title": "🍪 Cookie policy",
         "content": "<p>We use cookies and similar technologies to provide the best experience on our website. Refer to our Privacy Policy for more information.</p>"
       }
+    },
+    "global_popup_t64JBV": {
+      "type": "global-popup",
+      "blocks": {
+        "image_pfjf8y": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/Cintura_nera_con_fibbia_Mirror_indossata.jpg",
+            "width": 100,
+            "radius": 8,
+            "alignment": "center"
+          }
+        },
+        "heading_LwgPax": {
+          "type": "heading",
+          "settings": {
+            "text": "Testing popup",
+            "size": 22,
+            "weight": "600",
+            "alignment": "center",
+            "color": ""
+          }
+        },
+        "text_dgnpVU": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Hello World this is dummy popup</p>",
+            "size": 15,
+            "line_height": 1.5,
+            "alignment": "center",
+            "color": ""
+          }
+        },
+        "button_6qFtPc": {
+          "type": "button",
+          "settings": {
+            "label": "Scopri di più",
+            "link": "",
+            "new_tab": false,
+            "close_on_click": true,
+            "style": "filled",
+            "full_width": false,
+            "size": 15,
+            "padding_block": 13,
+            "padding_inline": 26,
+            "radius": 8,
+            "background": "#111111",
+            "text_color": "#ffffff",
+            "alignment": "center"
+          }
+        }
+      },
+      "block_order": [
+        "image_pfjf8y",
+        "heading_LwgPax",
+        "text_dgnpVU",
+        "button_6qFtPc"
+      ],
+      "name": "Popup",
+      "settings": {
+        "popup_name": "popup",
+        "auto_home": true,
+        "auto_product": false,
+        "auto_collection": false,
+        "auto_cart": false,
+        "auto_paths": "",
+        "delay": 3,
+        "frequency": "session",
+        "position": "center",
+        "panel_width": 520,
+        "panel_width_mobile": 420,
+        "panel_padding": 32,
+        "panel_padding_mobile": 22,
+        "screen_padding": 20,
+        "panel_radius": 14,
+        "block_gap": 14,
+        "color_scheme": "",
+        "panel_background": "",
+        "panel_text_color": "",
+        "backdrop_color": "#000000",
+        "backdrop_opacity": 55,
+        "show_close": true,
+        "close_on_backdrop": true
+      }
     }
   },
   "order": [
     "cart-drawer",
     "newsletter-popup",
-    "privacy-banner"
+    "privacy-banner",
+    "global_popup_t64JBV"
   ]
 }

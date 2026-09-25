@@ -26,6 +26,22 @@
       endif
     endfor
   endif
+
+  assign popup_scheme = section.settings.color_scheme
+  assign panel_bg = section.settings.panel_background
+  if panel_bg == blank or panel_bg == 'rgba(0,0,0,0)'
+    assign panel_bg = popup_scheme.settings.background
+  endif
+  if panel_bg == blank or panel_bg == 'rgba(0,0,0,0)'
+    assign panel_bg = '#ffffff'
+  endif
+  assign panel_fg = section.settings.panel_text_color
+  if panel_fg == blank or panel_fg == 'rgba(0,0,0,0)'
+    assign panel_fg = popup_scheme.settings.text_color
+  endif
+  if panel_fg == blank or panel_fg == 'rgba(0,0,0,0)'
+    assign panel_fg = '#141311'
+  endif
 -%}
 
 {%- style -%}
@@ -77,8 +93,9 @@
     overflow-y: auto;
     padding: {{ section.settings.panel_padding }}px;
     border-radius: {{ section.settings.panel_radius }}px;
-    {% if section.settings.panel_background != blank %}background: {{ section.settings.panel_background }};{% endif %}
-    {% if section.settings.panel_text_color != blank %}color: {{ section.settings.panel_text_color }};{% endif %}
+    background-color: {{ panel_bg }};
+    {% if popup_scheme.settings.background_gradient != blank %}background-image: {{ popup_scheme.settings.background_gradient }};{% endif %}
+    color: {{ panel_fg }};
     box-shadow: 0 18px 60px rgba(0, 0, 0, 0.22);
     opacity: 0;
     transition: opacity 0.25s ease, transform 0.25s ease;
@@ -107,8 +124,8 @@
 
   #gpopup-{{ section.id }} .gpopup__close {
     position: absolute;
-    inset-block-start: 10px;
-    inset-inline-end: 10px;
+    inset-block-start: 2px;
+    inset-inline-end: 2px;
     display: grid;
     place-items: center;
     width: 32px;
@@ -145,6 +162,18 @@
     margin-block-end: 0;
   }
 
+  #gpopup-{{ section.id }} .gpopup__video video,
+  #gpopup-{{ section.id }} .gpopup__video iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  #gpopup-{{ section.id }} .gpopup__video-frame {
+    aspect-ratio: 16 / 9;
+  }
+
   #gpopup-{{ section.id }} .gpopup__image img {
     display: block;
     width: 100%;
@@ -171,6 +200,7 @@
   id="gpopup-{{ section.id }}"
   class="gpopup"
   data-gpopup="{{ popup_name }}"
+  data-gpopup-root="{{ section.id }}"
   hidden
 >
   <div class="gpopup__backdrop" data-gpopup-backdrop></div>
@@ -190,7 +220,7 @@
           {%- when 'heading' -%}
             <p
               class="gpopup__heading"
-              style="font-size: {{ block.settings.size }}px; line-height: 1.25; font-weight: {{ block.settings.weight }}; text-align: {{ block.settings.alignment }};{% if block.settings.color != blank %} color: {{ block.settings.color }};{% endif %}"
+              style="font-size: {{ block.settings.size }}px; line-height: 1.25; font-weight: {{ block.settings.weight }}; text-align: {{ block.settings.alignment }};{% if block.settings.color != blank and block.settings.color != 'rgba(0,0,0,0)' %} color: {{ block.settings.color }};{% endif %}"
               {{ block.shopify_attributes }}
             >
               {{ block.settings.text }}
@@ -199,7 +229,7 @@
           {%- when 'text' -%}
             <div
               class="gpopup__text"
-              style="font-size: {{ block.settings.size }}px; line-height: {{ block.settings.line_height }}; text-align: {{ block.settings.alignment }};{% if block.settings.color != blank %} color: {{ block.settings.color }};{% endif %}"
+              style="font-size: {{ block.settings.size }}px; line-height: {{ block.settings.line_height }}; text-align: {{ block.settings.alignment }};{% if block.settings.color != blank and block.settings.color != 'rgba(0,0,0,0)' %} color: {{ block.settings.color }};{% endif %}"
               {{ block.shopify_attributes }}
             >
               {{ block.settings.text }}
@@ -214,6 +244,70 @@
               >
                 <span style="display: inline-block; width: {{ block.settings.width }}%; border-radius: {{ block.settings.radius }}px; overflow: hidden;">
                   {{ block.settings.image | image_url: width: 1400 | image_tag: loading: 'lazy', sizes: '(max-width: 699px) 90vw, 600px' }}
+                </span>
+              </div>
+            {%- endif -%}
+
+          {%- when 'video' -%}
+            {%- liquid
+              assign has_file = false
+              if block.settings.video != blank
+                assign has_file = true
+              endif
+              assign has_embed = false
+              if block.settings.video_url != blank
+                assign has_embed = true
+              endif
+            -%}
+            {%- if has_file or has_embed -%}
+              <div class="gpopup__video" style="text-align: {{ block.settings.alignment }};" {{ block.shopify_attributes }}>
+                <span style="display: inline-block; width: {{ block.settings.width }}%; border-radius: {{ block.settings.radius }}px; overflow: hidden;">
+                  {%- if has_file -%}
+                    {{
+                      block.settings.video
+                      | video_tag:
+                        image_size: '1100x',
+                        autoplay: block.settings.autoplay,
+                        loop: block.settings.loop,
+                        muted: true,
+                        controls: block.settings.controls,
+                        playsinline: true
+                    }}
+                  {%- else -%}
+                    {%- liquid
+                      assign embed = ''
+                      if block.settings.video_url.type == 'youtube'
+                        assign embed = 'https://www.youtube.com/embed/' | append: block.settings.video_url.id | append: '?playsinline=1&rel=0&mute=1'
+                        if block.settings.autoplay
+                          assign embed = embed | append: '&autoplay=1'
+                        endif
+                        if block.settings.loop
+                          assign embed = embed | append: '&loop=1&playlist=' | append: block.settings.video_url.id
+                        endif
+                        unless block.settings.controls
+                          assign embed = embed | append: '&controls=0'
+                        endunless
+                      elsif block.settings.video_url.type == 'vimeo'
+                        assign embed = 'https://player.vimeo.com/video/' | append: block.settings.video_url.id | append: '?muted=1&playsinline=1'
+                        if block.settings.autoplay
+                          assign embed = embed | append: '&autoplay=1'
+                        endif
+                        if block.settings.loop
+                          assign embed = embed | append: '&loop=1'
+                        endif
+                      endif
+                    -%}
+                    {%- if embed != blank -%}
+                      <span class="gpopup__video-frame" style="display: block;">
+                        <iframe
+                          data-gpopup-src="{{ embed }}"
+                          title="{{ block.settings.video_url.id | escape }}"
+                          allow="autoplay; encrypted-media; picture-in-picture"
+                          allowfullscreen
+                        ></iframe>
+                      </span>
+                    {%- endif -%}
+                  {%- endif -%}
                 </span>
               </div>
             {%- endif -%}
@@ -252,8 +346,28 @@
 
 <script>
   (function () {
-    var root = document.getElementById('gpopup-{{ section.id }}');
+    var sectionId = {{ section.id | json }};
+    var selector = '[data-gpopup-root="' + sectionId + '"]';
+    var domId = 'gpopup-' + sectionId;
+    var here = document.currentScript;
+
+    /* The copy next to this script is the live one; anything else is a stale render. */
+    var root = here && here.parentNode ? here.parentNode.querySelector(selector) : null;
+    if (!root) root = document.querySelector(selector);
     if (!root) return;
+
+    function dropDuplicates() {
+      var all = document.querySelectorAll('.gpopup');
+      for (var i = 0; i < all.length; i++) {
+        var node = all[i];
+        if (node === root) continue;
+        if (node.id !== domId && node.getAttribute('data-gpopup-root') !== sectionId) continue;
+        if (node.parentNode) node.parentNode.removeChild(node);
+      }
+    }
+
+    dropDuplicates();
+    document.body.style.overflow = '';
 
     var name = {{ popup_name | json }};
     var frequency = {{ section.settings.frequency | json }};
@@ -278,12 +392,14 @@
 
     function open() {
       if (!root.hidden) return;
+      dropDuplicates();
       /* Moved to the body so no transformed ancestor can trap the overlay. */
       if (!moved) {
         document.body.appendChild(root);
         moved = true;
       }
       root.hidden = false;
+      startMedia();
       requestAnimationFrame(function () {
         root.classList.add('is-open');
       });
@@ -293,12 +409,37 @@
       if (closer) closer.focus();
     }
 
+    window.motifinoPopupDismissed = window.motifinoPopupDismissed || {};
+
+    function dismiss() {
+      window.motifinoPopupDismissed[sectionId] = true;
+      close();
+    }
+
+    function startMedia() {
+      var frames = root.querySelectorAll('[data-gpopup-src]');
+      for (var i = 0; i < frames.length; i++) {
+        if (!frames[i].getAttribute('src')) frames[i].setAttribute('src', frames[i].getAttribute('data-gpopup-src'));
+      }
+    }
+
+    function stopMedia() {
+      var frames = root.querySelectorAll('[data-gpopup-src]');
+      for (var i = 0; i < frames.length; i++) frames[i].removeAttribute('src');
+      var videos = root.querySelectorAll('video');
+      for (var j = 0; j < videos.length; j++) {
+        videos[j].pause();
+        videos[j].currentTime = 0;
+      }
+    }
+
     function close() {
       if (root.hidden) return;
       root.classList.remove('is-open');
       setTimeout(function () {
         root.hidden = true;
         document.body.style.overflow = '';
+        stopMedia();
       }, closeDelay);
     }
 
@@ -312,16 +453,16 @@
           return;
         }
         event.preventDefault();
-        close();
+        dismiss();
       }
     });
 
     {% if section.settings.close_on_backdrop %}
-      root.querySelector('[data-gpopup-backdrop]').addEventListener('click', close);
+      root.querySelector('[data-gpopup-backdrop]').addEventListener('click', dismiss);
     {% endif %}
 
     document.addEventListener('keydown', function (event) {
-      if (event.key === 'Escape') close();
+      if (event.key === 'Escape') dismiss();
     });
 
     if (!window.motifinoPopupsBound) {
@@ -364,12 +505,22 @@
       }
     {% endif %}
 
+    document.addEventListener('shopify:section:unload', function (event) {
+      if (event.detail.sectionId !== sectionId) return;
+      if (root.parentNode) root.parentNode.removeChild(root);
+      document.body.style.overflow = '';
+      if (window.motifinoPopups && window.motifinoPopups[name]) delete window.motifinoPopups[name];
+    });
+
     document.addEventListener('shopify:section:select', function (event) {
-      if (event.detail.sectionId === '{{ section.id }}') open();
+      if (event.detail.sectionId !== sectionId) return;
+      if (!window.motifinoPopupDismissed[sectionId]) open();
     });
 
     document.addEventListener('shopify:section:deselect', function (event) {
-      if (event.detail.sectionId === '{{ section.id }}') close();
+      if (event.detail.sectionId !== sectionId) return;
+      delete window.motifinoPopupDismissed[sectionId];
+      close();
     });
   })();
 </script>
@@ -388,7 +539,7 @@
       "type": "text",
       "id": "popup_name",
       "label": "Popup name",
-      "info": "Lowercase, no spaces. Example: garanzia",
+      "info": "Lowercase, no spaces. If you name it garanzia, open it with the link #popup-garanzia",
       "default": "popup"
     },
     {
@@ -440,9 +591,18 @@
       "id": "frequency",
       "label": "How often",
       "options": [
-        { "value": "always", "label": "Every visit" },
-        { "value": "session", "label": "Once per session" },
-        { "value": "once", "label": "Only once" }
+        {
+          "value": "always",
+          "label": "Every visit"
+        },
+        {
+          "value": "session",
+          "label": "Once per session"
+        },
+        {
+          "value": "once",
+          "label": "Only once"
+        }
       ],
       "default": "session"
     },
@@ -455,10 +615,22 @@
       "id": "position",
       "label": "Position",
       "options": [
-        { "value": "center", "label": "Center" },
-        { "value": "bottom", "label": "Bottom" },
-        { "value": "left", "label": "Left drawer" },
-        { "value": "right", "label": "Right drawer" }
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        },
+        {
+          "value": "left",
+          "label": "Left drawer"
+        },
+        {
+          "value": "right",
+          "label": "Right drawer"
+        }
       ],
       "default": "center"
     },
@@ -611,10 +783,22 @@
           "id": "weight",
           "label": "Weight",
           "options": [
-            { "value": "400", "label": "Regular" },
-            { "value": "500", "label": "Medium" },
-            { "value": "600", "label": "Semibold" },
-            { "value": "700", "label": "Bold" }
+            {
+              "value": "400",
+              "label": "Regular"
+            },
+            {
+              "value": "500",
+              "label": "Medium"
+            },
+            {
+              "value": "600",
+              "label": "Semibold"
+            },
+            {
+              "value": "700",
+              "label": "Bold"
+            }
           ],
           "default": "600"
         },
@@ -623,9 +807,18 @@
           "id": "alignment",
           "label": "Alignment",
           "options": [
-            { "value": "left", "label": "Left" },
-            { "value": "center", "label": "Center" },
-            { "value": "right", "label": "Right" }
+            {
+              "value": "left",
+              "label": "Left"
+            },
+            {
+              "value": "center",
+              "label": "Center"
+            },
+            {
+              "value": "right",
+              "label": "Right"
+            }
           ],
           "default": "center"
         },
@@ -670,9 +863,18 @@
           "id": "alignment",
           "label": "Alignment",
           "options": [
-            { "value": "left", "label": "Left" },
-            { "value": "center", "label": "Center" },
-            { "value": "right", "label": "Right" }
+            {
+              "value": "left",
+              "label": "Left"
+            },
+            {
+              "value": "center",
+              "label": "Center"
+            },
+            {
+              "value": "right",
+              "label": "Right"
+            }
           ],
           "default": "center"
         },
@@ -717,9 +919,98 @@
           "id": "alignment",
           "label": "Alignment",
           "options": [
-            { "value": "left", "label": "Left" },
-            { "value": "center", "label": "Center" },
-            { "value": "right", "label": "Right" }
+            {
+              "value": "left",
+              "label": "Left"
+            },
+            {
+              "value": "center",
+              "label": "Center"
+            },
+            {
+              "value": "right",
+              "label": "Right"
+            }
+          ],
+          "default": "center"
+        }
+      ]
+    },
+    {
+      "type": "video",
+      "name": "Video",
+      "settings": [
+        {
+          "type": "video",
+          "id": "video",
+          "label": "Video"
+        },
+        {
+          "type": "video_url",
+          "id": "video_url",
+          "label": "Or paste a YouTube / Vimeo link",
+          "accept": [
+            "youtube",
+            "vimeo"
+          ],
+          "info": "Used only when no video is uploaded above."
+        },
+        {
+          "type": "checkbox",
+          "id": "autoplay",
+          "label": "Play automatically",
+          "default": true,
+          "info": "Autoplayed video is always muted, as browsers require."
+        },
+        {
+          "type": "checkbox",
+          "id": "loop",
+          "label": "Loop",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "controls",
+          "label": "Show controls",
+          "default": true
+        },
+        {
+          "type": "range",
+          "id": "width",
+          "min": 20,
+          "max": 100,
+          "step": 5,
+          "unit": "%",
+          "label": "Width",
+          "default": 100
+        },
+        {
+          "type": "range",
+          "id": "radius",
+          "min": 0,
+          "max": 40,
+          "step": 1,
+          "unit": "px",
+          "label": "Corner radius",
+          "default": 8
+        },
+        {
+          "type": "select",
+          "id": "alignment",
+          "label": "Alignment",
+          "options": [
+            {
+              "value": "left",
+              "label": "Left"
+            },
+            {
+              "value": "center",
+              "label": "Center"
+            },
+            {
+              "value": "right",
+              "label": "Right"
+            }
           ],
           "default": "center"
         }
@@ -757,8 +1048,14 @@
           "id": "style",
           "label": "Style",
           "options": [
-            { "value": "filled", "label": "Filled" },
-            { "value": "outline", "label": "Outline" }
+            {
+              "value": "filled",
+              "label": "Filled"
+            },
+            {
+              "value": "outline",
+              "label": "Outline"
+            }
           ],
           "default": "filled"
         },
@@ -825,9 +1122,18 @@
           "id": "alignment",
           "label": "Alignment",
           "options": [
-            { "value": "left", "label": "Left" },
-            { "value": "center", "label": "Center" },
-            { "value": "right", "label": "Right" }
+            {
+              "value": "left",
+              "label": "Left"
+            },
+            {
+              "value": "center",
+              "label": "Center"
+            },
+            {
+              "value": "right",
+              "label": "Right"
+            }
           ],
           "default": "center"
         }
@@ -887,9 +1193,15 @@
     {
       "name": "Popup",
       "blocks": [
-        { "type": "heading" },
-        { "type": "text" },
-        { "type": "button" }
+        {
+          "type": "heading"
+        },
+        {
+          "type": "text"
+        },
+        {
+          "type": "button"
+        }
       ]
     }
   ]
