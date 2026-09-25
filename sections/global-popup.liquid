@@ -27,6 +27,12 @@
     endfor
   endif
 
+  assign close_icon_color = section.settings.close_icon_color
+  assign close_circle_color = section.settings.close_circle_color
+  if close_circle_color == blank or close_circle_color == 'rgba(0,0,0,0)'
+    assign close_circle_color = 'rgba(0, 0, 0, 0.08)'
+  endif
+
   assign popup_scheme = section.settings.color_scheme
   assign panel_bg = section.settings.panel_background
   if panel_bg == blank or panel_bg == 'rgba(0,0,0,0)'
@@ -91,7 +97,7 @@
     max-width: {{ section.settings.panel_width }}px;
     max-height: 100%;
     overflow-y: auto;
-    padding: {{ section.settings.panel_padding }}px;
+    padding: {{ section.settings.padding_top }}px {{ section.settings.padding_right }}px {{ section.settings.padding_bottom }}px {{ section.settings.padding_left }}px;
     border-radius: {{ section.settings.panel_radius }}px;
     background-color: {{ panel_bg }};
     {% if popup_scheme.settings.background_gradient != blank %}background-image: {{ popup_scheme.settings.background_gradient }};{% endif %}
@@ -133,10 +139,10 @@
     padding: 0;
     border: none;
     border-radius: 50%;
-    background: transparent;
-    color: inherit;
+    {% if section.settings.close_style == 'circle' %}background: {{ close_circle_color }};{% else %}background: transparent;{% endif %}
+    {% if close_icon_color != blank and close_icon_color != 'rgba(0,0,0,0)' %}color: {{ close_icon_color }};{% else %}color: inherit;{% endif %}
     cursor: pointer;
-    opacity: 0.6;
+    opacity: {% if section.settings.close_style == 'circle' %}1{% else %}0.6{% endif %};
   }
 
   #gpopup-{{ section.id }} .gpopup__close:hover {
@@ -191,7 +197,7 @@
   @media screen and (max-width: 699px) {
     #gpopup-{{ section.id }} .gpopup__panel {
       max-width: {{ section.settings.panel_width_mobile }}px;
-      padding: {{ section.settings.panel_padding_mobile }}px;
+      padding: {{ section.settings.padding_top_mobile }}px {{ section.settings.padding_right_mobile }}px {{ section.settings.padding_bottom_mobile }}px {{ section.settings.padding_left_mobile }}px;
     }
   }
 {%- endstyle -%}
@@ -468,6 +474,18 @@
     if (!window.motifinoPopupsBound) {
       window.motifinoPopupsBound = true;
 
+      function trimSlash(path) {
+        return path.length > 1 && path.charAt(path.length - 1) === '/' ? path.slice(0, -1) : path;
+      }
+
+      /* The browser resolves the href for us, so an absolute URL for this same page still counts as here. */
+      function isHere(link, base) {
+        if (!base || base.charAt(0) === '#' || base === '?') return true;
+        if (link.protocol !== 'http:' && link.protocol !== 'https:') return false;
+        if (link.host !== window.location.host) return false;
+        return trimSlash(link.pathname) === trimSlash(window.location.pathname);
+      }
+
       function popupFromToken(token) {
         if (!token) return null;
         var map = window.motifinoPopups || {};
@@ -480,9 +498,8 @@
         var href = link.getAttribute('href') || '';
         var marker = href.indexOf('#popup-');
         if (marker === -1) return;
-        /* A link pointing at another page keeps navigating; the query opens it there. */
-        var base = href.slice(0, marker);
-        if (base && base !== window.location.pathname) return;
+        /* A link pointing at another page keeps navigating; the hash opens it there. */
+        if (!isHere(link, href.slice(0, marker))) return;
         var popup = popupFromToken(href.slice(marker + 7).split(/[?&#]/)[0]);
         if (!popup) return;
         event.preventDefault();
@@ -655,23 +672,91 @@
       "default": 420
     },
     {
+      "type": "header",
+      "content": "Inner padding"
+    },
+    {
       "type": "range",
-      "id": "panel_padding",
+      "id": "padding_top",
       "min": 0,
       "max": 80,
       "step": 2,
       "unit": "px",
-      "label": "Inner padding",
+      "label": "Top",
       "default": 32
     },
     {
       "type": "range",
-      "id": "panel_padding_mobile",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "label": "Bottom",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "padding_left",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "label": "Left",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "padding_right",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "label": "Right",
+      "default": 32
+    },
+    {
+      "type": "header",
+      "content": "Inner padding on mobile"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
       "min": 0,
       "max": 60,
       "step": 2,
       "unit": "px",
-      "label": "Inner padding on mobile",
+      "label": "Top",
+      "default": 22
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Bottom",
+      "default": 22
+    },
+    {
+      "type": "range",
+      "id": "padding_left_mobile",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Left",
+      "default": 22
+    },
+    {
+      "type": "range",
+      "id": "padding_right_mobile",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Right",
       "default": 22
     },
     {
@@ -749,6 +834,27 @@
       "id": "show_close",
       "label": "Show close button",
       "default": true
+    },
+    {
+      "type": "select",
+      "id": "close_style",
+      "label": "Close button style",
+      "options": [
+        { "value": "icon", "label": "Icon only" },
+        { "value": "circle", "label": "Circle" }
+      ],
+      "default": "icon"
+    },
+    {
+      "type": "color",
+      "id": "close_icon_color",
+      "label": "Icon colour"
+    },
+    {
+      "type": "color",
+      "id": "close_circle_color",
+      "label": "Circle colour",
+      "info": "Used only with the Circle style."
     },
     {
       "type": "checkbox",
