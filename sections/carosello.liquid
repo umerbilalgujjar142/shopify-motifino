@@ -66,8 +66,8 @@
     /* Sits on the photo itself, top right, so it reads as a sticker on the set. */
     #shopify-section-{{ section.id }} .carosello__saving {
       position: absolute;
-      inset-block-start: 12px;
-      inset-inline-end: 12px;
+      inset-block-start: var(--saving-top, 12px);
+      inset-inline-end: var(--saving-side, 12px);
       z-index: 2;
       padding: 5px 10px;
       border-radius: 999px;
@@ -79,10 +79,21 @@
       white-space: nowrap;
     }
 
+    #shopify-section-{{ section.id }} .carosello__saving--left {
+      inset-inline-start: var(--saving-side, 12px);
+      inset-inline-end: auto;
+    }
+
+    /* Mobile keeps the sticker a little higher and tighter than the set value. */
     @media screen and (max-width: 699px) {
       #shopify-section-{{ section.id }} .carosello__saving {
-        inset-block-start: 4px;
-        inset-inline-end: 8px;
+        inset-block-start: calc(var(--saving-top, 12px) - 8px);
+        inset-inline-end: calc(var(--saving-side, 12px) - 4px);
+      }
+
+      #shopify-section-{{ section.id }} .carosello__saving--left {
+        inset-inline-start: calc(var(--saving-side, 12px) - 4px);
+        inset-inline-end: auto;
       }
     }
 
@@ -624,16 +635,26 @@
 
             {%- liquid
               assign slide_saving = 0
+              assign slide_saving_label = ''
               if block.settings.show_savings_badge and slide_product != blank
                 assign slide_compare = slide_product.compare_at_price | default: 0
                 if slide_compare > slide_product.price
                   assign slide_saving = slide_compare | minus: slide_product.price
+                  if block.settings.saving_format == 'percent'
+                    assign slide_saving_pct = slide_saving | times: 100.0 | divided_by: slide_compare | round
+                    assign slide_saving_label = slide_saving_pct | append: '%'
+                  else
+                    assign slide_saving_label = slide_saving | money
+                  endif
                 endif
               endif
             -%}
             {%- capture carosello_savings_badge -%}
               {%- if slide_saving > 0 -%}
-                <span class="carosello__saving">(-{{ slide_saving | money }})</span>
+                <span
+                  class="carosello__saving{% if block.settings.saving_position == 'left' %} carosello__saving--left{% endif %}"
+                  style="--saving-top: {{ block.settings.saving_offset_block | default: 12 }}px; --saving-side: {{ block.settings.saving_offset_inline | default: 12 }}px;"
+                >(-{{ slide_saving_label }})</span>
               {%- endif -%}
             {%- endcapture -%}
 
@@ -1344,6 +1365,50 @@
           "id": "show_savings_badge",
           "label": "Show saving badge",
           "default": false
+        },
+        {
+          "type": "select",
+          "id": "saving_format",
+          "label": "Saving shown as",
+          "options": [
+            { "value": "money", "label": "Amount (\u20ac)" },
+            { "value": "percent", "label": "Percentage (%)" }
+          ],
+          "default": "money",
+          "visible_if": "{{ block.settings.show_savings_badge }}"
+        },
+        {
+          "type": "select",
+          "id": "saving_position",
+          "label": "Badge side",
+          "options": [
+            { "value": "right", "label": "Right" },
+            { "value": "left", "label": "Left" }
+          ],
+          "default": "right",
+          "visible_if": "{{ block.settings.show_savings_badge }}"
+        },
+        {
+          "type": "range",
+          "id": "saving_offset_block",
+          "label": "Distance from top",
+          "min": -40,
+          "max": 60,
+          "step": 1,
+          "unit": "px",
+          "default": 12,
+          "visible_if": "{{ block.settings.show_savings_badge }}"
+        },
+        {
+          "type": "range",
+          "id": "saving_offset_inline",
+          "label": "Distance from side",
+          "min": -40,
+          "max": 60,
+          "step": 1,
+          "unit": "px",
+          "default": 12,
+          "visible_if": "{{ block.settings.show_savings_badge }}"
         },
         {
           "type": "inline_richtext",

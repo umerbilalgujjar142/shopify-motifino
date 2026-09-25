@@ -941,6 +941,32 @@
         "id": "back_to_top_icon_color",
         "label": "Arrow colour",
         "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "back_to_top_border_color",
+        "label": "Border colour",
+        "default": "#111111"
+      },
+      {
+        "type": "range",
+        "id": "back_to_top_border_width",
+        "label": "Border thickness",
+        "min": 0,
+        "max": 8,
+        "step": 1,
+        "unit": "px",
+        "default": 0
+      },
+      {
+        "type": "range",
+        "id": "back_to_top_opacity",
+        "label": "Opacity",
+        "min": 10,
+        "max": 100,
+        "step": 5,
+        "unit": "%",
+        "default": 100
       }
     ]
   }

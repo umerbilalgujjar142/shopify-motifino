@@ -1,0 +1,897 @@
+{%- liquid
+  assign popup_name = section.settings.popup_name | strip | downcase | handleize
+  if popup_name == blank
+    assign popup_name = section.id
+  endif
+
+  assign auto_open = false
+  if section.settings.auto_home and template.name == 'index'
+    assign auto_open = true
+  endif
+  if section.settings.auto_product and template.name == 'product'
+    assign auto_open = true
+  endif
+  if section.settings.auto_collection and template.name == 'collection'
+    assign auto_open = true
+  endif
+  if section.settings.auto_cart and template.name == 'cart'
+    assign auto_open = true
+  endif
+  if section.settings.auto_paths != blank
+    assign auto_paths = section.settings.auto_paths | split: ','
+    for auto_path in auto_paths
+      assign clean_path = auto_path | strip
+      if clean_path != blank and request.path contains clean_path
+        assign auto_open = true
+      endif
+    endfor
+  endif
+-%}
+
+{%- style -%}
+  #gpopup-{{ section.id }} {
+    position: fixed;
+    inset: 0;
+    z-index: 2147482900;
+    display: flex;
+    padding: {{ section.settings.screen_padding }}px;
+    {% case section.settings.position %}
+      {% when 'bottom' %}
+        align-items: flex-end;
+        justify-content: center;
+      {% when 'left' %}
+        align-items: stretch;
+        justify-content: flex-start;
+        padding: 0;
+      {% when 'right' %}
+        align-items: stretch;
+        justify-content: flex-end;
+        padding: 0;
+      {% else %}
+        align-items: center;
+        justify-content: center;
+    {% endcase %}
+  }
+
+  #gpopup-{{ section.id }}[hidden] {
+    display: none;
+  }
+
+  #gpopup-{{ section.id }} .gpopup__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba({{ section.settings.backdrop_color.red }}, {{ section.settings.backdrop_color.green }}, {{ section.settings.backdrop_color.blue }}, {{ section.settings.backdrop_opacity | divided_by: 100.0 }});
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+
+  #gpopup-{{ section.id }}.is-open .gpopup__backdrop {
+    opacity: 1;
+  }
+
+  #gpopup-{{ section.id }} .gpopup__panel {
+    position: relative;
+    width: 100%;
+    max-width: {{ section.settings.panel_width }}px;
+    max-height: 100%;
+    overflow-y: auto;
+    padding: {{ section.settings.panel_padding }}px;
+    border-radius: {{ section.settings.panel_radius }}px;
+    {% if section.settings.panel_background != blank %}background: {{ section.settings.panel_background }};{% endif %}
+    {% if section.settings.panel_text_color != blank %}color: {{ section.settings.panel_text_color }};{% endif %}
+    box-shadow: 0 18px 60px rgba(0, 0, 0, 0.22);
+    opacity: 0;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    {% case section.settings.position %}
+      {% when 'bottom' %}
+        transform: translateY(24px);
+        border-end-start-radius: 0;
+        border-end-end-radius: 0;
+      {% when 'left' %}
+        transform: translateX(-100%);
+        border-radius: 0;
+        max-height: none;
+      {% when 'right' %}
+        transform: translateX(100%);
+        border-radius: 0;
+        max-height: none;
+      {% else %}
+        transform: translateY(12px) scale(0.97);
+    {% endcase %}
+  }
+
+  #gpopup-{{ section.id }}.is-open .gpopup__panel {
+    opacity: 1;
+    transform: none;
+  }
+
+  #gpopup-{{ section.id }} .gpopup__close {
+    position: absolute;
+    inset-block-start: 10px;
+    inset-inline-end: 10px;
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    opacity: 0.6;
+  }
+
+  #gpopup-{{ section.id }} .gpopup__close:hover {
+    opacity: 1;
+  }
+
+  #gpopup-{{ section.id }} .gpopup__body {
+    display: flex;
+    flex-direction: column;
+    gap: {{ section.settings.block_gap }}px;
+  }
+
+  #gpopup-{{ section.id }} .gpopup__heading,
+  #gpopup-{{ section.id }} .gpopup__text {
+    margin: 0;
+  }
+
+  #gpopup-{{ section.id }} .gpopup__text > *:first-child {
+    margin-block-start: 0;
+  }
+
+  #gpopup-{{ section.id }} .gpopup__text > *:last-child {
+    margin-block-end: 0;
+  }
+
+  #gpopup-{{ section.id }} .gpopup__image img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  #gpopup-{{ section.id }} .gpopup__button {
+    display: inline-block;
+    text-decoration: none;
+    text-align: center;
+    cursor: pointer;
+    border: 1px solid transparent;
+  }
+
+  @media screen and (max-width: 699px) {
+    #gpopup-{{ section.id }} .gpopup__panel {
+      max-width: {{ section.settings.panel_width_mobile }}px;
+      padding: {{ section.settings.panel_padding_mobile }}px;
+    }
+  }
+{%- endstyle -%}
+
+<div
+  id="gpopup-{{ section.id }}"
+  class="gpopup"
+  data-gpopup="{{ popup_name }}"
+  hidden
+>
+  <div class="gpopup__backdrop" data-gpopup-backdrop></div>
+
+  <div class="gpopup__panel color-scheme color-scheme--{{ section.settings.color_scheme.id }}" role="dialog" aria-modal="true" aria-label="{{ section.settings.popup_name | default: 'Popup' | escape }}">
+    {%- if section.settings.show_close -%}
+      <button type="button" class="gpopup__close" data-gpopup-close aria-label="Close">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path d="M1 1 13 13M13 1 1 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </button>
+    {%- endif -%}
+
+    <div class="gpopup__body">
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when 'heading' -%}
+            <p
+              class="gpopup__heading"
+              style="font-size: {{ block.settings.size }}px; line-height: 1.25; font-weight: {{ block.settings.weight }}; text-align: {{ block.settings.alignment }};{% if block.settings.color != blank %} color: {{ block.settings.color }};{% endif %}"
+              {{ block.shopify_attributes }}
+            >
+              {{ block.settings.text }}
+            </p>
+
+          {%- when 'text' -%}
+            <div
+              class="gpopup__text"
+              style="font-size: {{ block.settings.size }}px; line-height: {{ block.settings.line_height }}; text-align: {{ block.settings.alignment }};{% if block.settings.color != blank %} color: {{ block.settings.color }};{% endif %}"
+              {{ block.shopify_attributes }}
+            >
+              {{ block.settings.text }}
+            </div>
+
+          {%- when 'image' -%}
+            {%- if block.settings.image != blank -%}
+              <div
+                class="gpopup__image"
+                style="text-align: {{ block.settings.alignment }};"
+                {{ block.shopify_attributes }}
+              >
+                <span style="display: inline-block; width: {{ block.settings.width }}%; border-radius: {{ block.settings.radius }}px; overflow: hidden;">
+                  {{ block.settings.image | image_url: width: 1400 | image_tag: loading: 'lazy', sizes: '(max-width: 699px) 90vw, 600px' }}
+                </span>
+              </div>
+            {%- endif -%}
+
+          {%- when 'button' -%}
+            {%- if block.settings.label != blank -%}
+              <div style="text-align: {{ block.settings.alignment }};" {{ block.shopify_attributes }}>
+                <a
+                  class="gpopup__button"
+                  href="{{ block.settings.link | default: '#' }}"
+                  style="padding: {{ block.settings.padding_block }}px {{ block.settings.padding_inline }}px; border-radius: {{ block.settings.radius }}px; font-size: {{ block.settings.size }}px; background: {{ block.settings.background }}; color: {{ block.settings.text_color }};{% if block.settings.style == 'outline' %} background: transparent; border-color: {{ block.settings.text_color }};{% endif %}{% if block.settings.full_width %} width: 100%;{% endif %}"
+                  {% if block.settings.close_on_click %}data-gpopup-close{% endif %}
+                  {% if block.settings.new_tab %}target="_blank" rel="noopener"{% endif %}
+                >
+                  {{ block.settings.label }}
+                </a>
+              </div>
+            {%- endif -%}
+
+          {%- when 'divider' -%}
+            <hr
+              style="width: 100%; margin: 0; border: none; border-top: {{ block.settings.thickness }}px solid {{ block.settings.color }};"
+              {{ block.shopify_attributes }}
+            >
+
+          {%- when 'spacer' -%}
+            <div style="height: {{ block.settings.height }}px;" {{ block.shopify_attributes }}></div>
+
+          {%- when 'liquid' -%}
+            <div {{ block.shopify_attributes }}>{{ block.settings.custom_liquid }}</div>
+        {%- endcase -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var root = document.getElementById('gpopup-{{ section.id }}');
+    if (!root) return;
+
+    var name = {{ popup_name | json }};
+    var frequency = {{ section.settings.frequency | json }};
+    var storageKey = 'gpopup:' + name;
+    var moved = false;
+    var closeDelay = 300;
+
+    function alreadySeen() {
+      try {
+        if (frequency === 'once') return localStorage.getItem(storageKey) === '1';
+        if (frequency === 'session') return sessionStorage.getItem(storageKey) === '1';
+      } catch (error) {}
+      return false;
+    }
+
+    function remember() {
+      try {
+        if (frequency === 'once') localStorage.setItem(storageKey, '1');
+        if (frequency === 'session') sessionStorage.setItem(storageKey, '1');
+      } catch (error) {}
+    }
+
+    function open() {
+      if (!root.hidden) return;
+      /* Moved to the body so no transformed ancestor can trap the overlay. */
+      if (!moved) {
+        document.body.appendChild(root);
+        moved = true;
+      }
+      root.hidden = false;
+      requestAnimationFrame(function () {
+        root.classList.add('is-open');
+      });
+      document.body.style.overflow = 'hidden';
+      remember();
+      var closer = root.querySelector('[data-gpopup-close]');
+      if (closer) closer.focus();
+    }
+
+    function close() {
+      if (root.hidden) return;
+      root.classList.remove('is-open');
+      setTimeout(function () {
+        root.hidden = true;
+        document.body.style.overflow = '';
+      }, closeDelay);
+    }
+
+    window.motifinoPopups = window.motifinoPopups || {};
+    window.motifinoPopups[name] = { open: open, close: close };
+
+    root.addEventListener('click', function (event) {
+      if (event.target.closest('[data-gpopup-close]')) {
+        if (event.target.closest('a[data-gpopup-close]')) {
+          setTimeout(close, 60);
+          return;
+        }
+        event.preventDefault();
+        close();
+      }
+    });
+
+    {% if section.settings.close_on_backdrop %}
+      root.querySelector('[data-gpopup-backdrop]').addEventListener('click', close);
+    {% endif %}
+
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape') close();
+    });
+
+    if (!window.motifinoPopupsBound) {
+      window.motifinoPopupsBound = true;
+
+      function popupFromToken(token) {
+        if (!token) return null;
+        var map = window.motifinoPopups || {};
+        return map[token.toLowerCase()] || null;
+      }
+
+      document.addEventListener('click', function (event) {
+        var link = event.target.closest('a[href]');
+        if (!link) return;
+        var href = link.getAttribute('href') || '';
+        var marker = href.indexOf('#popup-');
+        if (marker === -1) return;
+        /* A link pointing at another page keeps navigating; the query opens it there. */
+        var base = href.slice(0, marker);
+        if (base && base !== window.location.pathname) return;
+        var popup = popupFromToken(href.slice(marker + 7).split(/[?&#]/)[0]);
+        if (!popup) return;
+        event.preventDefault();
+        popup.open();
+      });
+
+      window.addEventListener('load', function () {
+        var requested = new URLSearchParams(window.location.search).get('popup');
+        if (!requested && window.location.hash.indexOf('#popup-') === 0) {
+          requested = window.location.hash.slice(7);
+        }
+        var popup = popupFromToken(requested);
+        if (popup) popup.open();
+      });
+    }
+
+    {% if auto_open %}
+      if (!alreadySeen()) {
+        setTimeout(open, {{ section.settings.delay | times: 1000 }});
+      }
+    {% endif %}
+
+    document.addEventListener('shopify:section:select', function (event) {
+      if (event.detail.sectionId === '{{ section.id }}') open();
+    });
+
+    document.addEventListener('shopify:section:deselect', function (event) {
+      if (event.detail.sectionId === '{{ section.id }}') close();
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Popup",
+  "class": "shopify-section--popup",
+  "max_blocks": 25,
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Give the popup a short name, then open it from any Link field with #popup-name on the same page, or with ?popup=name to open it on another page."
+    },
+    {
+      "type": "text",
+      "id": "popup_name",
+      "label": "Popup name",
+      "info": "Lowercase, no spaces. Example: garanzia",
+      "default": "popup"
+    },
+    {
+      "type": "header",
+      "content": "Open automatically"
+    },
+    {
+      "type": "checkbox",
+      "id": "auto_home",
+      "label": "Home page",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "auto_product",
+      "label": "Product pages",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "auto_collection",
+      "label": "Collection pages",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "auto_cart",
+      "label": "Cart page",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "auto_paths",
+      "label": "Other pages",
+      "info": "Comma separated paths, example: /pages/bundle, /pages/faq"
+    },
+    {
+      "type": "range",
+      "id": "delay",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "unit": "sec",
+      "label": "Delay before opening",
+      "default": 3
+    },
+    {
+      "type": "select",
+      "id": "frequency",
+      "label": "How often",
+      "options": [
+        { "value": "always", "label": "Every visit" },
+        { "value": "session", "label": "Once per session" },
+        { "value": "once", "label": "Only once" }
+      ],
+      "default": "session"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "position",
+      "label": "Position",
+      "options": [
+        { "value": "center", "label": "Center" },
+        { "value": "bottom", "label": "Bottom" },
+        { "value": "left", "label": "Left drawer" },
+        { "value": "right", "label": "Right drawer" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "panel_width",
+      "min": 280,
+      "max": 900,
+      "step": 10,
+      "unit": "px",
+      "label": "Width",
+      "default": 520
+    },
+    {
+      "type": "range",
+      "id": "panel_width_mobile",
+      "min": 260,
+      "max": 600,
+      "step": 10,
+      "unit": "px",
+      "label": "Width on mobile",
+      "default": 420
+    },
+    {
+      "type": "range",
+      "id": "panel_padding",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "label": "Inner padding",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "panel_padding_mobile",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Inner padding on mobile",
+      "default": 22
+    },
+    {
+      "type": "range",
+      "id": "screen_padding",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Distance from screen edge",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "panel_radius",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "label": "Corner radius",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "block_gap",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "label": "Space between blocks",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "color",
+      "id": "panel_background",
+      "label": "Background override"
+    },
+    {
+      "type": "color",
+      "id": "panel_text_color",
+      "label": "Text override"
+    },
+    {
+      "type": "color",
+      "id": "backdrop_color",
+      "label": "Backdrop",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "backdrop_opacity",
+      "min": 0,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "label": "Backdrop opacity",
+      "default": 55
+    },
+    {
+      "type": "header",
+      "content": "Closing"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_close",
+      "label": "Show close button",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "close_on_backdrop",
+      "label": "Close when clicking outside",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "heading",
+      "name": "Heading",
+      "settings": [
+        {
+          "type": "inline_richtext",
+          "id": "text",
+          "label": "Heading",
+          "default": "Popup heading"
+        },
+        {
+          "type": "range",
+          "id": "size",
+          "min": 14,
+          "max": 48,
+          "step": 1,
+          "unit": "px",
+          "label": "Font size",
+          "default": 22
+        },
+        {
+          "type": "select",
+          "id": "weight",
+          "label": "Weight",
+          "options": [
+            { "value": "400", "label": "Regular" },
+            { "value": "500", "label": "Medium" },
+            { "value": "600", "label": "Semibold" },
+            { "value": "700", "label": "Bold" }
+          ],
+          "default": "600"
+        },
+        {
+          "type": "select",
+          "id": "alignment",
+          "label": "Alignment",
+          "options": [
+            { "value": "left", "label": "Left" },
+            { "value": "center", "label": "Center" },
+            { "value": "right", "label": "Right" }
+          ],
+          "default": "center"
+        },
+        {
+          "type": "color",
+          "id": "color",
+          "label": "Color"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "Text",
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>Add the text of your popup here.</p>"
+        },
+        {
+          "type": "range",
+          "id": "size",
+          "min": 11,
+          "max": 28,
+          "step": 1,
+          "unit": "px",
+          "label": "Font size",
+          "default": 15
+        },
+        {
+          "type": "range",
+          "id": "line_height",
+          "min": 1,
+          "max": 2.2,
+          "step": 0.1,
+          "label": "Line height",
+          "default": 1.5
+        },
+        {
+          "type": "select",
+          "id": "alignment",
+          "label": "Alignment",
+          "options": [
+            { "value": "left", "label": "Left" },
+            { "value": "center", "label": "Center" },
+            { "value": "right", "label": "Right" }
+          ],
+          "default": "center"
+        },
+        {
+          "type": "color",
+          "id": "color",
+          "label": "Color"
+        }
+      ]
+    },
+    {
+      "type": "image",
+      "name": "Image",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "range",
+          "id": "width",
+          "min": 20,
+          "max": 100,
+          "step": 5,
+          "unit": "%",
+          "label": "Width",
+          "default": 100
+        },
+        {
+          "type": "range",
+          "id": "radius",
+          "min": 0,
+          "max": 40,
+          "step": 1,
+          "unit": "px",
+          "label": "Corner radius",
+          "default": 8
+        },
+        {
+          "type": "select",
+          "id": "alignment",
+          "label": "Alignment",
+          "options": [
+            { "value": "left", "label": "Left" },
+            { "value": "center", "label": "Center" },
+            { "value": "right", "label": "Right" }
+          ],
+          "default": "center"
+        }
+      ]
+    },
+    {
+      "type": "button",
+      "name": "Button",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Scopri di più"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        },
+        {
+          "type": "checkbox",
+          "id": "new_tab",
+          "label": "Open in a new tab",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "close_on_click",
+          "label": "Close the popup on click",
+          "default": true
+        },
+        {
+          "type": "select",
+          "id": "style",
+          "label": "Style",
+          "options": [
+            { "value": "filled", "label": "Filled" },
+            { "value": "outline", "label": "Outline" }
+          ],
+          "default": "filled"
+        },
+        {
+          "type": "checkbox",
+          "id": "full_width",
+          "label": "Full width",
+          "default": false
+        },
+        {
+          "type": "range",
+          "id": "size",
+          "min": 11,
+          "max": 24,
+          "step": 1,
+          "unit": "px",
+          "label": "Font size",
+          "default": 15
+        },
+        {
+          "type": "range",
+          "id": "padding_block",
+          "min": 4,
+          "max": 30,
+          "step": 1,
+          "unit": "px",
+          "label": "Vertical padding",
+          "default": 13
+        },
+        {
+          "type": "range",
+          "id": "padding_inline",
+          "min": 6,
+          "max": 60,
+          "step": 1,
+          "unit": "px",
+          "label": "Horizontal padding",
+          "default": 26
+        },
+        {
+          "type": "range",
+          "id": "radius",
+          "min": 0,
+          "max": 40,
+          "step": 1,
+          "unit": "px",
+          "label": "Corner radius",
+          "default": 8
+        },
+        {
+          "type": "color",
+          "id": "background",
+          "label": "Background",
+          "default": "#111111"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Text",
+          "default": "#ffffff"
+        },
+        {
+          "type": "select",
+          "id": "alignment",
+          "label": "Alignment",
+          "options": [
+            { "value": "left", "label": "Left" },
+            { "value": "center", "label": "Center" },
+            { "value": "right", "label": "Right" }
+          ],
+          "default": "center"
+        }
+      ]
+    },
+    {
+      "type": "divider",
+      "name": "Divider",
+      "settings": [
+        {
+          "type": "range",
+          "id": "thickness",
+          "min": 1,
+          "max": 6,
+          "step": 1,
+          "unit": "px",
+          "label": "Thickness",
+          "default": 1
+        },
+        {
+          "type": "color",
+          "id": "color",
+          "label": "Color",
+          "default": "#e5e5e5"
+        }
+      ]
+    },
+    {
+      "type": "spacer",
+      "name": "Spacer",
+      "settings": [
+        {
+          "type": "range",
+          "id": "height",
+          "min": 0,
+          "max": 80,
+          "step": 2,
+          "unit": "px",
+          "label": "Height",
+          "default": 12
+        }
+      ]
+    },
+    {
+      "type": "liquid",
+      "name": "Liquid",
+      "settings": [
+        {
+          "type": "liquid",
+          "id": "custom_liquid",
+          "label": "Liquid"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Popup",
+      "blocks": [
+        { "type": "heading" },
+        { "type": "text" },
+        { "type": "button" }
+      ]
+    }
+  ]
+}
+{% endschema %}

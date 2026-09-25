@@ -32,7 +32,7 @@
       place-items: center;
       width: {{ settings.back_to_top_size | default: 48 }}px;
       height: {{ settings.back_to_top_size | default: 48 }}px;
-      border: none;
+      border: {{ settings.back_to_top_border_width | default: 0 }}px solid {{ settings.back_to_top_border_color | default: '#111111' }};
       border-radius: 50%;
       background: {{ settings.back_to_top_background | default: '#111111' }};
       color: {{ settings.back_to_top_icon_color | default: '#ffffff' }};
@@ -45,7 +45,7 @@
     }
 
     .back-to-top.is-visible {
-      opacity: 1;
+      opacity: {{ settings.back_to_top_opacity | default: 100 | divided_by: 100.0 }};
       visibility: visible;
       transform: none;
     }

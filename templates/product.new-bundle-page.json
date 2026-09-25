@@ -223,7 +223,9 @@
             "video": "shopify://files/videos/Video sales page utilizzo cintura_d571c559-6849-477c-99c5-41b392a77452.mp4",
             "product": "",
             "heading": "",
-            "text": ""
+            "show_heading_on_card": true,
+            "text": "",
+            "likes_start": 0
           }
         },
         "video_rMKgTd": {
@@ -232,7 +234,9 @@
             "video": "shopify://files/videos/798441720260622072215.mp4",
             "product": "",
             "heading": "",
-            "text": ""
+            "show_heading_on_card": true,
+            "text": "",
+            "likes_start": 0
           }
         },
         "video_KcM4aj": {
@@ -241,7 +245,9 @@
             "video": "shopify://files/videos/839970420260622073644.mp4",
             "product": "",
             "heading": "",
-            "text": ""
+            "show_heading_on_card": true,
+            "text": "",
+            "likes_start": 0
           }
         },
         "video_a8Fti8": {
@@ -250,7 +256,9 @@
             "video": "shopify://files/videos/Nuovo video tutorial.mp4",
             "product": "",
             "heading": "",
-            "text": ""
+            "show_heading_on_card": true,
+            "text": "",
+            "likes_start": 0
           }
         }
       },
@@ -270,10 +278,15 @@
         "cards_desktop": 4,
         "mobile_width": 44,
         "card_height": 240,
+        "card_width_desktop": 250,
+        "card_height_desktop": 420,
+        "side_padding": 20,
+        "side_padding_desktop": 110,
         "card_gap": 12,
         "card_radius": 12,
         "autoplay_preview": true,
         "preview_seconds": 5,
+        "show_likes": true,
         "show_share": true,
         "button_label": "Aggiungi al carrello",
         "copied_label": "Link copiato",
