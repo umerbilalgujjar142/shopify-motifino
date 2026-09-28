@@ -517,7 +517,7 @@
     }
 
     {% if auto_open %}
-      if (!alreadySeen()) {
+      if (frequency !== 'never' && !alreadySeen()) {
         setTimeout(open, {{ section.settings.delay | times: 1000 }});
       }
     {% endif %}
@@ -619,6 +619,10 @@
         {
           "value": "once",
           "label": "Only once"
+        },
+        {
+          "value": "never",
+          "label": "Never \u2014 only on click"
         }
       ],
       "default": "session"
