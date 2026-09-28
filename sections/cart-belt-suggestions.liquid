@@ -1,4 +1,5 @@
 {%- liquid
+  assign use_shopify_price = section.settings.use_shopify_price
   # The heading and the View all link come from the first collection block;
   # the other blocks are pricing rules.
   for b in section.blocks
@@ -396,6 +397,20 @@
                     assign next_off = rule.settings.rule_discount | replace: ',', '.' | times: 100 | round
                   endif
                 endfor
+                # On Shopify pricing the rules are ignored and the compare-at price is the was.
+                if use_shopify_price
+                  assign next_off = 0
+                endif
+                assign card_has_was = false
+                for v in product.variants
+                  if use_shopify_price
+                    if v.compare_at_price > v.price
+                      assign card_has_was = true
+                    endif
+                  elsif next_off > 0
+                    assign card_has_was = true
+                  endif
+                endfor
               -%}
               <div class="bs-card" {{ block.shopify_attributes }}>
                 {%- assign img_main = product.images[0] | default: product.featured_image -%}
@@ -438,12 +453,18 @@
                       {%- for variant in product.variants -%}
                         {%- assign v_now = variant.price | minus: next_off -%}
                         {%- if v_now < 0 %}{% assign v_now = 0 %}{% endif -%}
+                        {%- assign v_was = 0 -%}
+                        {%- if use_shopify_price -%}
+                          {%- if variant.compare_at_price > variant.price %}{% assign v_was = variant.compare_at_price %}{% endif -%}
+                        {%- elsif next_off > 0 -%}
+                          {%- assign v_was = variant.price -%}
+                        {%- endif -%}
                         <button
                           type="button"
                           class="bs-pill{% if variant.id == first_variant.id %} is-selected{% endif %}"
                           data-variant="{{ variant.id }}"
                           data-price="{{ v_now | money }}"
-                          {% if next_off > 0 %}data-compare="{{ variant.price | money }}"{% endif %}
+                          {% if v_was > 0 %}data-compare="{{ v_was | money }}"{% endif %}
                           {% unless variant.available %}disabled{% endunless %}
                         >{{ variant.title }}</button>
                       {%- endfor -%}
@@ -454,11 +475,17 @@
                 <div class="bs-card__body">
                   {%- assign now_price = first_variant.price | minus: next_off -%}
                   {%- if now_price < 0 %}{% assign now_price = 0 %}{% endif -%}
+                  {%- assign was_price = 0 -%}
+                  {%- if use_shopify_price -%}
+                    {%- if first_variant.compare_at_price > first_variant.price %}{% assign was_price = first_variant.compare_at_price %}{% endif -%}
+                  {%- elsif next_off > 0 -%}
+                    {%- assign was_price = first_variant.price -%}
+                  {%- endif -%}
 
                   <p class="bs-card__price">
                     <span data-price>{{ now_price | money }}</span>
-                    {%- if next_off > 0 -%}
-                      <s class="bs-card__was">{{ first_variant.price | money }}</s>
+                    {%- if card_has_was -%}
+                      <s class="bs-card__was"{% if was_price == 0 %} hidden{% endif %}>{% if was_price > 0 %}{{ was_price | money }}{% endif %}</s>
                     {%- endif -%}
                   </p>
                   <button
@@ -657,10 +684,12 @@
               return;
             }
 
-            /* Takes the shopper back up to the cart so the new line is visible. */
-            requestAnimationFrame(function () {
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            });
+            /* Only on the cart page, where the new line is at the top. */
+            {%- if template.name == 'cart' -%}
+              requestAnimationFrame(function () {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              });
+            {%- endif -%}
           })
           .catch(function () { window.location.reload(); })
           .then(function () {
@@ -675,12 +704,9 @@
 
 {% schema %}
 {
-  "name": "Belt Suggestions",
+  "name": "Collection Carousel",
   "class": "shopify-section--belt-suggestions",
   "tag": "section",
-  "enabled_on": {
-    "templates": ["cart"]
-  },
   "max_blocks": 12,
   "settings": [
     {
@@ -700,6 +726,17 @@
       "id": "button_text",
       "label": "Add to cart button",
       "default": "Aggiungi al Carrello"
+    },
+    {
+      "type": "header",
+      "content": "Pricing"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_shopify_price",
+      "label": "Use Shopify product price",
+      "info": "On: shows the product price with its Compare-at price struck through, and ignores the Pricing rule blocks. Off: prices come from the cart and the Pricing rule blocks apply.",
+      "default": false
     },
     {
       "type": "header",
@@ -965,7 +1002,7 @@
   ],
   "presets": [
     {
-      "name": "Belt Suggestions",
+      "name": "Collection Carousel",
       "blocks": [
         {
           "type": "collection"
