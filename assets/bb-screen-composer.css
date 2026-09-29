@@ -26,40 +26,102 @@
 
 /* ── Worn-photo toggle — rounded, centered pill ──────────────
    Product view (default) = black · Worn view (.is-worn) = white */
-.bb-worn-btn {
+/* ── Zoom trigger — bottom-left of the hero ── */
+.bb-zoom-btn {
   position: absolute;
-  bottom: 22px;
-  left: 50%;
-  transform: translateX(-50%);
+  bottom: 12px;
+  left: 12px;
   display: inline-flex;
   align-items: center;
-  padding: 8px 18px;
-  border-radius: 32px;
-  border: 1px solid var(--bb-dark);
-  background: var(--bb-dark);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
-  color: #fff;
-  font-family: inherit;
-  font-size: var(--bb-fs-2xs);
-  font-weight: 600;
-  white-space: nowrap;
+  justify-content: center;
+  width: calc(var(--bb-zoom-size, 28px) + 14px);
+  height: calc(var(--bb-zoom-size, 28px) + 14px);
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .85);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .14);
+  color: var(--bb-zoom-color, #1a1a1a);
   cursor: pointer;
   z-index: 4;
-  transition: background .18s, box-shadow .18s, color .18s, border-color .18s;
+  transition: background .18s, box-shadow .18s;
 }
 
-.bb-worn-btn:hover {
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+.bb-zoom-btn:hover { background: #fff; box-shadow: 0 4px 14px rgba(0, 0, 0, .2); }
+
+.bb-zoom-btn svg {
+  width: var(--bb-zoom-size, 28px);
+  height: var(--bb-zoom-size, 28px);
+  display: block;
 }
 
-.bb-worn-btn.is-worn {
-  background: #fff;
-  color: var(--bb-dark);
-  border-color: rgba(0, 0, 0, 0.1);
+/* ── Worn-view switch — bottom-right, shows the other view ── */
+.bb-worn-thumb {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  width: var(--bb-worn-thumb-size, 64px);
+  height: var(--bb-worn-thumb-size, 64px);
+  padding: 0;
+  overflow: hidden;
+  border: 2px solid #fff;
+  border-radius: 10px;
+  background: #e8e8e8;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .18);
+  cursor: pointer;
+  z-index: 4;
+  transition: box-shadow .18s, transform .18s;
 }
 
-.bb-worn-btn.is-worn:hover {
-  background: #fff;
+.bb-worn-thumb:hover { box-shadow: 0 4px 14px rgba(0, 0, 0, .24); transform: translateY(-1px); }
+.bb-worn-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* ── Zoom overlay — appended to <body>, so the hero overflow cannot clip it ── */
+.bb-zoom-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+  background: rgba(0, 0, 0, .9);
+  touch-action: pinch-zoom;
+  overscroll-behavior: contain;
+}
+
+.bb-zoom-overlay img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  cursor: zoom-in;
+  transition: max-width .25s, max-height .25s;
+}
+
+.bb-zoom-overlay.is-zoomed img {
+  max-width: none;
+  max-height: none;
+  width: 250%;
+  cursor: zoom-out;
+}
+
+.bb-zoom-overlay__close {
+  position: fixed;
+  top: 14px;
+  right: 14px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .9);
+  color: #1a1a1a;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 1;
 }
 
 /* ── Composer hero — full-width preview photo as background ── */

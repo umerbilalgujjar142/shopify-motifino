@@ -244,13 +244,8 @@
 
 <script>
   /* ── Carousel configuration (from Shopify Theme Editor) ───── */
-  /* URL delle immagini prodotto bundle (da Shopify CDN) — usate in riepilogo e carrello */
-  window.BB_BUNDLE_IMAGES = {
-    single:    {{ section.settings.img_single    | img_url: '240x240' | json | default: '""' }},
-    double:    {{ section.settings.img_double    | img_url: '240x240' | json | default: '""' }},
-    triple:    {{ section.settings.img_triple    | img_url: '240x240' | json | default: '""' }},
-    infinity:  {{ section.settings.img_infinity  | img_url: '240x240' | json | default: '""' }},
-  };
+  /* Le immagini bundle arrivano da bundle-builder-media.json. */
+  window.BB_BUNDLE_IMAGES = {};
   window.BB_CAROUSEL_CONFIG = {
     buckleOrder:   {{ section.settings.buckle_order   | default: "buckle-1,buckle-2,buckle-4,buckle-3" | json }},
     strapOrder:    {{ section.settings.strap_order    | default: "strap-nero,strap-marrone,strap-cognac,strap-cuoio,strap-beige,strap-rosso,strap-verde,strap-blu,strap-grigio" | json }},
@@ -270,54 +265,13 @@
    *            for warehouse/logistics use. Set them as "Draft" / unlisted
    *            products in Shopify so customers cannot find or purchase them.
    */
-  window.BB_VARIANTS = {
-    belt_preview_base_url: {{ section.settings.belt_preview_base_url | default: "" | json }},
-    bundles: {
-      single:         {{ section.settings.variant_bundle_single         | default: 0 }},
-      double:         {{ section.settings.variant_bundle_double         | default: 0 }},
-      triple:         {{ section.settings.variant_bundle_triple         | default: 0 }},
-      infinity_base:  {{ section.settings.variant_bundle_infinity_base  | default: 0 }},
-      infinity_extra: {{ section.settings.variant_bundle_infinity_extra | default: 0 }},
-    },
-    straps: {
-      '130': {{ section.settings.variant_strap_130 | default: 0 }},
-      '150': {{ section.settings.variant_strap_150 | default: 0 }},
-    },
-    buckles: {
-      'buckle-1': {{ section.settings.variant_buckle_1 | default: 0 }},
-      'buckle-2': {{ section.settings.variant_buckle_2 | default: 0 }},
-      'buckle-3': {{ section.settings.variant_buckle_3 | default: 0 }},
-      'buckle-4': {{ section.settings.variant_buckle_4 | default: 0 }},
-    },
-    logistics: {
-      warranty: {{ section.settings.variant_logistics_warranty | default: 0 }},
-      nfc:      {{ section.settings.variant_logistics_nfc      | default: 0 }},
-      box:      {{ section.settings.variant_logistics_box      | default: 0 }},
-    },
-  };
-  window.BB_AVAIL_MODE = {{ section.settings.unavailability_mode | default: 'grey' | json }};
+  window.BB_VARIANTS = {};
 
   {%- comment -%}
     BB_SKU_IMAGES: mappa SKU variante → URL immagine per le foto preview delle combinazioni.
     Richiede l'handle del prodotto Shopify che contiene le 72 varianti (lunghezza+fibbia+colore).
     Ogni variante deve avere: un campo SKU compilato e un'immagine della variante assegnata.
   {%- endcomment -%}
-  {%- if section.settings.belt_combo_product_handle != blank -%}
-    {%- assign _bcp = all_products[section.settings.belt_combo_product_handle] -%}
-    {%- if _bcp.id -%}
-  window.BB_SKU_IMAGES = {
-      {%- for _v in _bcp.variants -%}
-        {%- if _v.sku != blank -%}
-          {%- if _v.featured_image -%}
-    {{ _v.sku | json }}: {{ _v.featured_image | image_url: width: 900 | prepend: 'https:' | json }},
-          {%- elsif _bcp.featured_image -%}
-    {{ _v.sku | json }}: {{ _bcp.featured_image | image_url: width: 900 | prepend: 'https:' | json }},
-          {%- endif -%}
-        {%- endif -%}
-      {%- endfor -%}
-  };
-    {%- endif -%}
-  {%- endif -%}
 </script>
 
 {{ 'belt-combination.js' | asset_url | script_tag }}
@@ -348,131 +302,43 @@
     },
     {
       "type": "header",
-      "content": "Prezzi bundle"
+      "content": "Belt preview"
     },
     {
-      "type": "text",
-      "id": "price_single",
-      "label": "Prezzo Single Set Belt",
-      "default": "€ 49,99"
+      "type": "checkbox",
+      "id": "enable_zoom",
+      "label": "Enable zoom",
+      "info": "Shows the magnifier icon at the bottom left of the preview.",
+      "default": true
     },
     {
-      "type": "text",
-      "id": "price_double",
-      "label": "Prezzo Double Set Belt",
-      "default": "€ 79,99"
+      "type": "range",
+      "id": "zoom_icon_size",
+      "label": "Zoom icon size",
+      "min": 16,
+      "max": 64,
+      "step": 2,
+      "unit": "px",
+      "default": 28,
+      "visible_if": "{{ section.settings.enable_zoom }}"
     },
     {
-      "type": "text",
-      "id": "price_triple",
-      "label": "Prezzo Triple Set Belt",
-      "default": "€ 99,99"
+      "type": "color",
+      "id": "zoom_icon_color",
+      "label": "Zoom icon colour",
+      "default": "#1a1a1a",
+      "visible_if": "{{ section.settings.enable_zoom }}"
     },
     {
-      "type": "text",
-      "id": "price_infinity",
-      "label": "Prezzo Infinity Set Belt (4 cinture base)",
-      "default": "€ 119,99"
-    },
-    {
-      "type": "text",
-      "id": "price_infinity_extra",
-      "label": "Prezzo cintura extra Infinity (oltre le 4)",
-      "default": "€ 19,99"
-    },
-    {
-      "type": "header",
-      "content": "SKU Cinturini (2 lunghezze)"
-    },
-    { "type": "text", "id": "variant_strap_130", "label": "Cintura 130 cm — SKU / Variant ID" },
-    { "type": "text", "id": "variant_strap_150", "label": "Cintura 150 cm — SKU / Variant ID" },
-    {
-      "type": "header",
-      "content": "SKU Fibbie (4 stili)"
-    },
-    { "type": "number", "id": "variant_buckle_1", "label": "Fibbia Classica" },
-    { "type": "number", "id": "variant_buckle_2", "label": "Fibbia Automatica" },
-    { "type": "number", "id": "variant_buckle_3", "label": "Fibbia Style 3" },
-    { "type": "number", "id": "variant_buckle_4", "label": "Fibbia Style 4" },
-    {
-      "type": "header",
-      "content": "SKU Logistica (solo uso interno)"
-    },
-    {
-      "type": "number",
-      "id": "variant_logistics_warranty",
-      "label": "Garanzia Card",
-      "info": "Imposta il prodotto come Draft in Shopify — non visibile ai clienti ma appare negli ordini admin per la logistica."
-    },
-    {
-      "type": "number",
-      "id": "variant_logistics_nfc",
-      "label": "NFC Card",
-      "info": "Come sopra — prodotto Draft, solo uso interno logistica."
-    },
-    {
-      "type": "number",
-      "id": "variant_logistics_box",
-      "label": "Belt Box",
-      "info": "Come sopra — prodotto Draft, solo uso interno logistica."
-    },
-    {
-      "type": "header",
-      "content": "Immagini bundle (card selettore)"
-    },
-    {
-      "type": "image_picker",
-      "id": "img_single",
-      "label": "Immagine Single Set"
-    },
-    {
-      "type": "image_picker",
-      "id": "img_double",
-      "label": "Immagine Double Set"
-    },
-    {
-      "type": "image_picker",
-      "id": "img_triple",
-      "label": "Immagine Triple Set"
-    },
-    {
-      "type": "image_picker",
-      "id": "img_infinity",
-      "label": "Immagine Infinity Set"
-    },
-    {
-      "type": "header",
-      "content": "Variant ID Prodotti Bundle"
-    },
-    {
-      "type": "number",
-      "id": "variant_bundle_single",
-      "label": "Single Set Belt — variant ID",
-      "info": "Prodotto Shopify prezzato a €49,99"
-    },
-    {
-      "type": "number",
-      "id": "variant_bundle_double",
-      "label": "Double Set Belt — variant ID",
-      "info": "Prodotto Shopify prezzato a €79,99"
-    },
-    {
-      "type": "number",
-      "id": "variant_bundle_triple",
-      "label": "Triple Set Belt — variant ID",
-      "info": "Prodotto Shopify prezzato a €99,99"
-    },
-    {
-      "type": "number",
-      "id": "variant_bundle_infinity_base",
-      "label": "Infinity Set Belt Base — variant ID",
-      "info": "Prodotto Shopify prezzato a €119,99 (copre 4 cinture base)"
-    },
-    {
-      "type": "number",
-      "id": "variant_bundle_infinity_extra",
-      "label": "Infinity Set Belt Extra Cintura — variant ID",
-      "info": "Prodotto Shopify prezzato a €19,99 (cintura aggiuntiva oltre le 4)"
+      "type": "range",
+      "id": "worn_thumb_size",
+      "label": "Worn preview size",
+      "info": "Thumbnail at the bottom right that switches between product view and belt worn.",
+      "min": 40,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 64
     },
     {
       "type": "header",
@@ -524,48 +390,6 @@
       "label": "Ordine cinturini nel carousel",
       "default": "strap-nero,strap-marrone,strap-cognac,strap-cuoio,strap-beige,strap-rosso,strap-verde,strap-blu,strap-grigio",
       "info": "Chiavi separate da virgola. La prima definisce la sequenza. Valori validi: strap-nero, strap-marrone, strap-cognac, strap-cuoio, strap-beige, strap-rosso, strap-verde, strap-blu, strap-grigio"
-    },
-    {
-      "type": "header",
-      "content": "Anteprima cintura e modal"
-    },
-    {
-      "type": "text",
-      "id": "belt_combo_product_handle",
-      "label": "Handle prodotto combinazioni cintura",
-      "info": "Inserisci l'handle del prodotto Shopify che contiene le varianti combinazione (es. cintura-bundle-preview). Il sistema usa lo SKU e la foto di ogni variante per la preview."
-    },
-    {
-      "type": "image_picker",
-      "id": "model_photo",
-      "label": "Foto modello (modal Vedi indossata)"
-    },
-    {
-      "type": "text",
-      "id": "video_360",
-      "label": "URL video 360° (.mp4)",
-      "info": "URL diretto del file video. Caricalo con Shopify Files o un CDN esterno."
-    },
-    {
-      "type": "text",
-      "id": "belt_preview_base_url",
-      "label": "URL base immagini cintura",
-      "info": "Facoltativo. Se fornito, il sistema cerca immagini come: [base-url]-[buckle]-[strap].jpg"
-    },
-    {
-      "type": "header",
-      "content": "Gestione disponibilità prodotti"
-    },
-    {
-      "type": "select",
-      "id": "unavailability_mode",
-      "label": "Prodotti esauriti nel carousel",
-      "options": [
-        { "value": "grey", "label": "Mostra in grigio con badge 'Non Disponibile'" },
-        { "value": "hide", "label": "Nascondi dal carousel" }
-      ],
-      "default": "grey",
-      "info": "Controlla l'inventario Shopify in tempo reale ad ogni caricamento pagina. Nessuna azione manuale richiesta."
     }
   ],
   "presets": [

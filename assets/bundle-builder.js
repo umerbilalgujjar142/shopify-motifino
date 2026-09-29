@@ -497,44 +497,99 @@
     const strap = STRAPS[strapKey] || {};
     const buckle = BUCKLES[buckleKey] || {};
 
-    /* Worn photo — inline hero toggle (same pattern as single-bundle-builder) */
+    /* Worn photo — hero thumbnail switch */
     const wornImg = document.getElementById('bb-worn-preview-img');
-    const wornBtn = document.getElementById('bb-worn-toggle');
+    const wornThumb = document.getElementById('bb-worn-thumb');
     const wornSrc = combo.worn || '';
     if (wornImg) wornImg.src = wornSrc;
-    if (wornBtn) wornBtn.style.display = wornSrc ? '' : 'none';
-    /* Keep worn view if active — image src already updated above */
-    if (_bbIsWorn) setWornView(true);
+    if (wornThumb) wornThumb.style.display = wornSrc ? '' : 'none';
+    /* Drops back to the product view when this combination has no worn photo. */
+    setWornView(_bbIsWorn && Boolean(wornSrc));
 
     const vcap = document.getElementById('bb-modal-video-caption');
     if (vcap) vcap.textContent = (buckle.name || '—') + ' — ' + (strap.name || '—');
   }
 
-  /* ── Worn-photo toggle (rounded, centered button — mirrors single-bundle-builder) ── */
+  /* ── Worn-photo switch (bottom-right thumbnail of the hero) ── */
   let _bbIsWorn = false;
-  function setWornView(worn) {
-    const btn = document.getElementById('bb-worn-toggle');
+
+  /* The thumbnail always previews the view you are NOT looking at. */
+  function refreshWornThumb() {
+    const thumbImg = document.getElementById('bb-worn-thumb-img');
+    if (!thumbImg) return;
     const mainImg = document.getElementById('bb-belt-preview-img');
     const wornImg = document.getElementById('bb-worn-preview-img');
-    if (!btn || !wornImg) return;
+    const src = _bbIsWorn ? (mainImg && mainImg.src) : (wornImg && wornImg.src);
+    if (src) thumbImg.src = src;
+    thumbImg.alt = _bbIsWorn ? 'Vista prodotto' : 'Cintura indossata';
+  }
+
+  function setWornView(worn) {
+    const mainImg = document.getElementById('bb-belt-preview-img');
+    const wornImg = document.getElementById('bb-worn-preview-img');
+    const thumb = document.getElementById('bb-worn-thumb');
+    if (!wornImg) return;
     _bbIsWorn = worn;
     if (worn) {
       if (mainImg) mainImg.style.display = 'none';
       wornImg.style.display = '';
-      btn.classList.add('is-worn');
-      btn.querySelector('.bb-worn-btn__label').textContent = btn.dataset.labelBack;
     } else {
       wornImg.style.display = 'none';
       if (mainImg) mainImg.style.display = '';
-      btn.classList.remove('is-worn');
-      btn.querySelector('.bb-worn-btn__label').textContent = btn.dataset.label;
     }
+    if (thumb) thumb.classList.toggle('is-worn', worn);
+    refreshWornThumb();
   }
+
   function initWornToggle() {
-    const btn = document.getElementById('bb-worn-toggle');
+    const thumb = document.getElementById('bb-worn-thumb');
+    if (!thumb || thumb.dataset.wired) return;
+    thumb.dataset.wired = '1';
+    thumb.addEventListener('click', () => setWornView(!_bbIsWorn));
+  }
+
+  /* ── Zoom overlay — built on <body> because the hero clips its overflow ── */
+  let _bbZoomEl = null;
+  function zoomOverlay() {
+    if (_bbZoomEl) return _bbZoomEl;
+    const el = document.createElement('div');
+    el.className = 'bb-zoom-overlay';
+    el.style.display = 'none';
+    el.innerHTML = '<button class="bb-zoom-overlay__close" type="button" aria-label="Chiudi">&times;</button><img alt="">';
+    document.body.appendChild(el);
+    el.addEventListener('click', (e) => {
+      if (e.target.tagName === 'IMG') el.classList.toggle('is-zoomed');
+      else closeZoom();
+    });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeZoom(); });
+    _bbZoomEl = el;
+    return el;
+  }
+
+  function openZoom() {
+    const mainImg = document.getElementById('bb-belt-preview-img');
+    const wornImg = document.getElementById('bb-worn-preview-img');
+    const src = _bbIsWorn ? (wornImg && wornImg.src) : (mainImg && mainImg.src);
+    if (!src) return;
+    const el = zoomOverlay();
+    el.querySelector('img').src = src;
+    el.classList.remove('is-zoomed');
+    el.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeZoom() {
+    if (!_bbZoomEl) return;
+    _bbZoomEl.style.display = 'none';
+    _bbZoomEl.classList.remove('is-zoomed');
+    document.body.style.overflow = '';
+  }
+
+  function initZoom() {
+    const btn = document.getElementById('bb-zoom-btn');
     if (!btn || btn.dataset.wired) return;
     btn.dataset.wired = '1';
-    btn.addEventListener('click', () => setWornView(!_bbIsWorn));
+    btn.addEventListener('click', openZoom);
   }
 
   /* ── Render helpers ─────────────────────────────────────── */
@@ -2078,6 +2133,7 @@
 
     /* Vedi indossata — inline hero toggle (same pattern as single-bundle-builder) */
     initWornToggle();
+    initZoom();
 
     /* Modal closes */
     wrap.querySelectorAll('[data-close-modal]').forEach(btn => {

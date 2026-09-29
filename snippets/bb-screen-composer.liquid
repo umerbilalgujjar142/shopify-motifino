@@ -6,7 +6,7 @@
   <div
     class="bb-composer-hero"
     id="bb-composer-hero"
-    data-belt-preview-base="{{ section.settings.belt_preview_base_url }}"
+    style="--bb-zoom-size:{{ section.settings.zoom_icon_size | default: 28 }}px;--bb-zoom-color:{{ section.settings.zoom_icon_color | default: '#1a1a1a' }};--bb-worn-thumb-size:{{ section.settings.worn_thumb_size | default: 64 }}px;"
   >
     {%- comment -%} Background: belt combo photo fills entire hero area {%- endcomment -%}
     <canvas id="bb-belt-canvas" width="340" height="100" style="display:none;max-width:100%;"></canvas>
@@ -31,16 +31,18 @@
       Seleziona le opzioni per vedere l'anteprima
     </div>
 
-    {%- comment -%} Worn-photo toggle — rounded, centered pill button (same style/logic as sbb-worn-btn) {%- endcomment -%}
-    <button
-      class="bb-worn-btn"
-      id="bb-worn-toggle"
-      type="button"
-      data-label="Vedi indossata"
-      data-label-back="Vista prodotto"
-      style="display:none;"
-    >
-      <span class="bb-worn-btn__label">Vedi indossata</span>
+    {%- if section.settings.enable_zoom -%}
+      <button class="bb-zoom-btn" id="bb-zoom-btn" type="button" aria-label="Ingrandisci">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
+          <path d="M20 20l-3.6-3.6M8 11h6M11 8v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    {%- endif -%}
+
+    {%- comment -%} Shows the view you are NOT looking at — click swaps product and worn. {%- endcomment -%}
+    <button class="bb-worn-thumb" id="bb-worn-thumb" type="button" aria-label="Cambia vista" style="display:none;">
+      <img id="bb-worn-thumb-img" src="" alt="" loading="lazy">
     </button>
   </div>
 
