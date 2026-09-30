@@ -452,25 +452,26 @@
     });
   }
 
-  /* Carica automaticamente le immagini prodotto bundle dall'API AJAX di Shopify.
-     Usa le URL già configurate in BB_BUNDLE_IMAGES (Theme Editor) come priorità;
-     se mancanti, recupera l'immagine dal variant ID del prodotto bundle. */
+  /* Immagine di ogni card bundle: foto del prodotto SET-CINTURA su Shopify. */
+  const BUNDLE_SKUS = {
+    single:   'SET-CINTURA-SINGOLA',
+    double:   'SET-CINTURE-DOPPIO',
+    triple:   'SET-CINTURE-TRIPLO',
+    infinity: 'SET-CINTURE-INFINITY',
+  };
+
   async function fetchBundleImages() {
-    if (typeof BB_BUNDLE_IMAGES === 'undefined') window.BB_BUNDLE_IMAGES = {};
-    const V = (typeof BB_VARIANTS !== 'undefined') ? BB_VARIANTS : {};
-    const types = ['single', 'double', 'triple'];
-    await Promise.all(types.map(async function (type) {
-      if (BB_BUNDLE_IMAGES[type]) return;           /* già impostata dal Theme Editor */
-      const variantId = V.bundles && V.bundles[type];
+    window.BB_BUNDLE_IMAGES = window.BB_BUNDLE_IMAGES || {};
+    await Promise.all(Object.keys(BUNDLE_SKUS).map(async function (type) {
+      const variantId = _bbCatalog && Number(_bbCatalog[BUNDLE_SKUS[type]]);
       if (!variantId) return;
       try {
         const res = await fetch(_u('/variants/' + variantId + '.js'));
         if (!res.ok) return;
         const data = await res.json();
-        /* featured_image sul variant, oppure fallback al product.featured_image */
         const img = (data.featured_image && data.featured_image.src)
           || (data.product && data.product.featured_image && data.product.featured_image.src);
-        if (img) BB_BUNDLE_IMAGES[type] = img.startsWith('//') ? 'https:' + img : img;
+        if (img) window.BB_BUNDLE_IMAGES[type] = img.startsWith('//') ? 'https:' + img : img;
       } catch (e) { /* silente */ }
     }));
   }
@@ -1280,11 +1281,7 @@
     opts = opts || {};
     const w = opts.width || '80px';
     const h = opts.height || '80px';
-    // 1st: JSON file via _bbMedia (loaded at startup, reliable by review time)
-    // 2nd: BB_BUNDLE_IMAGES injected by Liquid/Theme Editor
-    console.log('bundleHeroHTML: looking for image for bundle type', bundleType);
-    const src = (window.BB_BUNDLE_IMAGES && window.BB_BUNDLE_IMAGES[bundleType])
-      || ((typeof BB_BUNDLE_IMAGES !== 'undefined') && BB_BUNDLE_IMAGES[bundleType]);
+    const src = window.BB_BUNDLE_IMAGES && window.BB_BUNDLE_IMAGES[bundleType];
     if (src) {
       return '<img src="' + src + '" alt="' + bundleType + '"'
         + ' style="width:' + w + ';height:' + h + ';object-fit:cover;border-radius:8px;"'

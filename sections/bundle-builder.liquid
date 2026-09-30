@@ -241,16 +241,6 @@
 </div>
 {%- comment -%} /.bb-wrap-outer {%- endcomment -%}
 
-<script>
-  /* ── Carousel configuration (from Shopify Theme Editor) ───── */
-  window.BB_BUNDLE_IMAGES = {
-    single:   {{ section.settings.bundle_img_single   | image_url: width: 1200 | json }},
-    double:   {{ section.settings.bundle_img_double   | image_url: width: 1200 | json }},
-    triple:   {{ section.settings.bundle_img_triple   | image_url: width: 1200 | json }},
-    infinity: {{ section.settings.bundle_img_infinity | image_url: width: 1200 | json }},
-  };
-</script>
-
 {%- render 'bb-shopify-data', combos_collection: section.settings.combinations_collection -%}
 
 <script>
@@ -348,30 +338,6 @@
       "id": "combinations_collection",
       "label": "Combinations collection",
       "info": "The collection of \"Combinazione cintura\" products. Each product supplies the preview photo (1st image), the worn photo (2nd image) and the cart variant. Carousel order follows the order of this collection."
-    },
-    {
-      "type": "header",
-      "content": "Bundle card images"
-    },
-    {
-      "type": "image_picker",
-      "id": "bundle_img_single",
-      "label": "Single"
-    },
-    {
-      "type": "image_picker",
-      "id": "bundle_img_double",
-      "label": "Double"
-    },
-    {
-      "type": "image_picker",
-      "id": "bundle_img_triple",
-      "label": "Triple"
-    },
-    {
-      "type": "image_picker",
-      "id": "bundle_img_infinity",
-      "label": "Infinity"
     }
   ],
   "presets": [
