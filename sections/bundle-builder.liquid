@@ -35,7 +35,6 @@
   <div
     class="bb-wrap"
     id="bb-root"
-    data-media-url="{{ 'bundle-builder-media.json' | asset_url }}"
     data-catalog-url="{{ 'bundle-builder-catalog.json' | asset_url }}"
     data-success-logo-url="{{ 'MotifinoIcon-1.svg' | asset_url }}"
     {% if section.settings.allow_transparent_header %}allow-transparent-header{% endif %}
@@ -244,13 +243,15 @@
 
 <script>
   /* ── Carousel configuration (from Shopify Theme Editor) ───── */
-  /* Le immagini bundle arrivano da bundle-builder-media.json. */
-  window.BB_BUNDLE_IMAGES = {};
+  window.BB_BUNDLE_IMAGES = {
+    single:   {{ section.settings.bundle_img_single   | image_url: width: 1200 | json }},
+    double:   {{ section.settings.bundle_img_double   | image_url: width: 1200 | json }},
+    triple:   {{ section.settings.bundle_img_triple   | image_url: width: 1200 | json }},
+    infinity: {{ section.settings.bundle_img_infinity | image_url: width: 1200 | json }},
+  };
 </script>
 
-{%- render 'bb-shopify-data',
-      combos_collection: section.settings.combinations_collection,
-      config_type: section.settings.config_metaobject -%}
+{%- render 'bb-shopify-data', combos_collection: section.settings.combinations_collection -%}
 
 <script>
   /*
@@ -346,14 +347,31 @@
       "type": "collection",
       "id": "combinations_collection",
       "label": "Combinations collection",
-      "info": "The collection of \"Combinazione cintura\" products. Each product supplies the preview photo (1st image), the worn photo (2nd image) and the cart variant. Leave empty to keep using bundle-builder-media.json."
+      "info": "The collection of \"Combinazione cintura\" products. Each product supplies the preview photo (1st image), the worn photo (2nd image) and the cart variant. Carousel order follows the order of this collection."
     },
     {
-      "type": "text",
-      "id": "config_metaobject",
-      "label": "Carousel metaobject type",
-      "default": "belt_builder_config",
-      "info": "Metaobject definition holding the ordered strap and buckle lists. One entry is used."
+      "type": "header",
+      "content": "Bundle card images"
+    },
+    {
+      "type": "image_picker",
+      "id": "bundle_img_single",
+      "label": "Single"
+    },
+    {
+      "type": "image_picker",
+      "id": "bundle_img_double",
+      "label": "Double"
+    },
+    {
+      "type": "image_picker",
+      "id": "bundle_img_triple",
+      "label": "Triple"
+    },
+    {
+      "type": "image_picker",
+      "id": "bundle_img_infinity",
+      "label": "Infinity"
     }
   ],
   "presets": [

@@ -9,24 +9,9 @@
   'use strict';
 
   /* ── Data ───────────────────────────────────────────────── */
-  const BUCKLES = {
-    'buckle-1': { name: 'Classic' },
-    'buckle-2': { name: 'Zeno Silver' },
-    'buckle-3': { name: 'Zeno Gold' },
-    'buckle-4': { name: 'Krono' },
-  };
-
-  const STRAPS = {
-    'strap-nero':    { name: 'Nero',            hex: '#1a1a1a' },
-    'strap-marrone': { name: 'Testa di Moro',            hex: '#6b3a2a' },
-    'strap-cognac':  { name: 'Cognac',           hex: '#c07840' },
-    'strap-cuoio':   { name: 'Bianco',            hex: '#f0ede8' },
-    'strap-beige':   { name: 'Sabbia',             hex: '#d4bc94' },
-    'strap-rosso':   { name: 'Marrone Croc',  hex: '#8b1a1a' },
-    'strap-verde':   { name: 'Nero Croc',  hex: '#2d5a1b' },
-    'strap-blu':     { name: 'Blue Navy',             hex: '#1a3a6b' },
-    'strap-grigio':  { name: 'Grigio',             hex: '#888888' },
-  };
+  /* Filled from window.BB_DATA (see snippets/bb-shopify-data.liquid). */
+  const BUCKLES = {};
+  const STRAPS = {};
 
   /* Live tier prices — overwritten by fetchTierPrices() */
   const TIER_PRICES = {
@@ -39,8 +24,8 @@
 
   /* ── State ──────────────────────────────────────────────── */
   const state = {
-    strap:        'strap-nero',
-    buckle:       'buckle-1',
+    strap:        '',
+    buckle:       '',
     length:       '130cm',
     price:        49.99,
   };
@@ -49,21 +34,15 @@
   let _catalog            = null;
   let _singleComparePrice = null;
 
-  /* Overlays window.BB_DATA (printed by bb-shopify-data.liquid) on top of the JSON.
-     No-op until the collection and metaobject are filled in. */
+  /* Loads window.BB_DATA, printed by bb-shopify-data.liquid. */
   function applyShopifyData() {
     const d = window.BB_DATA;
-    if (!d || !d.combos || !Object.keys(d.combos).length) return;
-    /* Both carousels must be configured too, or the builder would render empty. */
-    if (!d.strapOrder || !d.strapOrder.length) return;
-    if (!d.buckleOrder || !d.buckleOrder.length) return;
+    if (!d || !d.combos) return;
     _media = _media || {};
     _media.combinations = d.combos;
     _media.straps = d.strapImages;
     _media.buckles = d.buckleImages;
-    Object.keys(BUCKLES).forEach(k => delete BUCKLES[k]);
     Object.assign(BUCKLES, d.buckles);
-    Object.keys(STRAPS).forEach(k => delete STRAPS[k]);
     Object.assign(STRAPS, d.straps);
     if (d.strapOrder && d.strapOrder.length) state.strap = d.strapOrder[0];
     if (d.buckleOrder && d.buckleOrder.length) state.buckle = d.buckleOrder[0];
@@ -72,18 +51,6 @@
   applyShopifyData();
 
   /* ── Fetch helpers ──────────────────────────────────────── */
-  async function fetchMedia() {
-    const root = document.getElementById('sbb-root');
-    const url  = root && root.dataset.mediaUrl;
-    if (!url) return;
-    try {
-      const res = await fetch(url);
-      if (res.ok) _media = Object.assign({}, await res.json(), _media || {});
-    } catch (e) {
-      console.warn('[SBB] Media not loaded:', e);
-    }
-    applyShopifyData();
-  }
 
   async function fetchCatalog() {
     const root = document.getElementById('sbb-root');
@@ -436,7 +403,7 @@
     const root = document.getElementById('sbb-root');
     if (!root) return;
 
-    await Promise.all([fetchMedia(), fetchCatalog()]);
+    await fetchCatalog();
 
     /* Render dynamic parts */
     renderStrapDropdown();

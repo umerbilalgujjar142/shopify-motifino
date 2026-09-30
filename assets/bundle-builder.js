@@ -315,26 +315,11 @@
     return _bbAvailability[id] !== false;
   }
 
-  const BUCKLES = {
-    'buckle-1': { name: 'Classic', image: '' },
-    'buckle-2': { name: 'Zeno Silver', image: '' },
-    'buckle-3': { name: 'Zeno Gold', image: '' },
-    'buckle-4': { name: 'Krono', image: '' },
-  };
+  /* Filled from window.BB_DATA (see snippets/bb-shopify-data.liquid). */
+  const BUCKLES = {};
+  const STRAPS = {};
 
-  const STRAPS = {
-    'strap-nero': { name: 'Nero', hex: '#1a1a1a' },
-    'strap-marrone': { name: 'Testa di Moro', hex: '#6b3a2a' },
-    'strap-cognac': { name: 'Cognac', hex: '#c07840' },
-    'strap-cuoio': { name: 'Bianco', hex: '#f0ede8' },
-    'strap-beige': { name: 'Sabbia', hex: '#d4bc94' },
-    'strap-rosso': { name: 'Marrone Croc', hex: '#8b1a1a' },
-    'strap-verde': { name: 'Nero Croc', hex: '#2d5a1b' },
-    'strap-blu': { name: 'Blue Navy', hex: '#1a3a6b' },
-    'strap-grigio': { name: 'Grigio', hex: '#888' },
-  };
-
-  /* ── Carousel order (from the belt_builder_config metaobject) ──── */
+  /* ── Carousel order (collection order, via BB_DATA) ──── */
   function getBuckleKeys() {
     const d = window.BB_DATA;
     if (d && d.buckleOrder && d.buckleOrder.length) {
@@ -371,26 +356,20 @@
     return rel;
   }
 
-  /* ── Media config (Shopify first, bundle-builder-media.json as fallback) ── */
+  /* ── Media config (from window.BB_DATA) ── */
   let _bbMedia = null;
   let _previewLoadId = 0;   /* incremented on each preview change — used to cancel stale loads */
 
-  /* Overlays window.BB_DATA (printed by bb-shopify-data.liquid) on top of the JSON.
-     No-op while the collection and metaobject are still empty, so the builder keeps
-     running off bundle-builder-media.json until the admin side is filled in. */
+  /* Loads window.BB_DATA, printed by bb-shopify-data.liquid from the
+     Combinazione cintura collection. */
   function applyShopifyData() {
     const d = window.BB_DATA;
-    if (!d || !d.combos || !Object.keys(d.combos).length) return false;
-    /* Both carousels must be configured too, or the builder would render empty. */
-    if (!d.strapOrder || !d.strapOrder.length) return false;
-    if (!d.buckleOrder || !d.buckleOrder.length) return false;
+    if (!d || !d.combos) return false;
     _bbMedia = _bbMedia || {};
     _bbMedia.combinations = d.combos;
     _bbMedia.straps = d.strapImages;
     _bbMedia.buckles = d.buckleImages;
-    Object.keys(BUCKLES).forEach(k => delete BUCKLES[k]);
     Object.assign(BUCKLES, d.buckles);
-    Object.keys(STRAPS).forEach(k => delete STRAPS[k]);
     Object.assign(STRAPS, d.straps);
     return true;
   }
@@ -423,19 +402,6 @@
     });
   }
 
-  async function fetchMedia() {
-    const root = document.getElementById('bb-root');
-    const url = root && root.dataset.mediaUrl;
-    if (!url) return;
-    try {
-      const res = await fetch(url);
-      /* The JSON still supplies bundle_images; anything Shopify already gave us wins. */
-      if (res.ok) _bbMedia = Object.assign({}, await res.json(), _bbMedia || {});
-    } catch (e) {
-      console.warn('[BundleBuilder] Media config not loaded:', e);
-    }
-    applyShopifyData();
-  }
 
   let _bbCatalog = null;
   async function fetchCatalog() {
@@ -1317,7 +1283,7 @@
     // 1st: JSON file via _bbMedia (loaded at startup, reliable by review time)
     // 2nd: BB_BUNDLE_IMAGES injected by Liquid/Theme Editor
     console.log('bundleHeroHTML: looking for image for bundle type', bundleType);
-    const src = (_bbMedia && _bbMedia.bundle_images && _bbMedia.bundle_images[bundleType])
+    const src = (window.BB_BUNDLE_IMAGES && window.BB_BUNDLE_IMAGES[bundleType])
       || ((typeof BB_BUNDLE_IMAGES !== 'undefined') && BB_BUNDLE_IMAGES[bundleType]);
     if (src) {
       return '<img src="' + src + '" alt="' + bundleType + '"'
@@ -2047,7 +2013,7 @@
     if (!wrap) return;
 
     /* Load per-combination media config, catalog, and bundle product images */
-    await Promise.all([fetchMedia(), fetchCatalog()]);
+    await fetchCatalog();
     await fetchCatalogPrices();   /* must complete before review/composer reads BUNDLES prices */
     fetchBundleImages();   /* async, non blocking — images ready before user reaches review */
 

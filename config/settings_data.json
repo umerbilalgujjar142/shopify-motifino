@@ -52,21 +52,11 @@
         "settings": {
           "allow_transparent_header": true,
           "transparent_header_use_primary_colors": false,
-          "price_single": "€ 49,99",
-          "price_double": "€ 79,99",
-          "price_triple": "€ 99,99",
-          "price_infinity": "€ 119,99",
-          "price_infinity_extra": "€ 19,99",
-          "variant_strap_130": "",
-          "variant_strap_150": "",
-          "default_buckle": "buckle-1",
-          "buckle_order": "buckle-1,buckle-4,buckle-3,buckle-2",
-          "default_strap": "strap-nero",
-          "strap_order": "strap-nero,strap-marrone,strap-cognac,strap-cuoio,strap-beige,strap-rosso,strap-verde,strap-blu,strap-grigio",
-          "belt_combo_product_handle": "",
-          "video_360": "",
-          "belt_preview_base_url": "",
-          "unavailability_mode": "grey"
+          "enable_zoom": true,
+          "zoom_icon_size": 28,
+          "zoom_icon_color": "#1a1a1a",
+          "worn_thumb_size": 64,
+          "combinations_collection": "tutte-le-cinture-holess"
         }
       }
     },

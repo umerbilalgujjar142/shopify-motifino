@@ -31,26 +31,6 @@
   var COMBINATION_TYPE = 'Combinazione cintura';
   var PRIVILEGE_CARD_HANDLE = 'privilege-card-black';
 
-  /* ── Builder key → product handle ───────────────────────── */
-  var STRAP_SLUG = {
-    'strap-nero': 'black',
-    'strap-marrone': 'brown',
-    'strap-cognac': 'cognac',
-    'strap-cuoio': 'white',
-    'strap-beige': 'sand',
-    'strap-rosso': 'brown-crocodile',
-    'strap-verde': 'black-crocodile',
-    'strap-blu': 'blue',
-    'strap-grigio': 'gray',
-  };
-
-  var BUCKLE_SLUG = {
-    'buckle-1': 'classic-matt',
-    'buckle-2': 'elegant-chrome-silver',
-    'buckle-3': 'elegant-chrome-gold',
-    'buckle-4': 'mirror-chrome',
-  };
-
   /* Option values differ between stores ("130-cm", "130cm", "130 CM"), so lengths
      are compared on their digits only. */
   function lengthDigits(value) {
@@ -61,36 +41,11 @@
     return (lengthDigits(length) || '130') + '-cm';
   }
 
-  function handleFor(strapKey, buckleKey) {
-    var s = STRAP_SLUG[strapKey];
-    var b = BUCKLE_SLUG[buckleKey];
-    if (!s || !b) return null;
-    return s + '-' + b;
-  }
-
-  /* ── Product fetching (cached per page load) ────────────── */
-  var _productCache = {};
-
   /* The storefront runs under a locale prefix (/it-it/). An unprefixed URL costs a
      302 round trip on every single request, so build them all from Shopify.routes. */
   function url(path) {
     var root = (window.Shopify && window.Shopify.routes && window.Shopify.routes.root) || '/';
     return root.replace(/\/+$/, '') + path;
-  }
-
-  function fetchProduct(handle) {
-    if (_productCache[handle]) return _productCache[handle];
-    _productCache[handle] = fetch(url('/products/' + handle + '.js'))
-      .then(function (res) {
-        if (!res.ok) throw new Error('product_not_found:' + handle + ':' + res.status);
-        return res.json();
-      })
-      .catch(function (e) {
-        /* Don't poison the cache — a later retry should be able to succeed. */
-        delete _productCache[handle];
-        throw e;
-      });
-    return _productCache[handle];
   }
 
   /* Printed by bb-shopify-data.liquid. It already carries the variant id, so a
@@ -112,40 +67,19 @@
     };
   }
 
+  /* Only the Privilege Card still needs a lookup; belts come from BB_DATA. */
+  function fetchProduct(handle) {
+    return fetch(url('/products/' + handle + '.js')).then(function (res) {
+      if (!res.ok) throw new Error('product_not_found:' + handle + ':' + res.status);
+      return res.json();
+    });
+  }
+
   /* Resolve a builder selection to a concrete Shopify variant. */
   function resolveCombination(strapKey, buckleKey, length) {
     var fromData = comboFromData(strapKey, buckleKey, length);
     if (fromData) return Promise.resolve(fromData);
-
-    var handle = handleFor(strapKey, buckleKey);
-    if (!handle) return Promise.reject(new Error('unknown_combination:' + strapKey + '+' + buckleKey));
-
-    var wanted = lengthDigits(length) || '130';
-
-    return fetchProduct(handle).then(function (product) {
-      var variants = product.variants || [];
-      var variant = variants.filter(function (v) {
-        var opts = v.options && v.options.length ? v.options : [v.option1, v.option2, v.option3];
-        return opts.some(function (o) { return lengthDigits(o) === wanted; });
-      })[0];
-
-      /* Only a product with a single variant has no length to match. Anything else
-         means the option value was not recognised, and shipping the wrong length is
-         worse than failing the add. */
-      if (!variant && variants.length === 1) variant = variants[0];
-      if (!variant) throw new Error('no_variant:' + handle + ':' + wanted);
-
-      return {
-        handle: handle,
-        productId: product.id,
-        productTitle: product.title,
-        variantId: variant.id,
-        variantTitle: variant.title,
-        price: variant.price,
-        available: variant.available,
-        image: variant.featured_image ? variant.featured_image.url : (product.featured_image || ''),
-      };
-    });
+    return Promise.reject(new Error('unknown_combination:' + strapKey + '+' + buckleKey));
   }
 
   function privilegeCardVariantId() {
@@ -265,11 +199,8 @@
   }
 
   /* Warms the product cache so a later add doesn't pay for the product fetch. */
-  function prefetchCombination(strapKey, buckleKey) {
-    if (comboFromData(strapKey, buckleKey)) return;
-    var handle = handleFor(strapKey, buckleKey);
-    if (handle) fetchProduct(handle).catch(function () {});
-  }
+  /* Everything is already in the page, so there is nothing left to prefetch. */
+  function prefetchCombination() {}
 
   /* ── Section rendering ──────────────────────────────────── */
   /* Swaps in the section HTML the cart API returned. False means there was
@@ -489,9 +420,6 @@
   window.MotifinoBelt = {
     COMBINATION_TYPE: COMBINATION_TYPE,
     PRIVILEGE_CARD_HANDLE: PRIVILEGE_CARD_HANDLE,
-    STRAP_SLUG: STRAP_SLUG,
-    BUCKLE_SLUG: BUCKLE_SLUG,
-    handleFor: handleFor,
     optionValueForLength: optionValueForLength,
     lengthDigits: lengthDigits,
     comboFromData: comboFromData,

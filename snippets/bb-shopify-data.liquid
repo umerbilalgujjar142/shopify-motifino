@@ -1,33 +1,9 @@
 {%- comment -%}
-  Builds window.BB_DATA from Shopify data:
-    combos_collection — collection of "Combinazione cintura" products (photo, worn photo, cart variant)
-    config_type       — metaobject type holding the two ordered carousel lists
-  Emits nothing usable when the data is not set up yet, so bundle-builder.js keeps
-  falling back to bundle-builder-media.json.
+  Builds window.BB_DATA from the "Combinazione cintura" collection passed as combos_collection.
+  Each product supplies its strap and buckle (metafields), the preview photo (1st image),
+  the worn photo (2nd image) and the cart variants. Carousel order is the collection order:
+  the first product to use a strap or buckle fixes its position.
 {%- endcomment -%}
-
-{%- liquid
-  assign cfg_type = config_type | default: 'belt_builder_config'
-  # .first does not resolve on the values drop, so take the first entry with a loop.
-  assign cfg = nil
-  for bb_entry in metaobjects[cfg_type].values limit: 1
-    assign cfg = bb_entry
-  endfor
-  if cfg == blank
-    for bb_entry in metaobjects.belt_builder_config.values limit: 1
-      assign cfg = bb_entry
-    endfor
-  endif
-  # Either field naming works, so the metaobject can be built without fighting key collisions.
-  assign bb_straps = cfg.straps.value
-  if bb_straps == blank
-    assign bb_straps = cfg.strap_list.value
-  endif
-  assign bb_buckles = cfg.buckles.value
-  if bb_buckles == blank
-    assign bb_buckles = cfg.buckle_list.value
-  endif
--%}
 
 <script>
   window.BB_DATA = (function () {
@@ -35,7 +11,6 @@
     var buckles = {}, buckleImages = {}, buckleOrder = [];
     var combos = {};
 
-    /* Only fill a slot the metaobject did not already provide, so its order still wins. */
     function addStrap(k, name, hex, img) {
       if (straps[k]) return;
       straps[k] = { name: name, hex: hex };
@@ -48,58 +23,6 @@
       buckleImages[k] = img;
       buckleOrder.push(k);
     }
-
-    {%- for sp in bb_straps -%}
-      {%- capture s_hex -%}{{ sp.metafields.custom.swatch_colour.value | default: sp.metafields.custom.swatch_hex.value | default: '#888888' }}{%- endcapture -%}
-      {%- liquid
-        assign s_src = sp.metafields.custom.carousel_image.value
-        if s_src == blank
-          assign s_src = sp.metafields.custom.carosuel_image.value
-        endif
-        if s_src == blank
-          assign s_src = sp.featured_image
-        endif
-        assign s_img = ''
-        if s_src
-          assign s_img = s_src | image_url: width: 900
-        endif
-      -%}
-      straps[{{ sp.handle | json }}] = { name: {{ sp.title | json }}, hex: {{ s_hex | strip | json }} };
-      strapImages[{{ sp.handle | json }}] = { "130": {{ s_img | json }}, "150": {{ s_img | json }} };
-      strapOrder.push({{ sp.handle | json }});
-    {%- endfor -%}
-
-    {%- for bv in bb_buckles -%}
-      {%- liquid
-        assign bp = bv.product
-        assign b_key = bv.id | prepend: 'b'
-        if bp.variants.size > 1
-          assign b_name = bp.title | append: ' ' | append: bv.title
-        else
-          assign b_name = bp.title
-        endif
-        assign b_src = bv.metafields.custom.carousel_image.value
-        if b_src == blank
-          assign b_src = bv.metafields.custom.carosuel_image.value
-        endif
-        if b_src == blank
-          assign b_src = bp.metafields.custom.carousel_image.value
-        endif
-        if b_src == blank
-          assign b_src = bp.metafields.custom.carosuel_image.value
-        endif
-        if b_src == blank
-          assign b_src = bv.image | default: bp.featured_image
-        endif
-        assign b_img = ''
-        if b_src
-          assign b_img = b_src | image_url: width: 600
-        endif
-      -%}
-      buckles[{{ b_key | json }}] = { name: {{ b_name | json }}, image: {{ b_img | json }} };
-      buckleImages[{{ b_key | json }}] = {{ b_img | json }};
-      buckleOrder.push({{ b_key | json }});
-    {%- endfor -%}
 
     {%- for p in combos_collection.products -%}
       {%- assign c_strap = p.metafields.custom.strap.value -%}
@@ -116,23 +39,22 @@
           endif
           assign c_prefix = c_strap.handle | append: '__'
           assign c_suffix = '__b' | append: c_buckle.id
-          assign c_bp = c_buckle.product
-          if c_bp.variants.size > 1
-            assign c_bname = c_bp.title | append: ' ' | append: c_buckle.title
-          else
-            assign c_bname = c_bp.title
+
+          # A variant reached through a metafield has no .product, so the buckle name
+          # comes off the combination title: "Nero - Zeno Gold" -> "Zeno Gold".
+          assign c_bname = p.title | split: ' - ' | last | strip
+          if c_bname == p.title
+            assign c_bname = c_buckle.title
           endif
           assign c_bsrc = c_buckle.metafields.custom.carousel_image.value
           if c_bsrc == blank
-            assign c_bsrc = c_bp.metafields.custom.carousel_image.value
-          endif
-          if c_bsrc == blank
-            assign c_bsrc = c_buckle.image | default: c_bp.featured_image
+            assign c_bsrc = c_buckle.image
           endif
           assign c_bimg = ''
           if c_bsrc
             assign c_bimg = c_bsrc | image_url: width: 600
           endif
+
           assign c_ssrc = c_strap.metafields.custom.carousel_image.value
           if c_ssrc == blank
             assign c_ssrc = c_strap.featured_image
@@ -145,7 +67,6 @@
             echo c_strap.metafields.custom.swatch_colour.value | default: '#888888'
           endcapture
         -%}
-        {%- comment -%} Fallback when the metaobject lists are empty: discover them here. {%- endcomment -%}
         addStrap({{ c_strap.handle | json }}, {{ c_strap.title | json }}, {{ c_shex | strip | json }}, {{ c_simg | json }});
         addBuckle({{ '' | append: 'b' | append: c_buckle.id | json }}, {{ c_bname | json }}, {{ c_bimg | json }});
         {%- for v in p.variants -%}
@@ -169,16 +90,6 @@
     {%- endfor -%}
 
     return {
-      _debug: {
-        cfgType: {{ cfg_type | json }},
-        cfgHandle: {{ cfg.handle | default: '' | json }},
-        moBracket: {{ metaobjects[cfg_type].values.size | default: 0 | json }},
-        moLiteral: {{ metaobjects.belt_builder_config.values.size | default: 0 | json }},
-        strapsRaw: {{ bb_straps.size | default: 0 | json }},
-        bucklesRaw: {{ bb_buckles.size | default: 0 | json }},
-        collTitle: {{ combos_collection.title | default: '' | json }},
-        collCount: {{ combos_collection.products.size | default: 0 | json }}
-      },
       straps: straps, strapImages: strapImages, strapOrder: strapOrder,
       buckles: buckles, buckleImages: buckleImages, buckleOrder: buckleOrder,
       combos: combos
