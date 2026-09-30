@@ -958,6 +958,10 @@
 {%- comment -%} /.sbb-wrap {%- endcomment -%}
 
 
+{%- render 'bb-shopify-data',
+      combos_collection: section.settings.combinations_collection,
+      config_type: section.settings.config_metaobject -%}
+
 {{ 'belt-combination.js' | asset_url | script_tag }}
 {{ 'single-bundle-builder.js' | asset_url | script_tag }}
 
@@ -1085,6 +1089,23 @@
       "default": false,
       "visible_if": "{{ section.settings.allow_transparent_header }}"
     },
+    {
+      "type": "header",
+      "content": "Shopify data"
+    },
+    {
+      "type": "collection",
+      "id": "combinations_collection",
+      "label": "Combinations collection",
+      "info": "The collection of \"Combinazione cintura\" products. Leave empty to keep using bundle-builder-media.json."
+    },
+    {
+      "type": "text",
+      "id": "config_metaobject",
+      "label": "Carousel metaobject type",
+      "default": "belt_builder_config",
+      "info": "Metaobject definition holding the ordered strap and buckle lists. One entry is used."
+    }
   ],
   "blocks": [
     {

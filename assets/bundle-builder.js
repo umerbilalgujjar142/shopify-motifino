@@ -334,35 +334,32 @@
     'strap-grigio': { name: 'Grigio', hex: '#888' },
   };
 
-  /* ── Carousel order config (from Shopify Theme Editor) ──── */
+  /* ── Carousel order (from the belt_builder_config metaobject) ──── */
   function getBuckleKeys() {
-    const cfg = window.BB_CAROUSEL_CONFIG;
-    if (cfg && cfg.buckleOrder && cfg.buckleOrder.trim()) {
-      const ordered = cfg.buckleOrder.split(',').map(s => s.trim()).filter(k => BUCKLES[k]);
+    const d = window.BB_DATA;
+    if (d && d.buckleOrder && d.buckleOrder.length) {
+      const ordered = d.buckleOrder.filter(k => BUCKLES[k]);
       if (ordered.length > 0) return ordered;
     }
     return Object.keys(BUCKLES);
   }
 
   function getStrapKeys() {
-    const cfg = window.BB_CAROUSEL_CONFIG;
-    if (cfg && cfg.strapOrder && cfg.strapOrder.trim()) {
-      const ordered = cfg.strapOrder.split(',').map(s => s.trim()).filter(k => STRAPS[k]);
+    const d = window.BB_DATA;
+    if (d && d.strapOrder && d.strapOrder.length) {
+      const ordered = d.strapOrder.filter(k => STRAPS[k]);
       if (ordered.length > 0) return ordered;
     }
     return Object.keys(STRAPS);
   }
 
+  /* First in the metaobject list is the one centred at load. */
   function getDefaultBuckle() {
-    const cfg = window.BB_CAROUSEL_CONFIG;
-    if (cfg && cfg.defaultBuckle && BUCKLES[cfg.defaultBuckle]) return cfg.defaultBuckle;
-    return BUCKLES['buckle-2'] ? 'buckle-2' : getBuckleKeys()[0];
+    return getBuckleKeys()[0];
   }
 
   function getDefaultStrap() {
-    const cfg = window.BB_CAROUSEL_CONFIG;
-    if (cfg && cfg.defaultStrap && STRAPS[cfg.defaultStrap]) return cfg.defaultStrap;
-    return STRAPS['strap-nero'] ? 'strap-nero' : getStrapKeys()[0];
+    return getStrapKeys()[0];
   }
 
   /* ── Infinite wrap helper ────────────────────────────────── */
@@ -374,9 +371,31 @@
     return rel;
   }
 
-  /* ── Media config (loaded from bundle-builder-media.json) ── */
+  /* ── Media config (Shopify first, bundle-builder-media.json as fallback) ── */
   let _bbMedia = null;
   let _previewLoadId = 0;   /* incremented on each preview change — used to cancel stale loads */
+
+  /* Overlays window.BB_DATA (printed by bb-shopify-data.liquid) on top of the JSON.
+     No-op while the collection and metaobject are still empty, so the builder keeps
+     running off bundle-builder-media.json until the admin side is filled in. */
+  function applyShopifyData() {
+    const d = window.BB_DATA;
+    if (!d || !d.combos || !Object.keys(d.combos).length) return false;
+    /* Both carousels must be configured too, or the builder would render empty. */
+    if (!d.strapOrder || !d.strapOrder.length) return false;
+    if (!d.buckleOrder || !d.buckleOrder.length) return false;
+    _bbMedia = _bbMedia || {};
+    _bbMedia.combinations = d.combos;
+    _bbMedia.straps = d.strapImages;
+    _bbMedia.buckles = d.buckleImages;
+    Object.keys(BUCKLES).forEach(k => delete BUCKLES[k]);
+    Object.assign(BUCKLES, d.buckles);
+    Object.keys(STRAPS).forEach(k => delete STRAPS[k]);
+    Object.assign(STRAPS, d.straps);
+    return true;
+  }
+
+  applyShopifyData();
 
   /* Preload all combo photos for a given strap so buckle-swipe preview is instant */
   function preloadComboPhotos(strapKey, length) {
@@ -410,10 +429,12 @@
     if (!url) return;
     try {
       const res = await fetch(url);
-      if (res.ok) _bbMedia = await res.json();
+      /* The JSON still supplies bundle_images; anything Shopify already gave us wins. */
+      if (res.ok) _bbMedia = Object.assign({}, await res.json(), _bbMedia || {});
     } catch (e) {
       console.warn('[BundleBuilder] Media config not loaded:', e);
     }
+    applyShopifyData();
   }
 
   let _bbCatalog = null;

@@ -49,6 +49,28 @@
   let _catalog            = null;
   let _singleComparePrice = null;
 
+  /* Overlays window.BB_DATA (printed by bb-shopify-data.liquid) on top of the JSON.
+     No-op until the collection and metaobject are filled in. */
+  function applyShopifyData() {
+    const d = window.BB_DATA;
+    if (!d || !d.combos || !Object.keys(d.combos).length) return;
+    /* Both carousels must be configured too, or the builder would render empty. */
+    if (!d.strapOrder || !d.strapOrder.length) return;
+    if (!d.buckleOrder || !d.buckleOrder.length) return;
+    _media = _media || {};
+    _media.combinations = d.combos;
+    _media.straps = d.strapImages;
+    _media.buckles = d.buckleImages;
+    Object.keys(BUCKLES).forEach(k => delete BUCKLES[k]);
+    Object.assign(BUCKLES, d.buckles);
+    Object.keys(STRAPS).forEach(k => delete STRAPS[k]);
+    Object.assign(STRAPS, d.straps);
+    if (d.strapOrder && d.strapOrder.length) state.strap = d.strapOrder[0];
+    if (d.buckleOrder && d.buckleOrder.length) state.buckle = d.buckleOrder[0];
+  }
+
+  applyShopifyData();
+
   /* ── Fetch helpers ──────────────────────────────────────── */
   async function fetchMedia() {
     const root = document.getElementById('sbb-root');
@@ -56,10 +78,11 @@
     if (!url) return;
     try {
       const res = await fetch(url);
-      if (res.ok) _media = await res.json();
+      if (res.ok) _media = Object.assign({}, await res.json(), _media || {});
     } catch (e) {
       console.warn('[SBB] Media not loaded:', e);
     }
+    applyShopifyData();
   }
 
   async function fetchCatalog() {

@@ -246,13 +246,11 @@
   /* ── Carousel configuration (from Shopify Theme Editor) ───── */
   /* Le immagini bundle arrivano da bundle-builder-media.json. */
   window.BB_BUNDLE_IMAGES = {};
-  window.BB_CAROUSEL_CONFIG = {
-    buckleOrder:   {{ section.settings.buckle_order   | default: "buckle-1,buckle-2,buckle-4,buckle-3" | json }},
-    strapOrder:    {{ section.settings.strap_order    | default: "strap-nero,strap-marrone,strap-cognac,strap-cuoio,strap-beige,strap-rosso,strap-verde,strap-blu,strap-grigio" | json }},
-    defaultBuckle: {{ section.settings.default_buckle | default: "buckle-1" | json }},
-    defaultStrap:  {{ section.settings.default_strap  | default: "strap-nero" | json }},
-  };
 </script>
+
+{%- render 'bb-shopify-data',
+      combos_collection: section.settings.combinations_collection,
+      config_type: section.settings.config_metaobject -%}
 
 <script>
   /*
@@ -342,54 +340,20 @@
     },
     {
       "type": "header",
-      "content": "Carousel fibbie — ordine e partenza"
+      "content": "Shopify data"
     },
     {
-      "type": "select",
-      "id": "default_buckle",
-      "label": "Fibbia predefinita (centro al caricamento)",
-      "options": [
-        { "value": "buckle-1", "label": "1 — Classic" },
-        { "value": "buckle-2", "label": "2 — Zeno Silver" },
-        { "value": "buckle-3", "label": "3 — Zeno Gold" },
-        { "value": "buckle-4", "label": "4 — Krono" }
-      ],
-      "default": "buckle-1"
+      "type": "collection",
+      "id": "combinations_collection",
+      "label": "Combinations collection",
+      "info": "The collection of \"Combinazione cintura\" products. Each product supplies the preview photo (1st image), the worn photo (2nd image) and the cart variant. Leave empty to keep using bundle-builder-media.json."
     },
     {
       "type": "text",
-      "id": "buckle_order",
-      "label": "Ordine fibbie nel carousel",
-      "default": "buckle-1,buckle-4,buckle-3,buckle-2",
-      "info": "Chiavi separate da virgola. La prima è la posizione di default. Valori validi: buckle-1, buckle-2, buckle-3, buckle-4. Es: buckle-3,buckle-1,buckle-4,buckle-2"
-    },
-    {
-      "type": "header",
-      "content": "Carousel cinturini — ordine e partenza"
-    },
-    {
-      "type": "select",
-      "id": "default_strap",
-      "label": "Cinturino predefinito (centro al caricamento)",
-      "options": [
-        { "value": "strap-nero", "label": "Nero" },
-        { "value": "strap-marrone", "label": "Marrone" },
-        { "value": "strap-cognac", "label": "Cammello" },
-        { "value": "strap-cuoio", "label": "Bianco" },
-        { "value": "strap-beige", "label": "Beige" },
-        { "value": "strap-rosso", "label": "Coccodrillo Marrone" },
-        { "value": "strap-verde", "label": "Coccodrillo Nera" },
-        { "value": "strap-blu", "label": "Blu" },
-        { "value": "strap-grigio", "label": "Grigio" }
-      ],
-      "default": "strap-nero"
-    },
-    {
-      "type": "text",
-      "id": "strap_order",
-      "label": "Ordine cinturini nel carousel",
-      "default": "strap-nero,strap-marrone,strap-cognac,strap-cuoio,strap-beige,strap-rosso,strap-verde,strap-blu,strap-grigio",
-      "info": "Chiavi separate da virgola. La prima definisce la sequenza. Valori validi: strap-nero, strap-marrone, strap-cognac, strap-cuoio, strap-beige, strap-rosso, strap-verde, strap-blu, strap-grigio"
+      "id": "config_metaobject",
+      "label": "Carousel metaobject type",
+      "default": "belt_builder_config",
+      "info": "Metaobject definition holding the ordered strap and buckle lists. One entry is used."
     }
   ],
   "presets": [

@@ -93,8 +93,30 @@
     return _productCache[handle];
   }
 
+  /* Printed by bb-shopify-data.liquid. It already carries the variant id, so a
+     resolved selection costs no network call at all. */
+  function comboFromData(strapKey, buckleKey, length) {
+    var d = window.BB_DATA;
+    if (!d || !d.combos) return null;
+    var c = d.combos[strapKey + '__' + (lengthDigits(length) || '130') + '__' + buckleKey];
+    if (!c || !c.variantId) return null;
+    return {
+      handle: c.handle,
+      productId: c.productId,
+      productTitle: c.productTitle,
+      variantId: c.variantId,
+      variantTitle: c.variantTitle,
+      price: c.price,
+      available: c.available,
+      image: c.image || '',
+    };
+  }
+
   /* Resolve a builder selection to a concrete Shopify variant. */
   function resolveCombination(strapKey, buckleKey, length) {
+    var fromData = comboFromData(strapKey, buckleKey, length);
+    if (fromData) return Promise.resolve(fromData);
+
     var handle = handleFor(strapKey, buckleKey);
     if (!handle) return Promise.reject(new Error('unknown_combination:' + strapKey + '+' + buckleKey));
 
@@ -244,6 +266,7 @@
 
   /* Warms the product cache so a later add doesn't pay for the product fetch. */
   function prefetchCombination(strapKey, buckleKey) {
+    if (comboFromData(strapKey, buckleKey)) return;
     var handle = handleFor(strapKey, buckleKey);
     if (handle) fetchProduct(handle).catch(function () {});
   }
@@ -471,6 +494,7 @@
     handleFor: handleFor,
     optionValueForLength: optionValueForLength,
     lengthDigits: lengthDigits,
+    comboFromData: comboFromData,
     resolveCombination: resolveCombination,
     privilegeCardVariantId: privilegeCardVariantId,
     prefetchCombination: prefetchCombination,
