@@ -49,6 +49,54 @@
     "sections": {
       "bundle-builder": {
         "type": "bundle-builder",
+        "blocks": {
+          "bundle_set_6qYpG9": {
+            "type": "bundle_set",
+            "name": "Infinity Set",
+            "settings": {
+              "set_name": "No Limits",
+              "unlimited": true,
+              "belts": 1,
+              "link_key": "https://motifino.com/it-it/pages/bundle?type=infinity"
+            }
+          },
+          "bundle_set_DVz9Xf": {
+            "type": "bundle_set",
+            "name": "Single Set",
+            "settings": {
+              "set_name": "Single",
+              "unlimited": false,
+              "belts": 1,
+              "link_key": "https://motifino.com/pages/bundle?type=single"
+            }
+          },
+          "bundle_set_wniggq": {
+            "type": "bundle_set",
+            "name": "Double Set",
+            "settings": {
+              "set_name": "Double",
+              "unlimited": false,
+              "belts": 2,
+              "link_key": "https://motifino.com/pages/bundle?type=double"
+            }
+          },
+          "bundle_set_KEmCFj": {
+            "type": "bundle_set",
+            "name": "Triple Set",
+            "settings": {
+              "set_name": "Triple",
+              "unlimited": false,
+              "belts": 3,
+              "link_key": "https://motifino.com/pages/bundle?type=triple"
+            }
+          }
+        },
+        "block_order": [
+          "bundle_set_6qYpG9",
+          "bundle_set_DVz9Xf",
+          "bundle_set_wniggq",
+          "bundle_set_KEmCFj"
+        ],
         "settings": {
           "allow_transparent_header": true,
           "transparent_header_use_primary_colors": false,

@@ -22,8 +22,6 @@
     _editMode: null,       // { bundleIdx, beltInBundle, savedType, savedTotalBelts, savedCurrentBelt, savedBelts }
   };
 
-  const MAX_BUNDLES = 3;
-
   /* Belt configuration template */
   function newBeltConfig() {
     return { length: LENGTHS[0], buckle: null, strap: null, done: false };
@@ -61,16 +59,73 @@
   }
 
   /* ── Bundle config ──────────────────────────────────────── */
-  const BUNDLES = {
-    single: { name: 'Set Singolo', belts: 1, price: 49.99, extra: null },
-    double: { name: 'Set Doppio', belts: 2, price: 89.99, extra: null },
-    triple: { name: 'Set Triplo', belts: 3, price: 124.99, extra: null },
-    infinity: { name: 'Set Infinity', belts: 4, price: 154.98, extra: 29.99 },
-  };
+  /* Used only until the merchant adds the "Bundle set" blocks in the Theme Editor. */
+  const DEFAULT_TIERS = [
+    { key: 'single',   name: 'Set Singolo',  belts: 1 },
+    { key: 'double',   name: 'Set Doppio',   belts: 2 },
+    { key: 'triple',   name: 'Set Triplo',   belts: 3 },
+    { key: 'infinity', name: 'Set Infinity', belts: 4, unlimited: true },
+  ];
+
+  const BUNDLES = {};
+  let TIER_LIST = [];
+  let TIERS_FROM_BLOCKS = false;
+
+  /* Reads window.BB_TIERS (printed from the section blocks) and orders it by belt count. */
+  function applyTiers() {
+    const raw = (window.BB_TIERS || []).filter(function (t) {
+      return t && t.key && Number(t.belts) > 0;
+    });
+    TIERS_FROM_BLOCKS = raw.length > 0;
+    TIER_LIST = (TIERS_FROM_BLOCKS ? raw : DEFAULT_TIERS).map(function (t) {
+      return {
+        key: String(t.key),
+        name: t.name || String(t.key),
+        belts: t.unlimited ? 1 : Number(t.belts),
+        unlimited: !!t.unlimited,
+      };
+    }).sort(function (a, b) {
+      if (a.unlimited !== b.unlimited) return a.unlimited ? 1 : -1;   /* unlimited always last */
+      return a.belts - b.belts;
+    });
+
+    Object.keys(BUNDLES).forEach(function (k) { delete BUNDLES[k]; });
+    TIER_LIST.forEach(function (t) { BUNDLES[t.key] = t; });
+  }
+
+  function fixedTiers() { return TIER_LIST.filter(function (t) { return !t.unlimited; }); }
+  function unlimitedTier() { return TIER_LIST.filter(function (t) { return t.unlimited; })[0] || null; }
+  function topTier() { return TIER_LIST[TIER_LIST.length - 1] || null; }
+
+  /* The set that applies to n belts: the largest fixed one that fits, or the
+     unlimited set once n passes them all. */
+  function tierFor(n) {
+    const fixed = fixedTiers();
+    const unl = unlimitedTier();
+    let t = null;
+    fixed.forEach(function (x) { if (x.belts <= n) t = x; });
+    const maxFixed = fixed.length ? fixed[fixed.length - 1].belts : 0;
+    if (unl && (!t || n > maxFixed)) return { key: unl.key, name: unl.name, belts: n, unlimited: true };
+    if (t) return { key: t.key, name: t.name, belts: t.belts, unlimited: false };
+    const first = TIER_LIST[0];
+    return first ? { key: first.key, name: first.name, belts: first.belts, unlimited: false }
+                 : { key: '', name: '', belts: n };
+  }
+
+  function canAddMoreBelts(n) {
+    if (unlimitedTier()) return true;
+    const fixed = fixedTiers();
+    return fixed.length ? n < fixed[fixed.length - 1].belts : false;
+  }
+
+  /* Prices live in the cart (DiscountOS), so the button invites without quoting a figure. */
+  function addMoreLabel() { return 'Aggiungi 1 Cintura'; }
+
+  applyTiers();
 
   /* ── Bundle type selection ──────────────────────────────── */
   function selectBundleType(type) {
-    const bundle = BUNDLES[type] || BUNDLES.single;
+    const bundle = BUNDLES[type] || TIER_LIST[0];
     state.bundleType = type;
     state.totalBelts = bundle.belts;
     state.currentBelt = 1;
@@ -414,66 +469,6 @@
     } catch (e) {
       console.warn('[BundleBuilder] Catalog not loaded:', e);
     }
-  }
-
-  /* Pull live prices from Shopify for each bundle/extra variant in the catalog
-     and overwrite the hardcoded BUNDLES values, so the in-builder display always
-     matches what Shopify will charge at checkout. /variants/{id}.js returns the
-     price in cents — divide by 100 for euros. */
-  async function fetchCatalogPrices() {
-    if (!_bbCatalog) return;
-    const mapping = [
-      { catalogKey: 'SET-CINTURA-SINGOLA',  bundle: 'single',   field: 'price' },
-      { catalogKey: 'SET-CINTURE-DOPPIO',   bundle: 'double',   field: 'price' },
-      { catalogKey: 'SET-CINTURE-TRIPLO',   bundle: 'triple',   field: 'price' },
-      { catalogKey: 'SET-CINTURE-INFINITY', bundle: 'infinity', field: 'price' },
-      { catalogKey: 'SET-CINTURE-EXTRA',    bundle: 'infinity', field: 'extra' },
-    ];
-    await Promise.all(mapping.map(async function (m) {
-      const variantId = _bbCatalog && Number(_bbCatalog[m.catalogKey]);
-      if (!variantId || variantId <= 0) return;
-      try {
-        const res = await fetch(_u('/variants/' + variantId + '.js'));
-        if (!res.ok) return;
-        const data = await res.json();
-        const priceCents = Number(data.price);
-        if (!Number.isFinite(priceCents) || priceCents <= 0) return;
-        BUNDLES[m.bundle][m.field] = priceCents / 100;
-      } catch (e) {
-        console.warn('[BundleBuilder] Failed to fetch price for variant', m.catalogKey, e);
-      }
-    }));
-    console.log('[BundleBuilder] Catalog-driven prices →', {
-      single:   BUNDLES.single.price,
-      double:   BUNDLES.double.price,
-      triple:   BUNDLES.triple.price,
-      infinity: BUNDLES.infinity.price,
-      extra:    BUNDLES.infinity.extra,
-    });
-  }
-
-  /* Immagine di ogni card bundle: foto del prodotto SET-CINTURA su Shopify. */
-  const BUNDLE_SKUS = {
-    single:   'SET-CINTURA-SINGOLA',
-    double:   'SET-CINTURE-DOPPIO',
-    triple:   'SET-CINTURE-TRIPLO',
-    infinity: 'SET-CINTURE-INFINITY',
-  };
-
-  async function fetchBundleImages() {
-    window.BB_BUNDLE_IMAGES = window.BB_BUNDLE_IMAGES || {};
-    await Promise.all(Object.keys(BUNDLE_SKUS).map(async function (type) {
-      const variantId = _bbCatalog && Number(_bbCatalog[BUNDLE_SKUS[type]]);
-      if (!variantId) return;
-      try {
-        const res = await fetch(_u('/variants/' + variantId + '.js'));
-        if (!res.ok) return;
-        const data = await res.json();
-        const img = (data.featured_image && data.featured_image.src)
-          || (data.product && data.product.featured_image && data.product.featured_image.src);
-        if (img) window.BB_BUNDLE_IMAGES[type] = img.startsWith('//') ? 'https:' + img : img;
-      } catch (e) { /* silente */ }
-    }));
   }
 
   function updateWornMedia(strapKey, buckleKey) {
@@ -1142,8 +1137,82 @@
     }, 1200);
   }
 
+  /* True while the customer is building an unlimited set. */
+  function isUnlimitedRun() {
+    return !state._editMode && !!(BUNDLES[state.bundleType] || {}).unlimited;
+  }
+
+  /* Reads the cart once: feeds the header badge and the "go to cart" button. */
+  async function syncCartUI() {
+    let cart = null;
+    try {
+      const res = await fetch(_u('/cart.js'), { headers: { 'Accept': 'application/json' } });
+      if (res.ok) cart = await res.json();
+    } catch (e) { /* silente */ }
+
+    if (cart && typeof cart.item_count === 'number') {
+      document.dispatchEvent(new CustomEvent('cart:change', { detail: { cart: cart } }));
+    }
+
+    const btn = document.getElementById('bb-composer-cart');
+    if (!btn) return;
+    if (!isUnlimitedRun()) { btn.hidden = true; return; }
+
+    const type = (window.MotifinoBelt || {}).COMBINATION_TYPE;
+    let count = 0;
+    ((cart && cart.items) || []).forEach(function (it) {
+      if (it.product_type === type) count += it.quantity;
+    });
+
+    const label = document.getElementById('bb-composer-cart-label');
+    if (label) label.textContent = count > 0 ? 'Vai al carrello (' + count + ')' : 'Vai al carrello';
+    btn.hidden = count === 0;
+    const actions = btn.closest('.bb-combo-bar__actions');
+    if (actions) actions.classList.toggle('has-cart-btn', count > 0);
+  }
+
+  /* Adds the belt just built and clears the composer for the next one. */
+  async function addOneAndContinue() {
+    const btn = document.getElementById('bb-composer-cta');
+    const orig = btn ? btn.innerHTML : null;
+    if (btn) btn.disabled = true;
+    state.cartBundles = [{
+      id: Date.now(),
+      type: state.bundleType,
+      belts: JSON.parse(JSON.stringify(state.belts)),
+      qty: 1,
+    }];
+    try {
+      const payload = state.belts.map(function (belt) {
+        return { strap: belt.strap, buckle: belt.buckle, length: belt.length };
+      });
+      await window.MotifinoBelt.addBelts(payload);
+    } catch (e) {
+      console.error('[BundleBuilder] Add to cart failed:', e, e && e.body);
+      const desc = (e && e.body && (e.body.description || e.body.message)) || '';
+      showToast(desc || 'Impossibile aggiungere al carrello. Riprova.');
+      if (btn) { btn.disabled = false; if (orig) btn.innerHTML = orig; }
+      return;
+    }
+    state.cartBundles = [];
+    state.belts = [newBeltConfig()];
+    state.currentBelt = 1;
+    state.totalBelts = 1;
+    if (btn) { btn.disabled = false; if (orig) btn.innerHTML = orig; }
+    renderComposer();
+    await syncCartUI();
+    showToast('Cintura aggiunta al carrello.');
+  }
+
   function addToSet() {
     if (!validateCurrentBelt()) return;
+
+    if (isUnlimitedRun()) {
+      state.belts[state.currentBelt - 1].done = true;
+      _barDone = null;
+      showBeltSuccess(function () { addOneAndContinue(); });
+      return;
+    }
 
     const _spinnerSVG = '<svg class="bb-checkout-spinner" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>';
     const composerBtn    = document.getElementById('bb-composer-cta');
@@ -1277,16 +1346,7 @@
   }
 
   /* Markup per l'immagine del bundle (foto prodotto da Shopify o SVG stack) */
-  function bundleHeroHTML(bundleType, belts, opts) {
-    opts = opts || {};
-    const w = opts.width || '80px';
-    const h = opts.height || '80px';
-    const src = window.BB_BUNDLE_IMAGES && window.BB_BUNDLE_IMAGES[bundleType];
-    if (src) {
-      return '<img src="' + src + '" alt="' + bundleType + '"'
-        + ' style="width:' + w + ';height:' + h + ';object-fit:cover;border-radius:8px;"'
-        + ' onerror="this.style.display=\'none\'">';
-    }
+  function bundleHeroHTML(bundleType, belts) {
     return bundleVisualSVG(belts);
   }
 
@@ -1322,19 +1382,10 @@
     // const beltWord   = totalBelts === 1 ? 'cintura inclusa' : (totalBelts + ' cinture incluse');
     const beltWord = 'Inclusi nel set:\n2 anni di Garanzia + 1 Privilege Card per ogni Cintura';
 
-    // Tier: 1→single, 2→double, 3→triple, 4→infinity base, 5+→infinity+extra
-    const tierKeys = ['single', 'double', 'triple', 'infinity'];
-    let tierPrice, tierName;
-    if (totalBelts <= 4) {
-      const tierBundle = BUNDLES[tierKeys[totalBelts - 1]] || BUNDLES.infinity;
-      tierPrice = parseFloat(tierBundle.price.toFixed(2));
-      tierName = tierBundle.name;
-    } else {
-      tierPrice = parseFloat((BUNDLES.infinity.price + (totalBelts - 4) * BUNDLES.infinity.extra).toFixed(2));
-      tierName = BUNDLES.infinity.name;
-    }
-    const canAddMore = true; // always — infinity tier is unlimited
-    const effectiveTierType = totalBelts <= 4 ? tierKeys[totalBelts - 1] : 'infinity';
+    const tier = tierFor(totalBelts);
+    const tierName = tier.name;
+    const canAddMore = canAddMoreBelts(totalBelts);
+    const effectiveTierType = tier.key;
 
     // Header title
     const bundleTitle = document.getElementById('bb-review-title');
@@ -1413,16 +1464,7 @@
     const addBtnSlot = document.getElementById('bb-review-add-btn');
     if (addBtnSlot) {
       if (canAddMore) {
-        let addBtnLabel;
-        if (totalBelts < 4) {
-          const curTierBundle = BUNDLES[tierKeys[totalBelts - 1]] || BUNDLES.single;
-          const nextTierBundle = BUNDLES[tierKeys[totalBelts]];
-          const diff = nextTierBundle.price - curTierBundle.price;
-          addBtnLabel = 'Aggiungi 1 Cintura per €' + diff.toFixed(2).replace('.', ',');
-        } else {
-          addBtnLabel = 'Aggiungi 1 Cintura per (+€ '
-            + BUNDLES.infinity.extra.toFixed(2).replace('.', ',') + ')';
-        }
+        const addBtnLabel = addMoreLabel();
         addBtnSlot.innerHTML = '<div class="bb-review__add-wrap">'
           // + '<div class="bb-review__add-line"></div>'
           + '<button class="bb-review__add-bundle-btn" id="bb-add-another-bundle">'
@@ -1555,9 +1597,8 @@
       });
     }
 
-    // Tier price in the bottom total
     const totalEl = document.getElementById('bb-review-total');
-    if (totalEl) totalEl.textContent = '€ ' + tierPrice.toFixed(2).replace('.', ',');
+    if (totalEl) totalEl.hidden = true;
 
     renderProgress();
     setupReviewScroll(totalBelts);
@@ -1575,21 +1616,13 @@
   function updateReviewSummary() {
     const allBelts = state.pendingBundles.reduce(function (sum, b) { return sum + b.belts.length; }, 0)
       + state.belts.length;
-    const tierKeys = ['single', 'double', 'triple', 'infinity'];
-    let tierPrice, tierName;
-    if (allBelts <= 4) {
-      const tierBundle = BUNDLES[tierKeys[allBelts - 1]] || BUNDLES.infinity;
-      tierPrice = parseFloat(tierBundle.price.toFixed(2));
-      tierName = tierBundle.name;
-    } else {
-      tierPrice = parseFloat((BUNDLES.infinity.price + (allBelts - 4) * BUNDLES.infinity.extra).toFixed(2));
-      tierName = BUNDLES.infinity.name;
-    }
+    const tier = tierFor(allBelts);
+    const tierName = tier.name;
 
     const nameEl = document.querySelector('.bb-review__bundle-name');
     if (nameEl) nameEl.textContent = tierName;
 
-    const effectiveTierType = allBelts <= 4 ? tierKeys[allBelts - 1] : 'infinity';
+    const effectiveTierType = tier.key;
     const visualEl = document.querySelector('.bb-review__bundle-visual');
     if (visualEl) {
       const allBeltsFlat = state.pendingBundles.reduce(function (acc, b) {
@@ -1599,20 +1632,11 @@
     }
 
     const totalEl = document.getElementById('bb-review-total');
-    if (totalEl) totalEl.textContent = '€ ' + tierPrice.toFixed(2).replace('.', ',');
+    if (totalEl) totalEl.hidden = true;
 
     const addBtnSlot = document.getElementById('bb-review-add-btn');
     if (addBtnSlot) {
-      let addBtnLabel;
-      if (allBelts < 4) {
-        const cur = BUNDLES[tierKeys[allBelts - 1]] || BUNDLES.single;
-        const next = BUNDLES[tierKeys[allBelts]];
-        const diff = next.price - cur.price;
-        addBtnLabel = 'Aggiungi 1 Cintura per €' + diff.toFixed(2).replace('.', ',');
-      } else {
-        addBtnLabel = 'Aggiungi 1 Cintura per (+€ '
-          + BUNDLES.infinity.extra.toFixed(2).replace('.', ',') + ')';
-      }
+      const addBtnLabel = addMoreLabel();
       const addBtn = document.getElementById('bb-add-another-bundle');
       if (addBtn) addBtn.childNodes[addBtn.childNodes.length - 1].textContent = addBtnLabel;
     }
@@ -1626,31 +1650,19 @@
     // Reset cart bundles fresh each call — prevents duplicates on retry
     state.cartBundles = [];
 
-    // Tier price based on TOTAL BELT COUNT across all bundles
-    const allBeltSets = state.pendingBundles.concat([{ type: state.bundleType, belts: state.belts }]);
-    const totalBelts = allBeltSets.reduce(function (sum, b) { return sum + b.belts.length; }, 0);
-    const tierKeys = ['single', 'double', 'triple', 'infinity'];
-    const tierPrice = totalBelts <= 4
-      ? parseFloat(((BUNDLES[tierKeys[totalBelts - 1]] || BUNDLES.infinity).price).toFixed(2))
-      : parseFloat((BUNDLES.infinity.price + (totalBelts - 4) * BUNDLES.infinity.extra).toFixed(2));
-
-    // Push pending bundles with price = 0 (tier price is on the final entry)
     state.pendingBundles.forEach(function (bundle, i) {
       state.cartBundles.push({
         id: Date.now() + i,
         type: bundle.type,
         belts: JSON.parse(JSON.stringify(bundle.belts)),
-        price: 0,
         qty: 1,
       });
     });
 
-    // Push current bundle — carries the full tier price for the order
     state.cartBundles.push({
       id: Date.now() + state.pendingBundles.length,
       type: state.bundleType,
       belts: JSON.parse(JSON.stringify(state.belts)),
-      price: tierPrice,
       qty: 1,
     });
 
@@ -1705,7 +1717,7 @@
 
     let html = '';
     state.cartBundles.forEach(function (bundle) {
-      const label = (BUNDLES[bundle.type] || BUNDLES.single).name;
+      const label = (BUNDLES[bundle.type] || TIER_LIST[0] || {}).name;
       const beltWord = bundle.belts.length === 1 ? '1 cintura' : (bundle.belts.length + ' cinture');
       html += '<div class="bb-cart__bundle" data-bundle-id="' + bundle.id + '">'
         + '<div class="bb-cart__bundle-header">'
@@ -1716,8 +1728,6 @@
         + '<div style="font-size:14px;font-weight:700;color:var(--bb-dark);">' + label + '</div>'
         + '<div style="font-size:11px;color:var(--bb-mid);">' + beltWord + '</div>'
         + '</div></div>'
-        + '<span style="color:var(--bb-accent);font-weight:700;font-size:16px;">€ '
-        + (bundle.price * bundle.qty).toFixed(2).replace('.', ',') + '</span>'
         + '</div>'
         + '<div class="bb-cart__bundle-body">'
         + bundle.belts.slice().reverse().map(function (belt, ri) {
@@ -1771,9 +1781,8 @@
   }
 
   function updateCartTotal() {
-    const total = state.cartBundles.reduce((sum, b) => sum + b.price * b.qty, 0);
     const el = document.getElementById('bb-cart-total');
-    if (el) el.textContent = `€ ${total.toFixed(2)}`;
+    if (el) el.hidden = true;
   }
 
   /* ── Confirm / checkout screen ──────────────────────────── */
@@ -1781,11 +1790,9 @@
     const container = document.getElementById('bb-confirm-bundles');
     if (!container) return;
 
-    const total = state.cartBundles.reduce(function (sum, b) { return sum + b.price * b.qty; }, 0);
-
     let html = '';
     state.cartBundles.forEach(function (bundle) {
-      const label = (BUNDLES[bundle.type] || BUNDLES.single).name;
+      const label = (BUNDLES[bundle.type] || TIER_LIST[0] || {}).name;
       const beltsHTML = bundle.belts.map(function (belt, i) {
         const strap = STRAPS[belt.strap] || {};
         const buckle = BUCKLES[belt.buckle] || {};
@@ -1801,14 +1808,13 @@
         + '<div class="bb-confirm__bundle-detail">'
         + '<div class="bb-confirm__bundle-title">' + label + ' × ' + bundle.qty + '</div>'
         + beltsHTML
-        + '<div class="bb-confirm__bundle-price">€ ' + (bundle.price * bundle.qty).toFixed(2).replace('.', ',') + '</div>'
         + '</div></div>';
     });
 
     container.innerHTML = html;
 
     const totalEl = document.getElementById('bb-confirm-total');
-    if (totalEl) totalEl.textContent = '€ ' + total.toFixed(2).replace('.', ',');
+    if (totalEl) totalEl.hidden = true;
 
     showScreen('confirm');
   }
@@ -1859,7 +1865,7 @@
 
     let html = '';
     state.cartBundles.forEach(bundle => {
-      const label = (BUNDLES[bundle.type] || BUNDLES.single).name;
+      const label = (BUNDLES[bundle.type] || TIER_LIST[0] || {}).name;
       html += `<div style="margin-bottom:6px;"><strong>${label} × ${bundle.qty}</strong><br>`;
       bundle.belts.forEach((belt, i) => {
         const strap = STRAPS[belt.strap] || {};
@@ -2009,10 +2015,7 @@
     const wrap = document.getElementById('bb-root');
     if (!wrap) return;
 
-    /* Load per-combination media config, catalog, and bundle product images */
     await fetchCatalog();
-    await fetchCatalogPrices();   /* must complete before review/composer reads BUNDLES prices */
-    fetchBundleImages();   /* async, non blocking — images ready before user reaches review */
 
     debugFetchAllVariants();   /* non-blocking — logs variant status to console on page load */
 
@@ -2075,7 +2078,7 @@
           // Composing 2nd/3rd bundle — restore previous bundle and return to review
           const prev = state.pendingBundles.pop();
           state.bundleType = prev.type;
-          state.totalBelts = (BUNDLES[prev.type] || BUNDLES.single).belts;
+          state.totalBelts = (BUNDLES[prev.type] || TIER_LIST[0] || {}).belts;
           state.currentBelt = state.totalBelts;
           state.belts = JSON.parse(JSON.stringify(prev.belts));
                     showReview();
@@ -2139,13 +2142,27 @@
 
     /* Resolve bundle type from URL param — supports Italian product titles or internal keys.
      * e.g. /pages/bundle?type=Set%20Cinture%20Triplo  OR  ?type=triple */
-    const _TYPE_MAP = {
-      'set-cinture-triplo': 'triple',
-      'set-cinture-doppio': 'double',
-      'set-cintura-singola': 'single',
-      'set-infinity': 'infinity',
-      'triple': 'triple', 'double': 'double', 'single': 'single', 'infinity': 'infinity',
+    /* Every tier answers to its key and its product handle; old links resolve by belt count. */
+    const _TYPE_MAP = {};
+    TIER_LIST.forEach(function (t) {
+      _TYPE_MAP[t.key.toLowerCase()] = t.key;
+      if (t.handle) _TYPE_MAP[t.handle.toLowerCase()] = t.key;
+    });
+    const _LEGACY = {
+      'set-cintura-singola': 1, 'single': 1,
+      'set-cinture-doppio': 2, 'double': 2,
+      'set-cinture-triplo': 3, 'triple': 3,
     };
+    Object.keys(_LEGACY).forEach(function (slug) {
+      if (_TYPE_MAP[slug]) return;
+      const t = TIER_LIST.filter(function (x) { return x.belts === _LEGACY[slug]; })[0];
+      if (t) _TYPE_MAP[slug] = t.key;
+    });
+    const _top = topTier();
+    if (_top) {
+      if (!_TYPE_MAP['set-infinity']) _TYPE_MAP['set-infinity'] = _top.key;
+      if (!_TYPE_MAP['infinity']) _TYPE_MAP['infinity'] = _top.key;
+    }
     const _urlParam = new URLSearchParams(window.location.search).get('type');
     const _resolvedType = _urlParam && _TYPE_MAP[_urlParam.toLowerCase().trim()];
 
@@ -2159,6 +2176,10 @@
     } else {
       window.location.href = _u('/');
     }
+
+    const cartBtn = document.getElementById('bb-composer-cart');
+    if (cartBtn) cartBtn.addEventListener('click', function () { window.location.href = _u('/cart'); });
+    syncCartUI();
 
     /* Check inventory availability from Shopify — re-renders carousels if needed */
     initAvailability();
@@ -2199,4 +2220,9 @@
   } else {
     init();
   }
+
+  /* Theme editor re-renders the section when a block changes — pick the new tiers up. */
+  document.addEventListener('shopify:section:load', function (e) {
+    if (e.target && e.target.querySelector('#bb-root')) { applyTiers(); init(); }
+  });
 })();

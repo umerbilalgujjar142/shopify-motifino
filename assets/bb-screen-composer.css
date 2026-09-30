@@ -884,6 +884,15 @@
   padding-top: 13px;
 }
 
+/* Unlimited set: the "go to cart" button stacks under the primary one. */
+.bb-combo-bar__actions.has-cart-btn {
+  flex-direction: column;
+  gap: 8px;
+}
+.bb-combo-bar__actions.has-cart-btn > button {
+  width: 100%;
+}
+
 @media screen and (max-width: 699px) {
   .bb-combo-bar__actions {
     padding-top: 0;

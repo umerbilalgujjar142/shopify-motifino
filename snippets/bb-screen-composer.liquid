@@ -110,6 +110,10 @@
       <button class="bb-btn-primary is-accent" data-action="add-to-set" id="bb-composer-cta">
         <span class="bb-composer-cta__label">Aggiungi combinazione</span>
       </button>
+      {%- comment -%} Unlimited sets only: shown by bundle-builder.js once a belt is in the cart. {%- endcomment -%}
+      <button class="bb-btn-secondary" data-action="go-to-cart" id="bb-composer-cart" hidden>
+        <span id="bb-composer-cart-label">Vai al carrello</span>
+      </button>
     </div>
   </div>
 

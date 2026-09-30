@@ -324,6 +324,18 @@
               >
             {%- endif -%}
 
+            {%- liquid
+              assign bb_belt_count = 0
+              for bb_item in cart.items
+                if bb_item.product.type == 'Combinazione cintura'
+                  assign bb_belt_count = bb_belt_count | plus: bb_item.quantity
+                endif
+              endfor
+            -%}
+            <span
+              class="header__cart-badge{% if bb_belt_count > 0 %} is-visible{% endif %}"
+              data-bb-cart-badge
+            >{{ bb_belt_count }}</span>
             <cart-dot class="header__cart-dot {% unless cart.empty? %}is-visible{% endunless %} {% unless section.settings.show_icons %}md:hidden{% endunless %}"></cart-dot>
           </a>
         </li>
@@ -347,8 +359,69 @@
   </x-header>
 </height-observer>
 
+<style>
+  /* Filled with the brand gold, which reads on both the light and the dark header. */
+  .header__cart-badge {
+    position: absolute;
+    inset-block-start: -.45rem;
+    inset-inline-end: -.5rem;
+    min-width: 1.05rem;
+    height: 1.05rem;
+    padding: 0 .25rem;
+    border-radius: 999px;
+    background: #b8860b;
+    color: #fff;
+    font-size: .625rem;
+    font-weight: 700;
+    line-height: 1.05rem;
+    text-align: center;
+    transform: scale(0);
+    transition: transform .2s ease-in-out;
+    pointer-events: none;
+  }
+
+  .header__cart-badge.is-visible {
+    transform: scale(1);
+  }
+
+  /* The badge replaces the plain dot whenever there is a belt in the cart. */
+  .header__cart-badge.is-visible ~ .header__cart-dot {
+    display: none;
+  }
+</style>
+
 <script>
   document.documentElement.style.setProperty('--header-height', `${document.getElementById('shopify-section-{{ section.id }}').clientHeight.toFixed(2)}px`);
+
+  /* Belt count on the cart icon. Privilege Cards ride along free, so they are not counted. */
+  (function () {
+    var BELT_TYPE = 'Combinazione cintura';
+
+    function paint(cart) {
+      var n = 0;
+      (cart && cart.items || []).forEach(function (it) {
+        if (it.product_type === BELT_TYPE) n += it.quantity;
+      });
+      document.querySelectorAll('[data-bb-cart-badge]').forEach(function (el) {
+        el.textContent = n;
+        el.classList.toggle('is-visible', n > 0);
+      });
+    }
+
+    function pull() {
+      var root = (window.Shopify && window.Shopify.routes && window.Shopify.routes.root) || '/';
+      fetch(root.replace(/\/$/, '') + '/cart.js', { headers: { Accept: 'application/json' } })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (c) { if (c) paint(c); })
+        .catch(function () {});
+    }
+
+    document.addEventListener('cart:change', function (e) {
+      if (e.detail && e.detail.cart) paint(e.detail.cart); else pull();
+    });
+    document.addEventListener('cart:refresh', pull);
+    window.addEventListener('pageshow', pull);
+  })();
 </script>
 
 {% schema %}

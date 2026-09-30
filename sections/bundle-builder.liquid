@@ -241,6 +241,32 @@
 </div>
 {%- comment -%} /.bb-wrap-outer {%- endcomment -%}
 
+{%- if section.blocks.size > 0 -%}
+<script>
+  /* Tier list from the "Bundle set" blocks. Price and photo come from the chosen product. */
+  window.BB_TIERS = [
+    {%- assign t_first = true -%}
+    {%- for block in section.blocks -%}
+      {%- assign t_belts = block.settings.belts -%}
+      {%- if block.settings.unlimited -%}{%- assign t_belts = 1 -%}{%- endif -%}
+      {%- if t_belts > 0 -%}
+        {%- unless t_first -%},{%- endunless -%}
+        {%- comment -%} Accepts "triple" or a pasted full link ending in ?type=triple. {%- endcomment -%}
+        {%- assign t_key = block.settings.link_key | default: block.settings.set_name -%}
+        {%- assign t_key = t_key | split: 'type=' | last | split: '&' | first | handleize -%}
+        {
+          key: {{ t_key | json }},
+          name: {{ block.settings.set_name | json }},
+          belts: {{ t_belts | json }},
+          unlimited: {{ block.settings.unlimited | json }}
+        }
+        {%- assign t_first = false -%}
+      {%- endif -%}
+    {%- endfor -%}
+  ];
+</script>
+{%- endif -%}
+
 {%- render 'bb-shopify-data', combos_collection: section.settings.combinations_collection -%}
 
 <script>
@@ -338,6 +364,42 @@
       "id": "combinations_collection",
       "label": "Combinations collection",
       "info": "The collection of \"Combinazione cintura\" products. Each product supplies the preview photo (1st image), the worn photo (2nd image) and the cart variant. Carousel order follows the order of this collection."
+    }
+  ],
+  "max_blocks": 12,
+  "blocks": [
+    {
+      "type": "bundle_set",
+      "name": "Bundle set",
+      "settings": [
+        {
+          "type": "text",
+          "id": "set_name",
+          "label": "Set name",
+          "info": "Shown in the builder, e.g. \"Set Doppio\".",
+          "default": "Set"
+        },
+        {
+          "type": "checkbox",
+          "id": "unlimited",
+          "label": "Unlimited belts",
+          "default": false,
+          "info": "Customers can keep adding belts past the number below. Use it on your last set only."
+        },
+        {
+          "type": "number",
+          "id": "belts",
+          "label": "Number of belts",
+          "default": 1,
+          "visible_if": "{{ block.settings.unlimited == false }}"
+        },
+        {
+          "type": "text",
+          "id": "link_key",
+          "label": "Link key",
+          "info": "The value after ?type= in the link. Leave empty to use the set name."
+        }
+      ]
     }
   ],
   "presets": [
