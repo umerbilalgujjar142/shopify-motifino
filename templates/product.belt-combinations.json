@@ -182,7 +182,7 @@
         "show_sticky_add_to_cart": true,
         "center_basic_info": false,
         "mobile_image_aspect_ratio": "4:3",
-        "desktop_media_layout": "grid",
+        "desktop_media_layout": "carousel_next_preview",
         "desktop_media_grid_gap": 0,
         "mobile_controls": "next_preview",
         "enable_media_autoplay": false,

@@ -11,8 +11,10 @@
 
   * product: the product to render (if empty, renders placeholder content)
   * product_form_id: the product form id
-  * desktop_layout: the layout on desktop (can be "carousel_thumbnails_left", "carousel_thumbnails_bottom", "carousel_dots", "grid", "grid_2x" or "grid_2x_highlighted")
+  * desktop_layout: the layout on desktop (can be "carousel_thumbnails_left", "carousel_thumbnails_bottom", "carousel_next_preview", "carousel_dots", "grid", "grid_2x" or "grid_2x_highlighted")
   * mobile_controls: the controls to show on mobile (can be "thumbnails", "dots", "arrows" or "free_scroll")
+  * show_desktop_thumbnails: false hides the desktop thumbnail rail
+  * thumbnail_alignment: align-self value for the bottom thumbnail rail on desktop
   * enable_media_autoplay: if set to true media are autoplayed when switched to
   * enable_video_looping: if set to true videos automatically loop when finished
   * enable_image_zoom: if set to true the gallery allow zoom
@@ -62,7 +64,20 @@
   }
 </style>
 
-{%- if mobile_controls == 'next_preview' -%}
+{%- liquid
+  assign peek_on_mobile = false
+  assign peek_on_desktop = false
+
+  if mobile_controls == 'next_preview'
+    assign peek_on_mobile = true
+  endif
+
+  if desktop_layout == 'carousel_next_preview'
+    assign peek_on_desktop = true
+  endif
+-%}
+
+{%- if peek_on_mobile or peek_on_desktop -%}
   <style>
     #shopify-section-{{ section.id }} .product-gallery__image-list { position: relative; }
 
@@ -97,9 +112,17 @@
       object-fit: cover;
     }
 
-    @media screen and (min-width: 1000px) {
-      #shopify-section-{{ section.id }} .product-gallery__peek { display: none; }
-    }
+    {%- unless peek_on_desktop -%}
+      @media screen and (min-width: 1000px) {
+        #shopify-section-{{ section.id }} .product-gallery__peek { display: none; }
+      }
+    {%- endunless -%}
+
+    {%- unless peek_on_mobile -%}
+      @media screen and (max-width: 999px) {
+        #shopify-section-{{ section.id }} .product-gallery__peek { display: none; }
+      }
+    {%- endunless -%}
   </style>
 {%- endif -%}
 
@@ -132,6 +155,12 @@
         --product-gallery-carousel-gap: {{ section.settings.desktop_media_grid_gap }}px;
       {%- endif -%}
     }
+
+    {%- if desktop_layout == 'carousel_thumbnails_bottom' and thumbnail_alignment != blank -%}
+      #shopify-section-{{ section.id }} .product-gallery__thumbnail-list {
+        align-self: {{ thumbnail_alignment }};
+      }
+    {%- endif -%}
 
     {%- if desktop_layout == 'grid_2x_highlighted' -%}
       #shopify-section-{{ section.id }} .product-gallery__media:not([hidden]) {
@@ -338,7 +367,7 @@
       </button>
     {%- endif -%}
 
-    {%- if mobile_controls == 'next_preview' -%}
+    {%- if peek_on_mobile or peek_on_desktop -%}
       <product-gallery-peek class="product-gallery__peek" aria-controls="{{ product_gallery_carousel_id }}" hidden>
         <button type="button">
           <span class="sr-only">{{ 'general.accessibility.next' | t }}</span>
@@ -365,6 +394,10 @@
 
       if desktop_layout contains 'thumbnails' or desktop_layout == 'grid'
         assign show_thumbnails_desktop = true
+      endif
+
+      if show_desktop_thumbnails == false
+        assign show_thumbnails_desktop = false
       endif
     -%}
 
@@ -446,7 +479,7 @@
   {%- endif -%}
 </product-gallery>
 
-{%- if mobile_controls == 'next_preview' -%}
+{%- if peek_on_mobile or peek_on_desktop -%}
   <script>
     if (!customElements.get('product-gallery-peek')) {
       customElements.define('product-gallery-peek', class extends HTMLElement {

@@ -24,7 +24,6 @@
   endfor
 
   if allow_transparent_header
-    assign desktop_media_layout = 'grid_2x_highlighted'
     assign product_info_size = 50
   endif
 -%}
@@ -76,6 +75,16 @@
       height: var(--spacer-height-desktop);
     }
   }
+
+  {%- if allow_transparent_header -%}
+    @media screen and (min-width: 1000px) {
+      #shopify-section-{{ section.id }} .section-spacing[allow-transparent-header] .product-info {
+        width: auto;
+        max-width: none;
+        margin-inline: {{ section.settings.product_info_space_left | default: 0 }}% {{ section.settings.product_info_space_right | default: 0 }}%;
+      }
+    }
+  {%- endif -%}
 </style>
 
 {%- if section.settings.use_custom_section_spacing -%}
@@ -126,7 +135,9 @@
             enable_video_looping: section.settings.enable_video_looping,
             enable_image_zoom: section.settings.enable_image_zoom,
             max_image_zoom_level: section.settings.max_image_zoom_level,
-            mobile_aspect_ratio: section.settings.mobile_image_aspect_ratio
+            mobile_aspect_ratio: section.settings.mobile_image_aspect_ratio,
+            show_desktop_thumbnails: section.settings.desktop_show_thumbnails,
+            thumbnail_alignment: section.settings.desktop_thumbnail_alignment
           -%}
         {%- endif -%}
 
@@ -271,7 +282,6 @@
     {
       "type": "header",
       "content": "Mobile section spacing",
-      "info": "Requires 'Use custom section spacing' to be checked",
       "visible_if": "{{ section.settings.use_custom_section_spacing }}"
     },
     {
@@ -283,7 +293,6 @@
       "step": 2,
       "unit": "px",
       "default": 0,
-      "info": "Requires 'Use custom section spacing' to be checked",
       "visible_if": "{{ section.settings.use_custom_section_spacing }}"
     },
     {
@@ -295,7 +304,6 @@
       "step": 2,
       "unit": "px",
       "default": 0,
-      "info": "Requires 'Use custom section spacing' to be checked",
       "visible_if": "{{ section.settings.use_custom_section_spacing }}"
     },
     {
@@ -307,7 +315,6 @@
       "step": 2,
       "unit": "px",
       "default": 0,
-      "info": "Requires 'Use custom section spacing' to be checked",
       "visible_if": "{{ section.settings.use_custom_section_spacing }}"
     },
     {
@@ -319,13 +326,11 @@
       "step": 2,
       "unit": "px",
       "default": 0,
-      "info": "Requires 'Use custom section spacing' to be checked",
       "visible_if": "{{ section.settings.use_custom_section_spacing }}"
     },
     {
       "type": "header",
       "content": "Desktop section spacing",
-      "info": "Requires 'Use custom section spacing' to be checked",
       "visible_if": "{{ section.settings.use_custom_section_spacing }}"
     },
     {
@@ -337,7 +342,6 @@
       "step": 2,
       "unit": "px",
       "default": 0,
-      "info": "Requires 'Use custom section spacing' to be checked",
       "visible_if": "{{ section.settings.use_custom_section_spacing }}"
     },
     {
@@ -349,7 +353,6 @@
       "step": 2,
       "unit": "px",
       "default": 0,
-      "info": "Requires 'Use custom section spacing' to be checked",
       "visible_if": "{{ section.settings.use_custom_section_spacing }}"
     },
     {
@@ -361,7 +364,6 @@
       "step": 2,
       "unit": "px",
       "default": 0,
-      "info": "Requires 'Use custom section spacing' to be checked",
       "visible_if": "{{ section.settings.use_custom_section_spacing }}"
     },
     {
@@ -373,7 +375,6 @@
       "step": 2,
       "unit": "px",
       "default": 0,
-      "info": "Requires 'Use custom section spacing' to be checked",
       "visible_if": "{{ section.settings.use_custom_section_spacing }}"
     },
     {
@@ -422,6 +423,30 @@
       "step": 1,
       "unit": "%",
       "default": 35
+    },
+    {
+      "type": "range",
+      "id": "product_info_space_left",
+      "visible_if": "{{ section.settings.allow_transparent_header }}",
+      "label": "Desktop space on the left of the info",
+      "info": "Space between the gallery and the product text. Negative pulls the text over the gallery.",
+      "min": -20,
+      "max": 40,
+      "step": 1,
+      "unit": "%",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "product_info_space_right",
+      "visible_if": "{{ section.settings.allow_transparent_header }}",
+      "label": "Desktop space on the right of the info",
+      "info": "Negative pushes the text past the right edge of the screen.",
+      "min": -20,
+      "max": 40,
+      "step": 1,
+      "unit": "%",
+      "default": 12
     },
     {
       "type": "range",
@@ -494,7 +519,6 @@
     {
       "type": "select",
       "id": "desktop_media_layout",
-      "visible_if": "{{ section.settings.allow_transparent_header == false }}",
       "label": "t:sections.main_product.desktop_media_layout",
       "options": [
         {
@@ -520,9 +544,33 @@
         {
           "value": "carousel_dots",
           "label": "t:sections.main_product.desktop_media_layout_options.carousel_dots"
+        },
+        {
+          "value": "carousel_next_preview",
+          "label": "Carousel + next image preview (bottom right)"
         }
       ],
       "default": "grid"
+    },
+    {
+      "type": "checkbox",
+      "id": "desktop_show_thumbnails",
+      "label": "Show thumbnails on desktop",
+      "info": "Turn off for stacked images with no thumbnail rail.",
+      "visible_if": "{{ section.settings.desktop_media_layout == 'grid' or section.settings.desktop_media_layout == 'carousel_thumbnails_left' or section.settings.desktop_media_layout == 'carousel_thumbnails_bottom' }}",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "desktop_thumbnail_alignment",
+      "label": "Desktop thumbnail alignment",
+      "visible_if": "{{ section.settings.desktop_media_layout == 'carousel_thumbnails_bottom' and section.settings.desktop_show_thumbnails }}",
+      "options": [
+        { "value": "flex-start", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "flex-end", "label": "Right" }
+      ],
+      "default": "flex-start"
     },
     {
       "type": "range",
