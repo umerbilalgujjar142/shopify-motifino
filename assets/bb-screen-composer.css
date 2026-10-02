@@ -61,11 +61,11 @@
   bottom: 12px;
   right: 12px;
   width: var(--bb-worn-thumb-size, 64px);
-  height: var(--bb-worn-thumb-size, 64px);
+  aspect-ratio: var(--bb-worn-thumb-ratio, 1 / 1);
   padding: 0;
   overflow: hidden;
   border: 2px solid #fff;
-  border-radius: 10px;
+  border-radius: var(--bb-worn-thumb-radius, 10px);
   background: #e8e8e8;
   box-shadow: 0 2px 8px rgba(0, 0, 0, .18);
   cursor: pointer;
@@ -943,6 +943,29 @@
   gap: 10px;
 }
 
+/* Secondary "go to cart" — matches the primary button's height */
+.bb-combo-bar__actions .bb-btn-secondary {
+  height: 44px;
+  padding: 0 18px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.bb-composer-cart__icon,
+.bb-composer-cart__arrow {
+  flex: 0 0 auto;
+  display: block;
+  width: 18px;
+  height: 18px;
+}
+
+#bb-composer-cart-label {
+  flex: 0 1 auto;
+}
+
 .bb-composer-cta__label {
   flex: 1 1 auto;
   text-align: center;
@@ -1204,7 +1227,8 @@
     justify-content: flex-end;
   }
 
-  .bb-combo-bar__actions .bb-btn-primary {
+  .bb-combo-bar__actions .bb-btn-primary,
+  .bb-combo-bar__actions .bb-btn-secondary {
     flex: 0 1 auto;
   }
 

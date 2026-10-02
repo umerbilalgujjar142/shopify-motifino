@@ -15,6 +15,9 @@
   * mobile_controls: the controls to show on mobile (can be "thumbnails", "dots", "arrows" or "free_scroll")
   * show_desktop_thumbnails: false hides the desktop thumbnail rail
   * thumbnail_alignment: align-self value for the bottom thumbnail rail on desktop
+  * peek_aspect_ratio: shape of the next-image preview ("original" or "w:h")
+  * peek_size: width of the next-image preview in px
+  * peek_radius: corner radius of the next-image preview in px
   * enable_media_autoplay: if set to true media are autoplayed when switched to
   * enable_video_looping: if set to true videos automatically loop when finished
   * enable_image_zoom: if set to true the gallery allow zoom
@@ -75,6 +78,21 @@
   if desktop_layout == 'carousel_next_preview'
     assign peek_on_desktop = true
   endif
+
+  assign peek_ratio = peek_aspect_ratio
+  if peek_ratio == blank
+    assign peek_ratio = '1:1'
+  endif
+
+  assign peek_box_size = peek_size
+  if peek_box_size == blank
+    assign peek_box_size = 70
+  endif
+
+  assign peek_box_radius = peek_radius
+  if peek_box_radius == blank
+    assign peek_box_radius = 8
+  endif
 -%}
 
 {%- if peek_on_mobile or peek_on_desktop -%}
@@ -95,10 +113,14 @@
       appearance: none;
       display: block;
       padding: 0;
-      width: 70px;
-      height: 70px;
+      width: {{ peek_box_size }}px;
+      {%- if peek_ratio == 'original' -%}
+        height: auto;
+      {%- else -%}
+        aspect-ratio: {{ peek_ratio | replace: ':', ' / ' }};
+      {%- endif -%}
       border: 2px solid #fff;
-      border-radius: 8px;
+      border-radius: {{ peek_box_radius }}px;
       overflow: hidden;
       background: #fff;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
@@ -108,8 +130,12 @@
     #shopify-section-{{ section.id }} .product-gallery__peek img {
       display: block;
       width: 100%;
-      height: 100%;
-      object-fit: cover;
+      {%- if peek_ratio == 'original' -%}
+        height: auto;
+      {%- else -%}
+        height: 100%;
+        object-fit: cover;
+      {%- endif -%}
     }
 
     {%- unless peek_on_desktop -%}

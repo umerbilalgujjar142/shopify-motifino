@@ -6,7 +6,7 @@
   <div
     class="bb-composer-hero"
     id="bb-composer-hero"
-    style="--bb-zoom-size:{{ section.settings.zoom_icon_size | default: 28 }}px;--bb-zoom-color:{{ section.settings.zoom_icon_color | default: '#1a1a1a' }};--bb-worn-thumb-size:{{ section.settings.worn_thumb_size | default: 64 }}px;"
+    style="--bb-zoom-size:{{ section.settings.zoom_icon_size | default: 28 }}px;--bb-zoom-color:{{ section.settings.zoom_icon_color | default: '#1a1a1a' }};--bb-worn-thumb-size:{{ section.settings.worn_thumb_size | default: 64 }}px;--bb-worn-thumb-ratio:{% if section.settings.worn_thumb_ratio == 'original' %}auto{% elsif section.settings.worn_thumb_ratio == blank %}1 / 1{% else %}{{ section.settings.worn_thumb_ratio | replace: ':', ' / ' }}{% endif %};--bb-worn-thumb-radius:{{ section.settings.worn_thumb_radius | default: 10 }}px;"
   >
     {%- comment -%} Background: belt combo photo fills entire hero area {%- endcomment -%}
     <canvas id="bb-belt-canvas" width="340" height="100" style="display:none;max-width:100%;"></canvas>
@@ -112,7 +112,13 @@
       </button>
       {%- comment -%} Unlimited sets only: shown by bundle-builder.js once a belt is in the cart. {%- endcomment -%}
       <button class="bb-btn-secondary" data-action="go-to-cart" id="bb-composer-cart" hidden>
+        <svg class="bb-composer-cart__icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+        </svg>
         <span id="bb-composer-cart-label">Vai al carrello</span>
+        <svg class="bb-composer-cart__arrow" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+        </svg>
       </button>
     </div>
   </div>

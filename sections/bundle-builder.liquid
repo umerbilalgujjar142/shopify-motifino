@@ -29,6 +29,18 @@
       --header-transparent-header-text-color: initial;
     }
   {%- endif -%}
+
+  {%- if section.settings.worn_thumb_ratio == 'original' -%}
+    #shopify-section-{{ section.id }} .bb-worn-thumb,
+    #shopify-section-{{ section.id }} .bb-worn-thumb img { height: auto; }
+  {%- endif -%}
+
+  {%- if section.settings.allow_transparent_header -%}
+    {%- comment -%}The transparent header is out of the flow, so push the builder clear of it.{%- endcomment -%}
+    #shopify-section-{{ section.id }} .bb-wrap-outer {
+      padding-block-start: calc(var(--header-height, 0px) + {{ section.settings.transparent_header_gap | default: 24 }}px);
+    }
+  {%- endif -%}
 </style>
 
 <div class="bb-wrap-outer">
@@ -316,6 +328,18 @@
       "visible_if": "{{ section.settings.allow_transparent_header }}"
     },
     {
+      "type": "range",
+      "id": "transparent_header_gap",
+      "label": "Gap below the header",
+      "info": "Space between the transparent header and the top of the builder card.",
+      "visible_if": "{{ section.settings.allow_transparent_header }}",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
       "type": "header",
       "content": "Belt preview"
     },
@@ -354,6 +378,32 @@
       "step": 4,
       "unit": "px",
       "default": 64
+    },
+    {
+      "type": "select",
+      "id": "worn_thumb_ratio",
+      "label": "Worn preview aspect ratio",
+      "options": [
+        { "value": "original", "label": "Original (no crop)" },
+        { "value": "1:1", "label": "1:1" },
+        { "value": "4:5", "label": "4:5" },
+        { "value": "3:4", "label": "3:4" },
+        { "value": "5:4", "label": "5:4" },
+        { "value": "4:3", "label": "4:3" },
+        { "value": "9:16", "label": "9:16" },
+        { "value": "16:9", "label": "16:9" }
+      ],
+      "default": "1:1"
+    },
+    {
+      "type": "range",
+      "id": "worn_thumb_radius",
+      "label": "Worn preview corner radius",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 10
     },
     {
       "type": "header",
