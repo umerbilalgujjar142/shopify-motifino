@@ -138,8 +138,10 @@
             mobile_aspect_ratio: section.settings.mobile_image_aspect_ratio,
             show_desktop_thumbnails: section.settings.desktop_show_thumbnails,
             thumbnail_alignment: section.settings.desktop_thumbnail_alignment,
-            peek_aspect_ratio: section.settings.peek_aspect_ratio,
-            peek_size: section.settings.peek_size,
+            peek_mobile_ratio: section.settings.peek_mobile_ratio,
+            peek_mobile_size: section.settings.peek_mobile_size,
+            peek_desktop_ratio: section.settings.peek_desktop_ratio,
+            peek_desktop_size: section.settings.peek_desktop_size,
             peek_radius: section.settings.peek_radius
           -%}
         {%- endif -%}
@@ -577,10 +579,10 @@
     },
     {
       "type": "select",
-      "id": "peek_aspect_ratio",
-      "label": "Next preview aspect ratio",
+      "id": "peek_mobile_ratio",
+      "label": "Next preview aspect ratio — mobile",
       "info": "Shape of the small preview pinned to the bottom-right of the image.",
-      "visible_if": "{{ section.settings.mobile_controls == 'next_preview' or section.settings.desktop_media_layout == 'carousel_next_preview' }}",
+      "visible_if": "{{ section.settings.mobile_controls == 'next_preview' }}",
       "options": [
         { "value": "original", "label": "Original (no crop)" },
         { "value": "1:1", "label": "1:1" },
@@ -595,19 +597,50 @@
     },
     {
       "type": "range",
-      "id": "peek_size",
-      "label": "Next preview size",
-      "visible_if": "{{ section.settings.mobile_controls == 'next_preview' or section.settings.desktop_media_layout == 'carousel_next_preview' }}",
-      "min": 40,
-      "max": 140,
-      "step": 2,
-      "unit": "px",
-      "default": 70
+      "id": "peek_mobile_size",
+      "label": "Next preview size — mobile",
+      "info": "Width as a percentage of the gallery.",
+      "visible_if": "{{ section.settings.mobile_controls == 'next_preview' }}",
+      "min": 5,
+      "max": 60,
+      "step": 1,
+      "unit": "%",
+      "default": 18
+    },
+    {
+      "type": "select",
+      "id": "peek_desktop_ratio",
+      "label": "Next preview aspect ratio — desktop",
+      "visible_if": "{{ section.settings.desktop_media_layout == 'carousel_next_preview' }}",
+      "options": [
+        { "value": "original", "label": "Original (no crop)" },
+        { "value": "1:1", "label": "1:1" },
+        { "value": "4:5", "label": "4:5" },
+        { "value": "3:4", "label": "3:4" },
+        { "value": "5:4", "label": "5:4" },
+        { "value": "4:3", "label": "4:3" },
+        { "value": "9:16", "label": "9:16" },
+        { "value": "16:9", "label": "16:9" }
+      ],
+      "default": "1:1"
+    },
+    {
+      "type": "range",
+      "id": "peek_desktop_size",
+      "label": "Next preview size — desktop",
+      "info": "Width as a percentage of the gallery.",
+      "visible_if": "{{ section.settings.desktop_media_layout == 'carousel_next_preview' }}",
+      "min": 5,
+      "max": 60,
+      "step": 1,
+      "unit": "%",
+      "default": 18
     },
     {
       "type": "range",
       "id": "peek_radius",
       "label": "Next preview corner radius",
+      "info": "Applies to mobile and desktop.",
       "visible_if": "{{ section.settings.mobile_controls == 'next_preview' or section.settings.desktop_media_layout == 'carousel_next_preview' }}",
       "min": 0,
       "max": 40,

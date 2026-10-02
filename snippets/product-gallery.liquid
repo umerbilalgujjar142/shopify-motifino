@@ -15,8 +15,8 @@
   * mobile_controls: the controls to show on mobile (can be "thumbnails", "dots", "arrows" or "free_scroll")
   * show_desktop_thumbnails: false hides the desktop thumbnail rail
   * thumbnail_alignment: align-self value for the bottom thumbnail rail on desktop
-  * peek_aspect_ratio: shape of the next-image preview ("original" or "w:h")
-  * peek_size: width of the next-image preview in px
+  * peek_mobile_ratio / peek_desktop_ratio: shape of the next-image preview ("original" or "w:h")
+  * peek_mobile_size / peek_desktop_size: width of the next-image preview as a % of the gallery
   * peek_radius: corner radius of the next-image preview in px
   * enable_media_autoplay: if set to true media are autoplayed when switched to
   * enable_video_looping: if set to true videos automatically loop when finished
@@ -79,14 +79,24 @@
     assign peek_on_desktop = true
   endif
 
-  assign peek_ratio = peek_aspect_ratio
-  if peek_ratio == blank
-    assign peek_ratio = '1:1'
+  assign peek_ratio_mob = peek_mobile_ratio
+  if peek_ratio_mob == blank
+    assign peek_ratio_mob = '1:1'
   endif
 
-  assign peek_box_size = peek_size
-  if peek_box_size == blank
-    assign peek_box_size = 70
+  assign peek_ratio_desk = peek_desktop_ratio
+  if peek_ratio_desk == blank
+    assign peek_ratio_desk = '1:1'
+  endif
+
+  assign peek_width_mob = peek_mobile_size
+  if peek_width_mob == blank
+    assign peek_width_mob = 18
+  endif
+
+  assign peek_width_desk = peek_desktop_size
+  if peek_width_desk == blank
+    assign peek_width_desk = 18
   endif
 
   assign peek_box_radius = peek_radius
@@ -113,12 +123,7 @@
       appearance: none;
       display: block;
       padding: 0;
-      width: {{ peek_box_size }}px;
-      {%- if peek_ratio == 'original' -%}
-        height: auto;
-      {%- else -%}
-        aspect-ratio: {{ peek_ratio | replace: ':', ' / ' }};
-      {%- endif -%}
+      width: 100%;
       border: 2px solid #fff;
       border-radius: {{ peek_box_radius }}px;
       overflow: hidden;
@@ -130,12 +135,48 @@
     #shopify-section-{{ section.id }} .product-gallery__peek img {
       display: block;
       width: 100%;
-      {%- if peek_ratio == 'original' -%}
-        height: auto;
-      {%- else -%}
-        height: 100%;
-        object-fit: cover;
-      {%- endif -%}
+    }
+
+    @media screen and (max-width: 999px) {
+      #shopify-section-{{ section.id }} .product-gallery__peek { width: {{ peek_width_mob }}%; }
+
+      #shopify-section-{{ section.id }} .product-gallery__peek button {
+        {%- if peek_ratio_mob == 'original' -%}
+          height: auto;
+        {%- else -%}
+          aspect-ratio: {{ peek_ratio_mob | replace: ':', ' / ' }};
+        {%- endif -%}
+      }
+
+      #shopify-section-{{ section.id }} .product-gallery__peek img {
+        {%- if peek_ratio_mob == 'original' -%}
+          height: auto;
+        {%- else -%}
+          height: 100%;
+          object-fit: cover;
+        {%- endif -%}
+      }
+    }
+
+    @media screen and (min-width: 1000px) {
+      #shopify-section-{{ section.id }} .product-gallery__peek { width: {{ peek_width_desk }}%; }
+
+      #shopify-section-{{ section.id }} .product-gallery__peek button {
+        {%- if peek_ratio_desk == 'original' -%}
+          height: auto;
+        {%- else -%}
+          aspect-ratio: {{ peek_ratio_desk | replace: ':', ' / ' }};
+        {%- endif -%}
+      }
+
+      #shopify-section-{{ section.id }} .product-gallery__peek img {
+        {%- if peek_ratio_desk == 'original' -%}
+          height: auto;
+        {%- else -%}
+          height: 100%;
+          object-fit: cover;
+        {%- endif -%}
+      }
     }
 
     {%- unless peek_on_desktop -%}
