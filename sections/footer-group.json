@@ -32,36 +32,8 @@
             "collapse_mobile_only": true
           }
         },
-        "links_CpnAUn": {
-          "type": "links",
-          "disabled": true,
-          "settings": {
-            "menu": "main-menu",
-            "show_menu_title": true,
-            "menu_title": ""
-          }
-        },
-        "links": {
-          "type": "links",
-          "disabled": true,
-          "settings": {
-            "menu": "footer",
-            "show_menu_title": true,
-            "menu_title": "Privacy & Terms"
-          }
-        },
-        "text_ingpbR": {
-          "type": "text",
-          "disabled": true,
-          "settings": {
-            "title": "",
-            "content": "<p>  </p>",
-            "enable_follow_on_shop": false
-          }
-        },
         "newsletter": {
           "type": "newsletter",
-          "disabled": true,
           "settings": {
             "title": "Ottieni sconti esclusivi!",
             "content": "<p>Iscriviti alla newsletter per ricevere sconti e offerte esclusive per la community</p>",
@@ -73,9 +45,6 @@
       "block_order": [
         "collapsible_links_eJNbVW",
         "collapsible_links_ALYNrk",
-        "links_CpnAUn",
-        "links",
-        "text_ingpbR",
         "newsletter"
       ],
       "custom_css": [],
@@ -86,8 +55,8 @@
         "show_payment_icons": true,
         "show_powered_by_shopify": true,
         "menu_link_space": 10,
-        "block_alignment": "left",
-        "desktop_block_spacing": 50,
+        "block_alignment": "center",
+        "desktop_block_spacing": 250,
         "mobile_block_spacing": 24,
         "show_country_selector": true,
         "show_country_name": true,

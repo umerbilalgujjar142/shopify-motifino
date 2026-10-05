@@ -13,6 +13,12 @@
   if menu_link_space == blank
     assign menu_link_space = 10
   endif
+
+  assign social_alignment = section.settings.social_alignment
+  if social_alignment == blank
+    assign social_alignment = 'center'
+  endif
+  assign social_justify = social_alignment | replace: 'left', 'flex-start' | replace: 'right', 'flex-end'
 -%}
 
 <style>
@@ -77,6 +83,10 @@
         flex: 0 1 auto;
       }
     {%- endif -%}
+
+    #shopify-section-{{ section.id }} .footer__inner > .social-media--list {
+      justify-content: {{ social_justify }};
+    }
   }
 </style>
 
@@ -363,6 +373,27 @@
         }
       ],
       "default": "space_between"
+    },
+    {
+      "type": "select",
+      "id": "social_alignment",
+      "label": "Social icons alignment (desktop)",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center",
+      "visible_if": "{{ section.settings.show_social_media }}"
     },
     {
       "type": "range",
