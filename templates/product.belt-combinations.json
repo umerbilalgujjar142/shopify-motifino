@@ -196,8 +196,11 @@
         "mobile_controls": "next_preview",
         "enable_media_autoplay": false,
         "enable_video_looping": true,
-        "enable_image_zoom": false,
-        "max_image_zoom_level": 3
+        "enable_image_zoom": true,
+        "max_image_zoom_level": 3,
+        "zoom_icon_position": "bottom_left",
+        "zoom_icon_size": 32,
+        "zoom_icon_color": "#E52929"
       }
     },
     "shoppable_videos_FRVpdX": {

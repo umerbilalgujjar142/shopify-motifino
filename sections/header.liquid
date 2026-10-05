@@ -414,9 +414,16 @@
   }
 
   .menu-carousel__item {
-    flex: 0 0 70%;
+    flex: 0 0 var(--menu-carousel-card-width, 70%);
     min-width: 0;
     scroll-snap-align: start;
+  }
+
+  /* Only set when the block picks a ratio, so "Original" keeps the theme's own card ratio. */
+  .menu-carousel[style*="--menu-carousel-image-ratio"] .product-card__image {
+    aspect-ratio: var(--menu-carousel-image-ratio);
+    object-fit: cover;
+    height: auto;
   }
 
   .menu-carousel__item .product-card__info,
@@ -465,6 +472,16 @@
     display: grid;
     row-gap: .25rem;
     border-block-start: 1px solid rgb(var(--border-color));
+  }
+
+  {%- liquid
+    assign sidebar_link_space = section.settings.sidebar_link_space
+    if sidebar_link_space == blank
+      assign sidebar_link_space = 16
+    endif
+  -%}
+  .header-sidebar__bottom-linklist .header-sidebar__linklist-button {
+    padding-block: {{ sidebar_link_space | divided_by: 2.0 }}px;
   }
 
   /* The bottom menu and the selectors share one divider. */
@@ -624,6 +641,16 @@
       "id": "bottom_menu",
       "label": "Bottom menu",
       "info": "Shown at the bottom of the menu drawer, above the currency selector. Top-level links only."
+    },
+    {
+      "type": "range",
+      "id": "sidebar_link_space",
+      "label": "Space between bottom menu links",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 16
     },
     {
       "type": "link_list",
@@ -932,6 +959,56 @@
           "id": "link",
           "label": "Link",
           "info": "Defaults to the collection URL."
+        },
+        {
+          "type": "header",
+          "content": "Card"
+        },
+        {
+          "type": "range",
+          "id": "card_width",
+          "label": "Card width",
+          "info": "Share of the drawer width taken by one card.",
+          "min": 30,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "default": 70
+        },
+        {
+          "type": "select",
+          "id": "image_ratio",
+          "label": "Image ratio",
+          "options": [
+            {
+              "value": "original",
+              "label": "Original"
+            },
+            {
+              "value": "1:1",
+              "label": "1:1"
+            },
+            {
+              "value": "4:5",
+              "label": "4:5"
+            },
+            {
+              "value": "3:4",
+              "label": "3:4"
+            },
+            {
+              "value": "16:9",
+              "label": "16:9"
+            }
+          ],
+          "default": "original"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_badges",
+          "label": "Show product badges",
+          "info": "The coloured labels over the image.",
+          "default": true
         },
         {
           "type": "checkbox",

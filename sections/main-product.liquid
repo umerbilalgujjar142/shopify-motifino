@@ -85,6 +85,45 @@
       }
     }
   {%- endif -%}
+
+  {%- if section.settings.enable_image_zoom -%}
+    {%- liquid
+      assign zoom_icon_size = section.settings.zoom_icon_size
+      if zoom_icon_size == blank
+        assign zoom_icon_size = 28
+      endif
+
+      assign zoom_icon_position = section.settings.zoom_icon_position
+      if zoom_icon_position == blank
+        assign zoom_icon_position = 'bottom_left'
+      endif
+    -%}
+
+    #shopify-section-{{ section.id }} .product-gallery__zoom-button {
+      --circle-button-size: {{ zoom_icon_size | plus: 14 }}px;
+      {%- if section.settings.zoom_icon_color != blank -%}
+        color: {{ section.settings.zoom_icon_color }};
+      {%- endif -%}
+
+      {%- case zoom_icon_position -%}
+        {%- when 'bottom_left' -%}
+          inset-block-start: auto;
+          inset-block-end: 12px;
+          inset-inline-start: 12px;
+          inset-inline-end: auto;
+        {%- when 'bottom_right' -%}
+          inset-block-start: auto;
+          inset-block-end: 12px;
+          inset-inline-end: 12px;
+        {%- else -%}
+          inset-inline-end: 12px;
+      {%- endcase -%}
+    }
+
+    #shopify-section-{{ section.id }} .product-gallery__zoom-button > svg {
+      width: {{ zoom_icon_size | times: 0.5 | round }}px;
+    }
+  {%- endif -%}
 </style>
 
 {%- if section.settings.use_custom_section_spacing -%}
@@ -714,6 +753,45 @@
       "step": 0.5,
       "label": "t:sections.main_product.image_zoom_max_level",
       "default": 3
+    },
+    {
+      "type": "select",
+      "id": "zoom_icon_position",
+      "label": "Zoom icon position",
+      "visible_if": "{{ section.settings.enable_image_zoom }}",
+      "options": [
+        {
+          "value": "bottom_left",
+          "label": "Bottom left"
+        },
+        {
+          "value": "bottom_right",
+          "label": "Bottom right"
+        },
+        {
+          "value": "top_right",
+          "label": "Top right"
+        }
+      ],
+      "default": "bottom_left"
+    },
+    {
+      "type": "range",
+      "id": "zoom_icon_size",
+      "label": "Zoom icon size",
+      "visible_if": "{{ section.settings.enable_image_zoom }}",
+      "min": 16,
+      "max": 64,
+      "step": 2,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "color",
+      "id": "zoom_icon_color",
+      "label": "Zoom icon colour",
+      "visible_if": "{{ section.settings.enable_image_zoom }}",
+      "default": "#1a1a1a"
     }
   ],
   "blocks": [

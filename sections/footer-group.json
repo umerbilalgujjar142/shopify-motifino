@@ -14,8 +14,27 @@
     "footer": {
       "type": "footer",
       "blocks": {
+        "collapsible_links_eJNbVW": {
+          "type": "collapsible_links",
+          "settings": {
+            "menu": "main-menu",
+            "menu_title": "Menu",
+            "open_by_default": false,
+            "collapse_mobile_only": true
+          }
+        },
+        "collapsible_links_ALYNrk": {
+          "type": "collapsible_links",
+          "settings": {
+            "menu": "footer",
+            "menu_title": "<strong>Privacy & Terms</strong>",
+            "open_by_default": false,
+            "collapse_mobile_only": true
+          }
+        },
         "links_CpnAUn": {
           "type": "links",
+          "disabled": true,
           "settings": {
             "menu": "main-menu",
             "show_menu_title": true,
@@ -24,6 +43,7 @@
         },
         "links": {
           "type": "links",
+          "disabled": true,
           "settings": {
             "menu": "footer",
             "show_menu_title": true,
@@ -32,6 +52,7 @@
         },
         "text_ingpbR": {
           "type": "text",
+          "disabled": true,
           "settings": {
             "title": "",
             "content": "<p>  </p>",
@@ -50,6 +71,8 @@
         }
       },
       "block_order": [
+        "collapsible_links_eJNbVW",
+        "collapsible_links_ALYNrk",
         "links_CpnAUn",
         "links",
         "text_ingpbR",
@@ -62,6 +85,9 @@
         "show_social_media": true,
         "show_payment_icons": true,
         "show_powered_by_shopify": true,
+        "block_alignment": "space_between",
+        "desktop_block_spacing": 50,
+        "mobile_block_spacing": 24,
         "show_country_selector": true,
         "show_country_name": true,
         "show_country_flag": true,

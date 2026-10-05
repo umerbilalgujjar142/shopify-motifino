@@ -1,6 +1,82 @@
+{%- liquid
+  assign mobile_block_spacing = section.settings.mobile_block_spacing
+  if mobile_block_spacing == blank
+    assign mobile_block_spacing = 24
+  endif
+
+  assign desktop_block_spacing = section.settings.desktop_block_spacing
+  if desktop_block_spacing == blank
+    assign desktop_block_spacing = 50
+  endif
+
+  assign menu_link_space = section.settings.menu_link_space
+  if menu_link_space == blank
+    assign menu_link_space = 10
+  endif
+-%}
+
 <style>
   #shopify-section-{{ section.id }} {
-    --footer-content-justify-items: {% if section.settings.blocks.size <= 2 %}start{% else %}space-between{% endif %};
+    {%- liquid
+      assign footer_alignment = section.settings.block_alignment
+      case footer_alignment
+        when 'left'
+          assign footer_justify = 'start'
+        when 'center'
+          assign footer_justify = 'center'
+        else
+          assign footer_justify = 'space-between'
+      endcase
+    -%}
+    --footer-content-justify-items: {{ footer_justify }};
+  }
+
+  #shopify-section-{{ section.id }} .footer__block--collapsible_links .accordion {
+    border-block-width: 0;
+  }
+
+  #shopify-section-{{ section.id }} :is(.footer__block--links, .footer__block--collapsible_links) ul {
+    gap: {{ menu_link_space }}px;
+  }
+
+  {%- comment -%}The mobile grid sizes its column to the content, which would shrink the toggle row.{%- endcomment -%}
+  @media screen and (max-width: 699px) {
+    #shopify-section-{{ section.id }} .footer__block-list {
+      grid-template-columns: 100%;
+      gap: {{ mobile_block_spacing }}px;
+    }
+
+    #shopify-section-{{ section.id }} .footer__block {
+      min-width: 0;
+    }
+  }
+
+  #shopify-section-{{ section.id }} .footer__block--collapsible_links .accordion__toggle {
+    padding-block: 0 1rem;
+  }
+
+  #shopify-section-{{ section.id }} .footer__block--collapsible_links .accordion__content {
+    margin-block-start: 0;
+    padding-block-end: 0;
+    padding-inline-end: 0;
+  }
+
+  @media screen and (min-width: 700px) {
+    #shopify-section-{{ section.id }} .footer__block--collapsible_links {
+      flex-grow: 0;
+      max-width: 14rem;
+    }
+
+    #shopify-section-{{ section.id }} .footer__block-list {
+      gap: {{ desktop_block_spacing }}px;
+    }
+
+    {%- if footer_justify != 'space-between' -%}
+      {%- comment -%}.footer__block is flex:auto, so a block without a max-width would stretch and undo the alignment.{%- endcomment -%}
+      #shopify-section-{{ section.id }} .footer__block {
+        flex: 0 1 auto;
+      }
+    {%- endif -%}
   }
 </style>
 
@@ -76,6 +152,40 @@
                         {%- endfor -%}
                       </ul>
                     </div>
+                  {%- endif -%}
+
+                {%- when 'collapsible_links' -%}
+                  {%- assign menu = block.settings.menu -%}
+
+                  {%- if menu != blank and menu.links.size > 0 -%}
+                    {%- assign collapsible_title = block.settings.menu_title | default: menu.title -%}
+
+                    {%- capture collapsible_links_content -%}
+                      <ul class="v-stack gap-2.5 unstyled-list" role="list">
+                        {%- for link in menu.links -%}
+                          <li>
+                            <a href="{{ link.url }}" class="link-faded">{{ link.title }}</a>
+                          </li>
+                        {%- endfor -%}
+                      </ul>
+                    {%- endcapture -%}
+
+                    <div class="{% if block.settings.collapse_mobile_only %}sm:hidden{% endif %}">
+                      {%- render 'accordion',
+                        title: collapsible_title,
+                        content: collapsible_links_content,
+                        open: block.settings.open_by_default,
+                        icon: 'none'
+                      -%}
+                    </div>
+
+                    {%- if block.settings.collapse_mobile_only -%}
+                      {%- comment -%}Native details cannot be forced open with CSS, so desktop gets the plain menu.{%- endcomment -%}
+                      <div class="v-stack gap-4 sm:gap-5 sm-max:hidden">
+                        <p class="h6">{{ collapsible_title }}</p>
+                        {{- collapsible_links_content -}}
+                      </div>
+                    {%- endif -%}
                   {%- endif -%}
 
                 {%- when 'newsletter' -%}
@@ -225,6 +335,57 @@
       "default": true
     },
     {
+      "type": "range",
+      "id": "menu_link_space",
+      "label": "Space between menu links",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "select",
+      "id": "block_alignment",
+      "label": "Block alignment (desktop)",
+      "options": [
+        {
+          "value": "space_between",
+          "label": "Spread"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        }
+      ],
+      "default": "space_between"
+    },
+    {
+      "type": "range",
+      "min": 0,
+      "max": 500,
+      "step": 5,
+      "unit": "px",
+      "id": "desktop_block_spacing",
+      "label": "Space between blocks (desktop)",
+      "info": "Only has an effect when the alignment is Left or Center.",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "id": "mobile_block_spacing",
+      "label": "Space between blocks (mobile)",
+      "default": 24
+    },
+    {
       "type": "header",
       "content": "t:global.localization.country_region_selector_category",
       "info": "t:global.localization.country_region_selector_category_info"
@@ -340,6 +501,36 @@
           "label": "t:sections.footer.blocks.links.menu_title",
           "info": "t:sections.footer.blocks.links.menu_title_info",
           "visible_if": "{{ block.settings.show_menu_title }}"
+        }
+      ]
+    },
+    {
+      "type": "collapsible_links",
+      "name": "Collapsable Menu",
+      "settings": [
+        {
+          "type": "link_list",
+          "id": "menu",
+          "label": "t:sections.footer.blocks.links.menu"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "menu_title",
+          "label": "t:sections.footer.blocks.links.menu_title",
+          "info": "Defaults to the menu name."
+        },
+        {
+          "type": "checkbox",
+          "id": "open_by_default",
+          "label": "Open by default",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "collapse_mobile_only",
+          "label": "Collapse on mobile only",
+          "info": "On desktop the menu stays open and the toggle is hidden.",
+          "default": true
         }
       ]
     },

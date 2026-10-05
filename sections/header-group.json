@@ -67,6 +67,9 @@
             "heading": "Cinture HoLess senza buchi",
             "subheading": "Vedi tutti i colori",
             "link": "shopify://collections/tutte-le-cinture-holess",
+            "card_width": 55,
+            "image_ratio": "original",
+            "show_badges": false,
             "price_below_name": false
           }
         },
@@ -79,6 +82,9 @@
             "heading": "Risparmia con i Bundle",
             "subheading": "Vedi tutti i set",
             "link": "shopify://collections/scopri-tutti-i-bundle",
+            "card_width": 64,
+            "image_ratio": "original",
+            "show_badges": false,
             "price_below_name": false
           }
         }
@@ -101,6 +107,7 @@
         "menu": "main-menu",
         "sidebar_menu": "menu-copy",
         "bottom_menu": "header-bottom-menu",
+        "sidebar_link_space": 16,
         "customer_account_menu": "customer-account-main-menu",
         "menu_open_trigger": "hover",
         "menu_text_font": "body",

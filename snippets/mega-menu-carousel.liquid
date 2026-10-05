@@ -16,9 +16,19 @@
   assign carousel_collection = collections[block.settings.collection]
   assign products_to_show = block.settings.products_to_show | default: 6
   assign carousel_link = block.settings.link | default: carousel_collection.url
+
+  assign card_width = block.settings.card_width
+  if card_width == blank
+    assign card_width = 70
+  endif
+
+  assign image_ratio = block.settings.image_ratio
+  if image_ratio == blank
+    assign image_ratio = 'original'
+  endif
 -%}
 
-<div class="menu-carousel">
+<div class="menu-carousel" style="--menu-carousel-card-width: {{ card_width }}%;{% unless image_ratio == 'original' %}--menu-carousel-image-ratio: {{ image_ratio | replace: ':', ' / ' }};{% endunless %}">
   {%- if block.settings.heading != blank -%}
     <p class="menu-carousel__heading h5">{{ block.settings.heading }}</p>
   {%- endif -%}
@@ -34,7 +44,7 @@
     <div class="menu-carousel__track">
       {%- for product in carousel_collection.products limit: products_to_show -%}
         <div class="menu-carousel__item {% if block.settings.price_below_name == false %}menu-carousel__item--overlay{% endif %}">
-          {%- render 'product-card', product: product, position: forloop.index, show_quick_buy: false -%}
+          {%- render 'product-card', product: product, position: forloop.index, show_quick_buy: false, show_badges: block.settings.show_badges -%}
         </div>
       {%- endfor -%}
     </div>

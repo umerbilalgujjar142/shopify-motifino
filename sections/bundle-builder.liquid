@@ -34,13 +34,6 @@
     #shopify-section-{{ section.id }} .bb-worn-thumb,
     #shopify-section-{{ section.id }} .bb-worn-thumb img { height: auto; }
   {%- endif -%}
-
-  {%- if section.settings.allow_transparent_header -%}
-    {%- comment -%}The transparent header is out of the flow, so push the builder clear of it.{%- endcomment -%}
-    #shopify-section-{{ section.id }} .bb-wrap-outer {
-      padding-block-start: calc(var(--header-height, 0px) + {{ section.settings.transparent_header_gap | default: 24 }}px);
-    }
-  {%- endif -%}
 </style>
 
 <div class="bb-wrap-outer">
@@ -326,18 +319,6 @@
       "label": "t:global.section.transparent_header_use_primary_colors",
       "default": false,
       "visible_if": "{{ section.settings.allow_transparent_header }}"
-    },
-    {
-      "type": "range",
-      "id": "transparent_header_gap",
-      "label": "Gap below the header",
-      "info": "Space between the transparent header and the top of the builder card.",
-      "visible_if": "{{ section.settings.allow_transparent_header }}",
-      "min": 0,
-      "max": 100,
-      "step": 2,
-      "unit": "px",
-      "default": 24
     },
     {
       "type": "header",
