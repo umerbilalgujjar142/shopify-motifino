@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "type": "header",
   "name": "Header group",
@@ -42,18 +51,56 @@
     },
     "header": {
       "type": "header",
+      "blocks": {
+        "divider_b6RXWG": {
+          "type": "divider",
+          "settings": {
+            "menu_item": "Home"
+          }
+        },
+        "carousel_PxbWcq": {
+          "type": "carousel",
+          "settings": {
+            "menu_item": "Home",
+            "collection": "tutte-le-cinture-holess",
+            "products_to_show": 6,
+            "heading": "Cinture HoLess senza buchi",
+            "subheading": "Vedi tutti i colori",
+            "link": "shopify://collections/tutte-le-cinture-holess",
+            "price_below_name": false
+          }
+        },
+        "carousel_XyaCjr": {
+          "type": "carousel",
+          "settings": {
+            "menu_item": "Home",
+            "collection": "scopri-tutti-i-bundle",
+            "products_to_show": 3,
+            "heading": "Risparmia con i Bundle",
+            "subheading": "Vedi tutti i set",
+            "link": "shopify://collections/scopri-tutti-i-bundle",
+            "price_below_name": false
+          }
+        }
+      },
+      "block_order": [
+        "divider_b6RXWG",
+        "carousel_PxbWcq",
+        "carousel_XyaCjr"
+      ],
       "custom_css": [],
       "settings": {
         "color_scheme": "scheme-3",
         "enable_sticky": false,
         "hide_on_scroll": true,
-        "show_separation_border": true,
+        "show_separation_border": false,
         "reduce_padding": true,
         "logo": "shopify://shop_images/Logo_bianco_MOTIFINO_senza_scritta_sotto_f8bf6a34-5808-4a44-88c4-08bc8b2e27c1.png",
         "logo_max_width": 130,
         "logo_mobile_max_width": 110,
         "menu": "main-menu",
-        "sidebar_menu": "",
+        "sidebar_menu": "menu-copy",
+        "bottom_menu": "header-bottom-menu",
         "customer_account_menu": "customer-account-main-menu",
         "menu_open_trigger": "hover",
         "menu_text_font": "body",
@@ -62,7 +109,7 @@
         "sidebar_text_font": "body",
         "sidebar_show_dividers": false,
         "sidebar_open_second_level_menus": false,
-        "layout": "drawer",
+        "layout": "logo_left_navigation_inline",
         "show_icons": true,
         "show_country_selector": true,
         "show_country_name": false,

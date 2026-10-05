@@ -32,7 +32,7 @@
     "product_card_text_font": "body",
     "product_color_display": "hide",
     "show_product_rating": false,
-    "show_quick_buy": true,
+    "show_quick_buy": false,
     "show_sold_out_badge": true,
     "show_discount": false,
     "discount_mode": "saving",
@@ -46,6 +46,14 @@
     "social_instagram": "https://www.instagram.com/official_motifino/",
     "social_whatsapp": "https://wa.me/393508394347",
     "favicon": "shopify://shop_images/180x180_Favicon_2a2b4b9f-af96-461d-b82e-234fcf4ad689.png",
+    "back_to_top_cart": true,
+    "back_to_top_collection": true,
+    "back_to_top_paths": "products",
+    "back_to_top_scroll": 40,
+    "back_to_top_offset_inline": 16,
+    "back_to_top_background": "#FFFFFF",
+    "back_to_top_icon_color": "#000000",
+    "back_to_top_opacity": 85,
     "sections": {
       "bundle-builder": {
         "type": "bundle-builder",
@@ -100,10 +108,13 @@
         "settings": {
           "allow_transparent_header": true,
           "transparent_header_use_primary_colors": false,
+          "transparent_header_gap": 0,
           "enable_zoom": true,
-          "zoom_icon_size": 28,
+          "zoom_icon_size": 20,
           "zoom_icon_color": "#1a1a1a",
           "worn_thumb_size": 64,
+          "worn_thumb_ratio": "4:5",
+          "worn_thumb_radius": 8,
           "combinations_collection": "tutte-le-cinture-holess"
         }
       }

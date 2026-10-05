@@ -100,6 +100,42 @@
       {%- endif -%}
     }
   }
+
+  {%- liquid
+    assign card_align = section.settings.card_text_alignment
+    if card_align == blank
+      assign card_align = 'center'
+    endif
+    assign card_justify = card_align | replace: 'left', 'start' | replace: 'right', 'end'
+
+    assign card_info_space = section.settings.card_info_space
+    if card_info_space == blank
+      assign card_info_space = 20
+    endif
+
+    assign card_title_price_space = section.settings.card_title_price_space
+    if card_title_price_space == blank
+      assign card_title_price_space = 4
+    endif
+  -%}
+
+  #shopify-section-{{ section.id }} .product-card .product-card__info {
+    text-align: {{ card_align }};
+    justify-items: {{ card_justify }};
+    padding-block-start: {{ card_info_space }}px;
+  }
+
+  #shopify-section-{{ section.id }} .product-card .product-card__info .v-stack {
+    justify-items: {{ card_justify }};
+  }
+
+  #shopify-section-{{ section.id }} .product-card .product-card__info > .v-stack > .v-stack {
+    gap: {{ card_title_price_space }}px;
+  }
+
+  #shopify-section-{{ section.id }} .product-card .product-card__info :is(.price-list, .rating-badge) {
+    justify-content: {{ card_justify }};
+  }
 </style>
 
 {%- if section.settings.use_custom_section_spacing -%}
@@ -553,6 +589,37 @@
       "id": "vertical_spacing_factor",
       "label": "t:global.product_list.vertical_spacing_factor",
       "default": 1
+    },
+    {
+      "type": "header",
+      "content": "Product card text"
+    },
+    {
+      "type": "text_alignment",
+      "id": "card_text_alignment",
+      "label": "Text alignment",
+      "info": "Applies to the title, price, vendor, rating and swatches.",
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "id": "card_info_space",
+      "label": "Space above the text",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "id": "card_title_price_space",
+      "label": "Space between title and price",
+      "default": 4
     },
     {
       "type": "header",

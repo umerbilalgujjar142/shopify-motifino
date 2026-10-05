@@ -33,95 +33,53 @@
         "image_npacCJ": {
           "type": "image",
           "settings": {
-            "color_scheme": "",
+            "color_scheme": "scheme-4",
             "hide_on_desktop": false,
             "hide_on_mobile": false,
-            "enable_text_parallax": false,
-            "image": "shopify://shop_images/Come_tagliare_la_cintura_MOTIFINO_PC.jpg",
+            "enable_text_parallax": true,
+            "image": "shopify://shop_images/Immagini_34.jpg",
             "desktop_image_fit": "cover",
-            "mobile_image": "shopify://shop_images/Immagini_34.jpg",
             "mobile_image_fit": "cover",
             "block_link": "",
             "column_count": "12",
             "row_count": 2,
             "add_padding": false,
-            "subheading": "Come tagliare la cintura",
+            "subheading": "",
             "subheading_style": "h6",
             "subheading_shadow": 80,
-            "title": "FALLA SU MISURA",
+            "title": "COME TAGLIARE LA CINTURA?",
             "heading_tag": "h1",
-            "heading_shadow": 80,
-            "content": "<p>Segui gli step o il video sottostante per  fare la tua cintura su misura in 2 minuti</p>",
-            "content_shadow": 80,
-            "link_text": "",
-            "link_url": "",
-            "link_style": "link",
-            "button_shadow": 0,
-            "text_position": "place-self-start-center text-center",
-            "overlay_color": "#000000",
-            "overlay_opacity": 0,
-            "gradient_overlay": "",
-            "mobile_padding_top": 60,
-            "mobile_padding_right": 0,
-            "mobile_padding_bottom": 0,
-            "mobile_padding_left": 0,
-            "desktop_padding_top": 80,
-            "desktop_padding_right": 0,
-            "desktop_padding_bottom": 0,
-            "desktop_padding_left": 0
-          }
-        },
-        "video_PU8LBP": {
-          "type": "video",
-          "settings": {
-            "color_scheme": "scheme-4",
-            "hide_on_desktop": false,
-            "hide_on_mobile": false,
-            "enable_text_parallax": false,
-            "video": "shopify://files/videos/Nuovo video tutorial.mp4",
-            "autoplay": true,
-            "show_controls": true,
-            "block_link": "",
-            "column_count": "12",
-            "row_count": 2,
-            "add_padding": false,
-            "subheading": "",
-            "subheading_style": "subheading",
-            "subheading_shadow": 0,
-            "title": "VIDEO TUTORIAL",
-            "heading_tag": "h2",
-            "heading_shadow": 85,
-            "content": "",
+            "heading_shadow": 0,
+            "content": "<p>Segui il video sottostante per fare la tua cintura su misura in 2 minuti</p>",
             "content_shadow": 0,
             "link_text": "",
             "link_url": "",
             "link_style": "link",
             "button_shadow": 0,
-            "text_position": "place-self-start-center text-center",
+            "text_position": "place-self-end text-end",
             "overlay_color": "#000000",
             "overlay_opacity": 0,
-            "gradient_overlay": "",
-            "mobile_padding_top": 30,
+            "gradient_overlay": "linear-gradient(136deg, rgba(10, 234, 237, 0) 47%, rgba(0, 0, 0, 0.69) 100%)",
+            "mobile_padding_top": 0,
             "mobile_padding_right": 0,
-            "mobile_padding_bottom": 0,
+            "mobile_padding_bottom": 20,
             "mobile_padding_left": 0,
-            "desktop_padding_top": 0,
-            "desktop_padding_right": 0,
-            "desktop_padding_bottom": 0,
+            "desktop_padding_top": 80,
+            "desktop_padding_right": 40,
+            "desktop_padding_bottom": 60,
             "desktop_padding_left": 0
           }
         }
       },
       "block_order": [
-        "image_npacCJ",
-        "video_PU8LBP"
+        "image_npacCJ"
       ],
       "name": "t:sections.media_grid.presets.media_grid.name",
       "settings": {
         "color_scheme": "",
         "section_hide_on_mobile": false,
         "section_hide_on_desktop": false,
-        "allow_transparent_header": true,
+        "allow_transparent_header": false,
         "separate_section_with_border": true,
         "desktop_row_height": 370,
         "mobile_row_height": 250,
@@ -143,39 +101,32 @@
         "content": ""
       }
     },
-    "rich_text_jqeaRX": {
+    "rich_text_3WT3jf": {
       "type": "rich-text",
       "blocks": {
-        "subheading_E3jJjB": {
-          "type": "subheading",
-          "settings": {
-            "text": "Guida sul taglio"
-          }
-        },
-        "heading_4K69tc": {
+        "heading_inYRRE": {
           "type": "heading",
           "settings": {
-            "text": "INTRODUZIONE",
+            "text": "TUTORIAL TAGLIO CINTURA",
             "heading_tag": "h1"
           }
         },
-        "richtext_RcGGja": {
-          "type": "richtext",
+        "video_TyTpnJ": {
+          "type": "video",
           "settings": {
-            "content": "<p>La cintura risulta troppo lunga?</p><p>Nessun problema perché l'abbiamo creata in modo che possa essere accorciata facilmente in 2 minuti</p><p>Se hai problemi con il taglio della tua cintura, premi il pulsante WhatsApp in basso a destra e chiedi aiuto ad un nostro assistente personale</p>"
+            "video": "shopify://files/videos/Nuovo video tutorial.mp4"
           }
         }
       },
       "block_order": [
-        "subheading_E3jJjB",
-        "heading_4K69tc",
-        "richtext_RcGGja"
+        "heading_inYRRE",
+        "video_TyTpnJ"
       ],
       "name": "t:sections.rich_text.presets.rich_text.name",
       "settings": {
         "color_scheme": "",
         "separate_section_with_border": false,
-        "content_width": "sm",
+        "content_width": "xs",
         "text_position": "center",
         "remove_vertical_spacing": false,
         "use_custom_section_spacing": true,
@@ -183,97 +134,365 @@
         "mobile_section_spacing_right": 20,
         "mobile_section_spacing_bottom": 40,
         "mobile_section_spacing_left": 20,
-        "desktop_section_spacing_top": 60,
-        "desktop_section_spacing_right": 20,
-        "desktop_section_spacing_bottom": 60,
-        "desktop_section_spacing_left": 20
+        "desktop_section_spacing_top": 40,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 40,
+        "desktop_section_spacing_left": 0
       }
     },
-    "scrollytelling_features_pNdGxK": {
-      "type": "scrollytelling-features",
+    "carosello_cUcKBH": {
+      "type": "carosello",
       "blocks": {
-        "feature_slide_qMTg6C": {
-          "type": "feature_slide",
+        "slide_HgT8Uw": {
+          "type": "slide",
           "settings": {
-            "image": "shopify://shop_images/Taglio_cintura_MOTIFINO_-_Step_1_73074149-73b9-4fb5-aef3-6248746e1667.png",
-            "image_fit": "contain",
-            "text_alignment": "center",
-            "mobile_text_padding": 20,
-            "title": "Misura e Taglia",
-            "heading_size": "h2",
-            "margin_bottom_heading": 16,
-            "description": "<p>Indossa la cintura e porta la metà della cremagliera (i dentini) in corrispondenza del bottone dei pantaloni. Posiziona l'altra estremità (quella dove viene inserita la fibbia) sopra e taglia esattamente in corrispondenza del bottone.</p><p>Taglia un po' di meno al primo taglio per sicurezza </p>",
-            "margin_bottom_desc": 24,
-            "btn_label": "",
-            "btn_link": "",
-            "button_style": "solid",
-            "margin_bottom_btn": 0
+            "color_scheme": "scheme-3",
+            "product": "",
+            "hide_on_desktop": false,
+            "hide_on_mobile": false,
+            "media_position": "above",
+            "image": "shopify://shop_images/2_e0650b63-cbf9-4580-8f5f-c29c90a5de54.jpg",
+            "image_link": "",
+            "focal_point": "center",
+            "text_alignment": "left",
+            "content_position": "place-self-end-start text-start",
+            "subheading": "",
+            "subheading_size": "h6",
+            "heading": "BUSINESS CARD",
+            "heading_size": "h3",
+            "text": "<p>Addio biglietti da visita cartacei. Ora potrai presentarti ai clienti, colleghi e fornitori con un'ottima presentazione</p>",
+            "show_product_title": true,
+            "show_product_price": true,
+            "show_savings_badge": false,
+            "saving_format": "money",
+            "saving_position": "right",
+            "saving_offset_block": 12,
+            "saving_offset_inline": 12,
+            "price_text": "",
+            "price_size": "h6",
+            "button_1_text": "Guarda il video di come funziona",
+            "button_1_link": "#popup-privilege",
+            "button_1_style": "link",
+            "button_2_text": "",
+            "button_2_link": "",
+            "button_2_style": "outline",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0,
+            "gradient_overlay": "linear-gradient(180deg, rgba(54, 54, 54, 0.2) 0%, rgba(4, 4, 4, 0.65) 100%)"
           }
         },
-        "feature_slide_hbXnDy": {
-          "type": "feature_slide",
+        "slide_hndNgU": {
+          "type": "slide",
           "settings": {
-            "image": "shopify://shop_images/Taglio_cintura_MOTIFINO_-_Step_2_0a92e1d3-a1a5-4838-813b-5b7b6e6a5dbe.png",
-            "image_fit": "contain",
-            "text_alignment": "center",
-            "mobile_text_padding": 20,
-            "title": "Inserisci la fibbia",
-            "heading_size": "h2",
-            "margin_bottom_heading": 16,
-            "description": "<p>Prendi l'estremità accorciata e inseriscila nello scomparto al di sotto della linguetta presente nella fibbia. Tenendo premuta la cintura contro la fibbia chiudi la linguetta facendo penetrare i denti nella pelle della cintura</p>",
-            "margin_bottom_desc": 24,
-            "btn_label": "",
-            "btn_link": "",
-            "button_style": "solid",
-            "margin_bottom_btn": 0
+            "color_scheme": "scheme-3",
+            "product": "",
+            "hide_on_desktop": false,
+            "hide_on_mobile": false,
+            "media_position": "above",
+            "image": "shopify://shop_images/3_739b1e62-8b60-4b94-aa84-b86b6fa8416f.jpg",
+            "image_link": "",
+            "focal_point": "center",
+            "text_alignment": "left",
+            "content_position": "place-self-end-start text-start",
+            "subheading": "",
+            "subheading_size": "h6",
+            "heading": "IL TUO PROFILO",
+            "heading_size": "h4",
+            "text": "<p>Ora basterà appoggiare la card al telefono dell'altra persona per condividere il tuo profilo con tutto ciò che vuoi</p>",
+            "show_product_title": true,
+            "show_product_price": true,
+            "show_savings_badge": false,
+            "saving_format": "money",
+            "saving_position": "right",
+            "saving_offset_block": 12,
+            "saving_offset_inline": 12,
+            "price_text": "",
+            "price_size": "h6",
+            "button_1_text": "",
+            "button_1_link": "",
+            "button_1_style": "link",
+            "button_2_text": "",
+            "button_2_link": "",
+            "button_2_style": "outline",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0,
+            "gradient_overlay": "linear-gradient(180deg, rgba(54, 54, 54, 0.2) 0%, rgba(4, 4, 4, 0.65) 100%)"
           }
         },
-        "feature_slide_w7fE7e": {
-          "type": "feature_slide",
+        "slide_JRDnYE": {
+          "type": "slide",
           "settings": {
-            "image": "shopify://shop_images/Taglio_cintura_MOTIFINO_-_Step_3_7bd92c50-82a7-49f1-8ffe-2ea816f98dfa.png",
-            "image_fit": "contain",
-            "text_alignment": "center",
-            "mobile_text_padding": 20,
-            "title": "Prova la cintura",
-            "heading_size": "h2",
-            "margin_bottom_heading": 16,
-            "description": "<p>Ora non rimane altro da fare se non indossare la cintura e vedere se il taglio fatto è abbastanza oppure bisogna accorciarla ulteriormente. Nel secondo caso ripetere il procedimento aprendo la linguetta della fibbia tramite il piccolo foro di apertura.</p>",
-            "margin_bottom_desc": 24,
-            "btn_label": "",
-            "btn_link": "",
-            "button_style": "solid",
-            "margin_bottom_btn": 0
+            "color_scheme": "scheme-3",
+            "product": "",
+            "hide_on_desktop": false,
+            "hide_on_mobile": false,
+            "media_position": "above",
+            "image": "shopify://shop_images/ijgwrgqeibie3fgbwribgw.jpg",
+            "image_link": "",
+            "focal_point": "center",
+            "text_alignment": "left",
+            "content_position": "place-self-end-start text-start",
+            "subheading": "",
+            "subheading_size": "h6",
+            "heading": "...TUTTO CIÒ CHE VUOI",
+            "heading_size": "h3",
+            "text": "<p>Pulsante che riporta alla tua chat Whatsapp, foto e video, cataloghi, menù, links e tutti i tuoi dati. Tutto a portata di mano in un istante </p>",
+            "show_product_title": true,
+            "show_product_price": true,
+            "show_savings_badge": false,
+            "saving_format": "money",
+            "saving_position": "right",
+            "saving_offset_block": 12,
+            "saving_offset_inline": 12,
+            "price_text": "",
+            "price_size": "h6",
+            "button_1_text": "",
+            "button_1_link": "",
+            "button_1_style": "link",
+            "button_2_text": "",
+            "button_2_link": "",
+            "button_2_style": "outline",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0,
+            "gradient_overlay": "linear-gradient(180deg, rgba(54, 54, 54, 0.2) 0%, rgba(4, 4, 4, 0.65) 100%)"
+          }
+        },
+        "slide_hTbyrk": {
+          "type": "slide",
+          "settings": {
+            "color_scheme": "scheme-3",
+            "product": "",
+            "hide_on_desktop": false,
+            "hide_on_mobile": false,
+            "media_position": "above",
+            "image": "shopify://shop_images/4_e4b140b0-567c-449b-9331-55813a8253fb.jpg",
+            "image_link": "",
+            "focal_point": "center",
+            "text_alignment": "left",
+            "content_position": "place-self-end-start text-start",
+            "subheading": "",
+            "subheading_size": "h6",
+            "heading": "IL MONDO MOTIFINO",
+            "heading_size": "h3",
+            "text": "<p>Zero costi e solo per voi. Gestisci ordini e garanzie, ottieni punti, sconti a vita e tanto altro sull'app a voi dedicata. Acquista una cintura ed entra nella community!</p>",
+            "show_product_title": true,
+            "show_product_price": true,
+            "show_savings_badge": false,
+            "saving_format": "money",
+            "saving_position": "right",
+            "saving_offset_block": 12,
+            "saving_offset_inline": 12,
+            "price_text": "",
+            "price_size": "h6",
+            "button_1_text": "",
+            "button_1_link": "",
+            "button_1_style": "link",
+            "button_2_text": "",
+            "button_2_link": "",
+            "button_2_style": "outline",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0,
+            "gradient_overlay": "linear-gradient(180deg, rgba(54, 54, 54, 0.2) 0%, rgba(4, 4, 4, 0.65) 100%)"
           }
         }
       },
       "block_order": [
-        "feature_slide_qMTg6C",
-        "feature_slide_hbXnDy",
-        "feature_slide_w7fE7e"
+        "slide_HgT8Uw",
+        "slide_hndNgU",
+        "slide_JRDnYE",
+        "slide_hTbyrk"
       ],
-      "name": "Sticky Scrollytelling",
+      "name": "Carosello",
       "settings": {
-        "color_scheme": "",
-        "use_custom_section_spacing": false,
-        "mobile_section_spacing_top": 0,
-        "mobile_section_spacing_right": 0,
+        "color_scheme": "scheme-3",
+        "text_layout": "under",
+        "image_aspect_ratio": "auto",
+        "custom_image_height": 400,
+        "stack_mobile": false,
+        "desktop_slides_visible": 4,
+        "mobile_slide_width": 100,
+        "heading_alignment": "center",
+        "subheading": "",
+        "title": "SCOPRI LA NFC CARD IN OMAGGIO",
+        "content": "",
+        "show_navigation": true,
+        "navigation_style": "side_arrows_minimal",
+        "navigation_background": "#6b4f2a",
+        "navigation_text": "#ffffff",
+        "saving_font_size": 13,
+        "saving_background": "#c0392b",
+        "saving_text_color": "#ffffff",
+        "separate_section_with_border": true,
+        "padding_top": 36,
+        "padding_bottom": 12,
+        "desktop_padding_horizontal": 0,
+        "slide_gap": 16,
+        "slide_media_inner_padding": 0,
+        "slide_content_inner_padding": 14,
+        "slide_inner_gap": 0,
+        "media_border_radius": 12
+      }
+    },
+    "rich_text_meehAy": {
+      "type": "rich-text",
+      "blocks": {
+        "subheading_bFUKha": {
+          "type": "subheading",
+          "settings": {
+            "text": "Scaricala subito"
+          }
+        },
+        "heading_3N8LdU": {
+          "type": "heading",
+          "settings": {
+            "text": "APPLICAZIONE MOTIFINO",
+            "heading_tag": "h1"
+          }
+        },
+        "richtext_BMxj3x": {
+          "type": "richtext",
+          "settings": {
+            "content": "<p>Sfrutta il 100% del tuo acquisto e scarica l'applicazione sbloccando il tuo biglietto da visita digitale e il tuo sconto a vita.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "subheading_bFUKha",
+        "heading_3N8LdU",
+        "richtext_BMxj3x"
+      ],
+      "name": "t:sections.rich_text.presets.rich_text.name",
+      "settings": {
+        "color_scheme": "scheme-d1e6cd7b-3e71-4141-bf7b-fa5ddaf02c90",
+        "separate_section_with_border": true,
+        "content_width": "sm",
+        "text_position": "center",
+        "remove_vertical_spacing": false,
+        "use_custom_section_spacing": true,
+        "mobile_section_spacing_top": 40,
+        "mobile_section_spacing_right": 20,
         "mobile_section_spacing_bottom": 0,
-        "mobile_section_spacing_left": 0,
+        "mobile_section_spacing_left": 20,
+        "desktop_section_spacing_top": 50,
+        "desktop_section_spacing_right": 120,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 120
+      }
+    },
+    "logo_list_Yg3UcW": {
+      "type": "logo-list",
+      "blocks": {
+        "logo_DgEQYx": {
+          "type": "logo",
+          "settings": {
+            "logo": "shopify://shop_images/Pulsante_Scarica_da_App_Store_Apple.png",
+            "logo_width": 170,
+            "link": "https://apps.apple.com/us/app/motifino/id6764758087"
+          }
+        },
+        "logo_BnQPrD": {
+          "type": "logo",
+          "settings": {
+            "logo": "shopify://shop_images/Pulsante_Scarica_da_Google_Play_store.png",
+            "logo_width": 170,
+            "link": "https://play.google.com/store/apps/details?id=com.softbuilders.motifinoapp"
+          }
+        }
+      },
+      "block_order": [
+        "logo_DgEQYx",
+        "logo_BnQPrD"
+      ],
+      "name": "t:sections.logo_list.presets.logo_list.name",
+      "settings": {
+        "color_scheme": "scheme-d1e6cd7b-3e71-4141-bf7b-fa5ddaf02c90",
+        "separate_section_with_border": false,
+        "use_custom_section_spacing": true,
+        "mobile_section_spacing_top": 0,
+        "mobile_section_spacing_right": 10,
+        "mobile_section_spacing_bottom": 0,
+        "mobile_section_spacing_left": 10,
         "desktop_section_spacing_top": 0,
         "desktop_section_spacing_right": 0,
         "desktop_section_spacing_bottom": 0,
         "desktop_section_spacing_left": 0,
-        "zoom_scale": 100,
-        "float_intensity": 10,
-        "text_spacing": "sm"
+        "subheading": "",
+        "title": "",
+        "stack_on_mobile": true,
+        "items_per_row": 5,
+        "logo_item_background": "",
+        "logo_item_border": ""
+      }
+    },
+    "cart_belt_suggestions_pqUDzz": {
+      "type": "cart-belt-suggestions",
+      "blocks": {
+        "collection_b8dpQp": {
+          "type": "collection",
+          "settings": {
+            "collection": "tutte-le-cinture-holess",
+            "products_count": 8,
+            "title": "Acquista altre cinture e risparmia"
+          }
+        },
+        "pricing_rule_KLftft": {
+          "type": "pricing_rule",
+          "settings": {
+            "rule_product_type": "Combinazione cintura",
+            "rule_position": 2,
+            "rule_discount": "10"
+          }
+        },
+        "pricing_rule_4W6x4V": {
+          "type": "pricing_rule",
+          "settings": {
+            "rule_product_type": "Combinazione cintura",
+            "rule_position": 3,
+            "rule_discount": "20"
+          }
+        }
+      },
+      "block_order": [
+        "collection_b8dpQp",
+        "pricing_rule_KLftft",
+        "pricing_rule_4W6x4V"
+      ],
+      "name": "Collection Carousel",
+      "settings": {
+        "color_scheme": "",
+        "subheading": "Le più acquistate",
+        "button_text": "Aggiungi al Carrello",
+        "use_shopify_price": false,
+        "products_per_row_mobile": 1.4,
+        "products_per_row_desktop": 4,
+        "max_width": 1100,
+        "media_ratio": "1 / 1",
+        "media_height": 300,
+        "card_radius": 8,
+        "pill_font_size": 12,
+        "pill_padding_block": 4,
+        "pill_padding_inline": 11,
+        "pill_height": 0,
+        "pill_width": 0,
+        "padding_mobile": 32,
+        "padding_desktop": 48,
+        "link_text": "Vedi tutti i colori",
+        "link_url": "shopify://collections/tutte-le-cinture-holess",
+        "link_style": "link",
+        "media_bg": "#f1f1f1",
+        "button_bg": "#111111",
+        "button_text_color": "#ffffff",
+        "compare_color": "#e02b2b"
       }
     }
   },
   "order": [
     "main",
     "media_grid_LwMVWX",
-    "rich_text_jqeaRX",
-    "scrollytelling_features_pNdGxK"
+    "rich_text_3WT3jf",
+    "carosello_cUcKBH",
+    "rich_text_meehAy",
+    "logo_list_Yg3UcW",
+    "cart_belt_suggestions_pqUDzz"
   ]
 }

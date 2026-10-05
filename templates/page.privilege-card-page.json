@@ -1,0 +1,523 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "color_scheme": "",
+        "use_custom_section_spacing": false,
+        "mobile_section_spacing_top": 0,
+        "mobile_section_spacing_right": 0,
+        "mobile_section_spacing_bottom": 0,
+        "mobile_section_spacing_left": 0,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 0,
+        "show_title": true,
+        "page_width": "xs"
+      }
+    },
+    "rich_text_EwUm8x": {
+      "type": "rich-text",
+      "blocks": {
+        "subheading_hJ3qHy": {
+          "type": "subheading",
+          "settings": {
+            "text": "PRIVILEGE CARD"
+          }
+        },
+        "heading_tDDWLe": {
+          "type": "heading",
+          "settings": {
+            "text": "I TUOI DETTAGLI SEMPRE CON TE",
+            "heading_tag": "h1"
+          }
+        },
+        "richtext_VnazgF": {
+          "type": "richtext",
+          "settings": {
+            "content": "<p>Dati di contatto e fatturazione, file e link di ogni tipo. Condividi ogni tua informazione appoggiandola ad un telefono.</p>"
+          }
+        },
+        "button_GYeaMM": {
+          "type": "button",
+          "settings": {
+            "style": "solid",
+            "text": "Guarda il video",
+            "url": "#popup-privilege",
+            "background": "",
+            "text_color": ""
+          }
+        },
+        "image_prVEeP": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/Privilege_card_black.png",
+            "width_mode": "custom",
+            "max_width": 470,
+            "mobile_max_width": 400
+          }
+        }
+      },
+      "block_order": [
+        "subheading_hJ3qHy",
+        "heading_tDDWLe",
+        "richtext_VnazgF",
+        "button_GYeaMM",
+        "image_prVEeP"
+      ],
+      "name": "t:sections.rich_text.presets.rich_text.name",
+      "settings": {
+        "color_scheme": "scheme-3",
+        "separate_section_with_border": false,
+        "content_width": "sm",
+        "text_position": "center",
+        "remove_vertical_spacing": true,
+        "use_custom_section_spacing": true,
+        "mobile_section_spacing_top": 16,
+        "mobile_section_spacing_right": 20,
+        "mobile_section_spacing_bottom": 0,
+        "mobile_section_spacing_left": 20,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 0
+      }
+    },
+    "rich_text_zzzL3i": {
+      "type": "rich-text",
+      "blocks": {
+        "subheading_B7wPPE": {
+          "type": "subheading",
+          "settings": {
+            "text": "UN OTTIMA PRESENTAZIONE"
+          }
+        },
+        "heading_Hf8zpq": {
+          "type": "heading",
+          "settings": {
+            "text": "VELOCE E COMODA",
+            "heading_tag": "h1"
+          }
+        },
+        "richtext_ktnMiR": {
+          "type": "richtext",
+          "settings": {
+            "content": "<p>Rispondi alle richieste di informazione con un tap, offrendo una sensazione di professionalità e organizzazione.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "subheading_B7wPPE",
+        "heading_Hf8zpq",
+        "richtext_ktnMiR"
+      ],
+      "name": "t:sections.rich_text.presets.rich_text.name",
+      "settings": {
+        "color_scheme": "scheme-3",
+        "separate_section_with_border": false,
+        "content_width": "sm",
+        "text_position": "start",
+        "remove_vertical_spacing": true,
+        "use_custom_section_spacing": true,
+        "mobile_section_spacing_top": 16,
+        "mobile_section_spacing_right": 20,
+        "mobile_section_spacing_bottom": 0,
+        "mobile_section_spacing_left": 20,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 0
+      }
+    },
+    "rich_text_cKizhY": {
+      "type": "rich-text",
+      "blocks": {
+        "image_BhkyiK": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/Biglietto_da_visita_digitale.webp",
+            "width_mode": "custom",
+            "max_width": 470,
+            "mobile_max_width": 400
+          }
+        }
+      },
+      "block_order": [
+        "image_BhkyiK"
+      ],
+      "name": "t:sections.rich_text.presets.rich_text.name",
+      "settings": {
+        "color_scheme": "scheme-3",
+        "separate_section_with_border": false,
+        "content_width": "sm",
+        "text_position": "center",
+        "remove_vertical_spacing": true,
+        "use_custom_section_spacing": true,
+        "mobile_section_spacing_top": 0,
+        "mobile_section_spacing_right": 0,
+        "mobile_section_spacing_bottom": 0,
+        "mobile_section_spacing_left": 0,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 0
+      }
+    },
+    "rich_text_JUehTw": {
+      "type": "rich-text",
+      "blocks": {
+        "subheading_fFPQQm": {
+          "type": "subheading",
+          "settings": {
+            "text": "OGNI SINGOLA INFORMAZIONE"
+          }
+        },
+        "heading_HFKwJQ": {
+          "type": "heading",
+          "settings": {
+            "text": "PUÒ ESSERE SALVATA",
+            "heading_tag": "h1"
+          }
+        },
+        "richtext_gJdALw": {
+          "type": "richtext",
+          "settings": {
+            "content": "<p>Aggiungi ai contatti, salva i dati di fatturazione e scarica i file. Ogni dettaglio potrà essere salvato dalla persona che hai davanti.&nbsp;</p>"
+          }
+        }
+      },
+      "block_order": [
+        "subheading_fFPQQm",
+        "heading_HFKwJQ",
+        "richtext_gJdALw"
+      ],
+      "name": "t:sections.rich_text.presets.rich_text.name",
+      "settings": {
+        "color_scheme": "scheme-3",
+        "separate_section_with_border": false,
+        "content_width": "sm",
+        "text_position": "center",
+        "remove_vertical_spacing": true,
+        "use_custom_section_spacing": true,
+        "mobile_section_spacing_top": 16,
+        "mobile_section_spacing_right": 20,
+        "mobile_section_spacing_bottom": 0,
+        "mobile_section_spacing_left": 20,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 0
+      }
+    },
+    "rich_text_wK4d4k": {
+      "type": "rich-text",
+      "blocks": {
+        "image_gPYG8R": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/3.webp",
+            "width_mode": "custom",
+            "max_width": 470,
+            "mobile_max_width": 400
+          }
+        }
+      },
+      "block_order": [
+        "image_gPYG8R"
+      ],
+      "name": "t:sections.rich_text.presets.rich_text.name",
+      "settings": {
+        "color_scheme": "scheme-3",
+        "separate_section_with_border": false,
+        "content_width": "sm",
+        "text_position": "center",
+        "remove_vertical_spacing": true,
+        "use_custom_section_spacing": true,
+        "mobile_section_spacing_top": 0,
+        "mobile_section_spacing_right": 0,
+        "mobile_section_spacing_bottom": 0,
+        "mobile_section_spacing_left": 0,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 0
+      }
+    },
+    "rich_text_E9pr3T": {
+      "type": "rich-text",
+      "blocks": {
+        "subheading_jGwWHe": {
+          "type": "subheading",
+          "settings": {
+            "text": "GESTISCI I TUOI PROFILI"
+          }
+        },
+        "heading_AwT64D": {
+          "type": "heading",
+          "settings": {
+            "text": "TUTTO GRATUITO",
+            "heading_tag": "h1"
+          }
+        },
+        "richtext_8iAPdw": {
+          "type": "richtext",
+          "settings": {
+            "content": "<p>Crea e modifica i tuoi profili dall'app motifino in modo totalmente gratuito. Goditi il tuo sconto a vita e inizia subito a guadagnare crediti condividendo il tuo profilo</p>"
+          }
+        }
+      },
+      "block_order": [
+        "subheading_jGwWHe",
+        "heading_AwT64D",
+        "richtext_8iAPdw"
+      ],
+      "name": "t:sections.rich_text.presets.rich_text.name",
+      "settings": {
+        "color_scheme": "scheme-3",
+        "separate_section_with_border": false,
+        "content_width": "sm",
+        "text_position": "end",
+        "remove_vertical_spacing": true,
+        "use_custom_section_spacing": true,
+        "mobile_section_spacing_top": 16,
+        "mobile_section_spacing_right": 20,
+        "mobile_section_spacing_bottom": 0,
+        "mobile_section_spacing_left": 20,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 0
+      }
+    },
+    "rich_text_P4UmGg": {
+      "type": "rich-text",
+      "blocks": {
+        "image_pCfeAT": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/Crediti_applicazione.webp",
+            "width_mode": "custom",
+            "max_width": 470,
+            "mobile_max_width": 400
+          }
+        }
+      },
+      "block_order": [
+        "image_pCfeAT"
+      ],
+      "name": "t:sections.rich_text.presets.rich_text.name",
+      "settings": {
+        "color_scheme": "scheme-3",
+        "separate_section_with_border": false,
+        "content_width": "sm",
+        "text_position": "center",
+        "remove_vertical_spacing": true,
+        "use_custom_section_spacing": true,
+        "mobile_section_spacing_top": 0,
+        "mobile_section_spacing_right": 0,
+        "mobile_section_spacing_bottom": 0,
+        "mobile_section_spacing_left": 0,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 0
+      }
+    },
+    "rich_text_HyHGy7": {
+      "type": "rich-text",
+      "blocks": {
+        "subheading_dxCUJG": {
+          "type": "subheading",
+          "settings": {
+            "text": "CREA LA TUA COMMUNITY"
+          }
+        },
+        "heading_6TkgQL": {
+          "type": "heading",
+          "settings": {
+            "text": "SBLOCCA LE ALTRE MEMBERSHIP&nbsp;",
+            "heading_tag": "h1"
+          }
+        },
+        "richtext_V8jRdj": {
+          "type": "richtext",
+          "settings": {
+            "content": "<p>Fai conoscere il mondo Motifino a chiunque condividendo il tuo sconto a vita. Riceverai crediti creando la tua community e potendo ricevere le Privilege Card Silver e Gold.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "subheading_dxCUJG",
+        "heading_6TkgQL",
+        "richtext_V8jRdj"
+      ],
+      "name": "t:sections.rich_text.presets.rich_text.name",
+      "settings": {
+        "color_scheme": "scheme-3",
+        "separate_section_with_border": false,
+        "content_width": "sm",
+        "text_position": "start",
+        "remove_vertical_spacing": true,
+        "use_custom_section_spacing": true,
+        "mobile_section_spacing_top": 16,
+        "mobile_section_spacing_right": 20,
+        "mobile_section_spacing_bottom": 0,
+        "mobile_section_spacing_left": 20,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 0
+      }
+    },
+    "rich_text_tQiiMb": {
+      "type": "rich-text",
+      "blocks": {
+        "image_gjNxyq": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/Membership_applicazione.webp",
+            "width_mode": "custom",
+            "max_width": 470,
+            "mobile_max_width": 400
+          }
+        }
+      },
+      "block_order": [
+        "image_gjNxyq"
+      ],
+      "name": "t:sections.rich_text.presets.rich_text.name",
+      "settings": {
+        "color_scheme": "scheme-3",
+        "separate_section_with_border": false,
+        "content_width": "sm",
+        "text_position": "center",
+        "remove_vertical_spacing": true,
+        "use_custom_section_spacing": true,
+        "mobile_section_spacing_top": 0,
+        "mobile_section_spacing_right": 0,
+        "mobile_section_spacing_bottom": 0,
+        "mobile_section_spacing_left": 0,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 0
+      }
+    },
+    "rich_text_BPcnh6": {
+      "type": "rich-text",
+      "blocks": {
+        "subheading_eRRCG8": {
+          "type": "subheading",
+          "settings": {
+            "text": "Crea subito il tuo profilo"
+          }
+        },
+        "heading_fB9yxN": {
+          "type": "heading",
+          "settings": {
+            "text": "APPLICAZIONE MOTIFINO",
+            "heading_tag": "h1"
+          }
+        },
+        "richtext_JKdzL9": {
+          "type": "richtext",
+          "settings": {
+            "content": "<p>Sfrutta il 100% del tuo acquisto e scarica l'applicazione sbloccando il tuo biglietto da visita digitale NFC e il tuo sconto a vita.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "subheading_eRRCG8",
+        "heading_fB9yxN",
+        "richtext_JKdzL9"
+      ],
+      "name": "t:sections.rich_text.presets.rich_text.name",
+      "settings": {
+        "color_scheme": "scheme-3",
+        "separate_section_with_border": false,
+        "content_width": "sm",
+        "text_position": "center",
+        "remove_vertical_spacing": false,
+        "use_custom_section_spacing": true,
+        "mobile_section_spacing_top": 10,
+        "mobile_section_spacing_right": 20,
+        "mobile_section_spacing_bottom": 0,
+        "mobile_section_spacing_left": 20,
+        "desktop_section_spacing_top": 50,
+        "desktop_section_spacing_right": 120,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 120
+      }
+    },
+    "logo_list_YwijcB": {
+      "type": "logo-list",
+      "blocks": {
+        "logo_7j9AqV": {
+          "type": "logo",
+          "settings": {
+            "logo": "shopify://shop_images/4_254b7c01-904a-4230-b47a-af3abd1f7d8c.png",
+            "logo_width": 210,
+            "link": "https://apps.apple.com/us/app/motifino/id6764758087"
+          }
+        },
+        "logo_KCzd4j": {
+          "type": "logo",
+          "settings": {
+            "logo": "shopify://shop_images/3_655c9f47-54bd-44ce-aa0e-1b7d69225ead.png",
+            "logo_width": 210,
+            "link": "https://play.google.com/store/apps/details?id=com.softbuilders.motifinoapp"
+          }
+        }
+      },
+      "block_order": [
+        "logo_7j9AqV",
+        "logo_KCzd4j"
+      ],
+      "name": "t:sections.logo_list.presets.logo_list.name",
+      "settings": {
+        "color_scheme": "scheme-3",
+        "separate_section_with_border": false,
+        "use_custom_section_spacing": true,
+        "mobile_section_spacing_top": 0,
+        "mobile_section_spacing_right": 0,
+        "mobile_section_spacing_bottom": 20,
+        "mobile_section_spacing_left": 0,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 0,
+        "desktop_section_spacing_left": 0,
+        "subheading": "",
+        "title": "",
+        "stack_on_mobile": true,
+        "items_per_row": 3,
+        "logo_item_background": "",
+        "logo_item_border": ""
+      }
+    }
+  },
+  "order": [
+    "main",
+    "rich_text_EwUm8x",
+    "rich_text_zzzL3i",
+    "rich_text_cKizhY",
+    "rich_text_JUehTw",
+    "rich_text_wK4d4k",
+    "rich_text_E9pr3T",
+    "rich_text_P4UmGg",
+    "rich_text_HyHGy7",
+    "rich_text_tQiiMb",
+    "rich_text_BPcnh6",
+    "logo_list_YwijcB"
+  ]
+}

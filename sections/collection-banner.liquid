@@ -26,7 +26,18 @@
 
 {%- capture collection_content -%}
   {%- if section.settings.show_collection_title -%}
-    <h1 class="h1">{{ collection.title }}</h1>
+    {%- liquid
+      assign title_space_top = section.settings.title_space_top
+      if title_space_top == blank
+        assign title_space_top = 0
+      endif
+
+      assign title_space_bottom = section.settings.title_space_bottom
+      if title_space_bottom == blank
+        assign title_space_bottom = 0
+      endif
+    -%}
+    <h1 class="h1" style="margin-block: {{ title_space_top }}px {{ title_space_bottom }}px !important;">{{ collection.title }}</h1>
   {%- endif -%}
 
   {%- if section.settings.show_collection_description -%}
@@ -222,6 +233,28 @@
       "id": "show_collection_title",
       "label": "t:sections.collection_banner.show_collection_title",
       "default": true
+    },
+    {
+      "type": "range",
+      "min": -40,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "id": "title_space_top",
+      "label": "Space above title",
+      "default": 0,
+      "visible_if": "{{ section.settings.show_collection_title }}"
+    },
+    {
+      "type": "range",
+      "min": -40,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "id": "title_space_bottom",
+      "label": "Space below title",
+      "default": 0,
+      "visible_if": "{{ section.settings.show_collection_title }}"
     },
     {
       "type": "checkbox",

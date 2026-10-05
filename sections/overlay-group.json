@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "type": "custom.overlay",
   "name": "Overlay group",
@@ -45,64 +54,27 @@
     "global_popup_t64JBV": {
       "type": "global-popup",
       "blocks": {
-        "image_pfjf8y": {
-          "type": "image",
+        "video_QXCxxp": {
+          "type": "video",
           "settings": {
-            "image": "shopify://shop_images/Cintura_nera_con_fibbia_Mirror_indossata.jpg",
+            "video": "shopify://files/videos/Video finale spiegazione privilege card.mp4",
+            "video_url": "",
+            "autoplay": true,
+            "loop": true,
+            "controls": true,
             "width": 100,
             "radius": 8,
-            "alignment": "center"
-          }
-        },
-        "heading_LwgPax": {
-          "type": "heading",
-          "settings": {
-            "text": "Testing popup",
-            "size": 22,
-            "weight": "600",
-            "alignment": "center",
-            "color": ""
-          }
-        },
-        "text_dgnpVU": {
-          "type": "text",
-          "settings": {
-            "text": "<p>Hello World this is dummy popup</p>",
-            "size": 15,
-            "line_height": 1.5,
-            "alignment": "center",
-            "color": ""
-          }
-        },
-        "button_6qFtPc": {
-          "type": "button",
-          "settings": {
-            "label": "Scopri di più",
-            "link": "",
-            "new_tab": false,
-            "close_on_click": true,
-            "style": "filled",
-            "full_width": false,
-            "size": 15,
-            "padding_block": 13,
-            "padding_inline": 26,
-            "radius": 8,
-            "background": "#111111",
-            "text_color": "#ffffff",
             "alignment": "center"
           }
         }
       },
       "block_order": [
-        "image_pfjf8y",
-        "heading_LwgPax",
-        "text_dgnpVU",
-        "button_6qFtPc"
+        "video_QXCxxp"
       ],
-      "name": "Popup",
+      "name": "Popup Video Privilege card",
       "settings": {
-        "popup_name": "popup",
-        "auto_home": true,
+        "popup_name": "privilege",
+        "auto_home": false,
         "auto_product": false,
         "auto_collection": false,
         "auto_cart": false,
@@ -111,27 +83,83 @@
         "frequency": "never",
         "position": "center",
         "panel_width": 520,
-        "panel_width_mobile": 420,
-        "padding_top": 32,
-        "padding_bottom": 32,
-        "padding_left": 32,
-        "padding_right": 32,
-        "padding_top_mobile": 22,
-        "padding_bottom_mobile": 22,
-        "padding_left_mobile": 22,
-        "padding_right_mobile": 22,
+        "panel_width_mobile": 310,
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "padding_left": 0,
+        "padding_right": 0,
+        "padding_top_mobile": 0,
+        "padding_bottom_mobile": 0,
+        "padding_left_mobile": 0,
+        "padding_right_mobile": 0,
         "screen_padding": 20,
-        "panel_radius": 14,
-        "block_gap": 14,
+        "panel_radius": 8,
+        "block_gap": 8,
         "color_scheme": "",
         "panel_background": "",
         "panel_text_color": "",
         "backdrop_color": "#000000",
         "backdrop_opacity": 55,
         "show_close": true,
-        "close_style": "icon",
-        "close_icon_color": "",
-        "close_circle_color": "",
+        "close_style": "circle",
+        "close_icon_color": "#000000",
+        "close_circle_color": "#FFFFFF",
+        "close_on_backdrop": true
+      }
+    },
+    "global_popup_cNfEJF": {
+      "type": "global-popup",
+      "blocks": {
+        "video_qX8xVy": {
+          "type": "video",
+          "settings": {
+            "video": "shopify://files/videos/Nuovo video tutorial.mp4",
+            "video_url": "",
+            "autoplay": true,
+            "loop": true,
+            "controls": true,
+            "width": 100,
+            "radius": 8,
+            "alignment": "center"
+          }
+        }
+      },
+      "block_order": [
+        "video_qX8xVy"
+      ],
+      "name": "Popup Video Taglio cintura",
+      "settings": {
+        "popup_name": "taglio",
+        "auto_home": false,
+        "auto_product": false,
+        "auto_collection": false,
+        "auto_cart": false,
+        "auto_paths": "",
+        "delay": 3,
+        "frequency": "never",
+        "position": "center",
+        "panel_width": 520,
+        "panel_width_mobile": 310,
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "padding_left": 0,
+        "padding_right": 0,
+        "padding_top_mobile": 0,
+        "padding_bottom_mobile": 0,
+        "padding_left_mobile": 0,
+        "padding_right_mobile": 0,
+        "screen_padding": 20,
+        "panel_radius": 8,
+        "block_gap": 8,
+        "color_scheme": "",
+        "panel_background": "",
+        "panel_text_color": "",
+        "backdrop_color": "#000000",
+        "backdrop_opacity": 55,
+        "show_close": true,
+        "close_style": "circle",
+        "close_icon_color": "#000000",
+        "close_circle_color": "#FFFFFF",
         "close_on_backdrop": true
       }
     }
@@ -140,6 +168,7 @@
     "cart-drawer",
     "newsletter-popup",
     "privacy-banner",
-    "global_popup_t64JBV"
+    "global_popup_t64JBV",
+    "global_popup_cNfEJF"
   ]
 }

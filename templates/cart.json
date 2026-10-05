@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "belt_tier_bar": {
@@ -146,12 +155,18 @@
         "color_scheme": "scheme-1",
         "subheading": "Le più acquistate",
         "button_text": "Aggiungi al Carrello",
+        "use_shopify_price": false,
         "products_per_row_mobile": 1.6,
         "products_per_row_desktop": 5,
         "max_width": 1320,
         "media_ratio": "4 / 5",
         "media_height": 160,
         "card_radius": 8,
+        "pill_font_size": 12,
+        "pill_padding_block": 4,
+        "pill_padding_inline": 11,
+        "pill_height": 0,
+        "pill_width": 0,
         "padding_mobile": 18,
         "padding_desktop": 48,
         "link_text": "Vedi tutte le combinazioni",
@@ -178,6 +193,13 @@
           "settings": {
             "question": "Posso pagare alla consegna?",
             "answer": "<p>Certamente! Andando alla cassa lo troverai tra i metodi di pagamento. Non ci sono costi aggiuntivi.</p>"
+          }
+        },
+        "question_d4XXaW": {
+          "type": "question",
+          "settings": {
+            "question": "Cos'è la Privilege Card in omaggio?",
+            "answer": "<p>Scaricando la nostra applicazione da google play o apple store potrai collegare la tua Privilege Card NFC.<br/><br/>Essa ti permetterà di creare il tuo personale biglietto da visita digitale, inserendo indirizzi, numeri, email, pdf, immagini e molto altro.<br/><br/><a href=\"#popup-privilege\" title=\"#popup-privilege\">Guarda questo video -&gt;</a></p>"
           }
         },
         "question_PXmfqE": {
@@ -207,23 +229,16 @@
             "question": "Le scatole sono ben protette per la spedizione?",
             "answer": "<p>Assolutamente si!<br/>Abbiamo migliorato ulteriormente la consegna usando una seconda scatola di cartone molto spesso per proteggere la scatola regalo all'interno.<br/><br/>Ci teniamo che possiate dare i vostri regali senza nessun ammaccatura dovuta al corriere.</p>"
           }
-        },
-        "question_d4XXaW": {
-          "type": "question",
-          "settings": {
-            "question": "Cos'è la Privilege Card in omaggio?",
-            "answer": "<p>Scaricando la nostra applicazione da google play o apple store potrai collegare la tua Privilege Card NFC.<br/><br/>Essa ti permetterà di creare il tuo personale biglietto da visita digitale, inserendo indirizzi, numeri, email, pdf, immagini e molto altro.<br/><br/>Appoggiandola dietro ad un telefono qualunque verrà visualizzato il tuo biglietto da visita.<br/><br/>Ne riceverai una per ogni cintura acquistata, così potrai regalarle anche ai tuoi conoscenti. É un servizio totalmente gratuito solo per i clienti MOTIFINO!</p>"
-          }
         }
       },
       "block_order": [
         "question_ccnTJ8",
         "question_4ffNqc",
+        "question_d4XXaW",
         "question_PXmfqE",
         "question_LhWi7i",
         "question_dTQ3tD",
-        "question_bHXkhG",
-        "question_d4XXaW"
+        "question_bHXkhG"
       ],
       "name": "t:sections.faq.presets.faq.name",
       "settings": {
