@@ -128,10 +128,21 @@
     transform: none;
   }
 
+  {%- liquid
+    assign close_offset_block = section.settings.close_offset_block
+    if close_offset_block == blank
+      assign close_offset_block = 2
+    endif
+
+    assign close_offset_inline = section.settings.close_offset_inline
+    if close_offset_inline == blank
+      assign close_offset_inline = 2
+    endif
+  -%}
   #gpopup-{{ section.id }} .gpopup__close {
     position: absolute;
-    inset-block-start: 2px;
-    inset-inline-end: 2px;
+    inset-block-start: {{ close_offset_block }}px;
+    inset-inline-end: {{ close_offset_inline }}px;
     display: grid;
     place-items: center;
     width: 32px;
@@ -166,6 +177,18 @@
 
   #gpopup-{{ section.id }} .gpopup__text > *:last-child {
     margin-block-end: 0;
+  }
+
+  {%- comment -%}The media sits in an inline-block, which otherwise leaves a baseline gap underneath.{%- endcomment -%}
+  #gpopup-{{ section.id }} .gpopup__video,
+  #gpopup-{{ section.id }} .gpopup__image {
+    font-size: 0;
+    line-height: 0;
+  }
+
+  #gpopup-{{ section.id }} .gpopup__video > span,
+  #gpopup-{{ section.id }} .gpopup__image > span {
+    vertical-align: top;
   }
 
   #gpopup-{{ section.id }} .gpopup__video video,
@@ -859,6 +882,28 @@
       "id": "close_circle_color",
       "label": "Circle colour",
       "info": "Used only with the Circle style."
+    },
+    {
+      "type": "range",
+      "id": "close_offset_block",
+      "label": "Close button distance from the top",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 2,
+      "visible_if": "{{ section.settings.show_close }}"
+    },
+    {
+      "type": "range",
+      "id": "close_offset_inline",
+      "label": "Close button distance from the side",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 2,
+      "visible_if": "{{ section.settings.show_close }}"
     },
     {
       "type": "checkbox",

@@ -74,7 +74,7 @@
       inset-block-end: 10px;
       z-index: 1;
       color: #fff;
-      font-size: 13px;
+      font-size: {{ section.settings.caption_size | default: 13 }}px;
       font-weight: 600;
       text-align: start;
       text-shadow: 0 1px 6px rgba(0, 0, 0, 0.6);
@@ -315,6 +315,43 @@
     .shoppable-player.is-closing .shoppable-player__copy,
     .shoppable-player.is-closing .shoppable-player__icon { opacity: 0; transition: opacity 0.15s ease; }
 
+    .shoppable-player__gradient {
+      position: absolute;
+      inset-inline: 0;
+      inset-block-end: 0;
+      height: {{ section.settings.gradient_height | default: 35 }}%;
+      z-index: 2;
+      pointer-events: none;
+      background: linear-gradient(to top, rgba(0, 0, 0, {{ section.settings.gradient_opacity | default: 70 | divided_by: 100.0 }}), rgba(0, 0, 0, 0));
+    }
+
+    .shoppable-player__promo {
+      position: absolute;
+      inset-inline-start: 14px;
+      inset-inline-end: 70px;
+      inset-block-end: calc(16px + var(--shoppable-copy-h, 0px) + var(--shoppable-product-h, 0px));
+      z-index: 4;
+      display: block;
+      padding: 11px 16px;
+      border-radius: {{ section.settings.promo_radius | default: 10 }}px;
+      background: {{ section.settings.promo_background | default: '#ffffff' }};
+      color: {{ section.settings.promo_text_color | default: '#111111' }};
+      font-size: {{ section.settings.promo_size | default: 14 }}px;
+      font-weight: 700;
+      text-align: center;
+      text-decoration: none;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    .shoppable-player__promo[hidden] { display: none; }
+
+    .shoppable-player__promo.is-visible {
+      opacity: 1;
+      transform: none;
+    }
+
     .shoppable-player__copy {
       position: absolute;
       inset-inline-start: 14px;
@@ -328,13 +365,13 @@
     .shoppable-player__copy[hidden] { display: none; }
 
     .shoppable-player__copy-title {
-      font-size: 15px;
+      font-size: {{ section.settings.title_size | default: 15 }}px;
       font-weight: 700;
       margin-block-end: 2px;
     }
 
     .shoppable-player__copy-text {
-      font-size: 13px;
+      font-size: {{ section.settings.text_size | default: 13 }}px;
       line-height: 1.35;
     }
 
@@ -351,7 +388,7 @@
       border: none;
       background: none;
       color: #fff;
-      font-size: 12px;
+      font-size: {{ section.settings.more_size | default: 12 }}px;
       font-weight: 700;
       text-decoration: underline;
       cursor: pointer;
@@ -480,6 +517,8 @@
         "poster": {{ poster | image_url: width: 720 | json }},
         "id": {{ block.id | json }},
         "likes": {{ block.settings.likes_start | default: 0 }},
+        "shares": {{ block.settings.shares_start | default: 0 }},
+        "promo": {{ block.settings.promo_link | default: section.settings.promo_link | json }},
         "heading": {{ block.settings.heading | json }},
         "text": {{ block.settings.text | json }},
         "sources": [
@@ -545,6 +584,7 @@
         {%- if section.settings.show_share -%}
           <button type="button" class="shoppable-player__icon shoppable-player__share" data-share aria-label="{{ 'general.social.share' | t }}">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4 20-7Z"/></svg>
+            <span data-share-count></span>
           </button>
         {%- endif -%}
 
@@ -554,6 +594,12 @@
         </a>
       </div>
 
+
+      {%- if section.settings.show_gradient -%}
+        <div class="shoppable-player__gradient" aria-hidden="true"></div>
+      {%- endif -%}
+
+      <a class="shoppable-player__promo" data-promo href="#" hidden>{{ section.settings.promo_label }}</a>
 
       <div class="shoppable-player__toast" data-toast></div>
 
@@ -602,6 +648,9 @@
       var stage = player.querySelector('.shoppable-player__stage');
       var likeBtn = player.querySelector('[data-like]');
       var likeCount = player.querySelector('[data-like-count]');
+      var shareCount = player.querySelector('[data-share-count]');
+      var promoBtn = player.querySelector('[data-promo]');
+      var promoThreshold = {{ section.settings.promo_after | default: 30 }} / 100;
       var soundIcon = player.querySelector('[data-sound-icon]');
 
       var current = 0;
@@ -688,6 +737,25 @@
         likeCount.textContent = total > 0 ? total : '';
       }
 
+      /* Shares are stored the same way as likes: this browser only. */
+      var SHARE_KEY = 'motifino-video-shares';
+
+      function sharedMap() {
+        try { return JSON.parse(localStorage.getItem(SHARE_KEY)) || {}; } catch (e) { return {}; }
+      }
+
+      function addShare(id) {
+        var map = sharedMap();
+        map[id] = (map[id] || 0) + 1;
+        try { localStorage.setItem(SHARE_KEY, JSON.stringify(map)); } catch (e) {}
+      }
+
+      function renderShare(item) {
+        if (!shareCount) return;
+        var total = (item.shares || 0) + (sharedMap()[item.id] || 0);
+        shareCount.textContent = total > 0 ? total : '';
+      }
+
       function renderCopy(item) {
         var heading = item.heading || '';
         var text = item.text || '';
@@ -703,6 +771,24 @@
 
       function measureProduct() {
         stage.style.setProperty('--shoppable-product-h', productBox.hidden ? '0px' : productBox.offsetHeight + 'px');
+      }
+
+      function measureCopy() {
+        stage.style.setProperty('--shoppable-copy-h', copy.hidden ? '0px' : (copy.offsetHeight + 10) + 'px');
+      }
+
+      function renderPromo(item) {
+        if (!promoBtn) return;
+        promoBtn.classList.remove('is-visible');
+        var url = item.promo || '';
+        promoBtn.hidden = !url;
+        if (url) promoBtn.href = url;
+      }
+
+      function tickPromo() {
+        if (!promoBtn || promoBtn.hidden || !video.duration) return;
+        var passed = video.currentTime / video.duration >= promoThreshold;
+        promoBtn.classList.toggle('is-visible', passed);
       }
 
       function renderProduct(item) {
@@ -767,7 +853,10 @@
         paintBars(0);
         renderProduct(item);
         renderCopy(item);
+        measureCopy();
         renderLike(item);
+        renderShare(item);
+        renderPromo(item);
       }
 
       function open(index) {
@@ -794,6 +883,7 @@
 
       moreBtn.addEventListener('click', function () {
         var clamped = copyText.classList.toggle('is-clamped');
+        setTimeout(measureCopy, 0);
         moreBtn.textContent = clamped ? moreLabel : {{ section.settings.less_label | default: 'Mostra meno' | json }};
       });
 
@@ -826,6 +916,8 @@
         share.addEventListener('click', function () {
           var item = items[current];
           var url = (item.product && item.product.url) ? window.location.origin + item.product.url : window.location.href;
+          addShare(item.id);
+          renderShare(item);
           if (navigator.share) { navigator.share({ url: url }).catch(function () {}); return; }
           if (navigator.clipboard) {
             navigator.clipboard.writeText(url).then(function () {
@@ -837,6 +929,7 @@
 
       video.addEventListener('timeupdate', function () {
         if (video.duration) paintBars(video.currentTime / video.duration);
+        tickPromo();
       });
 
       video.addEventListener('ended', function () { show(current + 1, 'is-up'); });
@@ -1089,6 +1182,142 @@
     },
     {
       "type": "header",
+      "content": "Text size"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Title",
+      "min": 10,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "label": "Description",
+      "min": 10,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "range",
+      "id": "more_size",
+      "label": "Show more link",
+      "min": 9,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "caption_size",
+      "label": "Caption on the cards",
+      "min": 9,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "header",
+      "content": "Bottom gradient"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_gradient",
+      "label": "Show bottom gradient",
+      "info": "Darkens the foot of the video so the text stays readable.",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "gradient_height",
+      "label": "Gradient height",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 35,
+      "visible_if": "{{ section.settings.show_gradient }}"
+    },
+    {
+      "type": "range",
+      "id": "gradient_opacity",
+      "label": "Gradient opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 70,
+      "visible_if": "{{ section.settings.show_gradient }}"
+    },
+    {
+      "type": "header",
+      "content": "Promo button"
+    },
+    {
+      "type": "text",
+      "id": "promo_label",
+      "label": "Button label",
+      "default": "Scopri i set"
+    },
+    {
+      "type": "url",
+      "id": "promo_link",
+      "label": "Button link",
+      "info": "Each video can override this in its own settings. With no link the button never appears."
+    },
+    {
+      "type": "range",
+      "id": "promo_after",
+      "label": "Show after",
+      "info": "Share of the video played before the button fades in.",
+      "min": 0,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "promo_size",
+      "label": "Button font size",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "promo_radius",
+      "label": "Button corner radius",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "color",
+      "id": "promo_background",
+      "label": "Button background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "promo_text_color",
+      "label": "Button text",
+      "default": "#111111"
+    },
+    {
+      "type": "header",
       "content": "Buy button"
     },
     {
@@ -1202,6 +1431,18 @@
           "id": "likes_start",
           "label": "Starting likes",
           "default": 0
+        },
+        {
+          "type": "number",
+          "id": "shares_start",
+          "label": "Starting shares",
+          "default": 0
+        },
+        {
+          "type": "url",
+          "id": "promo_link",
+          "label": "Button link",
+          "info": "Overrides the section link for this video."
         }
       ]
     }
