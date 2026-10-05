@@ -147,7 +147,7 @@
                 for block in section.blocks
                   assign menu_item_downcase = block.settings.menu_item | strip | downcase
 
-                  if menu_item_downcase == link_title_downcase
+                  if menu_item_downcase == link_title_downcase and block.type == 'mega_menu'
                     assign mega_menu_block = block
                     break
                   endif
@@ -351,6 +351,7 @@
     {%- if sidebar_menu.links.size > 0 -%}
       {%- render 'header-sidebar',
         menu: sidebar_menu,
+        bottom_menu: section.settings.bottom_menu,
         color_scheme: section.settings.sidebar_color_scheme,
         show_dividers: section.settings.sidebar_show_dividers,
         open_second_level_menus: section.settings.sidebar_open_second_level_menus
@@ -360,6 +361,118 @@
 </height-observer>
 
 <style>
+  /* Blocks placed between the links inside the menu drawer. */
+  .header-sidebar__block {
+    min-width: 0;
+    padding-block: 1.25rem;
+  }
+
+  .header-sidebar__block--spacer,
+  .header-sidebar__block--divider {
+    padding-block: 0;
+  }
+
+  .header-sidebar__block-divider {
+    border-block-start: 1px solid rgb(var(--border-color));
+  }
+
+  .menu-carousel {
+    display: grid;
+    row-gap: .35rem;
+    min-width: 0;
+  }
+
+  .menu-carousel__heading {
+    margin: 0;
+  }
+
+  .menu-carousel__link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem;
+  }
+
+  /* The carousel runs to the drawer edge; clipping keeps the panel from scrolling sideways. */
+  .header-sidebar__main-panel .header-sidebar__scroller {
+    overflow-x: clip;
+  }
+
+  .menu-carousel__track {
+    display: flex;
+    min-width: 0;
+    gap: .5rem;
+    margin-block-start: .5rem;
+    margin-inline-end: calc(-1 * var(--drawer-body-padding-inline, 1.25rem));
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  .menu-carousel__track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .menu-carousel__item {
+    flex: 0 0 70%;
+    min-width: 0;
+    scroll-snap-align: start;
+  }
+
+  .menu-carousel__item .product-card__info,
+  .menu-carousel__item .product-card__info .v-stack {
+    text-align: start;
+    justify-items: start;
+    gap: .15rem;
+  }
+
+  .menu-carousel__item .product-card__info {
+    padding-block-start: .5rem;
+  }
+
+  .menu-carousel__item .product-card__info :is(.price-list, .rating-badge) {
+    justify-content: flex-start;
+  }
+
+  /* Price over the image: stack the card's figure and info in the same grid cell. */
+  .menu-carousel__item--overlay .product-card__figure,
+  .menu-carousel__item--overlay .product-card__info {
+    grid-area: 1 / 1;
+  }
+
+  .menu-carousel__item--overlay .product-card__info {
+    z-index: 1;
+    align-self: end;
+    justify-items: end;
+    text-align: end;
+    padding: 0 .5rem .5rem;
+  }
+
+  .menu-carousel__item--overlay .product-card__info .v-stack {
+    justify-items: end;
+  }
+
+  .menu-carousel__item--overlay .product-title {
+    display: none;
+  }
+
+  .header-sidebar__block-card {
+    display: grid;
+    row-gap: .75rem;
+  }
+
+  .header-sidebar__bottom-linklist {
+    display: grid;
+    row-gap: .25rem;
+    border-block-start: 1px solid rgb(var(--border-color));
+  }
+
+  /* The bottom menu and the selectors share one divider. */
+  .header-sidebar__bottom-linklist ~ .localization-selectors {
+    border-block-start-width: 0;
+    padding-block-start: .25rem;
+  }
+
   /* Filled with the brand gold, which reads on both the light and the dark header. */
   .header__cart-badge {
     position: absolute;
@@ -505,6 +618,12 @@
       "type": "link_list",
       "id": "sidebar_menu",
       "label": "t:sections.header.mobile_menu"
+    },
+    {
+      "type": "link_list",
+      "id": "bottom_menu",
+      "label": "Bottom menu",
+      "info": "Shown at the bottom of the menu drawer, above the currency selector. Top-level links only."
     },
     {
       "type": "link_list",
@@ -766,6 +885,148 @@
           "type": "url",
           "id": "image_2_link",
           "label": "t:global.text.link"
+        }
+      ]
+    },
+    {
+      "type": "carousel",
+      "name": "Carousel",
+      "settings": [
+        {
+          "type": "text",
+          "id": "menu_item",
+          "label": "Show after this menu item",
+          "info": "Type a top-level menu item exactly. Leave empty to show at the end of the menu."
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection"
+        },
+        {
+          "type": "range",
+          "id": "products_to_show",
+          "label": "Products to show",
+          "min": 2,
+          "max": 12,
+          "step": 1,
+          "default": 6
+        },
+        {
+          "type": "header",
+          "content": "Text"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "heading",
+          "label": "Heading"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "subheading",
+          "label": "Subheading",
+          "info": "Shown as a link row with an arrow, under the heading."
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link",
+          "info": "Defaults to the collection URL."
+        },
+        {
+          "type": "checkbox",
+          "id": "price_below_name",
+          "label": "Price below the product name",
+          "info": "Turn off to show the price over the image, bottom right.",
+          "default": true
+        }
+      ]
+    },
+    {
+      "type": "image_with_text",
+      "name": "Image with text",
+      "settings": [
+        {
+          "type": "text",
+          "id": "menu_item",
+          "label": "Show after this menu item",
+          "info": "Type a top-level menu item exactly. Leave empty to show at the end of the menu."
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "t:global.image.image"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "heading",
+          "label": "t:global.text.heading"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "text",
+          "label": "t:global.text.text"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "t:global.text.link"
+        }
+      ]
+    },
+    {
+      "type": "rich_text",
+      "name": "Rich text",
+      "settings": [
+        {
+          "type": "text",
+          "id": "menu_item",
+          "label": "Show after this menu item",
+          "info": "Type a top-level menu item exactly. Leave empty to show at the end of the menu."
+        },
+        {
+          "type": "inline_richtext",
+          "id": "heading",
+          "label": "t:global.text.heading"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "t:global.text.text"
+        }
+      ]
+    },
+    {
+      "type": "spacer",
+      "name": "Spacer",
+      "settings": [
+        {
+          "type": "text",
+          "id": "menu_item",
+          "label": "Show after this menu item",
+          "info": "Type a top-level menu item exactly. Leave empty to show at the end of the menu."
+        },
+        {
+          "type": "range",
+          "id": "height",
+          "label": "Height",
+          "min": 0,
+          "max": 100,
+          "step": 2,
+          "unit": "px",
+          "default": 24
+        }
+      ]
+    },
+    {
+      "type": "divider",
+      "name": "Divider",
+      "settings": [
+        {
+          "type": "text",
+          "id": "menu_item",
+          "label": "Show after this menu item",
+          "info": "Type a top-level menu item exactly. Leave empty to show at the end of the menu."
         }
       ]
     }

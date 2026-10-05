@@ -11,6 +11,7 @@
   ********************************************
 
   * menu: the menu to render
+  * bottom_menu: optional menu rendered at the bottom of the drawer, above the localization selectors
   * color_scheme: the color scheme to use for the sidebar
   * show_dividers: whether dividers are shown for the collapsible
   * open_second_level_menus: if true, second level dropdown are open by default
@@ -36,7 +37,7 @@
       <div part="panel-list">
         <slot name="main-panel"></slot>
 
-        {%- if menu.levels > 0 -%}
+        {%- if menu.levels > 0 or bottom_menu.levels > 0 -%}
           <slot name="collapsible-panel"></slot>
         {%- endif -%}
       </div>
@@ -69,7 +70,12 @@
               </a>
             {%- endif -%}
           </li>
+
+          {%- assign sidebar_link_title = link.title | strip | downcase -%}
+          {%- render 'header-sidebar-blocks', after_title: sidebar_link_title -%}
         {%- endfor -%}
+
+        {%- render 'header-sidebar-blocks', after_title: '' -%}
       </ul>
     </div>
 
@@ -83,8 +89,32 @@
       endif
     -%}
 
-    {%- if shop.customer_accounts_enabled or show_country_selector or show_locale_selector -%}
+    {%- if shop.customer_accounts_enabled or show_country_selector or show_locale_selector or bottom_menu.links.size > 0 -%}
       <div class="header-sidebar__footer">
+        {%- if bottom_menu.links.size > 0 -%}
+          <ul class="header-sidebar__linklist header-sidebar__bottom-linklist unstyled-list" role="list">
+            {%- for link in bottom_menu.links -%}
+              <li>
+                {%- if link.links.size > 0 -%}
+                  <button
+                    type="button"
+                    class="header-sidebar__linklist-button {% if section.settings.sidebar_text_font == 'heading' %}h6{% endif %}"
+                    aria-controls="header-bottom-panel-{{ forloop.index }}"
+                    aria-expanded="false"
+                  >
+                    {{- link.title -}}
+                    {%- render 'icon' with 'chevron-right', width: 12, direction_aware: true -%}
+                  </button>
+                {%- else -%}
+                  <a href="{{ link.url }}" class="header-sidebar__linklist-button {% if section.settings.sidebar_text_font == 'heading' %}h6{% endif %}">
+                    {{- link.title -}}
+                  </a>
+                {%- endif -%}
+              </li>
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+
         {%- if shop.customer_accounts_enabled -%}
           <shopify-account menu="{{ section.settings.customer_account_menu }}">
             <div slot="signed-out-avatar">
@@ -122,7 +152,7 @@
   </div>
 
   {%- comment -%}Panel 2 holds all the second levels{%- endcomment -%}
-  {%- if menu.levels > 0 -%}
+  {%- if menu.levels > 0 or bottom_menu.levels > 0 -%}
     <header-sidebar-collapsible-panel class="header-sidebar__collapsible-panel" slot="collapsible-panel">
       <div class="header-sidebar__scroller">
         {%- for link in menu.links -%}
@@ -176,7 +206,7 @@
                 for block in section.blocks
                   assign menu_item_downcase = block.settings.menu_item | strip | downcase
 
-                  if menu_item_downcase == link_title_downcase
+                  if menu_item_downcase == link_title_downcase and block.type == 'mega_menu'
                     assign mega_menu_block = block
                     break
                   endif
@@ -192,6 +222,48 @@
                   {{- mega_menu_content -}}
                 </div>
               {%- endif -%}
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+
+        {%- for link in bottom_menu.links -%}
+          {%- if link.links.size > 0 -%}
+            <div id="header-bottom-panel-{{ forloop.index }}" class="header-sidebar__sub-panel" hidden>
+              <button
+                type="button"
+                class="header-sidebar__back-button link-faded {% if show_dividers %}is-divided{% endif %} text-with-icon {% if section.settings.sidebar_text_font == 'heading' %}h6{% endif %} md:hidden"
+                data-action="close-panel"
+              >
+                {%- render 'icon' with 'chevron-left', width: 12, direction_aware: true -%}
+                {{- link.title -}}
+              </button>
+
+              <ul class="header-sidebar__linklist {% if show_dividers %}divide-y{% endif %} unstyled-list" role="list">
+                {%- for sub_link in link.links -%}
+                  <li>
+                    {%- if sub_link.links.size > 0 -%}
+                      <accordion-disclosure>
+                        <details class="accordion__disclosure group" {% if open_second_level_menus %}open{% endif %}>
+                          <summary class="header-sidebar__linklist-button {% if section.settings.sidebar_text_font == 'heading' %}h6{% endif %}">
+                            {{- sub_link.title -}}
+                            <span class="animated-plus group-expanded:rotate" aria-hidden="true"></span>
+                          </summary>
+
+                          <div class="header-sidebar__nested-linklist">
+                            {%- for sub_sub_link in sub_link.links -%}
+                              <a href="{{ sub_sub_link.url }}" class="link-faded-reverse">{{ sub_sub_link.title }}</a>
+                            {%- endfor -%}
+                          </div>
+                        </details>
+                      </accordion-disclosure>
+                    {%- else -%}
+                      <a href="{{ sub_link.url }}" class="header-sidebar__linklist-button {% if section.settings.sidebar_text_font == 'heading' %}h6{% endif %}">
+                        {{- sub_link.title -}}
+                      </a>
+                    {%- endif -%}
+                  </li>
+                {%- endfor -%}
+              </ul>
             </div>
           {%- endif -%}
         {%- endfor -%}

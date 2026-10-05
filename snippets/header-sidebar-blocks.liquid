@@ -1,0 +1,68 @@
+{%- comment -%}
+  ----------------------------------------------------------------------------------------------------------------------
+  HEADER SIDEBAR BLOCKS COMPONENT
+  ----------------------------------------------------------------------------------------------------------------------
+
+  Render the header blocks that are positioned after a given menu item inside the drawer.
+
+  ********************************************
+  Supported variables
+  ********************************************
+
+  * after_title: downcased title of the menu item the blocks follow. Blank renders the blocks that have no menu item set.
+{%- endcomment -%}
+
+{%- for menu_block in section.blocks -%}
+  {%- if menu_block.type == 'mega_menu' -%}
+    {%- continue -%}
+  {%- endif -%}
+
+  {%- assign block_after = menu_block.settings.menu_item | strip | downcase -%}
+
+  {%- if block_after == after_title -%}
+    <li class="header-sidebar__block header-sidebar__block--{{ menu_block.type }}" {{ menu_block.shopify_attributes }}>
+      {%- case menu_block.type -%}
+        {%- when 'carousel' -%}
+          {%- render 'mega-menu-carousel', block: menu_block -%}
+
+        {%- when 'image_with_text' -%}
+          <a class="header-sidebar__block-card group" {% if menu_block.settings.link != blank %}href="{{ menu_block.settings.link }}"{% endif %}>
+            {%- if menu_block.settings.image != blank -%}
+              <div class="overflow-hidden">
+                {{- menu_block.settings.image | image_url: width: 630 | image_tag: loading: 'lazy', sizes: '315px', widths: '315,630', class: 'zoom-image group-hover:zoom' -}}
+              </div>
+            {%- endif -%}
+
+            {%- if menu_block.settings.heading != blank or menu_block.settings.text != blank -%}
+              <div class="v-stack gap-1">
+                {%- if menu_block.settings.heading != blank -%}
+                  <p class="h6">{{ menu_block.settings.heading }}</p>
+                {%- endif -%}
+
+                {%- if menu_block.settings.text != blank -%}
+                  <p class="text-sm text-subdued">{{ menu_block.settings.text }}</p>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+          </a>
+
+        {%- when 'rich_text' -%}
+          <div class="v-stack gap-2">
+            {%- if menu_block.settings.heading != blank -%}
+              <p class="h6">{{ menu_block.settings.heading }}</p>
+            {%- endif -%}
+
+            {%- if menu_block.settings.text != blank -%}
+              <div class="prose text-sm">{{ menu_block.settings.text }}</div>
+            {%- endif -%}
+          </div>
+
+        {%- when 'spacer' -%}
+          <div style="height: {{ menu_block.settings.height | default: 24 }}px;"></div>
+
+        {%- when 'divider' -%}
+          <div class="header-sidebar__block-divider"></div>
+      {%- endcase -%}
+    </li>
+  {%- endif -%}
+{%- endfor -%}

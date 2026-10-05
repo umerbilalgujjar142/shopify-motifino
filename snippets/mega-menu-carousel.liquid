@@ -1,0 +1,42 @@
+{%- comment -%}
+  ----------------------------------------------------------------------------------------------------------------------
+  MENU CAROUSEL COMPONENT
+  ----------------------------------------------------------------------------------------------------------------------
+
+  Render a heading, an optional link row and a horizontal row of products inside the menu drawer.
+
+  ********************************************
+  Supported variables
+  ********************************************
+
+  * block: the carousel block holding the collection and the text settings
+{%- endcomment -%}
+
+{%- liquid
+  assign carousel_collection = collections[block.settings.collection]
+  assign products_to_show = block.settings.products_to_show | default: 6
+  assign carousel_link = block.settings.link | default: carousel_collection.url
+-%}
+
+<div class="menu-carousel">
+  {%- if block.settings.heading != blank -%}
+    <p class="menu-carousel__heading h5">{{ block.settings.heading }}</p>
+  {%- endif -%}
+
+  {%- if block.settings.subheading != blank -%}
+    <a href="{{ carousel_link }}" class="menu-carousel__link link-faded">
+      {{- block.settings.subheading -}}
+      {%- render 'icon' with 'chevron-right', width: 12, direction_aware: true -%}
+    </a>
+  {%- endif -%}
+
+  {%- if carousel_collection.products.size > 0 -%}
+    <div class="menu-carousel__track">
+      {%- for product in carousel_collection.products limit: products_to_show -%}
+        <div class="menu-carousel__item {% if block.settings.price_below_name == false %}menu-carousel__item--overlay{% endif %}">
+          {%- render 'product-card', product: product, position: forloop.index, show_quick_buy: false -%}
+        </div>
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+</div>
