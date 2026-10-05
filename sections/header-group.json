@@ -109,6 +109,8 @@
         "bottom_menu": "header-bottom-menu",
         "sidebar_link_space": 10,
         "sidebar_selector_space": 0,
+        "drawer_close_space_above": 30,
+        "drawer_close_space_below": 0,
         "drawer_footer_padding": 12,
         "customer_account_menu": "customer-account-main-menu",
         "menu_open_trigger": "hover",

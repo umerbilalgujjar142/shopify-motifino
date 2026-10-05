@@ -489,7 +489,32 @@
     if drawer_footer_padding == blank
       assign drawer_footer_padding = 20
     endif
+
+    assign close_space_above = section.settings.drawer_close_space_above
+    if close_space_above == blank
+      assign close_space_above = 32
+    endif
+
+    assign close_space_below = section.settings.drawer_close_space_below
+    if close_space_below == blank
+      assign close_space_below = 32
+    endif
+
+    assign drawer_footer_fade = section.settings.drawer_footer_fade
+    if drawer_footer_fade == blank
+      assign drawer_footer_fade = 40
+    endif
   -%}
+
+  #sidebar-menu .header-sidebar__footer:before {
+    height: {{ drawer_footer_fade }}px;
+  }
+
+  /* The theme forces a 5rem bar, which is what spaces the close icon rather than its padding. */
+  #sidebar-menu::part(header) {
+    min-height: 0;
+    padding-block: {{ close_space_above }}px {{ close_space_below }}px;
+  }
   .header-sidebar__bottom-linklist .header-sidebar__linklist-button {
     padding-block: {{ sidebar_link_space | divided_by: 2.0 }}px;
   }
@@ -675,6 +700,37 @@
       "step": 2,
       "unit": "px",
       "default": 4
+    },
+    {
+      "type": "range",
+      "id": "drawer_close_space_above",
+      "label": "Space above close icon",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "drawer_close_space_below",
+      "label": "Space below close icon",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "drawer_footer_fade",
+      "label": "Fade above drawer footer",
+      "info": "Set to 0 to remove the shaded strip over the content.",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 40
     },
     {
       "type": "range",
