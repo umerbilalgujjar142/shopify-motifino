@@ -479,15 +479,29 @@
     if sidebar_link_space == blank
       assign sidebar_link_space = 16
     endif
+
+    assign selector_space = section.settings.sidebar_selector_space
+    if selector_space == blank
+      assign selector_space = 4
+    endif
+
+    assign drawer_footer_padding = section.settings.drawer_footer_padding
+    if drawer_footer_padding == blank
+      assign drawer_footer_padding = 20
+    endif
   -%}
   .header-sidebar__bottom-linklist .header-sidebar__linklist-button {
     padding-block: {{ sidebar_link_space | divided_by: 2.0 }}px;
   }
 
+  #shopify-section-{{ section.id }} .header-sidebar__footer > * {
+    padding-block: {{ drawer_footer_padding }}px;
+  }
+
   /* The bottom menu and the selectors share one divider. */
   .header-sidebar__bottom-linklist ~ .localization-selectors {
     border-block-start-width: 0;
-    padding-block-start: .25rem;
+    padding-block-start: {{ selector_space }}px;
   }
 
   /* Filled with the brand gold, which reads on both the light and the dark header. */
@@ -651,6 +665,27 @@
       "step": 1,
       "unit": "px",
       "default": 16
+    },
+    {
+      "type": "range",
+      "id": "sidebar_selector_space",
+      "label": "Space above currency selector",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "drawer_footer_padding",
+      "label": "Drawer footer padding",
+      "info": "Space above the bottom menu and below the currency selector.",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 20
     },
     {
       "type": "link_list",
