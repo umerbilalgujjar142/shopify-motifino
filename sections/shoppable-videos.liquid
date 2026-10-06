@@ -289,6 +289,8 @@
 
     .shoppable-player__like span { line-height: 1; }
 
+    .shoppable-player__like.is-liked span { color: #fff; }
+
     .shoppable-player__actions .shoppable-player__cart {
       width: 38px;
       height: 38px;
@@ -378,7 +380,7 @@
     .shoppable-player__copy-text.is-clamped {
       display: -webkit-box;
       -webkit-box-orient: vertical;
-      -webkit-line-clamp: 2;
+      -webkit-line-clamp: var(--shoppable-clamp, 2);
       overflow: hidden;
     }
 
@@ -519,6 +521,10 @@
         "likes": {{ block.settings.likes_start | default: 0 }},
         "shares": {{ block.settings.shares_start | default: 0 }},
         "promo": {{ block.settings.promo_link | default: section.settings.promo_link | json }},
+        "promoLabel": {{ block.settings.promo_label | default: section.settings.promo_label | json }},
+        "lines": {{ block.settings.text_lines | default: 2 }},
+        "showLike": {% if block.settings.show_like == false %}false{% else %}true{% endif %},
+        "showShare": {% if block.settings.show_share == false %}false{% else %}true{% endif %},
         "heading": {{ block.settings.heading | json }},
         "text": {{ block.settings.text | json }},
         "sources": [
@@ -574,19 +580,15 @@
       </button>
 
       <div class="shoppable-player__actions">
-        {%- if section.settings.show_likes -%}
-          <button type="button" class="shoppable-player__icon shoppable-player__like" data-like aria-pressed="false" aria-label="{{ 'general.accessibility.like' | t | default: 'Like' }}">
-            <svg width="24" height="24" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1L12 21l7.7-7.6 1.1-1a5.5 5.5 0 0 0 0-7.8Z"/></svg>
-            <span data-like-count></span>
-          </button>
-        {%- endif -%}
+        <button type="button" class="shoppable-player__icon shoppable-player__like" data-like aria-pressed="false" aria-label="{{ 'general.accessibility.like' | t | default: 'Like' }}">
+          <svg width="24" height="24" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1L12 21l7.7-7.6 1.1-1a5.5 5.5 0 0 0 0-7.8Z"/></svg>
+          <span data-like-count></span>
+        </button>
 
-        {%- if section.settings.show_share -%}
-          <button type="button" class="shoppable-player__icon shoppable-player__share" data-share aria-label="{{ 'general.social.share' | t }}">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4 20-7Z"/></svg>
-            <span data-share-count></span>
-          </button>
-        {%- endif -%}
+        <button type="button" class="shoppable-player__icon shoppable-player__share" data-share aria-label="{{ 'general.social.share' | t }}">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4 20-7Z"/></svg>
+          <span data-share-count></span>
+        </button>
 
         <a class="shoppable-player__icon shoppable-player__cart" href="{{ routes.cart_url }}" aria-label="{{ 'general.cart.title' | t }}">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4H6ZM3 6h18M16 10a4 4 0 0 1-8 0"/></svg>
@@ -649,6 +651,7 @@
       var likeBtn = player.querySelector('[data-like]');
       var likeCount = player.querySelector('[data-like-count]');
       var shareCount = player.querySelector('[data-share-count]');
+      var shareBtn = player.querySelector('[data-share]');
       var promoBtn = player.querySelector('[data-promo]');
       var promoThreshold = {{ section.settings.promo_after | default: 30 }} / 100;
       var soundIcon = player.querySelector('[data-sound-icon]');
@@ -730,6 +733,7 @@
 
       function renderLike(item) {
         if (!likeBtn) return;
+        likeBtn.hidden = item.showLike === false;
         var liked = likedMap()[item.id] === 1;
         var total = (item.likes || 0) + (liked ? 1 : 0);
         likeBtn.classList.toggle('is-liked', liked);
@@ -751,6 +755,7 @@
       }
 
       function renderShare(item) {
+        if (shareBtn) shareBtn.hidden = item.showShare === false;
         if (!shareCount) return;
         var total = (item.shares || 0) + (sharedMap()[item.id] || 0);
         shareCount.textContent = total > 0 ? total : '';
@@ -763,6 +768,7 @@
         copyTitle.textContent = heading;
         copyTitle.hidden = !heading;
         copyText.textContent = text;
+        copyText.style.setProperty('--shoppable-clamp', item.lines || 2);
         copyText.classList.add('is-clamped');
         moreBtn.textContent = moreLabel;
         /* Only offer the toggle when the clamp is actually hiding something. */
@@ -783,6 +789,7 @@
         var url = item.promo || '';
         promoBtn.hidden = !url;
         if (url) promoBtn.href = url;
+        promoBtn.textContent = item.promoLabel || '';
       }
 
       function tickPromo() {
@@ -1169,18 +1176,6 @@
       "info": "0 plays the whole video in the row."
     },
     {
-      "type": "checkbox",
-      "id": "show_likes",
-      "label": "Show like button",
-      "default": true
-    },
-    {
-      "type": "checkbox",
-      "id": "show_share",
-      "label": "Show share button",
-      "default": true
-    },
-    {
       "type": "header",
       "content": "Text size"
     },
@@ -1443,6 +1438,34 @@
           "id": "promo_link",
           "label": "Button link",
           "info": "Overrides the section link for this video."
+        },
+        {
+          "type": "text",
+          "id": "promo_label",
+          "label": "Button label",
+          "info": "Leave empty to use the section label."
+        },
+        {
+          "type": "range",
+          "id": "text_lines",
+          "label": "Description lines",
+          "info": "Lines shown before the show more link appears.",
+          "min": 1,
+          "max": 8,
+          "step": 1,
+          "default": 2
+        },
+        {
+          "type": "checkbox",
+          "id": "show_like",
+          "label": "Show like button",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_share",
+          "label": "Show share button",
+          "default": true
         }
       ]
     }
