@@ -94,7 +94,9 @@
         "show_close": true,
         "close_style": "circle",
         "close_icon_color": "#000000",
-        "close_circle_color": "#FFFFFF",
+        "close_circle_color": "#ffffff",
+        "close_offset_block": 10,
+        "close_offset_inline": 10,
         "close_on_backdrop": true
       }
     },
@@ -150,7 +152,9 @@
         "show_close": true,
         "close_style": "circle",
         "close_icon_color": "#000000",
-        "close_circle_color": "#FFFFFF",
+        "close_circle_color": "#ffffff",
+        "close_offset_block": 10,
+        "close_offset_inline": 10,
         "close_on_backdrop": true
       }
     }
