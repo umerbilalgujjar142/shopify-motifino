@@ -3079,7 +3079,7 @@ var ProductGallery = class extends HTMLElement {
    * Open the lightbox at the given index (by default, it opens the selected image)
    */
   openLightBox(index) {
-    const images = this.carousel.cells.flatMap((cell) => Array.from(cell.querySelectorAll(":scope > img")));
+    const images = this.carousel.cells.flatMap((cell) => Array.from(cell.querySelectorAll(":scope > img, :scope > .product-gallery__mobile-media-wrapper > img")));
     const dataSource = images.map((image) => {
       return {
         thumbnailElement: image,
