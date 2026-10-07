@@ -30,6 +30,19 @@
     }
   {%- endif -%}
 
+  {%- assign bb_preview_ratio = section.settings.preview_ratio | default: 'original' -%}
+  {%- unless bb_preview_ratio == 'original' -%}
+    #shopify-section-{{ section.id }} .bb-composer-hero {
+      aspect-ratio: {{ bb_preview_ratio | replace: ':', ' / ' }};
+      min-height: 0;
+      height: auto;
+    }
+    #shopify-section-{{ section.id }} .bb-composer-hero__bg {
+      top: 0;
+      height: 100%;
+    }
+  {%- endunless -%}
+
   {%- if section.settings.worn_thumb_ratio == 'original' -%}
     #shopify-section-{{ section.id }} .bb-worn-thumb,
     #shopify-section-{{ section.id }} .bb-worn-thumb img { height: auto; }
@@ -348,6 +361,23 @@
       "label": "Zoom icon colour",
       "default": "#1a1a1a",
       "visible_if": "{{ section.settings.enable_zoom }}"
+    },
+    {
+      "type": "select",
+      "id": "preview_ratio",
+      "label": "Preview aspect ratio",
+      "info": "Crops the main belt photo. Original keeps the current fixed height.",
+      "options": [
+        { "value": "original", "label": "Original (no crop)" },
+        { "value": "1:1", "label": "1:1" },
+        { "value": "4:5", "label": "4:5" },
+        { "value": "3:4", "label": "3:4" },
+        { "value": "5:4", "label": "5:4" },
+        { "value": "4:3", "label": "4:3" },
+        { "value": "9:16", "label": "9:16" },
+        { "value": "16:9", "label": "16:9" }
+      ],
+      "default": "original"
     },
     {
       "type": "range",
