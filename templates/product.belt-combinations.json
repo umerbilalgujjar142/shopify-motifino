@@ -91,7 +91,7 @@
         "button_D9rxK3": {
           "type": "button",
           "settings": {
-            "link": "#shopify-section-template--28995053191494__tabs_FUAGrg",
+            "link": "#shopify-section-template--29200593453382__tabs_FUAGrg",
             "text": "Vedi taglie e dettagli",
             "button_style": "link",
             "stretch": false,
@@ -194,10 +194,10 @@
         "zoom_icon_color": "#111111"
       }
     },
-    "shoppable_videos_FRVpdX": {
+    "shoppable_videos_gEHmfj": {
       "type": "shoppable-videos",
       "blocks": {
-        "video_VkAecf": {
+        "video_hm3RV8": {
           "type": "video",
           "settings": {
             "video": "shopify://files/videos/798441720260622072215.mp4",
@@ -206,24 +206,24 @@
             "show_heading_on_card": false,
             "text": "Se non l'hai mai provata lo devi assolutamente fare. Queste cinture di MOTIFINO ti faranno dire addio a tutte le altre con i buchi",
             "likes_start": 1255,
-            "shares_start": -20,
-            "promo_link": "shopify://collections/all",
+            "shares_start": 102,
+            "promo_link": "",
             "promo_label": "",
             "text_lines": 2,
             "show_like": true,
             "show_share": true
           }
         },
-        "video_3j8p9p": {
+        "video_qAd8VL": {
           "type": "video",
           "settings": {
             "video": "shopify://files/videos/Dario Tagliavini - Una_lunga_recensione.mp4",
-            "product": "",
+            "product": "{{ product }}",
             "heading": "Recensione cintura MOTIFINO",
             "show_heading_on_card": false,
             "text": "Se cerchi un regalo questo è sicuramente il migliore che tu possa fare ad un uomo",
             "likes_start": 557,
-            "shares_start": 0,
+            "shares_start": 46,
             "promo_link": "",
             "promo_label": "",
             "text_lines": 2,
@@ -231,16 +231,16 @@
             "show_share": true
           }
         },
-        "video_y3AiGD": {
+        "video_i7nMRX": {
           "type": "video",
           "settings": {
             "video": "shopify://files/videos/Francesco - Come usare la cintura Motifino.mp4",
-            "product": "",
+            "product": "{{ product }}",
             "heading": "Sapevi come funziona?",
             "show_heading_on_card": false,
             "text": "Una volta provata non torni più indietro. La infili e la tiri, sarà lei ad adattarsi alla tua vita.",
             "likes_start": 896,
-            "shares_start": 0,
+            "shares_start": 337,
             "promo_link": "",
             "promo_label": "",
             "text_lines": 2,
@@ -248,16 +248,16 @@
             "show_share": true
           }
         },
-        "video_dxATdi": {
+        "video_eibJgg": {
           "type": "video",
           "settings": {
             "video": "shopify://files/videos/Giulio - Recensione cintura Motifino.mp4",
-            "product": "",
+            "product": "{{ product }}",
             "heading": "Vestire elegante non deve essere scomodo",
             "show_heading_on_card": false,
             "text": "Vesto elegante ogni giorno però da quando ho questa cintura di MOTIFINO la allento in ogni momento con il comodo bottone. Impossibile tornare alla classiche cinture",
             "likes_start": 145,
-            "shares_start": 0,
+            "shares_start": 20,
             "promo_link": "",
             "promo_label": "",
             "text_lines": 2,
@@ -265,16 +265,16 @@
             "show_share": true
           }
         },
-        "video_8CGJjU": {
+        "video_MVbDME": {
           "type": "video",
           "settings": {
             "video": "shopify://files/videos/818776920260620143858.mp4",
-            "product": "",
+            "product": "{{ product }}",
             "heading": "Il mio compagno l'ha adorata",
             "show_heading_on_card": false,
             "text": "Penso di non aver mai fatto un regalo migliore di questo. L'ha apprezzata moltissimo ed ora la usa ogni giorno",
             "likes_start": 483,
-            "shares_start": 0,
+            "shares_start": 73,
             "promo_link": "",
             "promo_label": "",
             "text_lines": 2,
@@ -282,16 +282,16 @@
             "show_share": true
           }
         },
-        "video_QyhwqP": {
+        "video_LNaLUX": {
           "type": "video",
           "settings": {
             "video": "shopify://files/videos/839970420260622073644.mp4",
-            "product": "",
+            "product": "{{ product }}",
             "heading": "Sempre comodissima",
             "show_heading_on_card": false,
             "text": "Questa cintura mi ha stupito tantissimo. In ogni momento della giornata la posso allentare di qualche millimetro semplicemente premendo il bottone",
             "likes_start": 1589,
-            "shares_start": 0,
+            "shares_start": 256,
             "promo_link": "",
             "promo_label": "",
             "text_lines": 2,
@@ -299,16 +299,16 @@
             "show_share": true
           }
         },
-        "video_8Jcrtn": {
+        "video_Tetmtj": {
           "type": "video",
           "settings": {
             "video": "shopify://files/videos/Recensione Giuseppe - MOTIFINO - Copyright 546468446854.mp4",
-            "product": "",
+            "product": "{{ product }}",
             "heading": "Bella e comoda",
             "show_heading_on_card": false,
             "text": "I materiali di questa cintura sono ottimi e si capisce a colpo d'occhio che durerà moltissimo dato che non ci sono i buchi che si rovinano.",
             "likes_start": 155,
-            "shares_start": 0,
+            "shares_start": 9,
             "promo_link": "",
             "promo_label": "",
             "text_lines": 2,
@@ -318,13 +318,13 @@
         }
       },
       "block_order": [
-        "video_VkAecf",
-        "video_3j8p9p",
-        "video_y3AiGD",
-        "video_dxATdi",
-        "video_8CGJjU",
-        "video_QyhwqP",
-        "video_8Jcrtn"
+        "video_hm3RV8",
+        "video_qAd8VL",
+        "video_i7nMRX",
+        "video_eibJgg",
+        "video_MVbDME",
+        "video_LNaLUX",
+        "video_Tetmtj"
       ],
       "name": "Shoppable videos",
       "settings": {
@@ -351,7 +351,7 @@
         "show_gradient": true,
         "gradient_height": 35,
         "gradient_opacity": 70,
-        "promo_label": "Scopri i set",
+        "promo_label": "",
         "promo_link": "",
         "promo_after": 30,
         "promo_size": 14,
@@ -1335,7 +1335,7 @@
   },
   "order": [
     "main",
-    "shoppable_videos_FRVpdX",
+    "shoppable_videos_gEHmfj",
     "rich_text_e9fp3X",
     "multi_column_VRfPTa",
     "tabs_FUAGrg",

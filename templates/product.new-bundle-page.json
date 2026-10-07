@@ -65,10 +65,22 @@
             "show_taxes_notice": false
           }
         },
-        "text_fdVntj": {
-          "type": "text",
+        "button_ezgY9Q": {
+          "type": "button",
           "settings": {
-            "text": "<p><a href=\"#shopify-section-template--28995053257030__tabs_FUAGrg\" title=\"#shopify-section-template--28995053257030__tabs_FUAGrg\">Vedi taglie e dettagli -&gt;</a></p>"
+            "link": "#shopify-section-template--29200593518918__tabs_FUAGrg",
+            "text": "Vedi taglie e dettagli ->",
+            "button_style": "link",
+            "stretch": false,
+            "background": "",
+            "text_color": ""
+          }
+        },
+        "spacer_KVfcqa": {
+          "type": "spacer",
+          "settings": {
+            "height_desktop": 24,
+            "height_mobile": 8
           }
         },
         "liquid_KHEgai": {
@@ -175,7 +187,8 @@
         "text_tDEWkJ",
         "spacer_XcEq4y",
         "price",
-        "text_fdVntj",
+        "button_ezgY9Q",
+        "spacer_KVfcqa",
         "liquid_KHEgai",
         "spacer_zVPWj7",
         "button_UPULxq",
@@ -220,7 +233,10 @@
         "enable_media_autoplay": false,
         "enable_video_looping": true,
         "enable_image_zoom": false,
-        "max_image_zoom_level": 3
+        "max_image_zoom_level": 3,
+        "zoom_icon_position": "bottom_left",
+        "zoom_icon_size": 28,
+        "zoom_icon_color": "#1a1a1a"
       }
     },
     "shoppable_videos_3pD9Cm": {
@@ -234,7 +250,13 @@
             "heading": "Una cintura con un bottone?",
             "show_heading_on_card": false,
             "text": "Se non l'hai mai provata lo devi assolutamente fare. Queste cinture di MOTIFINO ti faranno dire addio a tutte le altre con i buchi",
-            "likes_start": 1255
+            "likes_start": 1255,
+            "shares_start": 102,
+            "promo_link": "",
+            "promo_label": "",
+            "text_lines": 2,
+            "show_like": true,
+            "show_share": true
           }
         },
         "video_ky3TbR": {
@@ -245,7 +267,13 @@
             "heading": "Recensione cintura MOTIFINO",
             "show_heading_on_card": false,
             "text": "Se cerchi un regalo questo è sicuramente il migliore che tu possa fare ad un uomo",
-            "likes_start": 557
+            "likes_start": 557,
+            "shares_start": 46,
+            "promo_link": "",
+            "promo_label": "",
+            "text_lines": 2,
+            "show_like": true,
+            "show_share": true
           }
         },
         "video_Ai7EBB": {
@@ -256,7 +284,13 @@
             "heading": "Sapevi come funziona?",
             "show_heading_on_card": false,
             "text": "Una volta provata non torni più indietro. La infili e la tiri, sarà lei ad adattarsi alla tua vita.",
-            "likes_start": 896
+            "likes_start": 896,
+            "shares_start": 337,
+            "promo_link": "",
+            "promo_label": "",
+            "text_lines": 2,
+            "show_like": true,
+            "show_share": true
           }
         },
         "video_P7Vwyh": {
@@ -267,7 +301,13 @@
             "heading": "Vestire elegante non deve essere scomodo",
             "show_heading_on_card": false,
             "text": "Vesto elegante ogni giorno però da quando ho questa cintura di MOTIFINO la allento in ogni momento con il comodo bottone. Impossibile tornare alla classiche cinture",
-            "likes_start": 145
+            "likes_start": 145,
+            "shares_start": 20,
+            "promo_link": "",
+            "promo_label": "",
+            "text_lines": 2,
+            "show_like": true,
+            "show_share": true
           }
         },
         "video_pamBXd": {
@@ -278,7 +318,13 @@
             "heading": "Il mio compagno l'ha adorata",
             "show_heading_on_card": false,
             "text": "Penso di non aver mai fatto un regalo migliore di questo. L'ha apprezzata moltissimo ed ora la usa ogni giorno",
-            "likes_start": 483
+            "likes_start": 483,
+            "shares_start": 73,
+            "promo_link": "",
+            "promo_label": "",
+            "text_lines": 2,
+            "show_like": true,
+            "show_share": true
           }
         },
         "video_aVCPtg": {
@@ -289,7 +335,13 @@
             "heading": "Sempre comodissima",
             "show_heading_on_card": false,
             "text": "Questa cintura mi ha stupito tantissimo. In ogni momento della giornata la posso allentare di qualche millimetro semplicemente premendo il bottone",
-            "likes_start": 1589
+            "likes_start": 1589,
+            "shares_start": 256,
+            "promo_link": "",
+            "promo_label": "",
+            "text_lines": 2,
+            "show_like": true,
+            "show_share": true
           }
         },
         "video_b4kQbN": {
@@ -300,7 +352,13 @@
             "heading": "Bella e comoda",
             "show_heading_on_card": false,
             "text": "I materiali di questa cintura sono ottimi e si capisce a colpo d'occhio che durerà moltissimo dato che non ci sono i buchi che si rovinano.",
-            "likes_start": 155
+            "likes_start": 155,
+            "shares_start": 9,
+            "promo_link": "",
+            "promo_label": "",
+            "text_lines": 2,
+            "show_like": true,
+            "show_share": true
           }
         }
       },
@@ -331,8 +389,20 @@
         "card_radius": 8,
         "autoplay_preview": true,
         "preview_seconds": 3,
-        "show_likes": true,
-        "show_share": true,
+        "title_size": 18,
+        "text_size": 16,
+        "more_size": 12,
+        "caption_size": 12,
+        "show_gradient": true,
+        "gradient_height": 35,
+        "gradient_opacity": 70,
+        "promo_label": "{{ product.metafields.custom.call_to_action_scelta_cinture_e_fibbie.value }}",
+        "promo_link": "{{ product.metafields.custom.link_pulsante_1_cambio_bundle.value }}",
+        "promo_after": 30,
+        "promo_size": 14,
+        "promo_radius": 10,
+        "promo_background": "#ffffff",
+        "promo_text_color": "#111111",
         "button_label": "Aggiungi al carrello",
         "copied_label": "Link copiato",
         "more_label": "Mostra altro",
@@ -360,7 +430,7 @@
           "type": "tab",
           "settings": {
             "title": "Cos'é la Privilege Card?",
-            "content": "<p>Con ogni cintura ricevi anche un biglietto da visita digitale, ossia la Privilege Card. Guarda come funziona <a href=\"#popup-privilege\" title=\"#popup-privilege\">qui.</a></p>",
+            "content": "<p>Con ogni cintura ricevi anche un biglietto da visita digitale, ossia la Privilege Card. Guarda come funziona <a href=\"#popup-privilege\" title=\"#popup-privilege\"><strong>qui.</strong></a></p>",
             "page": "",
             "open_on_mobile": true
           }

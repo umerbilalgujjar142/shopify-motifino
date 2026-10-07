@@ -178,7 +178,7 @@
     const strapName  = (STRAPS[state.strap]  || {}).name || '';
     const buckleName = (BUCKLES[state.buckle] || {}).name || '';
     if (strapName && buckleName) {
-      titleEl.textContent = buckleName + ' - ' + strapName;
+      titleEl.textContent = strapName + ' - ' + buckleName;
     } else {
       titleEl.textContent = baseTitle;
     }

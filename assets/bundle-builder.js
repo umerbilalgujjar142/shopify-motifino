@@ -167,7 +167,7 @@
     if (comboEl) {
       const buckleName = (BUCKLES[belt.buckle] || {}).name || '—';
       const strapName = (STRAPS[belt.strap] || {}).name || '—';
-      comboEl.textContent = buckleName + ' + ' + strapName;
+      comboEl.textContent = strapName + ' + ' + buckleName;
     }
     const ctaLabel = document.querySelector('#bb-composer-cta .bb-composer-cta__label');
     if (ctaLabel) {

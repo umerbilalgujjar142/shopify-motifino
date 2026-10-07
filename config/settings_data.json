@@ -46,6 +46,7 @@
     "social_instagram": "https://www.instagram.com/official_motifino/",
     "social_whatsapp": "https://wa.me/393508394347",
     "favicon": "shopify://shop_images/180x180_Favicon_2a2b4b9f-af96-461d-b82e-234fcf4ad689.png",
+    "back_to_top_home": true,
     "back_to_top_cart": true,
     "back_to_top_collection": true,
     "back_to_top_paths": "products",
@@ -108,12 +109,11 @@
         "settings": {
           "allow_transparent_header": true,
           "transparent_header_use_primary_colors": false,
-          "transparent_header_gap": 0,
           "enable_zoom": true,
           "zoom_icon_size": 20,
           "zoom_icon_color": "#1a1a1a",
           "worn_thumb_size": 64,
-          "worn_thumb_ratio": "4:5",
+          "worn_thumb_ratio": "1:1",
           "worn_thumb_radius": 8,
           "combinations_collection": "tutte-le-cinture-holess"
         }
@@ -164,14 +164,6 @@
           "hide_in_theme_editor": true,
           "hide_in_password_page": false,
           "display_delay": 0
-        }
-      },
-      "9356323809658795675": {
-        "type": "shopify://apps/reelup-shoppable-videos/blocks/reelup/a8ec9e4d-d192-44f7-9c23-595f9ee7dd5b",
-        "disabled": false,
-        "settings": {
-          "debugging_global_script": "",
-          "enable_reelPops": true
         }
       },
       "9864028433945474133": {

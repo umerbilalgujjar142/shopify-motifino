@@ -262,17 +262,6 @@
     },
     "17761166034ed9bfed": {
       "type": "apps",
-      "blocks": {
-        "reelup_shoppable_videos_reels_reelup_playlist_A4CKtL": {
-          "type": "shopify://apps/reelup-shoppable-videos-reels/blocks/reelup_playlist/a8ec9e4d-d192-44f7-9c23-595f9ee7dd5b",
-          "settings": {
-            "playlist_id": "rl_pl_16368"
-          }
-        }
-      },
-      "block_order": [
-        "reelup_shoppable_videos_reels_reelup_playlist_A4CKtL"
-      ],
       "settings": {
         "color_scheme": "",
         "separate_section_with_border": false,
