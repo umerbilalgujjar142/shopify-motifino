@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "type": "custom.overlay",
   "name": "Overlay group",
@@ -157,6 +166,72 @@
         "close_offset_inline": 10,
         "close_on_backdrop": true
       }
+    },
+    "global_popup_rKJUeQ": {
+      "type": "global-popup",
+      "blocks": {
+        "heading_Q3H3VH": {
+          "type": "heading",
+          "settings": {
+            "text": "Guida alle taglie",
+            "size": 22,
+            "weight": "600",
+            "alignment": "left",
+            "color": ""
+          }
+        },
+        "text_BTWxJh": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Tutte le cinture sono alte 3,5cm.</p><p><br/>Sono disponibili in 2 taglie:</p><ul><li><strong>130cm</strong>: copre fino alla 56 IT di pantaloni</li><li><strong>150cm</strong>: copre fino alla 66 IT di pantaloni<br/>&nbsp;</li></ul><p>Le cinture possono essere <strong>accorciate su misura</strong> con una forbice, in modo estremamente semplice.</p><p><strong><br/>MATERIALI</strong></p><p><strong>Cinture</strong>: 70% pelle di vitello, 30% PU<br/><strong>Fibbie</strong>: Lega di zinco<br/>Le fibbie contengono una percentuale bassissima di Nichel<br/><br/></p>",
+            "size": 15,
+            "line_height": 1.5,
+            "alignment": "left",
+            "color": ""
+          }
+        }
+      },
+      "block_order": [
+        "heading_Q3H3VH",
+        "text_BTWxJh"
+      ],
+      "name": "Popup Guida alle taglie",
+      "settings": {
+        "popup_name": "taglie",
+        "auto_home": false,
+        "auto_product": false,
+        "auto_collection": false,
+        "auto_cart": false,
+        "auto_paths": "",
+        "delay": 3,
+        "frequency": "never",
+        "position": "center",
+        "panel_width": 520,
+        "panel_width_mobile": 420,
+        "padding_top": 32,
+        "padding_bottom": 32,
+        "padding_left": 32,
+        "padding_right": 32,
+        "padding_top_mobile": 22,
+        "padding_bottom_mobile": 22,
+        "padding_left_mobile": 22,
+        "padding_right_mobile": 22,
+        "screen_padding": 20,
+        "panel_radius": 14,
+        "block_gap": 14,
+        "color_scheme": "",
+        "panel_background": "",
+        "panel_text_color": "",
+        "backdrop_color": "#000000",
+        "backdrop_opacity": 55,
+        "show_close": true,
+        "close_style": "icon",
+        "close_icon_color": "",
+        "close_circle_color": "",
+        "close_offset_block": 8,
+        "close_offset_inline": 8,
+        "close_on_backdrop": true
+      }
     }
   },
   "order": [
@@ -164,6 +239,7 @@
     "newsletter-popup",
     "privacy-banner",
     "global_popup_t64JBV",
-    "global_popup_cNfEJF"
+    "global_popup_cNfEJF",
+    "global_popup_rKJUeQ"
   ]
 }

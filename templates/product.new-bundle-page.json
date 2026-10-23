@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "main": {
@@ -68,7 +77,7 @@
         "button_ezgY9Q": {
           "type": "button",
           "settings": {
-            "link": "#shopify-section-template--29200593518918__tabs_FUAGrg",
+            "link": "#shopify-section-template--29370837041478__tabs_FUAGrg",
             "text": "Vedi taglie e dettagli ->",
             "button_style": "link",
             "stretch": false,
@@ -116,6 +125,7 @@
         },
         "image_G7Kg4K": {
           "type": "image",
+          "disabled": true,
           "settings": {
             "image": "shopify://shop_images/Trust_pilot_eccellente.webp",
             "link": "#shopify-section-template--28657540333894__multi_column_yGDHbx",
@@ -1329,6 +1339,7 @@
         "image_with_text_Jnkbdq",
         "image_with_text_7GgwRg"
       ],
+      "disabled": true,
       "name": "t:sections.multi_column.presets.multi_column.name",
       "settings": {
         "color_scheme": "scheme-d1e6cd7b-3e71-4141-bf7b-fa5ddaf02c90",
@@ -1374,6 +1385,7 @@
       "block_order": [
         "richtext_t7VQN8"
       ],
+      "disabled": true,
       "name": "t:sections.rich_text.presets.rich_text.name",
       "settings": {
         "color_scheme": "scheme-d1e6cd7b-3e71-4141-bf7b-fa5ddaf02c90",

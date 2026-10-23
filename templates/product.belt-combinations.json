@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "main": {
@@ -91,7 +100,7 @@
         "button_D9rxK3": {
           "type": "button",
           "settings": {
-            "link": "#shopify-section-template--29200593453382__tabs_FUAGrg",
+            "link": "#shopify-section-template--29370836975942__tabs_FUAGrg",
             "text": "Vedi taglie e dettagli",
             "button_style": "link",
             "stretch": false,
@@ -369,37 +378,6 @@
         "padding_bottom": 40
       }
     },
-    "rich_text_e9fp3X": {
-      "type": "rich-text",
-      "blocks": {
-        "richtext_fBGnCF": {
-          "type": "richtext",
-          "settings": {
-            "content": "<p>Valutati <strong>4.8</strong> su <strong>5</strong> sulla base di più di 300 recensioni. <a href=\"https://it.trustpilot.com/review/motifino.com\" title=\"https://it.trustpilot.com/review/motifino.com\">Vai su Trustpilot -&gt;</a></p>"
-          }
-        }
-      },
-      "block_order": [
-        "richtext_fBGnCF"
-      ],
-      "name": "t:sections.rich_text.presets.rich_text.name",
-      "settings": {
-        "color_scheme": "scheme-d1e6cd7b-3e71-4141-bf7b-fa5ddaf02c90",
-        "separate_section_with_border": false,
-        "content_width": "xs",
-        "text_position": "center",
-        "remove_vertical_spacing": true,
-        "use_custom_section_spacing": true,
-        "mobile_section_spacing_top": 20,
-        "mobile_section_spacing_right": 20,
-        "mobile_section_spacing_bottom": 16,
-        "mobile_section_spacing_left": 20,
-        "desktop_section_spacing_top": 40,
-        "desktop_section_spacing_right": 0,
-        "desktop_section_spacing_bottom": 40,
-        "desktop_section_spacing_left": 0
-      }
-    },
     "multi_column_VRfPTa": {
       "type": "multi-column",
       "blocks": {
@@ -502,6 +480,7 @@
         "image_with_text_emAAhH",
         "image_with_text_TpaWtC"
       ],
+      "disabled": true,
       "name": "t:sections.multi_column.presets.multi_column.name",
       "settings": {
         "color_scheme": "scheme-d1e6cd7b-3e71-4141-bf7b-fa5ddaf02c90",
@@ -534,6 +513,38 @@
         "content": ""
       }
     },
+    "rich_text_CjEHYm": {
+      "type": "rich-text",
+      "blocks": {
+        "richtext_LEjh7b": {
+          "type": "richtext",
+          "settings": {
+            "content": "<p>Leggi le nostre recensioni.<br/><a href=\"https://it.trustpilot.com/review/motifino.com\" title=\"https://it.trustpilot.com/review/motifino.com\">Vai su Trustpilot -&gt;</a></p>"
+          }
+        }
+      },
+      "block_order": [
+        "richtext_LEjh7b"
+      ],
+      "disabled": true,
+      "name": "t:sections.rich_text.presets.rich_text.name",
+      "settings": {
+        "color_scheme": "scheme-d1e6cd7b-3e71-4141-bf7b-fa5ddaf02c90",
+        "separate_section_with_border": false,
+        "content_width": "xs",
+        "text_position": "center",
+        "remove_vertical_spacing": true,
+        "use_custom_section_spacing": true,
+        "mobile_section_spacing_top": 0,
+        "mobile_section_spacing_right": 20,
+        "mobile_section_spacing_bottom": 30,
+        "mobile_section_spacing_left": 20,
+        "desktop_section_spacing_top": 0,
+        "desktop_section_spacing_right": 0,
+        "desktop_section_spacing_bottom": 40,
+        "desktop_section_spacing_left": 0
+      }
+    },
     "tabs_FUAGrg": {
       "type": "tabs",
       "blocks": {
@@ -543,7 +554,7 @@
             "title": "Taglie e Dettagli Tecnici",
             "content": "<p><strong>TAGLIE<br/></strong>Tutte le cinture sono alte 3,5cm<br/>Sono disponibili in 2 taglie:<br/>- 130cm (copre fino alla 56 IT di pantaloni)<br/>- 150cm (copre fino alla 66 IT di pantaloni)<br/><br/>Le cinture possono essere <strong>accorciate su misura</strong> in modo estremamente semplice. Guarda il <a href=\"#popup-taglio\" title=\"#popup-taglio\">tutorial.</a><strong><br/><br/>MATERIALI<br/></strong>Cinture: 70% pelle di vitello, 30% PU<br/>Fibbie: Lega di zinco<br/>Le fibbie contengono una percentuale bassissima di Nichel</p><p></p>",
             "page": "",
-            "open_on_mobile": false
+            "open_on_mobile": true
           }
         },
         "tab_NTecAY": {
@@ -552,7 +563,7 @@
             "title": "Cos'é la Privilege card?",
             "content": "<p>Con ogni cintura ricevi anche un biglietto da visita digitale, ossia la Privilege Card. Guarda come funziona <a href=\"#popup-privilege\" title=\"#popup-privilege\"><strong>qui.</strong></a></p>",
             "page": "",
-            "open_on_mobile": true
+            "open_on_mobile": false
           }
         },
         "tab_Xtb8QR": {
@@ -1336,8 +1347,8 @@
   "order": [
     "main",
     "shoppable_videos_gEHmfj",
-    "rich_text_e9fp3X",
     "multi_column_VRfPTa",
+    "rich_text_CjEHYm",
     "tabs_FUAGrg",
     "rich_text_DQxxhY",
     "video_q7Dz8K",

@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "current": {
     "icon_stroke_width": 1.3,
@@ -18,7 +27,7 @@
     "heading_font_size_factor": 1.3,
     "heading_letter_spacing": 0,
     "text_font": "inter_n4",
-    "text_font_size_mobile": 15,
+    "text_font_size_mobile": 16,
     "text_font_size_desktop": 16,
     "button_text_font": "heading",
     "button_text_transform": "normal",
@@ -41,7 +50,7 @@
     "cart_empty_cart_link": "shopify://pages/linea-cinture-holess",
     "hide_qty_keywords": "Set, Kit",
     "cart_show_free_shipping_bar": false,
-    "cart_free_shipping_threshold": "35",
+    "cart_free_shipping_threshold": "54.99",
     "social_facebook": "https://www.facebook.com/profile.php?id=61559426038200&locale=it_IT",
     "social_instagram": "https://www.instagram.com/official_motifino/",
     "social_whatsapp": "https://wa.me/393508394347",
@@ -49,7 +58,7 @@
     "back_to_top_home": true,
     "back_to_top_cart": true,
     "back_to_top_collection": true,
-    "back_to_top_paths": "products",
+    "back_to_top_paths": "products, regalo-di-natale",
     "back_to_top_scroll": 40,
     "back_to_top_offset_inline": 16,
     "back_to_top_background": "#FFFFFF",
@@ -112,6 +121,7 @@
           "enable_zoom": true,
           "zoom_icon_size": 20,
           "zoom_icon_color": "#1a1a1a",
+          "preview_ratio": "4:3",
           "worn_thumb_size": 64,
           "worn_thumb_ratio": "1:1",
           "worn_thumb_radius": 8,

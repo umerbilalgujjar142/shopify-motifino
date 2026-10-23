@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "main": {
@@ -124,7 +133,7 @@
             "content": "",
             "content_shadow": 0,
             "link_text": "ACQUISTALA ORA",
-            "link_url": "#shopify-section-template--29200593322310__carosello_jpyLxY",
+            "link_url": "#shopify-section-template--29370836844870__carosello_jpyLxY",
             "link_style": "link",
             "button_shadow": 70,
             "text_position": "place-self-end-start text-start",
@@ -752,7 +761,7 @@
         "autoplay": true,
         "show_controls": false,
         "video_size": "auto",
-        "video": "shopify://files/videos/Video sales page utilizzo cintura_d571c559-6849-477c-99c5-41b392a77452.mp4",
+        "video": "shopify://files/videos/Video Clip varie per sales page-1.mp4",
         "external_video_url": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
         "text_color": "#ffffff",
         "use_custom_section_spacing": false,
@@ -1199,13 +1208,13 @@
             "subheading_size": "h6",
             "heading": "{{ block.settings.product.title }}",
             "heading_size": "h5",
-            "text": "<p><em>(-25%) 29,99€ / cintura</em></p>",
+            "text": "<p><em>(-40%) 29,99€ / cintura</em></p>",
             "show_product_title": true,
             "show_product_price": true,
             "show_savings_badge": true,
             "saving_format": "money",
             "saving_position": "right",
-            "saving_offset_block": 2,
+            "saving_offset_block": 8,
             "saving_offset_inline": 2,
             "price_text": "",
             "price_size": "h6",
@@ -1236,13 +1245,13 @@
             "subheading_size": "h6",
             "heading": "{{ block.settings.product.title }}",
             "heading_size": "h5",
-            "text": "<p><em>(-15%) 34,99€ / cintura</em></p>",
+            "text": "<p><em>(-30%) 34,99€ / cintura</em></p>",
             "show_product_title": true,
             "show_product_price": true,
-            "show_savings_badge": false,
-            "saving_format": "percent",
+            "show_savings_badge": true,
+            "saving_format": "money",
             "saving_position": "right",
-            "saving_offset_block": 2,
+            "saving_offset_block": 8,
             "saving_offset_inline": 8,
             "price_text": "",
             "price_size": "h6",
@@ -1262,7 +1271,7 @@
           "settings": {
             "color_scheme": "",
             "product": "set-cintura-singola",
-            "hide_on_desktop": false,
+            "hide_on_desktop": true,
             "hide_on_mobile": false,
             "media_position": "above",
             "image_link": "shopify://products/set-cintura-singola",
@@ -1273,14 +1282,51 @@
             "subheading_size": "h6",
             "heading": "{{ block.settings.product.title }}",
             "heading_size": "h5",
-            "text": "<p>NFC Card in omaggio con ogni cintura</p>",
+            "text": "",
             "show_product_title": true,
             "show_product_price": true,
-            "show_savings_badge": false,
+            "show_savings_badge": true,
             "saving_format": "money",
             "saving_position": "right",
-            "saving_offset_block": 12,
-            "saving_offset_inline": 12,
+            "saving_offset_block": 8,
+            "saving_offset_inline": 8,
+            "price_text": "",
+            "price_size": "h6",
+            "button_1_text": "Scopri il set",
+            "button_1_link": "{{ block.settings.product.url }}",
+            "button_1_style": "solid",
+            "button_2_text": "",
+            "button_2_link": "",
+            "button_2_style": "outline",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0,
+            "gradient_overlay": "linear-gradient(180deg, rgba(54, 54, 54, 0.2) 0%, rgba(4, 4, 4, 0.65) 100%)"
+          }
+        },
+        "slide_XrpQhQ": {
+          "type": "slide",
+          "settings": {
+            "color_scheme": "",
+            "product": "set-cintura-singola",
+            "hide_on_desktop": false,
+            "hide_on_mobile": true,
+            "media_position": "above",
+            "image_link": "shopify://products/set-cintura-singola",
+            "focal_point": "center",
+            "text_alignment": "center",
+            "content_position": "place-self-end-start text-start",
+            "subheading": "",
+            "subheading_size": "h6",
+            "heading": "{{ block.settings.product.title }}",
+            "heading_size": "h5",
+            "text": "<p>&nbsp;</p>",
+            "show_product_title": true,
+            "show_product_price": true,
+            "show_savings_badge": true,
+            "saving_format": "money",
+            "saving_position": "right",
+            "saving_offset_block": 8,
+            "saving_offset_inline": 8,
             "price_text": "",
             "price_size": "h6",
             "button_1_text": "Scopri il set",
@@ -1298,7 +1344,8 @@
       "block_order": [
         "slide_qPiepF",
         "slide_bJXapr",
-        "slide_JYTt9X"
+        "slide_JYTt9X",
+        "slide_XrpQhQ"
       ],
       "name": "Carosello",
       "settings": {
@@ -1677,6 +1724,7 @@
         "image_with_text_66tmbL",
         "image_with_text_ahDUgb"
       ],
+      "disabled": true,
       "name": "t:sections.multi_column.presets.multi_column.name",
       "settings": {
         "color_scheme": "scheme-d1e6cd7b-3e71-4141-bf7b-fa5ddaf02c90",
@@ -1709,19 +1757,20 @@
         "content": ""
       }
     },
-    "rich_text_BPfU8g": {
+    "rich_text_cbLqhi": {
       "type": "rich-text",
       "blocks": {
-        "richtext_FXiQf6": {
+        "richtext_KJMB88": {
           "type": "richtext",
           "settings": {
-            "content": "<p>Valutati <strong>4.8</strong> su <strong>5</strong> sulla base di più di 300 recensioni. <a href=\"https://it.trustpilot.com/review/motifino.com\" title=\"https://it.trustpilot.com/review/motifino.com\">Vai su Trustpilot -&gt;</a></p>"
+            "content": "<p>Leggi le nostre recensioni.<br/><a href=\"https://it.trustpilot.com/review/motifino.com\" title=\"https://it.trustpilot.com/review/motifino.com\">Vai su Trustpilot -&gt;</a></p>"
           }
         }
       },
       "block_order": [
-        "richtext_FXiQf6"
+        "richtext_KJMB88"
       ],
+      "disabled": true,
       "name": "t:sections.rich_text.presets.rich_text.name",
       "settings": {
         "color_scheme": "scheme-d1e6cd7b-3e71-4141-bf7b-fa5ddaf02c90",
@@ -1794,7 +1843,7 @@
     "text_with_icons_jHFxEG",
     "shoppable_videos_m8Q6PC",
     "multi_column_c97Uft",
-    "rich_text_BPfU8g",
+    "rich_text_cbLqhi",
     "1775167345b60e3ebf"
   ]
 }

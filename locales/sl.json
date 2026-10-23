@@ -108,7 +108,7 @@
       "view_in_space": "Ogled v vašem prostoru",
       "taxes_included": "Z davkom.",
       "taxes_excluded": "Brez davka.",
-      "shipping_policy_html": "<a href=\"{{ link }}\" class=\"link\">Stroški pošiljanja<\/a> bodo izračunani v košarici",
+      "shipping_policy_html": "<a href=\"{{ link }}\" class=\"link\">Stroški pošiljanja</a> bodo izračunani v košarici",
       "size_chart": "Tabela velikosti",
       "available_colors_count": {
         "one": "{{ count }} razpoložljiva barva",
@@ -376,9 +376,9 @@
       "view_cart": "Ogled košarice",
       "checkout": "Dokončanje nakupa",
       "we_accept": "Načini plačila",
-      "taxes_and_shipping_policy_at_checkout_html": "Davki in <a href=\"{{ link }}\" class=\"link\">stroški pošiljanja<\/a> bodo izračunani v košarici",
+      "taxes_and_shipping_policy_at_checkout_html": "Davki in <a href=\"{{ link }}\" class=\"link\">stroški pošiljanja</a> bodo izračunani v košarici",
       "taxes_included_but_shipping_at_checkout": "Davki in stroški pošiljanja bodo izračunani v košarici",
-      "taxes_included_and_shipping_policy_html": "Davki so vključeni. <a href=\"{{ link }}\" class=\"link\">Stroški pošiljanja<\/a> bodo izračunani v košarici.",
+      "taxes_included_and_shipping_policy_html": "Davki so vključeni. <a href=\"{{ link }}\" class=\"link\">Stroški pošiljanja</a> bodo izračunani v košarici.",
       "taxes_and_shipping_at_checkout": "Davki in stroški pošiljanja bodo izračunani v košarici"
     },
     "order": {
@@ -527,6 +527,639 @@
         "other": "{{ count }} izdelki"
       },
       "product_subtotal": "Delna vsota izdelkov"
+    }
+  },
+  "shopify": {
+    "checkout": {
+      "local_pickup": {
+        "location_information_far_away": {
+          "many": "Obstajajo %{count} lokacije z vašim predmetom"
+        },
+        "location_nearby": {
+          "many": "V bližini je %{count} lokacij z vašim izdelkom"
+        },
+        "location_nearby_short": {
+          "many": "%{count} sosednjih sedežev z vašim artiklom"
+        },
+        "location_far_away": {
+          "many": "%{count} sedežev z vašim artiklom"
+        },
+        "toggle_more_locations": {
+          "many": "%{count} drugih lokacijah"
+        },
+        "pickup_unavailable_banner_title": {
+          "many": "Ni poslovalnic, ki bi imele vaše izdelke na zalogi."
+        },
+        "pickup_unavailable_banner_title_with_country": {
+          "many": "V %{country} ni poslovalnic, ki bi imele vaše artikle"
+        },
+        "location_information_far_away_one_item": {
+          "many": "Obstaja %{count} lokacij z artiklom"
+        },
+        "location_information_far_away_other_items": {
+          "many": "%{count} lokacij z artikli"
+        },
+        "location_nearby_one_item": {
+          "many": "V bližini je %{count} lokacij z artiklom"
+        },
+        "location_nearby_other_items": {
+          "many": "V bližini je %{count} lokacij z izdelki"
+        },
+        "location_nearby_short_one_item": {
+          "many": "%{count} sede v bližini z artiklom"
+        },
+        "location_nearby_short_other_items": {
+          "many": "V bližini je %{count} sedežev z artikli"
+        },
+        "location_far_away_one_item": {
+          "many": "%{count} sedežev s člankom"
+        },
+        "location_far_away_other_items": {
+          "many": "%{count} sedežev z izdelki"
+        },
+        "stock_details": {
+          "ship_separately": {
+            "many": "Izdelki bodo odposlani ločeno."
+          },
+          "remove_items": {
+            "many": "Artikli bodo odstranjeni iz naročila"
+          }
+        },
+        "unavailable_item_count": {
+          "many": "%{count} artiklov ni na voljo"
+        },
+        "ship_separately_notice": {
+          "many": "%{count} izdelkov bo poslanih ločeno"
+        },
+        "location_information": {
+          "many": "Obstaja %{count} lokacij z razpoložljivo zalogo v vaši bližini"
+        },
+        "paginator": {
+          "label": {
+            "many": "%{first} - %{last} od %{count} trgovin"
+          }
+        },
+        "reveal_more_label": {
+          "many": "Prikaži še %{count} lokacij"
+        },
+        "all_stores_far_away": {
+          "title_with_item": {
+            "many": "Najbližja lokacija z vašimi izdelki je oddaljena več kot %{distance} od %{location}"
+          }
+        }
+      },
+      "split_delivery": {
+        "inventory_issue_banner": {
+          "heading": {
+            "cannot_be_picked_up": {
+              "many": "%{count} artiklov ni mogoče umakniti"
+            },
+            "cannot_be_shipped": {
+              "many": "%{count} izdelkov ni mogoče poslati"
+            }
+          },
+          "remove_item": {
+            "many": "odstrani artikle"
+          },
+          "ship_separately": {
+            "many": "Pošljite jih ločeno"
+          },
+          "pick_them_up_in_store": {
+            "many": "Prevzem v trgovini"
+          },
+          "remove_item_only": {
+            "many": "Odstrani artikle"
+          }
+        },
+        "pickup_items_count": {
+          "many": "Odstranite %{count} izdelkov"
+        },
+        "ship_items_count": {
+          "many": "Pošlji %{count} izdelkov"
+        },
+        "items_count": {
+          "many": "%{count} izdelkov"
+        }
+      },
+      "merchandise_unavailable_in_buyer_location": {
+        "remove_items_action": {
+          "many": "odstrani nedobavljive izdelke"
+        }
+      },
+      "review_address_modal": {
+        "subtitle": {
+          "many": "<p>To naročilo bo poslano na naslov, ki ga je navedel {{merchant}}. Izberite naslov za dostavo.</p>"
+        }
+      },
+      "remote_merchandise_only": {
+        "detail_item_label": {
+          "many": "{{count}} izdelkov"
+        }
+      },
+      "general": {
+        "map": {
+          "cluster_title": {
+            "many": "Združevanje {{number}} označevalcev"
+          }
+        }
+      },
+      "customer_account": {
+        "saved_address_option_description": {
+          "many": "Imate shranjenih {{count}} naslovov."
+        }
+      },
+      "stock": {
+        "unshippable_product": {
+          "header": {
+            "many": "Ni na voljo dostave za %{count} izdelkov"
+          },
+          "message": {
+            "many": "Ti predmeti bodo odstranjeni iz tvoje košarice, ker za tvoj naslov ni na voljo nobene možnosti dostave."
+          }
+        },
+        "item_label": {
+          "many": "{{count}} izdelkov"
+        },
+        "out_of_stock": {
+          "missing_items": {
+            "title": {
+              "many": "{{count}} artiklov ni več na voljo"
+            },
+            "some_available_notice": {
+              "many": "Preostali predmeti so še vedno na voljo za odjavo. Predmeti, ki niso na voljo, bodo odstranjeni iz košarice."
+            },
+            "none_available_notice": {
+              "many": "Ti izdelki niso več na voljo in so bili odstranjeni iz košarice."
+            }
+          }
+        },
+        "unfulfillable_product": {
+          "message": {
+            "many": "%{delivery_method} ni več na voljo za te izdelke."
+          },
+          "default_message": {
+            "many": "Izbrani način dostave za te izdelke ni več na voljo."
+          }
+        }
+      },
+      "order_summary": {
+        "unit_price": {
+          "per_item": {
+            "many": "%{price} za %{count} artikle"
+          }
+        },
+        "expand_component_information": {
+          "many": "Prikaži %{count} izdelkov"
+        },
+        "collapse_component_information": {
+          "many": "Skrij %{count} objav"
+        },
+        "discount_discovery": {
+          "merchandise_quantity_label": {
+            "many": "%{count} izdelkov"
+          }
+        },
+        "discount_title_stacking": {
+          "many": "Popusti"
+        },
+        "discount_order_stacking": {
+          "many": "Popusti na naročilo"
+        },
+        "subtotal_label_with_quantity": {
+          "many": "Medskupno · %{count} artiklov"
+        },
+        "number_items": {
+          "many": "%{count} izdelkov"
+        },
+        "view_all_items": {
+          "many": "Prikaži vse objave (%{count})"
+        },
+        "pickup_unavailable_banner_title": {
+          "many": "Nobena trgovina z vašimi izdelki ni na voljo"
+        },
+        "pickup_unavailable_banner_title_with_country": {
+          "many": "V državi %{country} ni na voljo nobena trgovina z vašimi izdelki."
+        },
+        "discount_code_applied_count": {
+          "many": "Pokaži %{count} popustov"
+        }
+      },
+      "shipping": {
+        "estimated_delivery_date": {
+          "many": "%{count} delovnih dni"
+        },
+        "other_method": {
+          "many": "Na voljo je še %{count} drugih metod od"
+        },
+        "subscription_delivery_description": {
+          "prepaid_delivery_frequency": {
+            "many": "za %{count} dostav"
+          },
+          "subscription_delivery_frequency": {
+            "day": {
+              "many": "vsakih %{count} dni"
+            },
+            "week": {
+              "many": "vsaka %{count} tedna"
+            },
+            "month": {
+              "many": "vsakih %{count} mesecev"
+            },
+            "year": {
+              "many": "vsakih %{count} let"
+            }
+          },
+          "first_n_order_free": {
+            "many": "Prvih %{count} naročil brezplačno"
+          },
+          "free_for_first_n_order": {
+            "many": "Za prvih %{count} naročil"
+          },
+          "free_shipping_cycles": {
+            "many": "Brezplačna dostava za še %{count} dostav"
+          },
+          "free_shipping_cycles_delivery_not_included": {
+            "many": "Brezplačna poštnina za %{count} dostav"
+          },
+          "first_n_order_free_with_cycle": {
+            "many": "Brezplačna dostava za še %{count} dostav, nato po ceni %{recurring_order_shipping_price}"
+          },
+          "first_n_order_free_with_cycle_delivery_not_included": {
+            "many": "Brezplačna dostava za %{count} dostav, nato po ceni %{recurring_order_shipping_price}"
+          },
+          "max_cycles_base_shipping": {
+            "many": "Še %{count} dostav po %{shipping_price} vsaka"
+          },
+          "max_cycles_base_shipping_delivery_not_included": {
+            "many": "Še %{count} dostav po %{shipping_price} vsaka"
+          },
+          "prepaid_free_shipping_with_cycles": {
+            "many": "Brezplačna dostava za prvo obdobje v višini %{cycle}, nato cena %{recurring_order_shipping_price}"
+          },
+          "prepaid_order_one_cycle": {
+            "many": "%{shipping_price} za dodatnih %{count} dostav (%{per_delivery_cost})"
+          },
+          "prepaid_order_one_cycle_delivery_not_included": {
+            "many": "%{shipping_price} za %{count} dostav (cena na dostavo: %{per_delivery_cost})"
+          },
+          "prepaid_order_no_cycle": {
+            "many": "%{shipping_price} za ostalih %{count} dostav (cena na dostavo: %{per_delivery_cost}), nato pa po ceni %{recurring_order_shipping_price}"
+          },
+          "prepaid_order_no_cycle_delivery_not_included": {
+            "many": "%{shipping_price} za %{count} dostav (cena %{per_delivery_cost} na dostavo), po ceni %{recurring_order_shipping_price}"
+          }
+        },
+        "shipping_method_first_shipment_group_title": {
+          "many": "Prve pošiljke"
+        },
+        "shipping_method_recurring_shipments_group_title": {
+          "many": "Ponavljajoče se pošiljke"
+        },
+        "unbranded_description_with_fulfillment_days": {
+          "many": "Odprema v %{count} delovnih dneh"
+        },
+        "unbranded_description_with_fulfillment_weeks": {
+          "many": "Pošljite v %{count} tednih"
+        },
+        "split_shipping_shipment_count_notice_one_time_purchase": {
+          "many": "Naročilo bo prispelo v %{count} pošiljkah"
+        },
+        "split_shipping_arrives_in_shipments": {
+          "many": "Dostavljeno v %{count} pošiljkah"
+        }
+      },
+      "payment": {
+        "order_covered_by_gift_cards_notice": {
+          "many": "Tvoje naročilo je krito z darilnimi karticami."
+        },
+        "card_fields_unavailable_html": {
+          "many": "Plačila s kreditnimi in debetnimi karticami trenutno niso na voljo. <br><a href=\"%{current_url}\">Osvežite to stran</a> ali poskusite z drugim plačilnim sredstvom."
+        },
+        "pending_payment": {
+          "oxxo": {
+            "days_left": {
+              "many": "%{count} dni"
+            }
+          }
+        },
+        "expired_cards_info": {
+          "many": "Imate %{count} poteklih kartic, ki si jih lahko ogledate in uredite v svojem računu."
+        },
+        "order_edit_banner_items_added": {
+          "many": "%{count} dodanih"
+        },
+        "crypto_payment_method": {
+          "cashback_descriptor": {
+            "many": "Cashback boste prejeli po %{count} dneh"
+          }
+        },
+        "discount_show_more_warnings": {
+          "many": "Prikaži še %{count}"
+        },
+        "discount_codes_removed_summary": {
+          "many": "Odstranjenih je bilo %{count} kod za popust"
+        },
+        "discount_codes_modified_summary": {
+          "many": "%{count} kodov za popust je bilo spremenjenih"
+        },
+        "discount_codes_removed_or_modified_summary": {
+          "many": "Število unovčenih kod je bilo odstranjenih ali spremenjenih: %{count}"
+        }
+      },
+      "field_errors": {
+        "custom_field": {
+          "cart_metafield_value_too_long_with_limit": {
+            "many": "Vnesite največ %{count} znakov."
+          },
+          "cart_metafield_value_too_short_with_limit": {
+            "many": "Vnesite vsaj %{count} znakov."
+          }
+        }
+      },
+      "shipping_errors": {
+        "shipping_method_not_available_generic": {
+          "many": "Nekateri artikli v košarici ne morejo biti dostavljeni na vnešeni naslov. Preverite naslov, da se prepričate, ali je pravilen, in poskusite znova, ali pa izberite drug naslov."
+        },
+        "shipping_method_not_available_updated": {
+          "many": "Eden ali več dodanih izdelkov ni mogoče poslati na vašo lokacijo. Odstranite jih, da dokončate naročilo, ali se obrnite na trgovino."
+        }
+      },
+      "processing": {
+        "wait": {
+          "medium": {
+            "many": "Vaše naročilo je v obdelavi. Predvideni čas čakanja: %{count} minut."
+          }
+        }
+      },
+      "thank_you": {
+        "login_reorder_link_text": {
+          "many": "kupite tudi te izdelke"
+        },
+        "gift_card_confirmation_by_text_typ": {
+          "many": "SMS z darilnimi boni boste prejeli čez nekaj minut."
+        },
+        "gift_card_confirmation_by_email_typ": {
+          "many": "Darila boste prejeli po e-pošti čez nekaj minut."
+        },
+        "gift_card_email_title": {
+          "many": "Darilni boni, poslani po e-pošti"
+        },
+        "gift_card_text_title": {
+          "many": "Darilni boni, poslani prek SMS-a"
+        },
+        "gift_card_resent_confirmation": {
+          "many": "Darilni boni so bili ponovno poslani."
+        },
+        "gift_card_resend_failure": {
+          "many": "Pri ponovnem pošiljanju darilnih bonov je prišlo do napake. Poskusite znova ali se obrnite na nas."
+        },
+        "thank_you_unconfirmed_items_heading": {
+          "many": "Nekateri predmeti niso potrjeni"
+        },
+        "thank_you_unconfirmed_items_description": {
+          "many": "Za te stvari nismo bili bremenjeni"
+        },
+        "thank_you_item_label": {
+          "many": "%{count} izdelkov"
+        },
+        "items_fulfilled_by_store": {
+          "many": "Izdelki, ki si jih kupil, bodo prispeli iz drugih trgovin."
+        }
+      },
+      "review": {
+        "blocks": {
+          "pickup_items_at": {
+            "many": "Prevzem %{count} artiklov pri"
+          },
+          "ship_items_to": {
+            "many": "Pošljite %{count} izdelkov na"
+          }
+        }
+      },
+      "order_payment_collection": {
+        "changes_summary": {
+          "added": {
+            "many": "%{count} dodanih"
+          }
+        }
+      },
+      "open_graph_meta_tag": {
+        "title_with_products": {
+          "many": "Kupite %{product_name} in še %{count} drugih izdelkov"
+        }
+      },
+      "subscriptions": {
+        "recurring_totals_with_policies": {
+          "first_cycles": {
+            "many": "Prva %{count} plačila: %{total_price} vsako"
+          }
+        },
+        "recurring_total_intervals": {
+          "day": {
+            "many": "%{count} dni"
+          },
+          "week": {
+            "many": "%{count} tednov"
+          },
+          "month": {
+            "many": "%{count} mesecev"
+          },
+          "year": {
+            "many": "%{count} let"
+          }
+        },
+        "recurring_totals_with_initial_order_shipping_discount_with_policies": {
+          "first_cycles": {
+            "many": "nato %{count} plačil, vsako v vrednosti %{total_price}"
+          }
+        }
+      },
+      "contextual_availability": {
+        "title": {
+          "many": "Izdelki niso na voljo"
+        },
+        "products_not_available": {
+          "many": "Ti izdelki bodo odstranjeni iz tvoje košarice, ker niso na voljo v tvoji državi/regiji."
+        },
+        "all_products_in_cart_unavailable": {
+          "many": "Ti izdelki niso na voljo v vaši državi/regiji."
+        }
+      },
+      "throttle": {
+        "estimated_wait_time": {
+          "many": "Predvideni čakalni čas: {{count}} minut"
+        }
+      },
+      "deliverability": {
+        "not_deliverable": {
+          "title": {
+            "many": "Ni na voljo dostave za %{count} izdelkov"
+          },
+          "message": {
+            "many": "Ti predmeti bodo odstranjeni iz tvoje košarice, ker za tvoj naslov ni na voljo nobene možnosti dostave."
+          }
+        }
+      },
+      "pickup_point": {
+        "paginator": {
+          "header": {
+            "many": "Prikazano je %{first} - %{last} od %{count} točk"
+          },
+          "selected_pickup_point_label": {
+            "many": "%{pickup_point_index} od %{count} točk"
+          },
+          "selected_page": {
+            "many": "%{first} - %{last} z %{count} točkami"
+          }
+        },
+        "number_of_pickup_points_near_location": {
+          "many": "%{count} zbirnih mest v vaši bližini"
+        },
+        "pickup_unavailable_banner_title": {
+          "many": "Za vaše artikle ni na voljo nobenega prevzemnega mesta."
+        }
+      },
+      "notice_banner": {
+        "validation_errors_banner": {
+          "heading": {
+            "many": "Prišlo je do {{count}} napak:"
+          }
+        }
+      }
+    },
+    "notices": {
+      "order": {
+        "cancel_reason": {
+          "many": "Drugo"
+        }
+      }
+    },
+    "page_titles": {
+      "search_results": {
+        "many": "Iskanje: %{count} rezultatov najdenih za \"%{terms}\""
+      }
+    }
+  },
+  "customer_accounts": {
+    "navigation_and_structure": {
+      "store_credit_multi_currency_accessibility_label": {
+        "many": "{{formattedBalance}} in drugih {{count}} valut shranjenih dobroimetij"
+      }
+    },
+    "orders": {
+      "order_list": {
+        "items": {
+          "many": "{{count}} izdelkov"
+        }
+      },
+      "order_status": {
+        "delivered_description_gift_card": {
+          "many": "Darilni boni, poslani po e-pošti."
+        },
+        "confirmed_gift_card_additional_description": {
+          "many": "Vsak darilni bon bo poslan v ločenem e-poštnem sporočilu."
+        },
+        "delivered_description_gift_card_text": {
+          "many": "Darilni boni so bili poslani prek sporočila."
+        },
+        "confirmed_gift_card_additional_description_text": {
+          "many": "Vsak darilni bon bo poslan v ločenem sporočilu."
+        },
+        "gift_resend_success": {
+          "many": "Darilni boni ponovno poslani"
+        },
+        "gift_resend_failure": {
+          "many": "Pri ponovnem pošiljanju darilnih bonov je prišlo do napake. Poskusite znova ali se obrnite na nas."
+        },
+        "tracking_number": {
+          "many": "Številke za sledenje"
+        },
+        "gift_card_resend_button": {
+          "many": "Ponovno pošljite darilne kartice"
+        },
+        "fulfillment_tracking": {
+          "gift_card_sent_to_recipient": {
+            "many": "Darilni boni so bili poslani prejemnikom."
+          }
+        }
+      }
+    },
+    "order_details": {
+      "image_gallery": {
+        "load_more_items": {
+          "many": "Prikaži še {{count}} objav"
+        }
+      },
+      "subtotal_label_with_quantity": {
+        "many": "Podskupaj · {{count}} izdelkov"
+      },
+      "discount_order_stacking": {
+        "many": "Popusti na naročilo"
+      }
+    },
+    "B2B": {
+      "orders": {
+        "draft_order_list": {
+          "pending_tab_accessibility_label": {
+            "pending_orders": {
+              "many": "Imate {{count}} nerešenih naročil"
+            }
+          }
+        }
+      },
+      "draft_order_details": {
+        "payment_status": {
+          "pending": {
+            "banner_overdue": {
+              "many": "Plačilo zamuja za {{count}} dni"
+            },
+            "banner_due": {
+              "many": "Plačilo zapade čez {{count}} dni"
+            },
+            "banner_overdue_for_single_fulfillment": {
+              "many": "Plačilo za {{amount}} zamuja za {{count}} dni. {{link}}"
+            }
+          }
+        }
+      }
+    },
+    "errors": {
+      "banner_title": {
+        "many": "Pojavile so se {{count}} napake"
+      }
+    },
+    "payment_methods": {
+      "add_payment_method": {
+        "subscription_contracts": {
+          "more_items": {
+            "many": "{{count}} drugih izdelkov"
+          },
+          "product_count": {
+            "many": "{{count}} izdelkov"
+          }
+        },
+        "updating_contracts": {
+          "many": "Posodabljanje {{count}} naročniških pogodb ..."
+        },
+        "contracts_updated": {
+          "many": "{{count}} naročniških pogodb uspešno posodobljenih"
+        }
+      }
+    },
+    "ui_components": {
+      "autocompleteOptionsAvailable": {
+        "many": "{{count}} artiklov na voljo"
+      },
+      "mapClusterTitle": {
+        "many": "Združevanje {{number}} kazalnikov"
+      }
+    },
+    "date": {
+      "humanize": {
+        "lessThanOneHourAgo": {
+          "many": "{{count}} minut nazaj"
+        }
+      }
     }
   }
 }

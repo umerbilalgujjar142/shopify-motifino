@@ -92,7 +92,7 @@
         "show_help_link": true,
         "help_link_text": "Hai dubbi o domande?",
         "help_link_size": 18,
-        "help_link": "#shopify-section-template--29200592666950__faq_y9kK7f",
+        "help_link": "#shopify-section-template--29370836156742__faq_y9kK7f",
         "show_trust_banner": true,
         "trust_icon_1": "picto-return",
         "trust_text_1": "Resi Gratuiti",
@@ -170,6 +170,90 @@
         "padding_mobile": 18,
         "padding_desktop": 48,
         "link_text": "Vedi tutte le combinazioni",
+        "link_url": "",
+        "link_style": "link",
+        "media_bg": "#f1f1f1",
+        "button_bg": "#111111",
+        "button_text_color": "#ffffff",
+        "compare_color": "#e02b2b"
+      }
+    },
+    "cart_belt_suggestions_eKPnmp": {
+      "type": "cart-belt-suggestions",
+      "blocks": {
+        "collection_XfpUey": {
+          "type": "collection",
+          "settings": {
+            "collection": "cinture-holess",
+            "products_count": 20,
+            "title": "Acquista solo la pelle"
+          }
+        }
+      },
+      "block_order": [
+        "collection_XfpUey"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "subheading": "Passanti inclusi",
+        "button_text": "Aggiungi al Carrello",
+        "use_shopify_price": true,
+        "products_per_row_mobile": 1.6,
+        "products_per_row_desktop": 5,
+        "max_width": 1320,
+        "media_ratio": "4 / 5",
+        "media_height": 160,
+        "card_radius": 8,
+        "pill_font_size": 12,
+        "pill_padding_block": 4,
+        "pill_padding_inline": 11,
+        "pill_height": 0,
+        "pill_width": 0,
+        "padding_mobile": 18,
+        "padding_desktop": 48,
+        "link_text": "Vedi tutte le pelli",
+        "link_url": "",
+        "link_style": "link",
+        "media_bg": "#f1f1f1",
+        "button_bg": "#111111",
+        "button_text_color": "#ffffff",
+        "compare_color": "#e02b2b"
+      }
+    },
+    "cart_belt_suggestions_zHTJtU": {
+      "type": "cart-belt-suggestions",
+      "blocks": {
+        "collection_PdXLM8": {
+          "type": "collection",
+          "settings": {
+            "collection": "fibbie-holess",
+            "products_count": 20,
+            "title": "Scopri le fibbie Holess"
+          }
+        }
+      },
+      "block_order": [
+        "collection_PdXLM8"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "subheading": "Crea diverse combinazioni",
+        "button_text": "Aggiungi al Carrello",
+        "use_shopify_price": true,
+        "products_per_row_mobile": 1.6,
+        "products_per_row_desktop": 5,
+        "max_width": 1320,
+        "media_ratio": "1 / 1",
+        "media_height": 160,
+        "card_radius": 8,
+        "pill_font_size": 12,
+        "pill_padding_block": 4,
+        "pill_padding_inline": 11,
+        "pill_height": 0,
+        "pill_width": 0,
+        "padding_mobile": 18,
+        "padding_desktop": 48,
+        "link_text": "Vedi le varie fibbie",
         "link_url": "",
         "link_style": "link",
         "media_bg": "#f1f1f1",
@@ -871,6 +955,8 @@
     "belt_tier_bar",
     "main",
     "belt_suggestions",
+    "cart_belt_suggestions_eKPnmp",
+    "cart_belt_suggestions_zHTJtU",
     "faq_y9kK7f",
     "media_grid_gzfeUE"
   ]
