@@ -1545,7 +1545,10 @@ updateMessage_fn = function() {
   if (this.totalPrice >= __privateGet(this, _threshold)) {
     messageElement.innerHTML = this.getAttribute("reached-message");
   } else {
-    const replacement = `${__privateGet(this, _currencyFormatter).format((__privateGet(this, _threshold) - this.totalPrice) / 100).replace(/\$/g, "$$$$")}`;
+    const remaining = (__privateGet(this, _threshold) - this.totalPrice) / 100;
+    // A round amount reads as "15 €", not "15,00 €"; the locale's own nbsp keeps the symbol off the number.
+    const formatter = remaining % 1 === 0 ? new Intl.NumberFormat(Shopify.locale, { style: "currency", currency: Shopify.currency.active, minimumFractionDigits: 0, maximumFractionDigits: 0 }) : __privateGet(this, _currencyFormatter);
+    const replacement = `${formatter.format(remaining).replace(/\$/g, "$$$$")}`;
     messageElement.innerHTML = this.getAttribute("unreached-message").replace(new RegExp("({{.*}})", "g"), replacement);
   }
 };

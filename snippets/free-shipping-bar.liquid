@@ -27,13 +27,32 @@
   assign calculated_total_price = calculated_total_price | minus: total_cart_discount
 -%}
 
+{%- liquid
+  # Callers can pass their own wording; the locale strings stay the fallback.
+  # Only the quote is escaped, so <b> in the setting reaches innerHTML as markup.
+  assign reached = reached_message
+  assign unreached = unreached_message
+  if reached == blank
+    assign reached = 'cart.free_shipping_bar.limit_reached_html' | t
+  endif
+  if unreached == blank
+    assign unreached = 'cart.free_shipping_bar.limit_unreached_html' | t
+  endif
+
+  # Shopify strips {{ }} out of section setting values, so merchants write
+  # [amount] and it is turned back into the token the JS looks for. Built by
+  # append so no brace pair ever sits in the source.
+  assign token = '{' | append: '{' | append: 'amount' | append: '}' | append: '}'
+  assign unreached = unreached | replace: '[amount]', token
+-%}
+
 {%- if cart.requires_shipping -%}
   <free-shipping-bar
-    class="free-shipping-bar"
+    class="free-shipping-bar {{ extra_class }}"
     threshold="{{ settings.cart_free_shipping_threshold }}"
     total-price="{{ calculated_total_price }}"
-    reached-message="{{ 'cart.free_shipping_bar.limit_reached_html' | t | escape }}"
-    unreached-message="{{ 'cart.free_shipping_bar.limit_unreached_html' | t | escape }}"
+    reached-message="{{ reached | replace: '"', '&quot;' }}"
+    unreached-message="{{ unreached | replace: '"', '&quot;' }}"
   >
     {%- comment -%}The span below is the placeholder where the content will be inserted in JS{%- endcomment -%}
     <span class="text-subdued">&nbsp;</span>

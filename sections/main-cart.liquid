@@ -57,6 +57,22 @@
     height: auto;
   }
 
+  .bb-ship-msg {
+    display: block;
+    background: #f4f4f4;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 14px;
+    line-height: 1.4;
+    margin: 0 0 5px;
+    text-align: left;
+  }
+
+  /* The snippet's own span is text-subdued; this box wants full-contrast text. */
+  .bb-ship-msg .text-subdued { color: inherit; }
+  .bb-ship-msg b,
+  .bb-ship-msg strong { font-weight: 700; color: #000; }
+
   .line-item__quantity { margin-block-start: 0.2rem; }
   body.bb-cart-busy .line-item__quantity { pointer-events: none; opacity: 0.45; }
 
@@ -493,7 +509,11 @@
                 {%- endif -%}
 
                 {%- if settings.cart_show_free_shipping_bar -%}
-                  {%- render 'free-shipping-bar' -%}
+                  {%- render 'free-shipping-bar',
+                    extra_class: 'bb-ship-msg',
+                    reached_message: section.settings.shipping_msg_reached,
+                    unreached_message: section.settings.shipping_msg_unreached
+                  -%}
                 {%- endif -%}
 
                 {%- render 'cart-discount' -%}
@@ -2065,6 +2085,23 @@
       "label": "Text",
       "default": "Consegna prevista tra:",
       "visible_if": "{{ section.settings.show_delivery_estimate }}"
+    },
+    {
+      "type": "header",
+      "content": "Free shipping message"
+    },
+    {
+      "type": "text",
+      "id": "shipping_msg_reached",
+      "label": "Message when free shipping is reached",
+      "default": "Hai ottenuto la <b>spedizione gratuita</b>!"
+    },
+    {
+      "type": "text",
+      "id": "shipping_msg_unreached",
+      "label": "Message when still below the minimum",
+      "info": "Write [amount] where the missing amount should appear.",
+      "default": "Ti mancano <b>[amount]</b> per ottenere la spedizione gratuita"
     },
     {
       "type": "checkbox",
