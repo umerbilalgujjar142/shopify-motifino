@@ -217,10 +217,6 @@
         <div class="section-header justify-self-center text-center">
           <div class="v-stack gap-1">
             <h1 class="h2">{{ 'cart.general.title' | t }}</h1>
-
-            {%- if settings.cart_show_free_shipping_bar -%}
-              {%- render 'free-shipping-bar' -%}
-            {%- endif -%}
           </div>
         </div>
 
@@ -496,6 +492,10 @@
                   </div>
                 {%- endif -%}
 
+                {%- if settings.cart_show_free_shipping_bar -%}
+                  {%- render 'free-shipping-bar' -%}
+                {%- endif -%}
+
                 {%- render 'cart-discount' -%}
 
                 {%- if cart.cart_level_discount_applications.size > 0 -%}
@@ -527,6 +527,15 @@
                 {%- endcomment -%}
                 {%- assign _bb_offerta_total = cart.original_total_price | minus: cart.items_subtotal_price -%}
                 {%- assign _shipping_threshold_cents = settings.cart_free_shipping_threshold | times: 100 -%}
+                {%- comment -%}
+                  round: Liquid float maths turns 4.99 | times: 100 into 498.999…, which money would render wrong.
+                {%- endcomment -%}
+                {%- comment -%}An unset rate multiplies out to 0, which hides the row on its own.{%- endcomment -%}
+                {%- assign _shipping_cents = 0 -%}
+                {%- if settings.cart_show_free_shipping_bar and cart.requires_shipping and cart.total_price < _shipping_threshold_cents -%}
+                  {%- assign _shipping_cents = settings.cart_shipping_rate | times: 100 | round -%}
+                {%- endif -%}
+                {%- assign _bb_grand_total = cart.total_price | plus: _shipping_cents -%}
 
                 <div class="bb-recap-row">
                   <span>Importo:</span>
@@ -540,11 +549,19 @@
                   </span>
                 </div>
 
-                {%- if cart.total_price >= _shipping_threshold_cents -%}
-                  <div class="bb-recap-row">
-                    <span>Spedizione:</span>
-                    <span>Gratis</span>
-                  </div>
+                {%- comment -%}One switch: the message and the Spedizione row go together.{%- endcomment -%}
+                {%- if settings.cart_show_free_shipping_bar and cart.requires_shipping -%}
+                  {%- if cart.total_price >= _shipping_threshold_cents -%}
+                    <div class="bb-recap-row">
+                      <span>Spedizione:</span>
+                      <span>Gratis</span>
+                    </div>
+                  {%- elsif _shipping_cents > 0 -%}
+                    <div class="bb-recap-row">
+                      <span>Spedizione:</span>
+                      <span>{{ _shipping_cents | money }}</span>
+                    </div>
+                  {%- endif -%}
                 {%- endif -%}
 
                 {%- for block in section.blocks -%}
@@ -553,7 +570,7 @@
 
                 <div class="bb-recap-row bb-recap-row--total">
                   <span>{{ 'cart.general.total' | t }}:</span>
-                  <span>{{ cart.total_price | money_with_currency }}</span>
+                  <span>{{ _bb_grand_total | money_with_currency }}</span>
                 </div>
 
                 {%- if section.settings.show_accelerated_buttons and additional_checkout_buttons -%}

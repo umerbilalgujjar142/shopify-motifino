@@ -755,6 +755,13 @@
         "placeholder": "t:theme_settings.cart.free_shipping_bar_minimum_amount_placeholder",
         "info": "t:theme_settings.cart.free_shipping_bar_minimum_amount_info",
         "default": "50"
+      },
+      {
+        "type": "text",
+        "id": "cart_shipping_rate",
+        "label": "Shipping price below the minimum",
+        "default": "4.99",
+        "info": "Shown in the cart recap and added to the total when the cart is under the free shipping minimum. Value in the store main currency, without currency code. Leave empty to show no shipping row."
       }
     ]
   },

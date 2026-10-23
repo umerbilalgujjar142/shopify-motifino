@@ -49,7 +49,7 @@
     "cart_icon": "shopping_cart",
     "cart_empty_cart_link": "shopify://pages/linea-cinture-holess",
     "hide_qty_keywords": "Set, Kit",
-    "cart_show_free_shipping_bar": false,
+    "cart_show_free_shipping_bar": true,
     "cart_free_shipping_threshold": "54.99",
     "social_facebook": "https://www.facebook.com/profile.php?id=61559426038200&locale=it_IT",
     "social_instagram": "https://www.instagram.com/official_motifino/",
