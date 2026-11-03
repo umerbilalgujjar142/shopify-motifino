@@ -100,7 +100,7 @@
         "button_D9rxK3": {
           "type": "button",
           "settings": {
-            "link": "#shopify-section-template--29370836975942__tabs_FUAGrg",
+            "link": "#shopify-section-template--29597955490118__tabs_FUAGrg",
             "text": "Vedi taglie e dettagli",
             "button_style": "link",
             "stretch": false,
@@ -174,7 +174,7 @@
         "desktop_section_spacing_right": 0,
         "desktop_section_spacing_bottom": 0,
         "desktop_section_spacing_left": 0,
-        "allow_transparent_header": true,
+        "allow_transparent_header": false,
         "transparent_header_use_primary_colors": false,
         "container_size": "full",
         "product_info_size": 40,
@@ -569,7 +569,7 @@
         "tab_Xtb8QR": {
           "type": "tab",
           "settings": {
-            "title": "Spedizione Gratuita in 24/72h",
+            "title": "Spedizione Rapida in 1-3 Giorni",
             "content": "<p>Tutte le spedizioni partono prima delle 15:00 dal Lunedì al Venerdì. In media tutti i pacchi vengono consegnati in <strong>24/72h</strong><br/><br/>Gli ordini vengono controllati ogni giorno dal nostro staff e per qualsiasi problema nella spedizioni verrai contattato.<br/><br/>Puoi leggere ulteriori informazioni sulla spedizione <a href=\"/policies/shipping-policy\" title=\"Shipping Policy\">QUI</a></p>",
             "page": "",
             "open_on_mobile": false

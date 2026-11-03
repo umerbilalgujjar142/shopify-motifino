@@ -42,10 +42,12 @@
         },
         "badges_fQW7pB": {
           "type": "badges",
+          "disabled": true,
           "settings": {}
         },
         "spacer_C9zbyk": {
           "type": "spacer",
+          "disabled": true,
           "settings": {
             "height_desktop": 24,
             "height_mobile": 12
@@ -77,7 +79,7 @@
         "button_ezgY9Q": {
           "type": "button",
           "settings": {
-            "link": "#shopify-section-template--29370837041478__tabs_FUAGrg",
+            "link": "#shopify-section-template--29597955555654__tabs_FUAGrg",
             "text": "Vedi taglie e dettagli ->",
             "button_style": "link",
             "stretch": false,
@@ -220,7 +222,7 @@
         "desktop_section_spacing_right": 0,
         "desktop_section_spacing_bottom": 0,
         "desktop_section_spacing_left": 0,
-        "allow_transparent_header": true,
+        "allow_transparent_header": false,
         "transparent_header_use_primary_colors": false,
         "container_size": "full",
         "product_info_size": 40,
@@ -433,7 +435,7 @@
             "title": "Taglie e Dettagli Tecnici",
             "content": "<p><strong>TAGLIE<br/></strong>Tutte le cinture sono alte 3,5cm<br/>Sono disponibili in 2 taglie:<br/>- 130cm (copre fino alla 56 IT di pantaloni)<br/>- 150cm (copre fino alla 66 IT di pantaloni)<br/><br/>Le cinture possono essere <strong>accorciate su misura</strong> in modo estremamente semplice. Guarda il<a href=\"#popup-taglio\" title=\"#popup-taglio\"> tutorial</a><strong><br/><br/>MATERIALI<br/></strong>Cinture: 70% pelle di vitello, 30% PU<br/>Fibbie: Lega di zinco<br/>Le fibbie contengono una percentuale bassissima di Nichel</p>",
             "page": "",
-            "open_on_mobile": false
+            "open_on_mobile": true
           }
         },
         "tab_RgFYrq": {
@@ -442,13 +444,13 @@
             "title": "Cos'é la Privilege Card?",
             "content": "<p>Con ogni cintura ricevi anche un biglietto da visita digitale, ossia la Privilege Card. Guarda come funziona <a href=\"#popup-privilege\" title=\"#popup-privilege\"><strong>qui.</strong></a></p>",
             "page": "",
-            "open_on_mobile": true
+            "open_on_mobile": false
           }
         },
         "tab_Xtb8QR": {
           "type": "tab",
           "settings": {
-            "title": "Spedizione Gratuita in 24/72h",
+            "title": "&nbsp;Spedizione Rapida in 1-3 Giorni&nbsp;",
             "content": "<p>Tutte le spedizioni partono prima delle 15:00 dal Lunedì al Venerdì. In media tutti i pacchi vengono consegnati in <strong>24/72h</strong><br/><br/>Gli ordini vengono controllati ogni giorno dal nostro staff e per qualsiasi problema nella spedizioni verrai contattato.<br/><br/>Puoi leggere ulteriori informazioni sulla spedizione <a href=\"/policies/shipping-policy\" title=\"Shipping Policy\">QUI</a></p>",
             "page": "",
             "open_on_mobile": false
