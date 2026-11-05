@@ -901,6 +901,35 @@
 
       player.querySelector('[data-close]').addEventListener('click', close);
 
+      /* The promo link is useless while the player is still covering the page:
+         an anchor on this page would scroll behind it, and the body is locked
+         anyway. So the player gets out of the way first, and a same-page jump
+         is done by hand once scrolling is possible again. */
+      if (promoBtn) {
+        promoBtn.addEventListener('click', function (event) {
+          var href = promoBtn.getAttribute('href') || '';
+          var hash = href.indexOf('#');
+          var id = hash > -1 ? href.slice(hash + 1) : '';
+          var samePage =
+            id !== '' &&
+            (hash === 0 || href.slice(0, hash) === location.origin + location.pathname);
+
+          close();
+
+          /* close() only unlocks the body when its animation ends, which is
+             far too late for a jump that should feel like one tap. */
+          document.body.style.overflow = '';
+
+          if (!samePage) return;
+
+          var target = document.getElementById(id);
+          if (!target) return;
+
+          event.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      }
+
       player.querySelector('[data-sound]').addEventListener('click', function () {
         muted = !muted;
         video.muted = muted;

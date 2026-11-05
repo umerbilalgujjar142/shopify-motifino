@@ -644,8 +644,13 @@
         button.disabled = true;
         button.innerHTML = SPINNER + '<span>' + label + '</span>';
 
+        /* The card can only ride along when its quantity does not depend on what
+           is already in the cart — otherwise the sync below works it out. */
+        var rideAlong = !!(B && B.privilegeCardEnabled && B.privilegeCardEnabled()
+          && (!B.cardLimit || B.cardLimit() === 1));
+
         var cardId = Promise.resolve(null);
-        if (B && B.privilegeCardVariantId) {
+        if (rideAlong && B.privilegeCardVariantId) {
           cardId = B.privilegeCardVariantId().catch(function () { return null; });
         }
 
@@ -672,6 +677,12 @@
           .then(function (response) {
             if (!response.ok) throw new Error('cart_add_failed');
             return response.json();
+          })
+          .then(function (payload) {
+            if (rideAlong || !B || !B.syncPrivilegeCard) return payload;
+            return B.syncPrivilegeCard(null, ids.join(',')).then(function (after) {
+              return after || payload;
+            });
           })
           .then(function (payload) {
             return minSpin.then(function () { return payload; });

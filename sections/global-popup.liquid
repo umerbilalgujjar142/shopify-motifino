@@ -233,6 +233,117 @@
     border: 1px solid transparent;
   }
 
+  #gpopup-{{ section.id }} .gpopup__products {
+    display: grid;
+    gap: 12px;
+  }
+
+  #gpopup-{{ section.id }} .gpopup__products--grid2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  #gpopup-{{ section.id }} .gpopup__products--grid3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+  {%- comment -%}A row that scrolls keeps the cards readable when the panel is narrow.{%- endcomment -%}
+  #gpopup-{{ section.id }} .gpopup__products--row {
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(140px, 1fr);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #gpopup-{{ section.id }} .gpopup__products--row .gpopup__card {
+    scroll-snap-align: start;
+  }
+
+  #gpopup-{{ section.id }} .gpopup__card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  #gpopup-{{ section.id }} .gpopup__card-media {
+    display: block;
+    border-radius: var(--gpopup-card-radius, 8px);
+    overflow: hidden;
+    background: rgb(0 0 0 / 0.04);
+  }
+
+  #gpopup-{{ section.id }} .gpopup__card-media img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+  }
+
+  #gpopup-{{ section.id }} .gpopup__card-title {
+    font-size: 13px;
+    line-height: 1.3;
+    text-decoration: none;
+    color: inherit;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  #gpopup-{{ section.id }} .gpopup__card-price {
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    gap: 6px;
+    align-items: baseline;
+  }
+
+  #gpopup-{{ section.id }} .gpopup__card-price s {
+    font-weight: 400;
+    opacity: 0.55;
+  }
+
+  {%- comment -%}Same treatment as the free card line in the cart.{%- endcomment -%}
+  #gpopup-{{ section.id }} .gpopup__card-price--free s {
+    color: #c0392b;
+    opacity: 1;
+    font-size: 12px;
+  }
+
+  #gpopup-{{ section.id }} .gpopup__card-select {
+    width: 100%;
+    font: inherit;
+    font-size: 12px;
+    padding: 6px 8px;
+    border-radius: var(--gpopup-card-radius, 8px);
+    border: 1px solid rgb(0 0 0 / 0.2);
+    background: transparent;
+    color: inherit;
+  }
+
+  #gpopup-{{ section.id }} .gpopup__card-btn {
+    margin-block-start: auto;
+    display: block;
+    width: 100%;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    padding: 9px 10px;
+    border: 1px solid transparent;
+    border-radius: var(--gpopup-card-radius, 8px);
+    cursor: pointer;
+  }
+
+  #gpopup-{{ section.id }} .gpopup__card-btn[disabled] {
+    opacity: 0.45;
+    cursor: default;
+  }
+
+  @media screen and (max-width: 699px) {
+    #gpopup-{{ section.id }} .gpopup__products--grid3 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
   @media screen and (max-width: 699px) {
     #gpopup-{{ section.id }} .gpopup__panel-wrap {
       max-width: {{ section.settings.panel_width_mobile }}px;
@@ -373,6 +484,94 @@
                 >
                   {{ block.settings.label }}
                 </a>
+              </div>
+            {%- endif -%}
+
+          {%- when 'collection' -%}
+            {%- assign gp_collection = block.settings.collection -%}
+            {%- if gp_collection != blank and gp_collection.products_count > 0 -%}
+              <div
+                class="gpopup__products gpopup__products--{{ block.settings.layout }}"
+                style="--gpopup-card-radius: {{ block.settings.radius }}px;"
+                data-gpopup-products
+                data-gpopup-after="{{ block.settings.after_add }}"
+                data-gpopup-adding="{{ block.settings.adding_label | escape }}"
+                data-gpopup-added="{{ block.settings.added_label | escape }}"
+                {% if block.settings.limit_one %}data-gpopup-limit-one data-gpopup-taken="{{ block.settings.taken_label | escape }}"{% endif %}
+                {{ block.shopify_attributes }}
+              >
+                {%- for gp_product in gp_collection.products limit: block.settings.products_count -%}
+                  {%- assign gp_variant = gp_product.selected_or_first_available_variant -%}
+
+                  <div class="gpopup__card" data-gpopup-product="{{ gp_product.id }}">
+                    <a class="gpopup__card-media" href="{{ gp_product.url }}">
+                      {{-
+                        gp_product.featured_image
+                        | image_url: width: 400
+                        | image_tag: loading: 'lazy', sizes: '160px', widths: '160,240,320,400'
+                      -}}
+                    </a>
+
+                    <a class="gpopup__card-title" href="{{ gp_product.url }}">{{ gp_product.title }}</a>
+
+                    {%- if block.settings.show_price -%}
+                      {%- if block.settings.free_mode -%}
+                        <div class="gpopup__card-price gpopup__card-price--free">
+                          <span>{{ block.settings.free_label }}</span>
+                          {%- comment -%}
+                            A product already priced at zero has nothing to strike
+                            through; one with a real price shows what it is worth.
+                          {%- endcomment -%}
+                          {%- if gp_variant.price > 0 -%}
+                            <s>{{ gp_variant.price | money }}</s>
+                          {%- endif -%}
+                        </div>
+                      {%- else -%}
+                        <div class="gpopup__card-price">
+                          <span>{{ gp_variant.price | money }}</span>
+                          {%- if block.settings.show_compare_price and gp_variant.compare_at_price > gp_variant.price -%}
+                            <s>{{ gp_variant.compare_at_price | money }}</s>
+                          {%- endif -%}
+                        </div>
+                      {%- endif -%}
+                    {%- endif -%}
+
+                    {%- if gp_product.available == false -%}
+                      <button type="button" class="gpopup__card-btn" style="background: {{ block.settings.button_background }}; color: {{ block.settings.button_text_color }};" disabled>
+                        {{- block.settings.sold_out_label -}}
+                      </button>
+
+                    {%- elsif gp_product.options.size > 1 -%}
+                      {%- comment -%}
+                        More than one option dimension - a single row cannot ask for
+                        all of them, so the card hands over to the product page rather
+                        than guessing a variant on the customer's behalf.
+                      {%- endcomment -%}
+                      <a class="gpopup__card-btn" href="{{ gp_product.url }}" style="background: {{ block.settings.button_background }}; color: {{ block.settings.button_text_color }};">
+                        {{- block.settings.choose_label -}}
+                      </a>
+
+                    {%- else -%}
+                      <form data-gpopup-add>
+                        {%- if gp_product.variants.size > 1 -%}
+                          <select class="gpopup__card-select" name="id" aria-label="{{ gp_product.options.first | escape }} - {{ gp_product.title | escape }}">
+                            {%- for gp_v in gp_product.variants -%}
+                              <option value="{{ gp_v.id }}" {% unless gp_v.available %}disabled{% endunless %}>
+                                {{- gp_v.title }} &middot; {{ gp_v.price | money -}}
+                              </option>
+                            {%- endfor -%}
+                          </select>
+                        {%- else -%}
+                          <input type="hidden" name="id" value="{{ gp_variant.id }}">
+                        {%- endif -%}
+
+                        <button type="submit" class="gpopup__card-btn" style="background: {{ block.settings.button_background }}; color: {{ block.settings.button_text_color }};">
+                          {{- block.settings.button_label -}}
+                        </button>
+                      </form>
+                    {%- endif -%}
+                  </div>
+                {%- endfor -%}
               </div>
             {%- endif -%}
 
@@ -560,9 +759,204 @@
       });
     }
 
+    /* ── Adding from a collection block ────────────────────────────── */
+
+    function readCart() {
+      return fetch({{ routes.cart_url | append: '.js' | json }}, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+      }).then(function (response) {
+        return response.json();
+      });
+    }
+
+    /* "Only one from this block": once one of these products is in the cart the
+       rest stop being addable. Driven by the cart rather than by a click, so it
+       survives a reload and reverses itself when the item is removed. */
+    function applyBlockLimits(cart) {
+      var boxes = root.querySelectorAll('[data-gpopup-limit-one]');
+      if (!boxes.length) return;
+
+      var inCart = {};
+      ((cart && cart.items) || []).forEach(function (item) {
+        inCart[item.product_id] = true;
+      });
+
+      Array.prototype.forEach.call(boxes, function (box) {
+        var taken = box.getAttribute('data-gpopup-taken') || '';
+        var cards = box.querySelectorAll('[data-gpopup-product]');
+
+        var anyTaken = Array.prototype.some.call(cards, function (card) {
+          return inCart[parseInt(card.getAttribute('data-gpopup-product'), 10)];
+        });
+
+        Array.prototype.forEach.call(cards, function (card) {
+          var button = card.querySelector('button[type="submit"]');
+          if (!button) return;
+
+          /* The original label is kept on the button, so restoring it never
+             depends on what happens to be written there now. */
+          if (!button.hasAttribute('data-gpopup-label')) {
+            button.setAttribute('data-gpopup-label', button.textContent.trim());
+          }
+          var label = button.getAttribute('data-gpopup-label');
+          var mine = inCart[parseInt(card.getAttribute('data-gpopup-product'), 10)];
+
+          button.disabled = anyTaken;
+          button.textContent = anyTaken && mine ? taken : label;
+        });
+      });
+    }
+
+    if (root.querySelector('[data-gpopup-limit-one]')) {
+      readCart().then(applyBlockLimits).catch(function () {});
+      document.addEventListener('cart:change', function (event) {
+        var cart = event && event.detail && event.detail.cart;
+        if (cart) return applyBlockLimits(cart);
+        readCart().then(applyBlockLimits).catch(function () {});
+      });
+    }
+
+    root.addEventListener('submit', function (event) {
+      var form = event.target.closest('[data-gpopup-add]');
+      if (!form) return;
+      event.preventDefault();
+
+      var field = form.querySelector('[name="id"]');
+      var variantId = field ? parseInt(field.value, 10) : 0;
+      if (!variantId) return;
+
+      var box = form.closest('[data-gpopup-products]');
+      var button = form.querySelector('button[type="submit"]');
+      var restore = button ? button.textContent : '';
+      if (button) {
+        button.disabled = true;
+        button.textContent = (box && box.getAttribute('data-gpopup-adding')) || restore;
+      }
+
+      fetch({{ routes.cart_add_url | append: '.js' | json }}, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+        body: JSON.stringify({ items: [{ id: variantId, quantity: 1 }] }),
+      })
+        .then(function (response) {
+          if (!response.ok) throw new Error('add_failed');
+          /* The cart is read back so the event can carry it - the theme's own
+             listeners, and the privilege card sync, both expect detail.cart. */
+          return readCart();
+        })
+        .then(function (cart) {
+          document.dispatchEvent(new CustomEvent('cart:change', { detail: { cart: cart } }));
+          document.dispatchEvent(new CustomEvent('cart:refresh'));
+
+          var after = box ? box.getAttribute('data-gpopup-after') : 'stay';
+          if (after === 'cart') {
+            window.location.href = {{ routes.cart_url | json }};
+            return;
+          }
+          if (after === 'close') {
+            dismiss();
+            return;
+          }
+          /* With the one-per-block rule on, applyBlockLimits has already set this
+             button from the cart - putting the old label back would undo it. */
+          if (box && box.hasAttribute('data-gpopup-limit-one')) return;
+
+          if (button) {
+            button.textContent = (box && box.getAttribute('data-gpopup-added')) || restore;
+            setTimeout(function () {
+              button.disabled = false;
+              button.textContent = restore;
+            }, 1600);
+          }
+        })
+        .catch(function () {
+          if (button) {
+            button.disabled = false;
+            button.textContent = restore;
+          }
+        });
+    });
+
+    /* ── When to open ──────────────────────────────────────────────── */
+
+    var conditions = {
+      minItems: {{ section.settings.cond_min_items | default: 0 }},
+      maxItems: {{ section.settings.cond_max_items | default: 0 }},
+      minTotal: {{ section.settings.cond_min_total | default: 0 }},
+      maxTotal: {{ section.settings.cond_max_total | default: 0 }},
+      typeMode: {{ section.settings.cond_type_mode | default: 'ignore' | json }},
+      types: {{ section.settings.cond_product_type | default: '' | json }},
+      minTypeQty: {{ section.settings.cond_min_type_qty | default: 0 }}
+    };
+
+    var wantedTypes = conditions.types
+      .split(',')
+      .map(function (value) { return value.trim().toLowerCase(); })
+      .filter(Boolean);
+
+    var hasConditions =
+      conditions.minItems > 0 ||
+      conditions.maxItems > 0 ||
+      conditions.minTotal > 0 ||
+      conditions.maxTotal > 0 ||
+      (conditions.typeMode !== 'ignore' && wantedTypes.length > 0);
+
+    function cartQualifies(cart) {
+      if (!cart) return false;
+
+      var count = cart.item_count || 0;
+      /* Shopify counts in cents; the settings are in whole currency units. */
+      var total = (cart.total_price || 0) / 100;
+
+      if (conditions.minItems > 0 && count < conditions.minItems) return false;
+      if (conditions.maxItems > 0 && count > conditions.maxItems) return false;
+      if (conditions.minTotal > 0 && total < conditions.minTotal) return false;
+      if (conditions.maxTotal > 0 && total > conditions.maxTotal) return false;
+
+      if (conditions.typeMode !== 'ignore' && wantedTypes.length) {
+        /* Units, not lines: three belts are three combinations whether Shopify
+           split them across lines or merged them into one. */
+        var matched = (cart.items || []).reduce(function (sum, item) {
+          return wantedTypes.indexOf((item.product_type || '').toLowerCase()) !== -1
+            ? sum + item.quantity
+            : sum;
+        }, 0);
+        var needed = conditions.minTypeQty > 0 ? conditions.minTypeQty : 1;
+        if (conditions.typeMode === 'contains' && matched < needed) return false;
+        if (conditions.typeMode === 'excludes' && matched > 0) return false;
+      }
+
+      return true;
+    }
+
     {% if auto_open %}
       if (frequency !== 'never' && !alreadySeen()) {
-        setTimeout(open, {{ section.settings.delay | times: 1000 }});
+        if (!hasConditions) {
+          setTimeout(open, {{ section.settings.delay | times: 1000 }});
+        } else {
+          /* This section renders once; the cart moves under it without a reload.
+             So the test runs against live data, and again on every cart change -
+             which also means the popup can appear the moment the cart qualifies. */
+          var armed = true;
+
+          function considerOpening(cart) {
+            if (!armed || alreadySeen() || window.motifinoPopupDismissed[sectionId]) return;
+            if (!root.hidden) return;
+            if (!cartQualifies(cart)) return;
+            armed = false;
+            setTimeout(open, {{ section.settings.delay | times: 1000 }});
+          }
+
+          function considerWithCart(cart) {
+            if (cart) return considerOpening(cart);
+            readCart().then(considerOpening).catch(function () {});
+          }
+
+          considerWithCart(null);
+          document.addEventListener('cart:change', function (event) {
+            considerWithCart(event && event.detail && event.detail.cart);
+          });
+        }
       }
     {% endif %}
 
@@ -670,6 +1064,69 @@
         }
       ],
       "default": "session"
+    },
+    {
+      "type": "header",
+      "content": "Cart conditions"
+    },
+    {
+      "type": "paragraph",
+      "content": "Checked against the live cart, so the popup can also appear right after an item is added. Leave a field empty to ignore it."
+    },
+    {
+      "type": "number",
+      "id": "cond_min_items",
+      "label": "Minimum items in cart"
+    },
+    {
+      "type": "number",
+      "id": "cond_max_items",
+      "label": "Maximum items in cart"
+    },
+    {
+      "type": "number",
+      "id": "cond_min_total",
+      "label": "Minimum cart value",
+      "info": "In the store main currency, without the currency code."
+    },
+    {
+      "type": "number",
+      "id": "cond_max_total",
+      "label": "Maximum cart value"
+    },
+    {
+      "type": "select",
+      "id": "cond_type_mode",
+      "label": "Product type in cart",
+      "options": [
+        {
+          "value": "ignore",
+          "label": "Ignore"
+        },
+        {
+          "value": "contains",
+          "label": "Cart contains one of these types"
+        },
+        {
+          "value": "excludes",
+          "label": "Cart contains none of these types"
+        }
+      ],
+      "default": "ignore"
+    },
+    {
+      "type": "text",
+      "id": "cond_product_type",
+      "label": "Product types",
+      "info": "Separate with commas, for example: Combinazione cintura, Privilege Card",
+      "visible_if": "{{ section.settings.cond_type_mode != 'ignore' }}"
+    },
+    {
+      "type": "number",
+      "id": "cond_min_type_qty",
+      "label": "Minimum units of those types",
+      "info": "Counts only the units of the types above, so everything else in the cart is ignored. Set 3 to open the popup on the 3rd combination. Leave empty to open as soon as one is there.",
+      "visible_if": "{{ section.settings.cond_type_mode == 'contains' }}"
     },
     {
       "type": "header",
@@ -1314,6 +1771,166 @@
             }
           ],
           "default": "center"
+        }
+      ]
+    },
+    {
+      "type": "collection",
+      "name": "Collection",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection"
+        },
+        {
+          "type": "range",
+          "id": "products_count",
+          "min": 2,
+          "max": 12,
+          "step": 1,
+          "label": "Products to show",
+          "default": 4
+        },
+        {
+          "type": "select",
+          "id": "layout",
+          "label": "Layout",
+          "options": [
+            {
+              "value": "grid2",
+              "label": "Grid, 2 per row"
+            },
+            {
+              "value": "grid3",
+              "label": "Grid, 3 per row"
+            },
+            {
+              "value": "row",
+              "label": "Row that scrolls sideways"
+            }
+          ],
+          "default": "grid2"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_price",
+          "label": "Show price",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_compare_price",
+          "label": "Show crossed out price",
+          "default": true
+        },
+        {
+          "type": "header",
+          "content": "Free gift"
+        },
+        {
+          "type": "paragraph",
+          "content": "This only changes what the popup shows. Making the product actually cost nothing is a Shopify automatic discount or a DiscountOS rule \u2014 the same way the Privilege Card is handled \u2014 unless the product is already priced at 0."
+        },
+        {
+          "type": "checkbox",
+          "id": "free_mode",
+          "label": "Show these products as free",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "free_label",
+          "label": "Free label",
+          "default": "GRATIS",
+          "visible_if": "{{ block.settings.free_mode }}"
+        },
+        {
+          "type": "checkbox",
+          "id": "limit_one",
+          "label": "Only one of these can be added",
+          "default": false,
+          "info": "Once one is in the cart the other buttons are disabled, and they come back if it is removed."
+        },
+        {
+          "type": "text",
+          "id": "taken_label",
+          "label": "Label on the one already added",
+          "default": "Gi\u00e0 aggiunto",
+          "visible_if": "{{ block.settings.limit_one }}"
+        },
+        {
+          "type": "range",
+          "id": "radius",
+          "min": 0,
+          "max": 24,
+          "step": 1,
+          "unit": "px",
+          "label": "Corner radius",
+          "default": 8
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Add button",
+          "default": "Aggiungi"
+        },
+        {
+          "type": "text",
+          "id": "adding_label",
+          "label": "While adding",
+          "default": "Attendi\u2026"
+        },
+        {
+          "type": "text",
+          "id": "added_label",
+          "label": "Once added",
+          "default": "Aggiunto \u2713"
+        },
+        {
+          "type": "text",
+          "id": "sold_out_label",
+          "label": "Sold out",
+          "default": "Esaurito"
+        },
+        {
+          "type": "text",
+          "id": "choose_label",
+          "label": "Button for products with several options",
+          "default": "Scegli",
+          "info": "A product with more than one option cannot be added in one tap, so its button opens the product page instead."
+        },
+        {
+          "type": "color",
+          "id": "button_background",
+          "label": "Button background",
+          "default": "#1a1a1a"
+        },
+        {
+          "type": "color",
+          "id": "button_text_color",
+          "label": "Button text",
+          "default": "#ffffff"
+        },
+        {
+          "type": "select",
+          "id": "after_add",
+          "label": "After adding",
+          "options": [
+            {
+              "value": "stay",
+              "label": "Keep the popup open"
+            },
+            {
+              "value": "close",
+              "label": "Close the popup"
+            },
+            {
+              "value": "cart",
+              "label": "Go to the cart"
+            }
+          ],
+          "default": "stay"
         }
       ]
     },

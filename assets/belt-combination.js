@@ -7,9 +7,10 @@
    already combined, e.g. "Black - Classic Matt") in the chosen
    length variant (130-cm / 150-cm).
 
-   One combination = one box = one Privilege Card Black.
-   The card line quantity is always kept equal to the total
-   number of combination units in the cart.
+   One combination = one box = one Privilege Card Black, once
+   the cart holds at least "Limit of combinations" of them.
+   Below that limit no card is given at all; from it on the card
+   line quantity equals the number of combination units.
 
    Nothing else is added: no SET-CINTURA-* tier product, no
    hidden strap/buckle component lines, no box, no warranty card.
@@ -28,8 +29,31 @@
   /* ── Product identification ─────────────────────────────── */
   /* Combination products carry this product type in Shopify. It is how a
      belt line is recognised in the cart, both here and in Liquid. */
-  var COMBINATION_TYPE = 'Combinazione cintura';
+  /* Printed by belt-card-sync.liquid from the theme setting. Read on every call:
+     the cart drawer pulls this asset in before that snippet has rendered. */
+  function combinationType() {
+    return window.MOTIFINO_COMBINATION_TYPE || 'Combinazione cintura';
+  }
   var PRIVILEGE_CARD_HANDLE = 'privilege-card-black';
+
+  /* The shop can switch the free card off. Everything that would add one asks
+     here first, and syncPrivilegeCard then clears whatever is already in the
+     cart rather than leaving a card stranded from before the switch. */
+  function privilegeCardEnabled() {
+    return !window.MOTIFINO_PRIVILEGE_CARD_DISABLED;
+  }
+
+  /* Minimum number of combinations before any card is given. */
+  function cardLimit() {
+    var n = parseInt(window.MOTIFINO_PRIVILEGE_CARD_LIMIT, 10);
+    return n > 1 ? n : 1;
+  }
+
+  /* The one rule: nothing under the limit, one card per combination from it on. */
+  function cardsFor(belts) {
+    if (!privilegeCardEnabled()) return 0;
+    return belts < cardLimit() ? 0 : belts;
+  }
 
   /* Option values differ between stores ("130-cm", "130cm", "130 CM"), so lengths
      are compared on their digits only. */
@@ -102,7 +126,7 @@
   }
 
   function isBeltItem(item) {
-    return item && item.product_type === COMBINATION_TYPE;
+    return item && item.product_type === combinationType();
   }
 
   function isPrivilegeCardItem(item) {
@@ -153,7 +177,7 @@
     var current = cart ? Promise.resolve(cart) : getCart();
 
     return current.then(function (c) {
-      var belts = countBelts(c);
+      var belts = cardsFor(countBelts(c));
       /* Shopify splits one variant across several lines when the units carry
          different discount allocations, so the card can hold more than one. */
       var cardLines = (c.items || []).filter(isPrivilegeCardItem);
@@ -265,7 +289,12 @@
          known up front. Shopify merges it into any existing card line, so there is
          no cart read-back and no second write. The add is atomic: a sold-out belt
          adds nothing at all. */
-      var cardId = Number(window.MOTIFINO_PRIVILEGE_CARD_VARIANT_ID) || 0;
+      /* Above a limit of 1 the card count depends on the belts already in the cart,
+         which this request cannot see — so the ride-along is dropped and the sync
+         below reads the cart back instead. */
+      var cardId = privilegeCardEnabled() && cardLimit() === 1
+        ? Number(window.MOTIFINO_PRIVILEGE_CARD_VARIANT_ID) || 0
+        : 0;
       if (cardId) items.push({ id: cardId, quantity: list.length });
 
       var body = { items: items };
@@ -418,7 +447,7 @@
 
   /* ── Public API ─────────────────────────────────────────── */
   window.MotifinoBelt = {
-    COMBINATION_TYPE: COMBINATION_TYPE,
+    combinationType: combinationType,
     PRIVILEGE_CARD_HANDLE: PRIVILEGE_CARD_HANDLE,
     optionValueForLength: optionValueForLength,
     lengthDigits: lengthDigits,
@@ -432,6 +461,9 @@
     isPrivilegeCardItem: isPrivilegeCardItem,
     countBelts: countBelts,
     syncPrivilegeCard: syncPrivilegeCard,
+    privilegeCardEnabled: privilegeCardEnabled,
+    cardLimit: cardLimit,
+    cardsFor: cardsFor,
     addBelt: addBelt,
     addBelts: addBelts,
     repairCard: repairCard,

@@ -30,6 +30,17 @@
 {%- assign dd_bw = section.settings.dropdown_border_width | default: 1 -%}
 {%- assign dd_bc = section.settings.dropdown_border_color | default: '#e0e0e0' -%}
 <style>
+  {%- if section.settings.allow_transparent_header and section.settings.transparent_header_use_primary_colors -%}
+    {%- comment -%}
+    When this setting is enabled, we use the transparent header, but we force the header to use the primary colors and primary logo.
+    {%- endcomment -%}
+    .header {
+      --header-show-transparent-logo: 0 !important;
+      --header-show-primary-logo: 1 !important;
+      --header-transparent-header-text-color: initial;
+    }
+  {%- endif -%}
+
   #sbb-root {
     --sbb-info-col-max-width: {{ section.settings.info_col_max_width | default: 540 }}px;
   }

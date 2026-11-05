@@ -13,6 +13,35 @@
     z-index: 200;
   }
 
+  {%- if section.settings.primary_colors_logo -%}
+    {%- comment -%}
+      A third logo means the stock rule, which only knows about the transparent
+      one, can no longer decide the main logo on its own.
+    {%- endcomment -%}
+    #shopify-section-{{ section.id }} .header__logo-image:where(:not(:only-of-type)) {
+      opacity: calc(1 - max(var(--header-show-transparent-logo, 0), var(--header-show-primary-logo, 0)));
+    }
+
+    #shopify-section-{{ section.id }} .header__logo-image--primary-colors {
+      opacity: var(--header-show-primary-logo, 0);
+      pointer-events: none;
+      position: absolute;
+      inset-block-start: 0;
+      inset-inline-start: 0;
+      transition: opacity 0.2s;
+    }
+  {%- else -%}
+    {%- comment -%}
+      No dedicated logo uploaded, so the main one is flipped instead - a white
+      wordmark would otherwise vanish into the light section underneath.
+      invert(0) is a no-op, so this costs nothing the rest of the time.
+    {%- endcomment -%}
+    #shopify-section-{{ section.id }} .header__logo-image {
+      filter: invert(var(--header-show-primary-logo, 0));
+      transition: filter 0.2s;
+    }
+  {%- endif -%}
+
   {%- if section.settings.enable_transparent_header -%}
   #shopify-section-{{ section.id }} .header:not(.is-solid, :hover, :has(.header__primary-nav [open], .header__secondary-nav [open], .header-search[open])) {
     background: transparent;
@@ -98,6 +127,14 @@
 
         {%- if section.settings.transparent_logo -%}
           {{- section.settings.transparent_logo | image_url: width: section.settings.transparent_logo.width | image_tag: sizes: sizes, widths: widths, class: 'header__logo-image header__logo-image--transparent' -}}
+        {%- endif -%}
+
+        {%- comment -%}
+          Shown when a section asks for a transparent header in its own colours,
+          where the main logo would sit on a background it was not drawn for.
+        {%- endcomment -%}
+        {%- if section.settings.primary_colors_logo -%}
+          {{- section.settings.primary_colors_logo | image_url: width: section.settings.primary_colors_logo.width | image_tag: sizes: sizes, widths: widths, class: 'header__logo-image header__logo-image--primary-colors' -}}
         {%- endif -%}
       {%- else -%}
         <span class="header__logo-text h5">{{ shop.name }}</span>
@@ -326,8 +363,9 @@
 
             {%- liquid
               assign bb_belt_count = 0
+              assign bb_combo_type = settings.cart_combination_product_type | default: 'Combinazione cintura'
               for bb_item in cart.items
-                if bb_item.product.type == 'Combinazione cintura'
+                if bb_item.product.type == bb_combo_type
                   assign bb_belt_count = bb_belt_count | plus: bb_item.quantity
                 endif
               endfor
@@ -564,7 +602,7 @@
 
   /* Belt count on the cart icon. Privilege Cards ride along free, so they are not counted. */
   (function () {
-    var BELT_TYPE = 'Combinazione cintura';
+    var BELT_TYPE = {{ settings.cart_combination_product_type | default: 'Combinazione cintura' | json }};
 
     function paint(cart) {
       var n = 0;
@@ -925,6 +963,12 @@
       "id": "transparent_logo",
       "label": "t:sections.header.transparent_header_logo_image",
       "info": "t:sections.header.transparent_header_logo_size_recommendation"
+    },
+    {
+      "type": "image_picker",
+      "id": "primary_colors_logo",
+      "label": "Logo image (primary colors)",
+      "info": "Used when a section turns on \"Use header primary colors when transparent\". Same dimensions as the main logo."
     }
   ],
   "blocks": [

@@ -762,6 +762,40 @@
         "label": "Shipping price below the minimum",
         "default": "4.99",
         "info": "Shown in the cart recap and added to the total when the cart is under the free shipping minimum. Value in the store main currency, without currency code. Leave empty to show no shipping row."
+      },
+      {
+        "type": "checkbox",
+        "id": "cart_hide_shipping_cost",
+        "label": "Hide the shipping cost in the cart",
+        "default": false,
+        "info": "Leaves the shipping row out of the cart recap and out of the total, so shipping is only charged at checkout. The free shipping bar and the \"Gratis\" row are kept."
+      },
+      {
+        "type": "header",
+        "content": "Privilege Card"
+      },
+      {
+        "type": "checkbox",
+        "id": "cart_disable_privilege_card",
+        "label": "Do not add the free Privilege Card",
+        "default": false,
+        "info": "No card is added with a belt, and any card already in a cart is removed on the next cart change, so nothing reaches the checkout."
+      },
+      {
+        "type": "header",
+        "content": "Card Rule"
+      },
+      {
+        "type": "text",
+        "id": "cart_combination_product_type",
+        "label": "Combination product type",
+        "default": "Combinazione cintura"
+      },
+      {
+        "type": "text",
+        "id": "cart_privilege_card_limit",
+        "label": "Limit of combinations",
+        "default": "1"
       }
     ]
   },

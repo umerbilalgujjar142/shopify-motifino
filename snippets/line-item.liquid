@@ -16,16 +16,17 @@
   Motifino belt logic
   ********************************************
 
-  A belt is one unit of a "Combinazione cintura" product — leather and buckle already
-  combined, sold in a 130-cm or 150-cm variant. One combination is one box, so one free
-  Privilege Card Black is carried per belt; that card line is derived from the belt count
-  and therefore has no quantity controls of its own.
+  A belt is one unit of the combination product type set in the theme settings — leather
+  and buckle already combined, sold in a 130-cm or 150-cm variant. One combination is one
+  box, so a free Privilege Card Black is carried per belt once the cart reaches the limit;
+  that card line is derived from the belt count and has no quantity controls of its own.
 {%- endcomment -%}
 
 <line-item class="line-item">
   {%- liquid
     assign _li_is_belt = false
-    if line_item.product.type == 'Combinazione cintura'
+    assign _li_combo_type = settings.cart_combination_product_type | default: 'Combinazione cintura'
+    if line_item.product.type == _li_combo_type
       assign _li_is_belt = true
     endif
 

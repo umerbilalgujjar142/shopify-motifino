@@ -1,18 +1,33 @@
 {%- comment -%}
-  Keeps one free Privilege Card Black per belt in the cart, whatever added the belt.
-  Must be rendered on every page — see theme.liquid.
+  Keeps the free Privilege Card Black count in step with the belts in the cart,
+  whatever added the belt. Must be rendered on every page — see theme.liquid.
 {%- endcomment -%}
+
+{%- liquid
+  assign bb_combo_type = settings.cart_combination_product_type | default: 'Combinazione cintura'
+  assign bb_card_limit = settings.cart_privilege_card_limit | plus: 0
+  if bb_card_limit < 1
+    assign bb_card_limit = 1
+  endif
+-%}
 
 {%- assign bb_card_variant = all_products['privilege-card-black'].variants.first -%}
 {%- if bb_card_variant -%}
   <script>window.MOTIFINO_PRIVILEGE_CARD_VARIANT_ID = {{ bb_card_variant.id }};</script>
 {%- endif -%}
 
+{%- comment -%}Read by belt-combination.js before any write that would add a card.{%- endcomment -%}
+<script>
+  window.MOTIFINO_PRIVILEGE_CARD_DISABLED = {% if settings.cart_disable_privilege_card %}true{% else %}false{% endif %};
+  window.MOTIFINO_PRIVILEGE_CARD_LIMIT = {{ bb_card_limit }};
+  window.MOTIFINO_COMBINATION_TYPE = {{ bb_combo_type | json }};
+</script>
+
 {%- comment -%}
   On a belt product page the free card can ride along in the same add, so the
   cart is already correct on arrival and needs no read-back.
 {%- endcomment -%}
-{%- if bb_product and bb_product.type == 'Combinazione cintura' -%}
+{%- if bb_product and bb_product.type == bb_combo_type -%}
   <script>
     window.MOTIFINO_BELT_VARIANTS = [
       {%- for v in bb_product.variants -%}{{ v.id }}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}
@@ -94,7 +109,11 @@
 
       var variantId = parseInt(idField.value, 10);
       var belts = (window.MOTIFINO_BELT_VARIANTS || []).indexOf(variantId) !== -1;
-      var cardId = Number(window.MOTIFINO_PRIVILEGE_CARD_VARIANT_ID) || 0;
+      /* Above a limit of 1 the card count depends on what is already in the cart,
+         so the card cannot ride along — the plain add below syncs afterwards. */
+      var cardId = window.MOTIFINO_PRIVILEGE_CARD_DISABLED || window.MOTIFINO_PRIVILEGE_CARD_LIMIT > 1
+        ? 0
+        : Number(window.MOTIFINO_PRIVILEGE_CARD_VARIANT_ID) || 0;
 
       /* Marks the write as ours: belt-combination.js's fetch observer would
          otherwise read the cart back and correct a card that is already right. */
@@ -153,17 +172,23 @@
       assign bb_belts = 0
       assign bb_cards = 0
       for bb_ci in cart.items
-        if bb_ci.product.type == 'Combinazione cintura'
+        if bb_ci.product.type == bb_combo_type
           assign bb_belts = bb_belts | plus: bb_ci.quantity
         endif
         if bb_ci.product.handle == 'privilege-card-black'
           assign bb_cards = bb_cards | plus: bb_ci.quantity
         endif
       endfor
+
+      assign bb_expected = bb_belts
+      if bb_belts < bb_card_limit or settings.cart_disable_privilege_card
+        assign bb_expected = 0
+      endif
     -%}
 
-    /* Only read the cart on load when this page already renders a mismatch. */
-    if ({{ bb_belts }} !== {{ bb_cards }}) {
+    /* Only read the cart on load when this page already renders a mismatch — which
+       covers both a missing card and one left over from before the rule changed. */
+    if ({{ bb_expected }} !== {{ bb_cards }}) {
       if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function () { sync(); });
       } else {

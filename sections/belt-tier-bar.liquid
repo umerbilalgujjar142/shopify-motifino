@@ -1,7 +1,8 @@
 {%- liquid
   assign belts = 0
+  assign combo_type = settings.cart_combination_product_type | default: 'Combinazione cintura'
   for item in cart.items
-    if item.product.type == 'Combinazione cintura'
+    if item.product.type == combo_type
       assign belts = belts | plus: item.quantity
     endif
   endfor
@@ -100,6 +101,8 @@
         --bb-tier-lead: {{ anim_lead }}ms;
         --bb-tier-line-h: {{ section.settings.line_height | default: 3.5 }}px;
         --bb-tier-ring-w: {{ section.settings.ring_width | default: 3.5 }}px;
+        --bb-tier-bonus-size: calc(var(--bb-tier-size) * {{ section.settings.bonus_size | default: 42 | divided_by: 100.0 }});
+        --bb-tier-bonus-ring: max(1px, calc(var(--bb-tier-ring-w) * 0.6));
         --bb-tier-gold-1: {{ section.settings.gold_1 | default: '#bf953f' }};
         --bb-tier-gold-2: {{ section.settings.gold_2 | default: '#fcf6ba' }};
         --bb-tier-gold-3: {{ section.settings.gold_3 | default: '#b38728' }};
@@ -205,7 +208,8 @@
           animation: bb-tier-band var(--bb-tier-cycle2) linear {{ sweep_delay }}ms infinite;
         }
         {%- for k in (1..rings) -%}
-        #shopify-section-{{ section.id }} .bb-tier--anim .bb-tier__step--r{{ k }} .bb-tier__circle::before {
+        #shopify-section-{{ section.id }} .bb-tier--anim .bb-tier__step--r{{ k }} .bb-tier__circle::before,
+        #shopify-section-{{ section.id }} .bb-tier--anim .bb-tier__step--r{{ k }} .bb-tier__bonus-img::before {
           animation: bb-tier-draw-{{ k }} var(--bb-tier-cycle) linear var(--bb-tier-lead) both;
         }
         #shopify-section-{{ section.id }} .bb-tier--anim .bb-tier__step--r{{ k }} .bb-tier__circle::after {
@@ -339,7 +343,8 @@
           {%- assign w = 420 | minus: pb | times: 100 | divided_by: 140 -%}
           {%- assign cb = gleft | color_mix: darkg, w -%}
         {%- endif -%}
-      #shopify-section-{{ section.id }} .bb-tier__step.is-done.bb-tier__step--r{{ k }} .bb-tier__circle::before {
+      #shopify-section-{{ section.id }} .bb-tier__step.is-done.bb-tier__step--r{{ k }} .bb-tier__circle::before,
+      #shopify-section-{{ section.id }} .bb-tier__step.is-done.bb-tier__step--r{{ k }} .bb-tier__bonus-img::before {
         background-image: linear-gradient(90deg, {{ ca }}, {{ cb }});
       }
       {%- endfor -%}
@@ -363,6 +368,80 @@
         height: 100%;
         border-radius: 50%;
         overflow: hidden;
+      }
+
+      {%- comment -%}
+        The "+ something" badge: what this step adds on top of the belts. It hangs
+        off the circle's top right, so it sits outside .bb-tier__circle and is not
+        caught by the img rules above.
+      {%- endcomment -%}
+      #shopify-section-{{ section.id }} .bb-tier__bonus {
+        position: absolute;
+        top: calc(var(--bb-tier-bonus-size) * -0.45);
+        left: calc(50% + var(--bb-tier-size) * 0.22);
+        width: var(--bb-tier-bonus-size);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        pointer-events: none;
+        z-index: 2;
+      }
+
+      #shopify-section-{{ section.id }} .bb-tier__bonus-plus {
+        font-size: calc(var(--bb-tier-bonus-size) * 0.46);
+        line-height: 1;
+        font-weight: 700;
+        color: var(--bb-tier-ink);
+        margin-bottom: calc(var(--bb-tier-bonus-size) * 0.04);
+      }
+
+      #shopify-section-{{ section.id }} .bb-tier__bonus-img {
+        width: var(--bb-tier-bonus-size);
+        height: var(--bb-tier-bonus-size);
+        border-radius: 50%;
+        background: #fff;
+        border: var(--bb-tier-bonus-ring) solid var(--bb-tier-idle);
+        box-sizing: border-box;
+        position: relative;
+        isolation: isolate;
+      }
+
+      {%- comment -%}
+        The same masked gradient the big circle uses, so the two rings are the
+        same gold and get wiped in together rather than one of them just
+        switching colour.
+      {%- endcomment -%}
+      #shopify-section-{{ section.id }} .bb-tier__step.is-done .bb-tier__bonus-img::before {
+        content: '';
+        position: absolute;
+        inset: calc(-1 * var(--bb-tier-bonus-ring));
+        border-radius: 50%;
+        pointer-events: none;
+        background-image: linear-gradient(90deg, var(--bb-tier-gold-1), var(--bb-tier-gold-3));
+        -webkit-mask: radial-gradient(closest-side, transparent calc(100% - var(--bb-tier-bonus-ring)), #000 calc(100% - var(--bb-tier-bonus-ring)));
+        mask: radial-gradient(closest-side, transparent calc(100% - var(--bb-tier-bonus-ring)), #000 calc(100% - var(--bb-tier-bonus-ring)));
+      }
+
+      {%- comment -%}
+        The cut-outs are often much wider than tall, so they are fitted with a
+        little air. The padding lives here, not on the ring, or the ring would
+        be pushed off the edge it is meant to trace.
+      {%- endcomment -%}
+      #shopify-section-{{ section.id }} .bb-tier__bonus-thumb {
+        display: block;
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+        border-radius: 50%;
+        overflow: hidden;
+        padding: {{ section.settings.bonus_inset | default: 14 }}%;
+      }
+
+      #shopify-section-{{ section.id }} .bb-tier__bonus-img img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
       }
 
       #shopify-section-{{ section.id }} .bb-tier__price {
@@ -425,6 +504,21 @@
                 {%- endif -%}
                 </span>
               </div>
+
+              {%- assign bonus_src = block.settings.bonus_image_url -%}
+              {%- if block.settings.bonus_image != blank -%}
+                {%- assign bonus_src = block.settings.bonus_image | image_url: width: 200 -%}
+              {%- endif -%}
+              {%- if bonus_src != blank -%}
+                <span class="bb-tier__bonus">
+                  <span class="bb-tier__bonus-plus" aria-hidden="true">+</span>
+                  <span class="bb-tier__bonus-img">
+                    <span class="bb-tier__bonus-thumb">
+                      <img src="{{ bonus_src }}" alt="{{ block.settings.bonus_image.alt | escape }}" loading="lazy">
+                    </span>
+                  </span>
+                </span>
+              {%- endif -%}
               <span class="bb-tier__price{% if forloop.index0 == target %} is-target{% endif %}">{{ block.settings.price }}</span>
             </div>
           {%- endfor -%}
@@ -643,6 +737,28 @@
     },
     {
       "type": "range",
+      "id": "bonus_size",
+      "min": 20,
+      "max": 60,
+      "step": 1,
+      "unit": "%",
+      "label": "Bonus badge size",
+      "info": "Share of the circle size, so it scales with it on mobile and desktop.",
+      "default": 42
+    },
+    {
+      "type": "range",
+      "id": "bonus_inset",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "unit": "%",
+      "label": "Bonus badge padding",
+      "info": "Air around the cut-out inside its circle. Set to 0 for an image that should fill it edge to edge.",
+      "default": 14
+    },
+    {
+      "type": "range",
       "id": "ring_width",
       "label": "Circle ring thickness",
       "min": 0.5,
@@ -696,6 +812,18 @@
           "type": "text",
           "id": "image_url",
           "label": "Image URL",
+          "info": "Used only when no image is picked above."
+        },
+        {
+          "type": "image_picker",
+          "id": "bonus_image",
+          "label": "Bonus image",
+          "info": "Shown as a small \"+\" badge on the circle, for what this step adds on top of the belts. Leave empty for no badge."
+        },
+        {
+          "type": "text",
+          "id": "bonus_image_url",
+          "label": "Bonus image URL",
           "info": "Used only when no image is picked above."
         },
         {
