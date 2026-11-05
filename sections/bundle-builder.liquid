@@ -309,6 +309,7 @@
 </script>
 
 {{ 'belt-combination.js' | asset_url | script_tag }}
+<script>window.BB_SOLD_OUT_BUTTON = {{ section.settings.sold_out_button | default: 'Non disponibile' | json }};</script>
 {{ 'bundle-builder.js' | asset_url | script_tag }}
 
 {% schema %}
@@ -337,6 +338,23 @@
     {
       "type": "header",
       "content": "Belt preview"
+    },
+    {
+      "type": "header",
+      "content": "Out of stock"
+    },
+    {
+      "type": "text",
+      "id": "sold_out_badge",
+      "label": "Badge over the photo",
+      "default": "Terminato",
+      "info": "Shown when the chosen leather, buckle and length combination is out of stock."
+    },
+    {
+      "type": "text",
+      "id": "sold_out_button",
+      "label": "Add to cart button when out of stock",
+      "default": "Non disponibile"
     },
     {
       "type": "checkbox",

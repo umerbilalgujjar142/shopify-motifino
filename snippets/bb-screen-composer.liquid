@@ -40,6 +40,9 @@
       </button>
     {%- endif -%}
 
+    {%- comment -%} Shown by bundle-builder.js when the chosen combination is out of stock. {%- endcomment -%}
+    <div class="bb-soldout-badge">{{ section.settings.sold_out_badge | default: 'Terminato' }}</div>
+
     {%- comment -%} Shows the view you are NOT looking at — click swaps product and worn. {%- endcomment -%}
     <button class="bb-worn-thumb" id="bb-worn-thumb" type="button" aria-label="Cambia vista" style="display:none;">
       <img id="bb-worn-thumb-img" src="" alt="" loading="lazy">

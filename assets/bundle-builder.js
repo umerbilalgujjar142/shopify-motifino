@@ -169,9 +169,12 @@
       const strapName = (STRAPS[belt.strap] || {}).name || '—';
       comboEl.textContent = strapName + ' + ' + buckleName;
     }
+    const available = refreshAvailabilityUI();
     const ctaLabel = document.querySelector('#bb-composer-cta .bb-composer-cta__label');
     if (ctaLabel) {
-      ctaLabel.textContent = 'Aggiungi al carrello';
+      ctaLabel.textContent = available
+        ? 'Aggiungi al carrello'
+        : (window.BB_SOLD_OUT_BUTTON || 'Non disponibile');
     }
 
     /* Warm the combination's product JSON while the customer is still choosing,
@@ -351,23 +354,79 @@
   /* ── Data definitions ───────────────────────────────────── */
   const LENGTHS = ['130cm', '150cm'];
 
-  /* ── Availability state (populated async from Shopify AJAX API) ── */
-  let _bbAvailability = {}; /* variantId → true/false */
+  /* ── Availability ────────────────────────────────────────
+     One combination + length = one Shopify variant, and the combination is a
+     bundle, so Shopify already folds the strap, buckle, loop and box stock into
+     its `available`. bb-shopify-data.liquid writes that into every combo, so
+     nothing has to be fetched. */
+
+  function comboEntry(strapKey, buckleKey, length) {
+    const d = window.BB_DATA;
+    if (!d || !d.combos || !strapKey || !buckleKey) return null;
+    const len = String(length == null ? '130' : length).replace(/[^0-9]/g, '') || '130';
+    return d.combos[strapKey + '__' + len + '__' + buckleKey] || null;
+  }
+
+  /* A pairing the shop does not sell at all has no entry; treat it as available
+     so a gap in the data can never grey out the whole carousel. */
+  function comboAvailable(strapKey, buckleKey, length) {
+    const c = comboEntry(strapKey, buckleKey, length);
+    return !c || c.available !== false;
+  }
+
+  function currentBelt() {
+    return state.belts[state.currentBelt - 1] || {};
+  }
 
   function isBuckleAvailable(key) {
-    if (!window.BB_VARIANTS || !window.BB_VARIANTS.buckles) return true;
-    const id = window.BB_VARIANTS.buckles[key];
-    if (!id || id === 0) return true;
-    if (!Object.prototype.hasOwnProperty.call(_bbAvailability, id)) return true;
-    return _bbAvailability[id] !== false;
+    const b = currentBelt();
+    return comboAvailable(b.strap || getDefaultStrap(), key, b.length);
   }
 
   function isStrapAvailable(key, length) {
-    if (!window.BB_VARIANTS || !window.BB_VARIANTS.straps) return true;
-    const id = window.BB_VARIANTS.straps[length || '130'];
-    if (!id || id === 0) return true;
-    if (!Object.prototype.hasOwnProperty.call(_bbAvailability, id)) return true;
-    return _bbAvailability[id] !== false;
+    const b = currentBelt();
+    return comboAvailable(key, b.buckle || getDefaultBuckle(), length || b.length);
+  }
+
+  function isLengthAvailable(length) {
+    const b = currentBelt();
+    return comboAvailable(b.strap, b.buckle, length);
+  }
+
+  function isSelectionAvailable() {
+    const b = currentBelt();
+    return comboAvailable(b.strap, b.buckle, b.length);
+  }
+
+  /* Repaints what the current choice makes unavailable, without re-rendering the
+     carousels — a re-render would throw away their scroll position. */
+  function refreshAvailabilityUI() {
+    const belt = currentBelt();
+
+    document.querySelectorAll('#bb-buckle-carousel .bb-carousel__item').forEach(el => {
+      el.classList.toggle('bb-carousel__item--unavailable', !isBuckleAvailable(el.dataset.buckle));
+    });
+
+    document.querySelectorAll('#bb-strap-carousel .bb-strap-item').forEach(el => {
+      el.classList.toggle('bb-strap-item--unavailable', !isStrapAvailable(el.dataset.strap, belt.length));
+    });
+
+    document.querySelectorAll('#bb-length-selector .bb-length-btn').forEach(btn => {
+      const ok = isLengthAvailable(btn.dataset.length);
+      btn.classList.toggle('is-unavailable', !ok);
+      btn.disabled = !ok;
+    });
+
+    const ok = isSelectionAvailable();
+    const hero = document.getElementById('bb-composer-hero');
+    if (hero) hero.classList.toggle('is-unavailable', !ok);
+
+    const cta = document.getElementById('bb-composer-cta');
+    if (cta) {
+      cta.disabled = !ok;
+      cta.classList.toggle('is-unavailable', !ok);
+    }
+    return ok;
   }
 
   /* Filled from window.BB_DATA (see snippets/bb-shopify-data.liquid). */
@@ -579,14 +638,19 @@
   function renderLengthButtons(belt) {
     const container = document.getElementById('bb-length-selector');
     if (!container) return;
-    container.innerHTML = LENGTHS.map(l => `
-      <button class="bb-length-btn ${belt.length === l ? 'is-selected' : ''}"
-              data-length="${l}">${l}</button>`).join('');
+    container.innerHTML = LENGTHS.map(l => {
+      const ok = isLengthAvailable(l);
+      return `
+      <button class="bb-length-btn ${belt.length === l ? 'is-selected' : ''}${ok ? '' : ' is-unavailable'}"
+              data-length="${l}"${ok ? '' : ' disabled'}>${l}</button>`;
+    }).join('');
     container.querySelectorAll('.bb-length-btn').forEach(btn => {
       btn.addEventListener('click', () => {
+        if (!isLengthAvailable(btn.dataset.length)) return;
         state.belts[state.currentBelt - 1].length = btn.dataset.length;
         renderLengthButtons(state.belts[state.currentBelt - 1]);
         updateBeltPreview();
+        updateComboBar();
               });
     });
   }
@@ -822,6 +886,7 @@
     container.querySelectorAll('.bb-carousel__item').forEach((el, i) => {
       el.addEventListener('click', () => {
         if (_buckleJustSwiped) return;
+        if (!isBuckleAvailable(keys[i])) return;
         if (relPos[i] !== 0) navigateBuckle(relPos[i]);
       }, { signal: bSig });
     });
@@ -940,6 +1005,7 @@
     container.querySelectorAll('.bb-strap-item').forEach((item, i) => {
       item.addEventListener('click', () => {
         if (_strapJustSwiped) return;
+        if (!isStrapAvailable(keys[i], belt.length)) return;
         const rel = wrapRel(i, selIdx, N);
         if (rel !== 0) selectStrap(selIdx + rel);
       }, { signal });
@@ -2181,35 +2247,7 @@
     if (cartBtn) cartBtn.addEventListener('click', function () { window.location.href = _u('/cart'); });
     syncCartUI();
 
-    /* Check inventory availability from Shopify — re-renders carousels if needed */
-    initAvailability();
-  }
-
-  /* ── Availability fetch — queries Shopify for each configured variant ── */
-  async function initAvailability() {
-    if (!window.BB_VARIANTS) return;
-    const ids = [];
-    Object.values(window.BB_VARIANTS.buckles || {}).forEach(id => { if (id && id !== 0) ids.push(id); });
-    Object.values(window.BB_VARIANTS.straps || {}).forEach(id => { if (id && id !== 0) ids.push(id); });
-    if (!ids.length) return;
-    try {
-      const results = await Promise.all(
-        ids.map(id =>
-          fetch(_u('/variants/' + id + '.js'), { credentials: 'include' })
-            .then(r => r.ok ? r.json() : null)
-            .then(v => v ? { id, available: Boolean(v.available) } : null)
-            .catch(() => null)
-        )
-      );
-      let changed = false;
-      results.forEach(r => {
-        if (!r) return;
-        if (_bbAvailability[r.id] !== r.available) changed = true;
-        _bbAvailability[r.id] = r.available;
-      });
-      /* Re-render carousels only if something changed */
-      if (changed) renderComposer();
-    } catch (e) { /* fail silently — items remain available */ }
+    refreshAvailabilityUI();
   }
 
   /* Public API */

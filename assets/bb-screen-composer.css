@@ -1517,3 +1517,51 @@
     width: 100%;
   }
 }
+
+/* ── Out of stock ──────────────────────────────────────────
+   Shopify treats a combination as a bundle, so its own `available`
+   already accounts for the strap, buckle, loop and box. */
+.bb-soldout-badge {
+  display: none;
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  z-index: 6;
+  padding: 9px 26px;
+  border-radius: 999px;
+  background: #e01b1b;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.bb-composer-hero.is-unavailable .bb-soldout-badge {
+  display: block;
+}
+
+.bb-length-btn.is-unavailable {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.bb-combo-bar__actions .bb-btn-primary.is-unavailable {
+  background: #ececec;
+  background-image: none;
+  color: #1a1a1a;
+  border-color: #ececec;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.bb-combo-bar__actions .bb-btn-primary.is-unavailable:hover {
+  filter: none;
+  box-shadow: none;
+}
+
+.bb-carousel__item--unavailable,
+.bb-strap-item--unavailable {
+  cursor: not-allowed;
+}
