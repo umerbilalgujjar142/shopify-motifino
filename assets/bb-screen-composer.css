@@ -680,6 +680,11 @@
   display: none;
 }
 
+/* ── Desktop-only heading ("Scegli la fibbia") ─────────────── */
+.bb-section__title {
+  display: none;
+}
+
 /* ── Section number prefix (1. / 2.) — accent gold ─────────── */
 .bb-section__num {
   color: var(--bb-accent);
@@ -1354,4 +1359,161 @@
     display: none;
   }
 
+}
+
+/* ============================================================
+   DESKTOP — full-bleed split layout
+   Photo flush to the left edge and full height; the selectors,
+   the summary and the add-to-cart share one centred column on
+   the right. Mobile is untouched.
+   ============================================================ */
+@media (min-width: 768px) {
+
+  #bb-screen-composer.is-active {
+    display: grid;
+    grid-template-columns: 52% minmax(0, 1fr);
+    grid-template-rows: 1fr auto auto 1fr;
+    align-items: stretch;
+    min-height: calc(100vh - var(--header-height, 0px));
+    border-radius: 0;
+  }
+
+  /* A transparent header floats over the photo instead of pushing it down, so
+     the composer starts at the top of the viewport and nothing is subtracted. */
+  .bb-wrap[allow-transparent-header] #bb-screen-composer.is-active {
+    min-height: 100vh;
+  }
+
+  /* The section prints `#shopify-section-x .bb-composer-hero { aspect-ratio }`
+     from the Preview ratio setting. In a stretched grid cell that ratio would
+     derive the WIDTH from the height and overflow the column, so it is cleared
+     here — the cell decides the size. Needs to out-specify that ID rule. */
+  #bb-screen-composer.is-active .bb-composer-hero {
+    grid-column: 1;
+    grid-row: 1 / 5;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    aspect-ratio: auto;
+  }
+
+  #bb-screen-composer.is-active .bb-composer-hero__bg {
+    top: 0;
+    height: 100%;
+  }
+
+  /* min-width:0 everywhere a track or a flex item could otherwise refuse to
+     shrink below the intrinsic width of a belt photo. */
+  .bb-composer-right {
+    grid-column: 2;
+    grid-row: 2;
+    justify-content: flex-start;
+    min-width: 0;
+  }
+
+  /* The bar moves into the right column, so the photo runs past it. */
+  /* Sits straight under the selectors. The two 1fr rows around the pair split
+     the leftover height evenly, so the block is centred and the photo, which
+     spans every row, still fills the viewport. */
+  .bb-combo-bar {
+    grid-column: 2;
+    grid-row: 3;
+    min-width: 0;
+  }
+
+  .bb-composer-right > .bb-section,
+  .bb-carousel,
+  .bb-strap-carousel {
+    min-width: 0;
+  }
+
+  /* One content column for both grid items, so the divider above the
+     button lines up with the swatches. */
+  .bb-composer-right > .bb-section,
+  .bb-combo-bar {
+    width: 100%;
+    max-width: 760px;
+    margin-inline: auto;
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+
+  .bb-section--buckle {
+    padding-top: 56px;
+    padding-bottom: 8px;
+  }
+
+  .bb-section--strap {
+    padding-top: 28px;
+    padding-bottom: 28px;
+  }
+
+  .bb-combo-bar {
+    padding-top: 18px;
+    padding-bottom: 56px;
+    background: transparent;
+  }
+
+  /* Heading, with the current choice underneath it. */
+  .bb-section__num {
+    display: none;
+  }
+
+  .bb-section__title {
+    display: block;
+    font-size: 28px;
+    font-weight: 700;
+    color: #111;
+    line-height: 1.2;
+  }
+
+  .bb-selection-inline-name {
+    display: block;
+    margin-top: 2px;
+    font-size: 15px;
+    font-weight: 400;
+    color: #6b7280;
+  }
+
+  .bb-section__label {
+    margin-bottom: 18px;
+  }
+
+  /* Length pills align with the choice line, not the heading. */
+  .bb-section-header {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .bb-section--strap .bb-section-header {
+    align-items: end;
+  }
+
+  /* Three swatches per row. */
+  .bb-strap-item {
+    flex: 0 0 calc((100% - 16px) / 3);
+    min-width: 0;
+    height: 72px;
+  }
+
+  /* Summary left-aligned above a full-width button. */
+  .bb-combo-bar__info,
+  .bb-combo-bar__title,
+  .bb-combo-bar__sub {
+    text-align: left;
+  }
+
+  .bb-combo-bar__info {
+    margin-bottom: 14px;
+    padding-right: 0;
+  }
+
+  .bb-combo-bar__actions {
+    justify-content: stretch;
+  }
+
+  .bb-combo-bar__actions .bb-btn-primary,
+  .bb-combo-bar__actions .bb-btn-secondary {
+    flex: 1 1 auto;
+    width: 100%;
+  }
 }

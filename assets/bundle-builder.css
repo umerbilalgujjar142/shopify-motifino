@@ -1661,3 +1661,19 @@ body.bb-modal-open {
   animation: bb-chk-spin 0.7s linear infinite;
 }
 .bb-btn-primary:disabled { opacity: 0.7; cursor: default; }
+/* ── Composer on desktop: edge to edge, no card frame ──────── */
+@media (min-width: 768px) {
+  .bb-wrap-outer:has(#bb-screen-composer.is-active) {
+    padding: 0;
+    background: #ffffff;
+  }
+
+  .bb-wrap-outer:has(#bb-screen-composer.is-active) .bb-wrap {
+    max-width: none;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: #ffffff;
+  }
+}
