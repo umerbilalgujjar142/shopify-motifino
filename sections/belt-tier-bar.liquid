@@ -97,11 +97,11 @@
         --bb-tier-fs: {{ section.settings.text_size_mobile }}px;
         --bb-tier-price-fs: {{ section.settings.price_size_mobile }}px;
         --bb-tier-pad: {{ section.settings.padding_mobile }}px;
-        --bb-tier-pad-x: 14px;
+        --bb-tier-pad-x: calc(14px + max(0px, var(--bb-tier-bonus-size) - var(--bb-tier-size) * 0.28));
         --bb-tier-lead: {{ anim_lead }}ms;
         --bb-tier-line-h: {{ section.settings.line_height | default: 3.5 }}px;
         --bb-tier-ring-w: {{ section.settings.ring_width | default: 3.5 }}px;
-        --bb-tier-bonus-size: calc(var(--bb-tier-size) * {{ section.settings.bonus_size | default: 42 | divided_by: 100.0 }});
+        --bb-tier-bonus-size: calc(var(--bb-tier-size) * {{ section.settings.bonus_size_mobile | default: 52 | divided_by: 100.0 }});
         --bb-tier-bonus-ring: max(1px, calc(var(--bb-tier-ring-w) * 0.6));
         --bb-tier-gold-1: {{ section.settings.gold_1 | default: '#bf953f' }};
         --bb-tier-gold-2: {{ section.settings.gold_2 | default: '#fcf6ba' }};
@@ -118,7 +118,8 @@
           --bb-tier-fs: {{ section.settings.text_size_desktop }}px;
           --bb-tier-price-fs: {{ section.settings.price_size_desktop }}px;
           --bb-tier-pad: {{ section.settings.padding_desktop }}px;
-          --bb-tier-pad-x: 16px;
+          --bb-tier-pad-x: calc(16px + max(0px, var(--bb-tier-bonus-size) - var(--bb-tier-size) * 0.28));
+          --bb-tier-bonus-size: calc(var(--bb-tier-size) * {{ section.settings.bonus_size | default: 42 | divided_by: 100.0 }});
         }
       }
 
@@ -393,6 +394,10 @@
         font-weight: 700;
         color: var(--bb-tier-ink);
         margin-bottom: calc(var(--bb-tier-bonus-size) * 0.04);
+        transform: translate(
+          calc(var(--bb-tier-bonus-size) * {{ section.settings.bonus_plus_shift | default: -35 | divided_by: 100.0 }}),
+          calc(var(--bb-tier-bonus-size) * {{ section.settings.bonus_plus_shift_y | default: 20 | divided_by: 100.0 }})
+        );
       }
 
       #shopify-section-{{ section.id }} .bb-tier__bonus-img {
@@ -739,12 +744,44 @@
       "type": "range",
       "id": "bonus_size",
       "min": 20,
-      "max": 60,
+      "max": 70,
       "step": 1,
       "unit": "%",
-      "label": "Bonus badge size",
-      "info": "Share of the circle size, so it scales with it on mobile and desktop.",
+      "label": "Bonus badge size (desktop)",
+      "info": "Share of the circle size.",
       "default": 42
+    },
+    {
+      "type": "range",
+      "id": "bonus_size_mobile",
+      "min": 20,
+      "max": 80,
+      "step": 1,
+      "unit": "%",
+      "label": "Bonus badge size (mobile)",
+      "default": 52
+    },
+    {
+      "type": "range",
+      "id": "bonus_plus_shift",
+      "min": -80,
+      "max": 20,
+      "step": 5,
+      "unit": "%",
+      "label": "Plus sign sideways",
+      "info": "Negative moves it left, towards where the two circles meet.",
+      "default": -35
+    },
+    {
+      "type": "range",
+      "id": "bonus_plus_shift_y",
+      "min": -40,
+      "max": 80,
+      "step": 5,
+      "unit": "%",
+      "label": "Plus sign up or down",
+      "info": "Positive moves it down.",
+      "default": 20
     },
     {
       "type": "range",

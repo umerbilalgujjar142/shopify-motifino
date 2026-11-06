@@ -241,13 +241,25 @@
   #gpopup-{{ section.id }} .gpopup__products--grid2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   #gpopup-{{ section.id }} .gpopup__products--grid3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 
-  {%- comment -%}A row that scrolls keeps the cards readable when the panel is narrow.{%- endcomment -%}
+  {%- comment -%}
+    A row that scrolls keeps the cards readable when the panel is narrow. The card
+    width comes from how many should fit, so a fractional value leaves the next one
+    half cut at the edge — the only cue that there is more to the right.
+  {%- endcomment -%}
   #gpopup-{{ section.id }} .gpopup__products--row {
     grid-auto-flow: column;
-    grid-auto-columns: minmax(140px, 1fr);
+    grid-auto-columns: max(110px, calc((100% - (12px * (var(--gpopup-visible, 2.2) - 1))) / var(--gpopup-visible, 2.2)));
     overflow-x: auto;
-    scroll-snap-type: x mandatory;
+    scroll-snap-type: x proximity;
+    scroll-padding-left: 0;
     -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  {%- comment -%}The half-cut card is the scroll cue, so the bar is not needed.{%- endcomment -%}
+  #gpopup-{{ section.id }} .gpopup__products--row::-webkit-scrollbar {
+    display: none;
   }
 
   #gpopup-{{ section.id }} .gpopup__products--row .gpopup__card {
@@ -492,7 +504,7 @@
             {%- if gp_collection != blank and gp_collection.products_count > 0 -%}
               <div
                 class="gpopup__products gpopup__products--{{ block.settings.layout }}"
-                style="--gpopup-card-radius: {{ block.settings.radius }}px;"
+                style="--gpopup-card-radius: {{ block.settings.radius }}px;{% if block.settings.layout == 'row' %} --gpopup-visible: {{ block.settings.row_visible | default: 2.2 }};{% endif %}"
                 data-gpopup-products
                 data-gpopup-after="{{ block.settings.after_add }}"
                 data-gpopup-adding="{{ block.settings.adding_label | escape }}"
@@ -507,8 +519,8 @@
                     <a class="gpopup__card-media" href="{{ gp_product.url }}">
                       {{-
                         gp_product.featured_image
-                        | image_url: width: 400
-                        | image_tag: loading: 'lazy', sizes: '160px', widths: '160,240,320,400'
+                        | image_url: width: 800
+                        | image_tag: loading: 'lazy', sizes: '(max-width: 600px) 70vw, 340px', widths: '160,240,320,400,520,680,800'
                       -}}
                     </a>
 
@@ -1811,6 +1823,16 @@
             }
           ],
           "default": "grid2"
+        },
+        {
+          "type": "range",
+          "id": "row_visible",
+          "label": "Cards visible",
+          "min": 1.2,
+          "max": 4,
+          "step": 0.1,
+          "default": 2.2,
+          "visible_if": "{{ block.settings.layout == 'row' }}"
         },
         {
           "type": "checkbox",
