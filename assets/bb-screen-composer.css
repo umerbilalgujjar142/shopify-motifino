@@ -27,9 +27,13 @@
 /* ── Worn-photo toggle — rounded, centered pill ──────────────
    Product view (default) = black · Worn view (.is-worn) = white */
 /* ── Zoom trigger — bottom-left of the hero ── */
+/* Both overlay controls hang their CENTRE on one line above the hero's bottom
+   edge: `bottom` places the bottom edge, and translateY(50%) pushes each down by
+   half its own height, so different sizes still line up. */
 .bb-zoom-btn {
   position: absolute;
-  bottom: 12px;
+  bottom: var(--bb-hero-ctl-line, 46px);
+  transform: translateY(50%);
   left: 12px;
   display: inline-flex;
   align-items: center;
@@ -58,7 +62,8 @@
 /* ── Worn-view switch — bottom-right, shows the other view ── */
 .bb-worn-thumb {
   position: absolute;
-  bottom: 12px;
+  bottom: var(--bb-hero-ctl-line, 46px);
+  transform: translateY(50%);
   right: 12px;
   width: var(--bb-worn-thumb-size, 64px);
   aspect-ratio: var(--bb-worn-thumb-ratio, 1 / 1);
@@ -73,7 +78,7 @@
   transition: box-shadow .18s, transform .18s;
 }
 
-.bb-worn-thumb:hover { box-shadow: 0 4px 14px rgba(0, 0, 0, .24); transform: translateY(-1px); }
+.bb-worn-thumb:hover { box-shadow: 0 4px 14px rgba(0, 0, 0, .24); transform: translateY(calc(50% - 1px)); }
 .bb-worn-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
 /* ── Zoom overlay — appended to <body>, so the hero overflow cannot clip it ── */
@@ -1452,6 +1457,19 @@
     padding-top: 18px;
     padding-bottom: 56px;
     background: transparent;
+    /* A border-top would run the full box, padding included; this starts the
+       rule where the text does. */
+    border-top: none;
+  }
+
+  .bb-combo-bar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 32px;
+    right: 32px;
+    height: 1px;
+    background: var(--bb-border);
   }
 
   /* Heading, with the current choice underneath it. */
@@ -1508,45 +1526,20 @@
   }
 
   .bb-combo-bar__actions {
-    justify-content: stretch;
+    justify-content: flex-start;
   }
 
   .bb-combo-bar__actions .bb-btn-primary,
   .bb-combo-bar__actions .bb-btn-secondary {
-    flex: 1 1 auto;
-    width: 100%;
+    flex: 0 0 auto;
+    width: auto;
+    padding: 15px 38px;
   }
 }
 
 /* ── Out of stock ──────────────────────────────────────────
    Shopify treats a combination as a bundle, so its own `available`
    already accounts for the strap, buckle, loop and box. */
-.bb-soldout-badge {
-  display: none;
-  position: absolute;
-  left: 50%;
-  bottom: 18px;
-  transform: translateX(-50%);
-  z-index: 6;
-  padding: 9px 26px;
-  border-radius: 999px;
-  background: #e01b1b;
-  color: #fff;
-  font-size: 15px;
-  font-weight: 600;
-  white-space: nowrap;
-  pointer-events: none;
-}
-
-.bb-composer-hero.is-unavailable .bb-soldout-badge {
-  display: block;
-}
-
-.bb-length-btn.is-unavailable {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
 .bb-combo-bar__actions .bb-btn-primary.is-unavailable {
   background: #ececec;
   background-image: none;

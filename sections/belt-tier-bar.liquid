@@ -97,7 +97,8 @@
         --bb-tier-fs: {{ section.settings.text_size_mobile }}px;
         --bb-tier-price-fs: {{ section.settings.price_size_mobile }}px;
         --bb-tier-pad: {{ section.settings.padding_mobile }}px;
-        --bb-tier-pad-x: calc(14px + max(0px, var(--bb-tier-bonus-size) - var(--bb-tier-size) * 0.28));
+        --bb-tier-pad-x: 14px;
+        --bb-tier-overhang: max(0px, calc(var(--bb-tier-bonus-size) - var(--bb-tier-size) * 0.28));
         --bb-tier-lead: {{ anim_lead }}ms;
         --bb-tier-line-h: {{ section.settings.line_height | default: 3.5 }}px;
         --bb-tier-ring-w: {{ section.settings.ring_width | default: 3.5 }}px;
@@ -118,7 +119,7 @@
           --bb-tier-fs: {{ section.settings.text_size_desktop }}px;
           --bb-tier-price-fs: {{ section.settings.price_size_desktop }}px;
           --bb-tier-pad: {{ section.settings.padding_desktop }}px;
-          --bb-tier-pad-x: calc(16px + max(0px, var(--bb-tier-bonus-size) - var(--bb-tier-size) * 0.28));
+          --bb-tier-pad-x: 16px;
           --bb-tier-bonus-size: calc(var(--bb-tier-size) * {{ section.settings.bonus_size | default: 42 | divided_by: 100.0 }});
         }
       }
@@ -161,6 +162,11 @@
         justify-content: space-between;
         align-items: flex-start;
         margin-top: 16px;
+        /* Room for the badge hanging off the last circle. On the track, not on
+           the section, so the headline above keeps the full width and does not
+           wrap when the badge grows. The line is positioned inside the track,
+           so a margin moves both together; padding would not. */
+        margin-inline: var(--bb-tier-overhang, 0px);
       }
 
       #shopify-section-{{ section.id }} .bb-tier__line {
@@ -396,7 +402,7 @@
         margin-bottom: calc(var(--bb-tier-bonus-size) * 0.04);
         transform: translate(
           calc(var(--bb-tier-bonus-size) * {{ section.settings.bonus_plus_shift | default: -35 | divided_by: 100.0 }}),
-          calc(var(--bb-tier-bonus-size) * {{ section.settings.bonus_plus_shift_y | default: 20 | divided_by: 100.0 }})
+          {{ section.settings.bonus_plus_shift_y | default: 4 }}px
         );
       }
 
@@ -775,13 +781,13 @@
     {
       "type": "range",
       "id": "bonus_plus_shift_y",
-      "min": -40,
-      "max": 80,
-      "step": 5,
-      "unit": "%",
+      "min": -20,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
       "label": "Plus sign up or down",
       "info": "Positive moves it down.",
-      "default": 20
+      "default": 4
     },
     {
       "type": "range",

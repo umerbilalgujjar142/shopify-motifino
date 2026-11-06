@@ -411,16 +411,7 @@
       el.classList.toggle('bb-strap-item--unavailable', !isStrapAvailable(el.dataset.strap, belt.length));
     });
 
-    document.querySelectorAll('#bb-length-selector .bb-length-btn').forEach(btn => {
-      const ok = isLengthAvailable(btn.dataset.length);
-      btn.classList.toggle('is-unavailable', !ok);
-      btn.disabled = !ok;
-    });
-
     const ok = isSelectionAvailable();
-    const hero = document.getElementById('bb-composer-hero');
-    if (hero) hero.classList.toggle('is-unavailable', !ok);
-
     const cta = document.getElementById('bb-composer-cta');
     if (cta) {
       cta.disabled = !ok;
@@ -638,15 +629,13 @@
   function renderLengthButtons(belt) {
     const container = document.getElementById('bb-length-selector');
     if (!container) return;
-    container.innerHTML = LENGTHS.map(l => {
-      const ok = isLengthAvailable(l);
-      return `
-      <button class="bb-length-btn ${belt.length === l ? 'is-selected' : ''}${ok ? '' : ' is-unavailable'}"
-              data-length="${l}"${ok ? '' : ' disabled'}>${l}</button>`;
-    }).join('');
+    /* A sold-out length looks and behaves like any other; only the add-to-cart
+       button below reacts once it is picked. */
+    container.innerHTML = LENGTHS.map(l => `
+      <button class="bb-length-btn ${belt.length === l ? 'is-selected' : ''}"
+              data-length="${l}">${l}</button>`).join('');
     container.querySelectorAll('.bb-length-btn').forEach(btn => {
       btn.addEventListener('click', () => {
-        if (!isLengthAvailable(btn.dataset.length)) return;
         state.belts[state.currentBelt - 1].length = btn.dataset.length;
         renderLengthButtons(state.belts[state.currentBelt - 1]);
         updateBeltPreview();
